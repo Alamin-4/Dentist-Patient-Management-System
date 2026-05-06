@@ -37,7 +37,7 @@ export function StepIndicator({ currentStep = 0 }) {
             </span>
           </div>
           {index < steps.length - 1 && (
-            <div className="h-[2px] w-8 lg:w-16 bg-gray-100 mt-[-20px]" />
+            <div className="h-0.5 w-8 lg:w-16 bg-gray-100 -mt-5" />
           )}
         </div>
       ))}
