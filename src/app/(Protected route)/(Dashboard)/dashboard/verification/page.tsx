@@ -1,5 +1,5 @@
 import { HeadshotUpload } from "../../_components/module/verification/headshot-upload";
-import { LicenceForm } from "../../_components/module/verification/licence-form";
+import VerifyPage from "../../_components/module/verification/licence-form";
 
 export default function PhaseOnePage() {
   return (
@@ -15,7 +15,7 @@ export default function PhaseOnePage() {
           </h2>
         </div>
         <div>
-          <LicenceForm />
+          <VerifyPage />
         </div>
       </div>
 

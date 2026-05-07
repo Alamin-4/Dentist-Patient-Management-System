@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,154 +12,154 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import MatchFound from "./match-found";
 
 const formSchema = z.object({
-  country: z.string().min(1, "Please select a country"),
-  city: z.string().min(1, "Please select a city"),
-  authority: z.string().min(1, "Please select a registration authority"),
-  regNo: z.string().min(3, "Registration number is required"),
+  country: z.string().min(1),
+  city: z.string().min(1),
+  authority: z.string().min(1),
+  regNo: z.string().min(1),
 });
 
-type FormData = z.infer<typeof formSchema>;
-
-export function LicenceForm() {
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<FormData>({
+export default function VerifyPage() {
+  const [isVerified, setIsVerified] = useState(false);
+  const { control, register } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      country: "",
-      city: "",
-      authority: "",
-      regNo: "",
+      country: "USA",
+      city: "California",
+      authority: "California Medical Board",
+      regNo: "CA-123456",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form Submitted:", data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Country - Controlled via Controller for Select */}
-        <div className="space-y-2">
-          <Label className="text-sm font-bold text-gray-700">Country</Label>
-          <Controller
-            name="country"
-            control={control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger
-                  className={cn(
-                    "h-14 border-gray-200",
-                    errors.country && "border-red-500",
-                  )}
-                >
-                  <SelectValue placeholder="Select Country" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="usa">USA</SelectItem>
-                  <SelectItem value="uk">UK</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.country && (
-            <p className="text-xs text-red-500">{errors.country.message}</p>
-          )}
+    <div className="max-w-360 w-11/12 mx-auto py-20 space-y-32">
+      {/* STEP 1: LICENCE VERIFICATION */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-4">
+          <span className="text-[#10436B] text-xs font-bold uppercase tracking-widest">
+            Step 1
+          </span>
+          <h2 className="text-[32px] font-bold text-[#10436B] mt-2">
+            Verify your dental licence
+          </h2>
         </div>
 
-        {/* City - Controlled via Controller for Select */}
-        <div className="space-y-2">
-          <Label className="text-sm font-bold text-gray-700">City</Label>
-          <Controller
-            name="city"
-            control={control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger
-                  className={cn(
-                    "h-14 border-gray-200",
-                    errors.city && "border-red-500",
-                  )}
-                >
-                  <SelectValue placeholder="Select City" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="california">California</SelectItem>
-                  <SelectItem value="london">London</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.city && (
-            <p className="text-xs text-red-500">{errors.city.message}</p>
-          )}
-        </div>
+        <div className="lg:col-span-8 space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="text-gray-600 font-medium">Country</Label>
+              <Controller
+                name="country"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="h-14! border-gray-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USA">USA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-gray-600 font-medium">City</Label>
+              <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="h-14! border-gray-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="California">California</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-gray-600 font-medium">
+                Registration Authority
+              </Label>
+              <Controller
+                name="authority"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="h-14! border-gray-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="California Medical Board">
+                        California Medical Board
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-gray-600 font-medium">
+                Registration No
+              </Label>
+              <Input {...register("regNo")} className="h-14! border-gray-200" />
+            </div>
+          </div>
 
-        {/* Authority - Controlled via Controller for Select */}
-        <div className="space-y-2">
-          <Label className="text-sm font-bold text-gray-700">
-            Registration Authority
-          </Label>
-          <Controller
-            name="authority"
-            control={control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger
-                  className={cn(
-                    "h-14 border-gray-200",
-                    errors.authority && "border-red-500",
-                  )}
-                >
-                  <SelectValue placeholder="Select Authority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cmb">California Medical Board</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.authority && (
-            <p className="text-xs text-red-500">{errors.authority.message}</p>
-          )}
-        </div>
-
-        {/* Registration No - Standard register for Input */}
-        <div className="space-y-2">
-          <Label className="text-sm font-bold text-gray-700">
-            Registration No
-          </Label>
-          <Input
-            {...register("regNo")}
-            placeholder="e.g. CA-123456"
-            className={cn(
-              "h-14 border-gray-200 px-4",
-              errors.regNo && "border-red-500",
-            )}
-          />
-          {errors.regNo && (
-            <p className="text-xs text-red-500">{errors.regNo.message}</p>
-          )}
+          {/* This only appears when the form is "processed" */}
+          <div className="mt-4">
+            <MatchFound
+              doctorName="Dr. Alex Hemsworth"
+              specialty="Orthodontist"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex pt-2">
-        <Button
-          type="submit"
-          className="h-12 w-32 bg-[#163E5C] font-bold text-white hover:bg-[#113149]"
-        >
-          Verify
-        </Button>
+      <div className="h-[1px] bg-gray-100 w-full" />
+
+      {/* STEP 2: HEADSHOT UPLOAD */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-4">
+          <span className="text-[#10436B] text-xs font-bold uppercase tracking-widest">
+            Step 2
+          </span>
+          <h2 className="text-[32px] font-bold text-[#10436B] mt-2">
+            Upload your professional headshot
+          </h2>
+        </div>
+
+        <div className="lg:col-span-8">
+          <div className="flex items-center gap-10">
+            <div className="w-[140px] h-[140px] rounded-full overflow-hidden bg-gray-100">
+              <img
+                src="/doctor-placeholder.png"
+                alt="Headshot"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <button className="px-10 py-3 rounded-xl border-2 border-[#10436B] text-[#10436B] font-bold hover:bg-gray-50 transition-all">
+              Re-Upload
+            </button>
+          </div>
+        </div>
       </div>
-    </form>
+    </div>
   );
 }

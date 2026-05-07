@@ -68,7 +68,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           <Link
-            href="/join"
+            href="/register-doctor"
             className="hidden sm:block rounded-lg bg-[#10436B] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             Join as a Doctor
@@ -107,7 +107,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/join"
+            href="/register-doctor"
             className="mt-2 block w-full rounded-lg bg-[#10436B] py-3 text-center font-semibold text-white"
             onClick={() => setIsOpen(false)}
           >

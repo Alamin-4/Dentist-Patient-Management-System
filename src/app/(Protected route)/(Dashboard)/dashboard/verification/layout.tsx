@@ -7,7 +7,7 @@ export default function VerificationLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen md:w-11/12 mx-auto flex-col bg-[#F9FAFB]">
+    <div className="flex min-h-screen md:w-11/12 mx-auto flex-col">
       <header className=" border-b pb-2">
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col gap-1">
@@ -26,7 +26,7 @@ export default function VerificationLayout({
 
       {/* Middle Part - Changeable Content */}
       <main className="flex-1 px-6 py-10 pb-32">
-        <div className="mx-auto max-w-5xl">
+        <div className="">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
             {children}
           </div>
@@ -34,8 +34,8 @@ export default function VerificationLayout({
       </main>
 
       {/* Bottom Bar - Always visible */}
-      <footer className="fixed bottom-0 left-0 right-0 border-t bg-white p-4 z-50">
-        <div className="mx-auto flex max-w-5xl justify-end">
+      <footer className="fixed bottom-0 left-0 right-0 border-t bg-white py-6 z-50">
+        <div className="mx-auto flex max-w-11/12 justify-end">
           <button
             disabled
             className="h-12 px-10 bg-[#8FA3B0] text-white font-bold rounded-lg cursor-not-allowed transition-colors"

@@ -25,8 +25,8 @@ export function VerificationSteps({ currentStep }: { currentStep: number }) {
             </div>
             <span
               className={cn(
-                "hidden md:block text-[10px] font-medium text-center",
-                index <= currentStep ? "text-[#0A2533]" : "text-gray-400",
+                "hidden md:block text-sm text-center",
+                index <= currentStep ? "text-[#0A2533] font-medium" : "text-gray-400",
               )}
             >
               {step.label}
