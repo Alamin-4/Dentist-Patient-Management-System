@@ -1,13 +1,17 @@
+"use client";
+
 import { User, Lock, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useStateContext } from "@/providers/StateProvider";
 
 const STEPS = [
-  { label: "Licence + identity", icon: User },
-  { label: "Facility & Transparency", icon: Lock },
-  { label: "Clinical Excellence", icon: Award },
+  { step: 1, label: "Licence + identity", icon: User },
+  { step: 2, label: "Facility & Transparency", icon: Lock },
+  { step: 3, label: "Clinical Excellence", icon: Award },
 ];
 
-export function VerificationSteps({ currentStep }: { currentStep: number }) {
+export function VerificationSteps() {
+  const { verificationStep } = useStateContext();
   return (
     <div className="flex items-center gap-2 md:gap-8">
       {STEPS.map((step, index) => (
@@ -16,7 +20,7 @@ export function VerificationSteps({ currentStep }: { currentStep: number }) {
             <div
               className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
-                index <= currentStep
+                step.step <= verificationStep
                   ? "border-[#163E5C] bg-[#163E5C] text-white"
                   : "border-gray-100 bg-white text-gray-300",
               )}
@@ -26,15 +30,14 @@ export function VerificationSteps({ currentStep }: { currentStep: number }) {
             <span
               className={cn(
                 "hidden md:block text-sm text-center",
-                index <= currentStep ? "text-[#0A2533] font-medium" : "text-gray-400",
+                step.step <= verificationStep
+                  ? "text-[#0A2533] font-medium"
+                  : "text-gray-400",
               )}
             >
               {step.label}
             </span>
           </div>
-          {index < STEPS.length - 1 && (
-            <div className="h-px w-8 md:w-12 bg-gray-200 -mt-6" />
-          )}
         </div>
       ))}
     </div>

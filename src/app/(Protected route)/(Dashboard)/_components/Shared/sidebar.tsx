@@ -11,6 +11,7 @@ import {
   Settings,
   LifeBuoy,
   LogOut,
+  Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -18,6 +19,7 @@ import Image from "next/image";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
+  { icon: Video, label: "Consultations", href: "/dashboard/consultations" },
   { icon: Calendar, label: "Bookings", href: "/dashboard/bookings" },
   { icon: Users, label: "Patients", href: "/dashboard/patients" },
   { icon: BarChart3, label: "Results", href: "/dashboard/results" },

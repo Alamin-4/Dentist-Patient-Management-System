@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { VerificationSteps } from "../../_components/module/verification/verification-steps";
+import StepButton from "../../_components/module/verification/StepButton";
 
 export default function VerificationLayout({
   children,
@@ -20,14 +21,14 @@ export default function VerificationLayout({
           </div>
 
           {/* Stepper Component */}
-          <VerificationSteps currentStep={0} />
+          <VerificationSteps />
         </div>
       </header>
 
       {/* Middle Part - Changeable Content */}
-      <main className="flex-1 px-6 py-10 pb-32">
+      <main className="flex-1 py-10 pb-32">
         <div className="">
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6 lg:p-12">
             {children}
           </div>
         </div>
@@ -35,14 +36,7 @@ export default function VerificationLayout({
 
       {/* Bottom Bar - Always visible */}
       <footer className="fixed bottom-0 left-0 right-0 border-t bg-white py-6 z-50">
-        <div className="mx-auto flex max-w-11/12 justify-end">
-          <button
-            disabled
-            className="h-12 px-10 bg-[#8FA3B0] text-white font-bold rounded-lg cursor-not-allowed transition-colors"
-          >
-            Continue to Phase 2
-          </button>
-        </div>
+        <StepButton />
       </footer>
     </div>
   );

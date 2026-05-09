@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { StateProvider } from "@/providers/StateProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -13,7 +14,8 @@ const jakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "RatedDocs - Compare Verified Dentists with Transparent Pricing",
-  description: "Discover top-rated dentists with transparent pricing on RatedDocs. Compare verified dental professionals, read reviews, and book confidently for your oral health needs.",
+  description:
+    "Discover top-rated dentists with transparent pricing on RatedDocs. Compare verified dental professionals, read reviews, and book confidently for your oral health needs.",
 };
 
 export default function RootLayout({
@@ -26,7 +28,9 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jakartaSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <StateProvider>{children}</StateProvider>
+      </body>
     </html>
   );
 }
