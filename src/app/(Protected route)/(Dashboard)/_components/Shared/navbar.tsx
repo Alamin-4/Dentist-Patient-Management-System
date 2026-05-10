@@ -17,6 +17,7 @@ export function Navbar() {
           alt="Website logo"
           height={200}
           width={400}
+          loading="eager"
           className="w-43 h-auto object-contain"
         />
       </div>

@@ -17,14 +17,14 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: User, label: "Profile", href: "/dashboard/profile" },
-  { icon: Video, label: "Consultations", href: "/dashboard/consultations" },
-  { icon: Calendar, label: "Bookings", href: "/dashboard/bookings" },
-  { icon: Users, label: "Patients", href: "/dashboard/patients" },
-  { icon: BarChart3, label: "Results", href: "/dashboard/results" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-  { icon: LifeBuoy, label: "Support", href: "/dashboard/support" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard/dentist" },
+  { icon: User, label: "Profile", href: "/dashboard/dentist/profile" },
+  { icon: Video, label: "Consultations", href: "/dashboard/dentist/consultations" },
+  { icon: Calendar, label: "Bookings", href: "/dashboard/dentist/bookings" },
+  { icon: Users, label: "Patients", href: "/dashboard/dentist/patients" },
+  { icon: BarChart3, label: "Results", href: "/dashboard/dentist/results" },
+  { icon: Settings, label: "Settings", href: "/dashboard/dentist/settings" },
+  { icon: LifeBuoy, label: "Support", href: "/dashboard/dentist/support" },
 ];
 
 export function Sidebar() {

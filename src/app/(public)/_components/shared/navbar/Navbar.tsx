@@ -28,12 +28,13 @@ export default function Navbar() {
                 alt="Website logo"
                 height={200}
                 width={400}
+                loading="eager"
                 className="w-43 h-auto object-contain"
               />
             </div>
           </div>
         </Link>
-        
+
         <div className="hidden lg:flex items-center gap-8">
           {navConfig.map((item) => (
             <Link

@@ -16,6 +16,7 @@ export default function Hero() {
               src="/images/hero.png"
               height={400}
               width={600}
+              loading="eager"
               alt="Dental Clinic Entry"
               className="h-full w-full object-cover"
             />

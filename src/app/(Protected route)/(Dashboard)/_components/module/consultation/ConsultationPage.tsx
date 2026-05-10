@@ -72,7 +72,6 @@ export default function ConsultationPage() {
         onClose={() => {
           setIsSidebarOpen(false);
           setSelectedConsultation(null);
-          setIsTreatmentModalOpen(true); // Open treatment modal when sidebar closes, as per image 470877.png
         }}
         isOpen={isSidebarOpen}
         data={

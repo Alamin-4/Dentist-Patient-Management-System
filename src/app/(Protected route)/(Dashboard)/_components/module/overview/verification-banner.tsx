@@ -20,7 +20,7 @@ export function VerificationBanner() {
         </p>
         <div className="pt-4">
           <Button
-            onClick={() => router.push("/dashboard/verification")}
+            onClick={() => router.push("/dashboard/dentist/verification")}
             className="h-12 px-8 bg-white text-[#163E5C] hover:bg-gray-100 font-bold rounded-lg cursor-pointer transition-all"
           >
             Start Verification

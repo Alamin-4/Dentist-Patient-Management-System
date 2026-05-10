@@ -5,7 +5,7 @@ import SearchTags from "./search-tags";
 
 export default function CtaSearchSection() {
   return (
-    <section style={{ backgroundImage: `url('/images/cta.png')`, backgroundPosition: "center", backgroundSize: "cover" }} className="relative w-full py-24 overflow-hidden">
+    <section style={{ backgroundImage: `url('/images/cta.png')`, backgroundPosition: "center", backgroundSize: "cover" }} className="relative w-full py-24 ">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-linear-to-b from-black/10 to-transparent" />
       </div>

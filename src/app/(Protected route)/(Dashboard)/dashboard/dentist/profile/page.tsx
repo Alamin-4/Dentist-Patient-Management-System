@@ -1,8 +1,8 @@
-import { BasicDetailsCard } from "../../_components/module/profile/basic-details-card";
-import { PricingPlaceholder } from "../../_components/module/profile/pricing-placeholder";
-import { ReviewsPlaceholder } from "../../_components/module/profile/reviews-placeholder";
-import { ProfileHeader } from "../../_components/module/profile/profile-header";
-import { VerificationSidebar } from "../../_components/module/profile/verification-sidebar";
+import { BasicDetailsCard } from "../../../_components/module/profile/basic-details-card";
+import { PricingPlaceholder } from "../../../_components/module/profile/pricing-placeholder";
+import { ReviewsPlaceholder } from "../../../_components/module/profile/reviews-placeholder";
+import { ProfileHeader } from "../../../_components/module/profile/profile-header";
+import { VerificationSidebar } from "../../../_components/module/profile/verification-sidebar";
 
 export default function ProfilePage() {
   return (

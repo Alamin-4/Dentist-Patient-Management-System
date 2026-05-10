@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
-import { VerificationSteps } from "../../_components/module/verification/verification-steps";
-import StepButton from "../../_components/module/verification/StepButton";
+import { VerificationSteps } from "../../../_components/module/verification/verification-steps";
+import StepButton from "../../../_components/module/verification/StepButton";
 
 export default function VerificationLayout({
   children,
