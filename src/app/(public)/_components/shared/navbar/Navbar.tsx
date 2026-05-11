@@ -8,7 +8,7 @@ import Image from "next/image";
 
 const navConfig = [
   { label: "Home", href: "/", active: true },
-  { label: "Find a Dentist", href: "/find" },
+  { label: "Find a Dentist", href: "/find-dentist" },
   { label: "About us", href: "/about", hasDropdown: true },
   { label: "Guarantee", href: "/guarantee", hasDropdown: true },
 ];
@@ -17,7 +17,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white py-3">
+    <nav className="sticky shadow-md top-0 z-50 w-full border-b border-gray-100 bg-white py-6">
       <div className="mx-auto flex max-w-360 w-11/12 items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center">

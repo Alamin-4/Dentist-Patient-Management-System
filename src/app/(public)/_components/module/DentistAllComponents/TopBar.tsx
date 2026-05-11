@@ -1,8 +1,8 @@
 "use client";
 
-import { Map as MapIcon, List, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { FaFilter, FaListUl, FaMapMarkedAlt } from "react-icons/fa";
 
 type TopBarProps = {
   query: string;
@@ -10,6 +10,8 @@ type TopBarProps = {
   viewMode: "list" | "map";
   onViewModeChange: (mode: "list" | "map") => void;
   resultCount: number;
+  showMapFilters: boolean;
+  onToggleMapFilters: () => void;
 };
 
 export default function TopBar({
@@ -17,51 +19,74 @@ export default function TopBar({
   onQueryChange,
   viewMode,
   onViewModeChange,
+  resultCount,
+  showMapFilters,
+  onToggleMapFilters,
 }: TopBarProps) {
   return (
-    <div className="w-full bg-white">
-      <div className="max-w-[1440px] mx-auto w-11/12 flex flex-col gap-6 py-6">
-        {/* Title Section */}
+    <div className="w-full">
+      <div className="mx-auto flex w-11/12 max-w-360 flex-col gap-6 py-7">
         <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#0a0a1a] tracking-tight">
+          <h1 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0A0A1A] md:text-[40px]">
             Search Verified Dentists
           </h1>
         </div>
 
-        {/* Search & Toggle Section */}
-        <div className="flex items-center gap-4">
-          {/* Search Input Container */}
-          <div className="relative flex-1 group">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
+          <div className="relative flex-1">
             <input
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
               placeholder="Search Dentist"
-              className="h-14 w-full rounded-2xl border border-slate-200 bg-[#f8f9fb] pl-5 pr-12 text-base text-slate-700 outline-none transition-all focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-100"
+              className="h-14 w-full rounded-lg border border-slate-200 bg-[#F8F9FB] pl-5 pr-12 text-[14px] font-medium text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-100"
             />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2">
-              <Search className="size-6 text-slate-400 group-focus-within:text-[#003366] transition-colors" />
+            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+              <Search className="size-6 text-slate-400" />
             </div>
           </div>
 
-          {/* Conditional View Toggle Button */}
-          <Button
-            type="button"
-            onClick={() =>
-              onViewModeChange(viewMode === "list" ? "map" : "list")
-            }
-            className="h-14 rounded-2xl border border-slate-200 bg-white px-6 text-[#003366] hover:bg-slate-50 shadow-sm transition-all flex items-center gap-3"
-          >
-            <span className="font-bold text-lg">
-              {viewMode === "list" ? "Map View" : "List View"}
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ffda7a]">
-              {viewMode === "list" ? (
-                <MapIcon className="size-5 fill-[#003366] text-[#003366]" />
-              ) : (
-                <List className="size-5 text-[#003366]" />
-              )}
-            </div>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {viewMode === "map" && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onToggleMapFilters}
+                className={`h-14 rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10 ${
+                  showMapFilters ? "bg-[#0E3E65]/10" : "bg-[#0E3E65]/3"
+                }`}
+              >
+                Filters
+                <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
+                  <FaFilter className="size-4 fill-[#003366] text-[#003366]" />
+                </div>
+              </Button>
+            )}
+
+            {viewMode === "map" ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onViewModeChange("list")}
+                className="h-14 rounded-lg border border-slate-200 bg-[#0E3E65]/3 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10"
+              >
+                List View
+                <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
+                  <FaListUl className="size-4 fill-[#003366] text-[#003366]" />
+                </div>
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={() => onViewModeChange("map")}
+                className="h-14 rounded-lg border border-slate-200 bg-[#0E3E65]/3 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10"
+              >
+                Map View
+                <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
+                  <FaMapMarkedAlt className="size-4 fill-[#003366] text-[#003366]" />
+                </div>
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

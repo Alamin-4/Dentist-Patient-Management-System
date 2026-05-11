@@ -27,7 +27,7 @@ const trustFeatures = [
 
 export default function WhyTrust() {
   return (
-    <section className="py-20">
+    <section className="py-20 bg-[#EEF8FF]">
       <div className="max-w-360 w-11/12 mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
           <h2 className="text-3xl md:text-4xl font-bold text-[#10436B]">
