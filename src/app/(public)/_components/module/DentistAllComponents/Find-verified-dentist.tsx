@@ -287,7 +287,6 @@ export default function FindDentist() {
                       )}
                       onCompareToggle={() => handleCompareToggle(dentist)}
                       onPrimaryAction={() => setActiveDentistId(dentist.id)}
-                      onSecondaryAction={() => setActiveDentistId(dentist.id)}
                     />
                   ))}
                 </div>

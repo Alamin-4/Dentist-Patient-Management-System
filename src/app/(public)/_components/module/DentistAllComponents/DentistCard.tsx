@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
 import type { Dentist } from "./types";
+import { redirect } from "next/navigation";
 
 type DentistCardProps = {
   dentist: Dentist;
@@ -18,7 +19,7 @@ type DentistCardProps = {
   isSelectedForCompare?: boolean;
   onCompareToggle?: () => void;
   onPrimaryAction?: () => void;
-  onSecondaryAction?: () => void;
+
   viewMode?: "list" | "map";
 };
 
@@ -29,7 +30,7 @@ export default function DentistCard({
   isSelectedForCompare = false,
   onCompareToggle,
   onPrimaryAction,
-  onSecondaryAction,
+
   viewMode = "list",
 }: DentistCardProps) {
   return (
@@ -153,7 +154,7 @@ export default function DentistCard({
             <Button
               variant="outline"
               className="h-11 rounded-lg border-[#003366] px-6 font-bold text-[#003366] hover:bg-slate-50 "
-              onClick={onSecondaryAction}
+              onClick={() => redirect(`/find-dentist/${dentist.slug}`)}
             >
               View Profile
             </Button>

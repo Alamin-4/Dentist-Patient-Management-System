@@ -1,6 +1,7 @@
 export type Dentist = {
   id: string;
   name: string;
+  slug: string;
   specialty: string;
   imageSeed: string;
   rating: number;
@@ -15,6 +16,7 @@ export type Dentist = {
   procedures: string[];
   tags: string[];
   languages: string[];
+  licenseNo: string;
   coords: {
     lat: number;
     lng: number;
@@ -23,12 +25,34 @@ export type Dentist = {
 
 export const dentists: Dentist[] = [
   {
+    id: "dr-ava-johnson",
+    name: "Dr. Ava Johnson",
+    slug: "dr-ava-johnson",
+    specialty: "Veneers Specialist",
+    imageSeed: "ava-johnson",
+    image: "/images/dentist.png",
+    rating: 5.0,
+    reviewCount: 45,
+    location: "Mexico City, Mexico",
+    city: "Mexico City",
+    country: "Mexico",
+    price: 1500,
+    rdvScore: 100,
+    verified: true,
+    licenseNo: "MX-2847361",
+    procedures: ["Veneers", "Cosmetic Dentistry", "Smile Design"],
+    tags: ["No Surprise Guarantee", "EN - ES"],
+    languages: ["English", "Spanish"],
+    coords: { lat: 19.4326, lng: -99.1332 },
+  },
+  {
     id: "dr-sarah-thompson",
     name: "Dr. Sarah Thompson",
+    slug: "dr-sarah-thompson",
     specialty: "Orthodontist",
     imageSeed: "sarah-thompson",
     image: "/images/dentist.png",
-    rating: 5,
+    rating: 4.9,
     reviewCount: 48,
     location: "Polanco, Mexico City",
     city: "Polanco",
@@ -36,6 +60,7 @@ export const dentists: Dentist[] = [
     price: 1500,
     rdvScore: 100,
     verified: true,
+    licenseNo: "MX-9928172",
     procedures: ["Orthodontics", "Aligners"],
     tags: ["No Surprise Guarantee", "EN - ES"],
     languages: ["English", "Spanish"],
@@ -44,6 +69,7 @@ export const dentists: Dentist[] = [
   {
     id: "dr-emily-carter",
     name: "Dr. Emily Carter",
+    slug: "dr-emily-carter",
     specialty: "Restorative Dentist",
     imageSeed: "emily-carter",
     image: "/images/dentist.png",
@@ -55,6 +81,7 @@ export const dentists: Dentist[] = [
     price: 1350,
     rdvScore: 98,
     verified: true,
+    licenseNo: "MX-1122334",
     procedures: ["Crowns", "Veneers"],
     tags: ["Same Day Booking", "EN - ES"],
     languages: ["English", "Spanish"],
@@ -63,6 +90,7 @@ export const dentists: Dentist[] = [
   {
     id: "dr-julian-mora",
     name: "Dr. Julian Mora",
+    slug: "dr-julian-mora",
     specialty: "Implant Dentist",
     imageSeed: "julian-mora",
     image: "/images/dentist.png",
@@ -74,6 +102,7 @@ export const dentists: Dentist[] = [
     price: 1600,
     rdvScore: 96,
     verified: true,
+    licenseNo: "MX-8877665",
     procedures: ["Implants", "Bone Grafting"],
     tags: ["No Surprise Guarantee", "EN"],
     languages: ["English"],
@@ -82,6 +111,7 @@ export const dentists: Dentist[] = [
   {
     id: "dr-ana-lopez",
     name: "Dr. Ana Lopez",
+    slug: "dr-ana-lopez",
     specialty: "Cosmetic Dentist",
     imageSeed: "ana-lopez",
     image: "/images/dentist.png",
@@ -93,6 +123,7 @@ export const dentists: Dentist[] = [
     price: 1200,
     rdvScore: 94,
     verified: true,
+    licenseNo: "MX-5544332",
     procedures: ["Whitening", "Smile Design"],
     tags: ["EN - ES", "Weekend Availability"],
     languages: ["English", "Spanish"],
@@ -101,6 +132,7 @@ export const dentists: Dentist[] = [
   {
     id: "dr-isaac-reyes",
     name: "Dr. Isaac Reyes",
+    slug: "dr-isaac-reyes",
     specialty: "General Dentist",
     imageSeed: "isaac-reyes",
     image: "/images/dentist.png",
@@ -112,6 +144,7 @@ export const dentists: Dentist[] = [
     price: 980,
     rdvScore: 92,
     verified: true,
+    licenseNo: "MX-2233441",
     procedures: ["Cleanings", "Fillings"],
     tags: ["Family Friendly", "EN - ES"],
     languages: ["English", "Spanish"],
@@ -120,6 +153,7 @@ export const dentists: Dentist[] = [
   {
     id: "dr-lucia-gomez",
     name: "Dr. Lucia Gomez",
+    slug: "dr-lucia-gomez",
     specialty: "Periodontist",
     imageSeed: "lucia-gomez",
     image: "/images/dentist.png",
@@ -131,6 +165,7 @@ export const dentists: Dentist[] = [
     price: 1100,
     rdvScore: 90,
     verified: true,
+    licenseNo: "MX-7788990",
     procedures: ["Gum Care", "Deep Cleaning"],
     tags: ["Flexible Schedule", "EN - ES"],
     languages: ["English", "Spanish"],
@@ -140,10 +175,10 @@ export const dentists: Dentist[] = [
 
 export const procedureOptions = [
   "All Procedures",
+  "Veneers",
   "Orthodontics",
   "Aligners",
   "Crowns",
-  "Veneers",
   "Implants",
   "Bone Grafting",
   "Whitening",
@@ -158,6 +193,7 @@ export const countryOptions = ["All Countries", "Mexico"];
 
 export const cityOptions = [
   "All Cities",
+  "Mexico City",
   "Polanco",
   "Roma Norte",
   "Coyoacan",
