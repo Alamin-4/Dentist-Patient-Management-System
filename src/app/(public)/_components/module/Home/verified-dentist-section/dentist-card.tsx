@@ -10,7 +10,8 @@ export default function DentistCard({ dentist, isCompareMode, isSelected, onSele
         "group relative rounded-md p-6 flex items-start gap-5 transition-all duration-300 border-2 border-[#CEE0F4]",
         isSelected 
           ? "border-[#CEE0F4]" 
-          : ""
+          : "",
+          isCompareMode && "pl-10"
       )}
     >
       {/* Compare Checkbox Overlay */}

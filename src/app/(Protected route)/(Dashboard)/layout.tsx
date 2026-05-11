@@ -1,5 +1,5 @@
-import { Navbar } from "../../_components/Shared/navbar";
-import { Sidebar } from "../../_components/Shared/sidebar";
+import { Navbar } from "./_components/Shared/navbar";
+import { Sidebar } from "./_components/Shared/sidebar";
 
 export default function DashboardLayout({
   children,
