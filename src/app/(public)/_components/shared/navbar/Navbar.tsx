@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Search, ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const navConfig = [
-  { label: "Home", href: "/", active: true },
+  { label: "Home", href: "/" },
   { label: "Find a Dentist", href: "/find-dentist" },
   { label: "About us", href: "/about", hasDropdown: true },
   { label: "Guarantee", href: "/guarantee", hasDropdown: true },
@@ -15,6 +16,7 @@ const navConfig = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathName = usePathname();
 
   return (
     <nav className="sticky shadow-md top-0 z-50 w-full border-b border-gray-100 bg-white py-6">
@@ -42,7 +44,7 @@ export default function Navbar() {
               href={item.href}
               className={cn(
                 "group flex items-center gap-1 text-[15px] font-medium transition-colors",
-                item.active
+                pathName === item.href
                   ? "text-[#10436B] border-b-2 border-[#10436B] pb-1"
                   : "text-gray-600 hover:text-[#10436B]",
               )}

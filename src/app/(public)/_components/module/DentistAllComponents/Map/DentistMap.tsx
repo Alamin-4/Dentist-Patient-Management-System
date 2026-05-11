@@ -5,7 +5,7 @@ import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import DentistCard from "../DentistCard";
+import MapDentistCard from "./MapDentistCard";
 import type { Dentist } from "../types";
 
 const customIcon = new L.Icon({
@@ -44,7 +44,7 @@ export default function DentistMap({
   const activeDentist = dentists.find((d) => d.id === activeDentistId);
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-[32px] border border-slate-200 bg-[#f8fafc] shadow-xl">
+    <div className="relative h-full w-full overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] shadow-xl">
       <MapContainer
         center={defaultPosition}
         zoom={13}
@@ -65,13 +65,12 @@ export default function DentistMap({
               click: () => onMarkerClick(dentist),
             }}
           >
-            <Popup minWidth={280} className="custom-popup">
+            <Popup minWidth={280} maxWidth={380} className="custom-popup">
               <div className="bg-transparent p-0">
-                <DentistCard
+                <MapDentistCard
                   dentist={dentist}
-                  floating
-                  viewMode="map"
-                  onPrimaryAction={onCloseCard}
+                  onConsult={onCloseCard}
+                  onViewProfile={onCloseCard}
                 />
               </div>
             </Popup>

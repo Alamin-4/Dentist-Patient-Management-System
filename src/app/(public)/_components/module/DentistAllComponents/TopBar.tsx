@@ -3,12 +3,13 @@
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FaFilter, FaListUl, FaMapMarkedAlt } from "react-icons/fa";
+import { on } from "events";
 
 type TopBarProps = {
   query: string;
   onQueryChange: (value: string) => void;
-  viewMode: "list" | "map";
-  onViewModeChange: (mode: "list" | "map") => void;
+  viewMode: "list" | "map" | "filter";
+  onViewModeChange: (mode: "list" | "map" | "filter") => void;
   resultCount: number;
   showMapFilters: boolean;
   onToggleMapFilters: () => void;
@@ -49,6 +50,7 @@ export default function TopBar({
             {viewMode === "map" && (
               <Button
                 type="button"
+                hidden={showMapFilters}
                 variant="outline"
                 onClick={onToggleMapFilters}
                 className={`h-14 rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10 ${
@@ -66,7 +68,10 @@ export default function TopBar({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onViewModeChange("list")}
+                onClick={() => {
+                  onViewModeChange("list");
+                  onToggleMapFilters();
+                }}
                 className="h-14 rounded-lg border border-slate-200 bg-[#0E3E65]/3 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10"
               >
                 List View
@@ -77,6 +82,7 @@ export default function TopBar({
             ) : (
               <Button
                 type="button"
+                hidden={showMapFilters}
                 onClick={() => onViewModeChange("map")}
                 className="h-14 rounded-lg border border-slate-200 bg-[#0E3E65]/3 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10"
               >

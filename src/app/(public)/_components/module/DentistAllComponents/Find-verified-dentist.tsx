@@ -24,7 +24,7 @@ const defaultPriceRange: [number, number] = [900, 1800];
 
 export default function FindDentist() {
   const [query, setQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [viewMode, setViewMode] = useState<"list" | "map" | "filter">("list");
   const [procedure, setProcedure] = useState("All Procedures");
   const [country, setCountry] = useState("All Countries");
   const [city, setCity] = useState("All Cities");
@@ -211,12 +211,12 @@ export default function FindDentist() {
             <div
               className={cn(
                 "grid gap-6",
-                viewMode === "list"
+                viewMode === "list" || showMapFilters
                   ? "grid-cols-1"
                   : "grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]",
               )}
             >
-              <div className="min-w-0">
+              <div className={`min-w-0 ${showMapFilters ? "hidden" : "block"}`}>
                 <div className="mb-4 flex flex-row gap-4 lg:items-center lg:justify-between">
                   <h2 className="text-xs font-medium leading-5 text-slate-500">
                     {filteredDentists.length} Verified Dentists in Mexico City |{" "}
@@ -294,8 +294,8 @@ export default function FindDentist() {
               </div>
 
               {viewMode === "map" && (
-                <div className="min-w-0">
-                  <div className="sticky top-24 h-[70vh] overflow-hidden rounded-[32px] border border-slate-100 shadow-xl lg:h-[calc(100vh-12rem)]">
+                <div className={`max-w-full w-full h-screen`}>
+                  <div className="sticky top-24 h-full w-full overflow-hidden rounded-lg border border-slate-100 shadow-xl">
                     <DentistMap
                       dentists={filteredDentists}
                       activeDentistId={activeDentistId}
