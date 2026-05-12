@@ -26,7 +26,7 @@ export default function TopBar({
 }: TopBarProps) {
   return (
     <div className="w-full">
-      <div className="mx-auto flex w-11/12 max-w-360 flex-col gap-6 py-7">
+      <div className=" flex flex-col gap-6 py-7">
         <div>
           <h1 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0A0A1A] md:text-[40px]">
             Search Verified Dentists

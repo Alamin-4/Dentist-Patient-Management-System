@@ -1,51 +1,27 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Sidebar from "./sidebar";
 import DentistCard from "./dentist-card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { X } from "lucide-react";
-
-const DENTISTS = [
-  {
-    id: "1",
-    name: "Dr. Sarah Thompson",
-    specialty: "Orthodontist",
-    price: "1,500",
-    rating: 5,
-    image: "https://i.pravatar.cc/150?u=1",
-  },
-  {
-    id: "2",
-    name: "Dr. Kevin Brown",
-    specialty: "Orthodontist",
-    price: "1,500",
-    rating: 5,
-    image: "https://i.pravatar.cc/150?u=2",
-  },
-  {
-    id: "3",
-    name: "Dr. David Martinez",
-    specialty: "Orthodontist",
-    price: "1,500",
-    rating: 5,
-    image: "https://i.pravatar.cc/150?u=3",
-  },
-  {
-    id: "4",
-    name: "Dr. Michael Anderson",
-    specialty: "Orthodontist",
-    price: "1,500",
-    rating: 5,
-    image: "https://i.pravatar.cc/150?u=4",
-  },
-];
+import { useStateContext } from "@/providers/StateProvider";
+import { getDentistsFromStorage } from "@/lib/storage/dentistData";
 
 export default function VerifiedDentists() {
   const [procedure, setProcedure] = useState("Orthodontist");
   const [compareMode, setCompareMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [dentists, setDentists] = useState<any[]>([]);
+  const { setShowSignupModal } = useStateContext();
+
+  // Load dentists from storage and filter by specialty
+  useEffect(() => {
+    const allDentists = getDentistsFromStorage();
+    const filtered = allDentists.filter((d) => d.specialty.includes(procedure));
+    setDentists(filtered.length > 0 ? filtered : allDentists.slice(0, 4));
+  }, [procedure]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
@@ -60,7 +36,7 @@ export default function VerifiedDentists() {
     setSelectedIds((prev) => prev.filter((i) => i !== id));
   };
 
-  const selectedDentists = DENTISTS.filter((doc) =>
+  const selectedDentists = dentists.filter((doc) =>
     selectedIds.includes(doc.id),
   );
 
@@ -133,14 +109,17 @@ export default function VerifiedDentists() {
                 ))}
               </div>
               <div>
-                <Button className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg">
+                <Button
+                  onClick={() => setShowSignupModal(true)}
+                  className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg cursor-pointer"
+                >
                   Compare
                 </Button>
               </div>
             </div>
           )}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            {DENTISTS.map((doc) => (
+            {dentists.map((doc) => (
               <DentistCard
                 key={doc.id}
                 dentist={doc}

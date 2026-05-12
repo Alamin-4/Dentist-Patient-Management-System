@@ -19,10 +19,12 @@ import {
   procedureOptions,
 } from "./types";
 import Image from "next/image";
+import { useStateContext } from "@/providers/StateProvider";
 
 const defaultPriceRange: [number, number] = [900, 1800];
 
 export default function FindDentist() {
+  let user = true;
   const [query, setQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "map" | "filter">("list");
   const [procedure, setProcedure] = useState("All Procedures");
@@ -41,6 +43,9 @@ export default function FindDentist() {
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [compareList, setCompareList] = useState<Dentist[]>([]);
   const [showMapFilters, setShowMapFilters] = useState(false);
+
+  // Signup modal
+  const { setShowSignupModal, setShowCompareModal } = useStateContext();
 
   const filteredDentists = useMemo(() => {
     return dentists.filter((dentist) => {
@@ -134,7 +139,7 @@ export default function FindDentist() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F8FC] text-slate-900">
+    <div className="min-h-screen text-slate-900">
       <TopBar
         query={query}
         onQueryChange={setQuery}
@@ -150,7 +155,7 @@ export default function FindDentist() {
         onToggleMapFilters={() => setShowMapFilters((prev) => !prev)}
       />
 
-      <main className="mx-auto w-11/12 max-w-360 pb-16">
+      <main className="pb-16">
         <div className=" flex gap-4">
           <AnimatePresence initial={false}>
             {(viewMode === "list" ||
@@ -269,7 +274,16 @@ export default function FindDentist() {
                       ))}
                     </div>
                     <div>
-                      <Button className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg">
+                      <Button
+                        onClick={() => {
+                          if (user === true) {
+                            setShowCompareModal(true);
+                          } else {
+                            setShowSignupModal(true);
+                          }
+                        }}
+                        className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg"
+                      >
                         Compare
                       </Button>
                     </div>

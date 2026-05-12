@@ -2,7 +2,7 @@ import FindDentist from "../_components/module/DentistAllComponents/Find-verifie
 
 export default function FindVerifiedDentistPage() {
   return (
-    <div>
+    <div className="max-w-360 mx-auto w-11/12">
       <FindDentist />
     </div>
   );

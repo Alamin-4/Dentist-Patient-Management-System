@@ -1,6 +1,8 @@
-'use client'
+"use client";
 
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { initializeDentistData } from "@/lib/storage/dentistData";
+import { initializeBookingData } from "@/lib/storage/bookingService";
 
 interface StateContextType {
   verificationStatus: "idle" | "match" | "no-match";
@@ -9,9 +11,25 @@ interface StateContextType {
   >;
   verificationStep: number;
   setVerificationStep: React.Dispatch<React.SetStateAction<number>>;
+  showSignupModal: boolean;
+  setShowSignupModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showCompareModal: boolean;
+  setShowCompareModal: React.Dispatch<React.SetStateAction<boolean>>;
+  compareModalPurpose: "compare" | "postBooking" | null;
+  setCompareModalPurpose: React.Dispatch<
+    React.SetStateAction<"compare" | "postBooking" | null>
+  >;
+  showBookingModal: string | null;
+  setShowBookingModal: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedDentistId: string | null;
+  setSelectedDentistId: React.Dispatch<React.SetStateAction<string | null>>;
+  setSchedule: React.Dispatch<React.SetStateAction<boolean>>;
+  schedule: boolean;
 }
 
-export const StateContext = createContext<StateContextType | undefined>(undefined);
+export const StateContext = createContext<StateContextType | undefined>(
+  undefined,
+);
 
 export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -20,23 +38,50 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     "idle" | "match" | "no-match"
   >("idle");
   const [verificationStep, setVerificationStep] = useState<number>(1);
+  const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
+  const [showCompareModal, setShowCompareModal] = useState<boolean>(false);
+  const [compareModalPurpose, setCompareModalPurpose] = useState<
+    "compare" | "postBooking" | null
+  >("compare");
+  const [showBookingModal, setShowBookingModal] = useState<string | null>(null);
+  const [selectedDentistId, setSelectedDentistId] = useState<string | null>(
+    null,
+  );
+  const [schedule, setSchedule] = useState<boolean>(false);
+
+  // Initialize storage data on mount
+  useEffect(() => {
+    initializeDentistData();
+    initializeBookingData();
+  }, []);
 
   const value = {
     verificationStatus,
     setVerificationStatus,
     verificationStep,
     setVerificationStep,
+    showSignupModal,
+    setShowSignupModal,
+    showCompareModal,
+    setShowCompareModal,
+    compareModalPurpose,
+    setCompareModalPurpose,
+    showBookingModal,
+    setShowBookingModal,
+    selectedDentistId,
+    setSelectedDentistId,
+    schedule,
+    setSchedule,
   };
 
   return (
     <StateContext.Provider value={value}>{children}</StateContext.Provider>
   );
 };
-// Custom hook for easier context consumption
 export const useStateContext = () => {
   const context = useContext(StateContext);
   if (!context) {
     throw new Error("useStateContext must be used within a StateProvider");
   }
   return context;
-}
+};
