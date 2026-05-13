@@ -25,6 +25,8 @@ interface StateContextType {
   setSelectedDentistId: React.Dispatch<React.SetStateAction<string | null>>;
   setSchedule: React.Dispatch<React.SetStateAction<boolean>>;
   schedule: boolean;
+  activeTab: string;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
@@ -48,6 +50,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     null,
   );
   const [schedule, setSchedule] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState("estimate");
 
   // Initialize storage data on mount
   useEffect(() => {
@@ -72,6 +75,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setSelectedDentistId,
     schedule,
     setSchedule,
+    activeTab,
+    setActiveTab,
   };
 
   return (

@@ -1,7 +1,9 @@
+import TravelChecklistPageComponent from "../_components/Module/Travel_Checklist/Travel_Checklist";
+
 export default function TravelChecklistPage() {
   return (
     <div>
-      <h1>Travel Checklist</h1>
+      <TravelChecklistPageComponent />
     </div>
   );
 }

@@ -1,7 +1,9 @@
+import MyResultPage from "../_components/Module/MyResult/MyResult";
+
 export default function MyResultPages() {
   return (
     <div>
-      <h1>My Results</h1>
+      <MyResultPage />
     </div>
   );
 }

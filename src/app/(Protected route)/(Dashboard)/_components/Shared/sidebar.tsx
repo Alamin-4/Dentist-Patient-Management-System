@@ -74,7 +74,7 @@ export function Sidebar() {
   return (
     <aside
       hidden={pathname === "/dashboard/verification"}
-      className="flex h-full w-68 flex-col border-r bg-white px-4.5 py-6"
+      className="flex h-full w-68 flex-col bg-white px-4.5 py-6"
     >
       <nav className="flex-1 space-y-1 px-4">
         {patientMenuItems.map((item) => {

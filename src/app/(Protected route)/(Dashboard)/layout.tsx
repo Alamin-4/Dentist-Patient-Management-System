@@ -1,5 +1,8 @@
+import IntakeModal from "@/app/(public)/_components/module/Booking-flow/Book";
 import { Navbar } from "./_components/Shared/navbar";
 import { Sidebar } from "./_components/Shared/sidebar";
+import StartBookingModal from "@/app/(public)/_components/module/Booking-flow/StartBooking";
+import CompareModal from "@/app/(public)/_components/module/CompareModal/CompareModal";
 
 export default function DashboardLayout({
   children,
@@ -19,6 +22,9 @@ export default function DashboardLayout({
           <div className="">{children}</div>
         </main>
       </div>
+      <CompareModal />
+      <StartBookingModal />
+      <IntakeModal />
     </div>
   );
 }
