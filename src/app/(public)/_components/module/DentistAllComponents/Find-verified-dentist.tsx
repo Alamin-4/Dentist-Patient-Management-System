@@ -3,13 +3,13 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { X } from "lucide-react";
+import dynamic from "next/dynamic";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import DentistCard from "./DentistCard";
 import FilterSidebar from "./SideBar";
-import DentistMap from "./Map/DentistMap";
 import TopBar from "./TopBar";
 import {
   Dentist,
@@ -20,6 +20,8 @@ import {
 } from "./types";
 import Image from "next/image";
 import { useStateContext } from "@/providers/StateProvider";
+
+const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
 const defaultPriceRange: [number, number] = [900, 1800];
 

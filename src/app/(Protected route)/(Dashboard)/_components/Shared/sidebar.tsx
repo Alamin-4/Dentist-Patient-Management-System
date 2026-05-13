@@ -77,7 +77,7 @@ export function Sidebar() {
       className="flex h-full w-68 flex-col bg-white px-4.5 py-6"
     >
       <nav className="flex-1 space-y-1 px-4">
-        {patientMenuItems.map((item) => {
+        {dentistMenuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link

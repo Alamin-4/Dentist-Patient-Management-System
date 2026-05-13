@@ -1,21 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import MapDentistCard from "./MapDentistCard";
 import type { Dentist } from "../types";
-
-const customIcon = new L.Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
 
 type DentistMapProps = {
   dentists: Dentist[];
@@ -42,6 +33,18 @@ export default function DentistMap({
 }: DentistMapProps) {
   const defaultPosition: [number, number] = [19.4326, -99.1332];
   const activeDentist = dentists.find((d) => d.id === activeDentistId);
+
+  const customIcon = useMemo(() => {
+    return new L.Icon({
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      iconRetinaUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      shadowUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+  }, []);
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] shadow-xl">

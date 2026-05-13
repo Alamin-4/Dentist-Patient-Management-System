@@ -14,7 +14,7 @@ export default function PublicLayout({
   return (
     <div>
       <Navbar />
-      {children}
+      <main className="min-h-150 h-full">{children}</main>
       <SignupModal />
       <CompareModal />
       <StartBookingModal />

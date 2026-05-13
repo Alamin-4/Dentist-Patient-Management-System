@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 const navConfig = [
   { label: "Home", href: "/" },
   { label: "Find a Dentist", href: "/find-dentist" },
-  { label: "About us", href: "/about", hasDropdown: true },
+  { label: "About us", href: "/about-us", hasDropdown: true },
   { label: "Guarantee", href: "/guarantee", hasDropdown: true },
 ];
 
