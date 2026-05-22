@@ -5,7 +5,6 @@ import { BadgeCheck, Globe2, MapPin, ShieldCheck, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,6 @@ type DentistCardProps = {
   onCompareToggle?: () => void;
   onPrimaryAction?: () => void;
 
-  viewMode?: "list" | "map";
 };
 
 export default function DentistCard({
@@ -30,8 +28,6 @@ export default function DentistCard({
   isSelectedForCompare = false,
   onCompareToggle,
   onPrimaryAction,
-
-  viewMode = "list",
 }: DentistCardProps) {
   return (
     <div
@@ -162,7 +158,7 @@ export default function DentistCard({
               className="h-11 rounded-lg bg-[#003366] px-6 font-bold text-white shadow-sm hover:bg-[#002850] "
               onClick={onPrimaryAction}
             >
-              Consult Now
+              Book Consultation
             </Button>
           </div>
         </div>
