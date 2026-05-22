@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2, Circle, Star } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
 import { useState, useEffect } from "react";
 import { getDentistsFromStorage } from "@/lib/storage/dentistData";
@@ -77,6 +77,7 @@ export default function CompareModal() {
   return (
     <Dialog open={showCompareModal} onOpenChange={setShowCompareModal}>
       <DialogContent className="sm:max-w-7xl w-full p-0 border-none rounded-2xl overflow-hidden bg-white border max-h-[90vh] overflow-y-auto">
+        <DialogTitle className="sr-only">Compare Dentists</DialogTitle>
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#F3F4F6]">
           <h2 className="text-[24px] font-bold text-[#1A1A2E]">
             Compare Dentists

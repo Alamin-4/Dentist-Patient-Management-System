@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function BookingSidebar({ dentist }: { dentist: any }) {
   return (
-    <aside className="sticky top-10 w-full max-w-110 rounded-lg border border-slate-200 bg-white p-6">
+    <aside className="lg:sticky lg:top-24 w-full rounded-lg border border-slate-200 bg-white p-6">
       <div className="flex gap-5 mb-6">
         <div className="flex flex-col gap-4 items-center">
           <div className="relative size-24 shrink-0 overflow-hidden rounded-full ring-4 ring-slate-50">

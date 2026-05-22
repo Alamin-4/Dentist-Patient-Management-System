@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push, and Deploy
 
 on:
   push:
@@ -6,7 +6,11 @@ on:
       - main
 
 jobs:
+  # ──────────────────────────────────────────────
+  # 1. Build Docker image and push to Docker Hub
+  # ──────────────────────────────────────────────
   docker:
+    name: Build & Push Image
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +36,47 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.vars.outputs.image }}:latest
+          tags: |
+            ${{ steps.vars.outputs.image }}:latest
+            ${{ steps.vars.outputs.image }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────────
+  # 2. SSH into EC2 and deploy the new image
+  # ──────────────────────────────────────────────
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: docker
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+
+            IMAGE="${{ secrets.DOCKER_USERNAME }}/rated-docs-website:latest"
+
+            echo "→ Pulling latest image..."
+            docker pull "$IMAGE"
+
+            echo "→ Stopping old container (if running)..."
+            docker stop rated-docs-website 2>/dev/null || true
+            docker rm   rated-docs-website 2>/dev/null || true
+
+            echo "→ Starting new container..."
+            docker run -d \
+              --name rated-docs-website \
+              --restart unless-stopped \
+              -p 80:3000 \
+              "$IMAGE"
+
+            echo "→ Removing dangling images..."
+            docker image prune -f
+
+            echo "✓ Deployment complete."
