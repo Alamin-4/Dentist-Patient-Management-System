@@ -6,12 +6,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { HamburgerButton } from "./hamburger-button";
 
 export function Navbar() {
   return (
-    <header className=" border-b bg-white w-full">
+    <header className="border-b bg-white w-full">
       <nav className="px-4 lg:px-8 flex h-20 items-center justify-between">
-        <div>
+        <div className="flex items-center gap-3">
+          <HamburgerButton />
           <Image
             src={"/logos/mainlogo.png"}
             alt="Website logo"
