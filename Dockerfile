@@ -5,7 +5,6 @@ FROM node:22-alpine AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Pin pnpm to v9 to avoid pnpm v11 build-script blocking issues
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
 FROM base AS deps
