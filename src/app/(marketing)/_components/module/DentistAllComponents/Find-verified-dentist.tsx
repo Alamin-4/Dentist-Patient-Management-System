@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import DentistCard from "./DentistCard";
 import FilterSidebar from "./SideBar";
+import FilterSheet from "./FilterSheet";
 import TopBar from "./TopBar";
 import {
   Dentist,
@@ -45,6 +46,7 @@ export default function FindDentist() {
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [compareList, setCompareList] = useState<Dentist[]>([]);
   const [showMapFilters, setShowMapFilters] = useState(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // Signup modal
   const { setShowSignupModal, setShowCompareModal } = useStateContext();
@@ -107,8 +109,6 @@ export default function FindDentist() {
     showVerifiedOnly,
   ]);
 
-  const isSearching = query.trim().length > 0;
-
   const handleCompareToggle = (dentist: Dentist) => {
     const exists = compareList.some((item) => item.id === dentist.id);
 
@@ -152,9 +152,55 @@ export default function FindDentist() {
             setShowMapFilters(false);
           }
         }}
-        resultCount={filteredDentists.length}
         showMapFilters={showMapFilters}
         onToggleMapFilters={() => setShowMapFilters((prev) => !prev)}
+        onOpenMobileFilters={() => setIsMobileFilterOpen(true)}
+      />
+
+      {/* Mobile filter sheet — shown below lg */}
+      <FilterSheet
+        open={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        procedure={procedure}
+        onProcedureChange={setProcedure}
+        country={country}
+        onCountryChange={setCountry}
+        city={city}
+        onCityChange={setCity}
+        priceRange={priceRange}
+        onPriceRangeChange={setPriceRange}
+        selectedRatings={selectedRatings}
+        onRatingToggle={(rating: number) =>
+          setSelectedRatings((prev) =>
+            prev.includes(rating)
+              ? prev.filter((v) => v !== rating)
+              : [...prev, rating],
+          )
+        }
+        selectedScoreRanges={selectedScoreRanges}
+        onScoreToggle={(range: string) =>
+          setSelectedScoreRanges((prev) =>
+            prev.includes(range)
+              ? prev.filter((v) => v !== range)
+              : [...prev, range],
+          )
+        }
+        selectedLanguages={selectedLanguages}
+        onLanguageToggle={(language: string) =>
+          setSelectedLanguages((prev) =>
+            prev.includes(language)
+              ? prev.filter((v) => v !== language)
+              : [...prev, language],
+          )
+        }
+        selectedAvailabilityDate={selectedAvailabilityDate}
+        onAvailabilityDateChange={setSelectedAvailabilityDate}
+        showVerifiedOnly={showVerifiedOnly}
+        onShowVerifiedOnlyChange={setShowVerifiedOnly}
+        onClear={resetAll}
+        availableProcedures={procedureOptions}
+        availableCountries={countryOptions}
+        availableCities={cityOptions}
       />
 
       <main className="pb-16">

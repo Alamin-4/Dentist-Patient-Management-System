@@ -29,7 +29,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jakartaSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body suppressHydrationWarning className="min-h-full flex flex-col">
         <StateProvider>{children}</StateProvider>
       </body>
     </html>

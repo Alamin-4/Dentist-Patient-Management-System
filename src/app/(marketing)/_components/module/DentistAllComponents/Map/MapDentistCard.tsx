@@ -1,15 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Badge,
-  BadgeCheck,
-  Globe2,
-  MapPin,
-  ShieldCheck,
-  Star,
-} from "lucide-react";
+import { BadgeCheck, Globe2, ShieldCheck, Star } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -122,7 +116,7 @@ export default function MapDentistCard({
               onClick={onConsult}
               className="h-10 rounded-md cursor-pointer bg-[#003366] px-3 text-xs font-bold text-white hover:bg-[#002850] shadow-sm transition-all active:scale-[0.98]"
             >
-              Consult Now
+              Book Consultation
             </Button>
           </div>
         </div>
