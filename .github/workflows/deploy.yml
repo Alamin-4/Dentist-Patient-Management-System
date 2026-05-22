@@ -42,9 +42,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ──────────────────────────────────────────────
-  # 2. SSH into EC2 and deploy the new image
-  # ──────────────────────────────────────────────
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-latest
