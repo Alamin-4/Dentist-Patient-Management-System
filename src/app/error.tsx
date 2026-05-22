@@ -61,7 +61,6 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
           <AlertTriangle className="size-10 text-red-500" />
         </div>
 
-        {/* Heading */}
         <div className="max-w-lg space-y-3 mb-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1A1A2E]">
             Something went wrong

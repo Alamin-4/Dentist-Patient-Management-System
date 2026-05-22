@@ -148,9 +148,7 @@ export default function FindDentist() {
         viewMode={viewMode}
         onViewModeChange={(mode) => {
           setViewMode(mode);
-          if (mode === "map") {
-            setShowMapFilters(false);
-          }
+          setShowMapFilters(false);
         }}
         showMapFilters={showMapFilters}
         onToggleMapFilters={() => setShowMapFilters((prev) => !prev)}
