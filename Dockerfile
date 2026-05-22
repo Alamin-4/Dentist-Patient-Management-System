@@ -30,7 +30,6 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# Install all dependencies for development
 RUN pnpm install --frozen-lockfile
 
 # Default command for dev stage when used directly
