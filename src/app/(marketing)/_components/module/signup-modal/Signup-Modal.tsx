@@ -4,7 +4,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebook } from "react-icons/fa";
-import { AiOutlineEye } from "react-icons/ai";
+import { Eye } from "lucide-react";
 
 import {
   Dialog,
@@ -12,7 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
 
@@ -92,7 +91,7 @@ export default function SignupModal() {
                 type="button"
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA9AA]"
               >
-                <AiOutlineEye size={20} />
+                <Eye className="size-5" />
               </button>
             </div>
           </div>
@@ -112,7 +111,7 @@ export default function SignupModal() {
                 type="button"
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA9AA]"
               >
-                <AiOutlineEye size={20} />
+                <Eye className="size-5" />
               </button>
             </div>
           </div>

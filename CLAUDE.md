@@ -13,7 +13,7 @@ Read this file completely before generating any code, file, or component.
 - **UI Library:** Shadcn UI + Radix UI primitives
 - **Animation:** Motion (formerly Framer Motion) — import from `motion/react`
 - **Forms:** React Hook Form + Zod
-- **Icons:** Lucide React only
+- **Icons:** Lucide React for all UI icons. `react-icons` is permitted **only** for brand/social logos that have no Lucide equivalent (e.g. `FcGoogle`, `FaApple`, `FaFacebook`, `FaXTwitter`). Never use react-icons for generic UI icons (arrows, close, search, etc.).
 - **Notifications:** React Hot Toast
 - **State:** Context API for global UI/auth state, React Query for server state, local state for component state
 
