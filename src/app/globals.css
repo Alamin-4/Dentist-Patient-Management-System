@@ -4,6 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+/* based on my design/colors.md file update color theme */
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
