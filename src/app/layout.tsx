@@ -13,7 +13,7 @@ const jakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "RatedDocs - Compare Verified Dentists with Transparent Pricing",
+  title: "RatedDocs",
   description:
     "Discover top-rated dentists with transparent pricing on RatedDocs. Compare verified dental professionals, read reviews, and book confidently for your oral health needs.",
 };

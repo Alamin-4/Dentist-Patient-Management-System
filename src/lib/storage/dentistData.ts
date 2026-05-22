@@ -1,4 +1,4 @@
-import { Dentist } from "@/app/(public)/_components/module/DentistAllComponents/types";
+import { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 
 // Centralized Demo Dentist Data
 export const DEMO_DENTISTS: Dentist[] = [

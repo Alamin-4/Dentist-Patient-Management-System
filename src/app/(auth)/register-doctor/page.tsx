@@ -1,5 +1,5 @@
 import React from "react";
-import RegisterPageComponent from "../_components/register-doctor/register-page";
+import RegisterPageComponent from "../../modules/auth/components/register-doctor/register-page";
 
 export default function RegisterPage() {
   return (
