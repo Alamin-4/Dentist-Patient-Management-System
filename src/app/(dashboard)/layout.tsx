@@ -5,6 +5,7 @@ import { MobileSidebarDrawer } from "../modules/shared/mobile-sidebar-drawer";
 import StartBookingModal from "@/app/(marketing)/_components/module/Booking-flow/StartBooking";
 import CompareModal from "@/app/(marketing)/_components/module/CompareModal/CompareModal";
 import { SidebarProvider } from "@/context/sidebar-context";
+import { Toaster } from "react-hot-toast";
 
 export default function DashboardLayout({
   children,
@@ -33,6 +34,7 @@ export default function DashboardLayout({
         <CompareModal />
         <StartBookingModal />
         <IntakeModal />
+        <Toaster position="top-center" />
       </div>
     </SidebarProvider>
   );
