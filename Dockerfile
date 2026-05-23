@@ -10,12 +10,10 @@ RUN corepack enable && corepack prepare pnpm@9 --activate
 FROM base AS deps
 WORKDIR /app
 
-# Required for some native modules
 RUN apk add --no-cache libc6-compat
 
 COPY package.json pnpm-lock.yaml ./
 
-# Install only production dependencies
 RUN pnpm install --frozen-lockfile --prod
 
 
@@ -26,27 +24,18 @@ COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
-# Default command for dev stage when used directly
 CMD ["corepack", "pnpm", "dev", "--hostname", "0.0.0.0"]
 
-# -----------------------
-# Builder
-# -----------------------
+
 FROM base AS builder
 WORKDIR /app
 
 COPY . .
 
-# Install all dependencies (including dev)
-# Using --filter to explicitly build only this package
 RUN pnpm install --frozen-lockfile
 
-# Build Next.js app
 RUN pnpm exec next build
 
-# -----------------------
-# Runner (Production)
-# -----------------------
 FROM base AS runner
 WORKDIR /app
 
