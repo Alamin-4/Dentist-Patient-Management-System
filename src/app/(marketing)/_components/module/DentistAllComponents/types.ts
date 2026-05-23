@@ -17,6 +17,7 @@ export type Dentist = {
   tags: string[];
   languages: string[];
   licenseNo: string;
+  experience: number;
   coords: {
     lat: number;
     lng: number;

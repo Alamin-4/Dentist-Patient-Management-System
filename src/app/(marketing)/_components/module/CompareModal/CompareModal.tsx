@@ -1,11 +1,37 @@
 "use client";
 
-import { CheckCircle2, Circle, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CheckCircle2, Circle, ShieldCheck, Star } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import { useState, useEffect } from "react";
 import { getDentistsFromStorage } from "@/lib/storage/dentistData";
-import { useRouter } from "next/navigation";
+import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const LANG_CODE: Record<string, string> = {
+  English: "EN",
+  Spanish: "ES",
+  French: "FR",
+  Portuguese: "PT",
+  German: "DE",
+  Italian: "IT",
+  Mandarin: "ZH",
+  Japanese: "JA",
+};
+
+const langAbbr = (languages: string[]) =>
+  languages.map((l) => LANG_CODE[l] ?? l.slice(0, 2).toUpperCase()).join(", ");
+
+const estimateLow = (price: number) =>
+  Math.round((price * 2.2) / 20) * 20;
+
+const estimateHigh = (price: number) =>
+  Math.round((price * 2.87) / 20) * 20;
+
+// ─── CompareModal ─────────────────────────────────────────────────────────────
 
 export default function CompareModal() {
   const {
@@ -17,205 +43,285 @@ export default function CompareModal() {
     setCompareModalPurpose,
     selectedDentistId,
     schedule,
+    dentistsToCompare,
   } = useStateContext();
+
   const router = useRouter();
-  const [selectedDentistIds, setSelectedDentistIds] = useState<string[]>([]);
-  const [dentists, setDentists] = useState<any[]>([]);
+  const [dentists, setDentists] = useState<Dentist[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const isPostBooking = compareModalPurpose === "postBooking";
 
   useEffect(() => {
-    const dentistsData = getDentistsFromStorage();
-    // If opened after booking, prioritize the selected dentist
-    if (compareModalPurpose === "postBooking" && selectedDentistId) {
-      const main = dentistsData.find((d) => d.id === selectedDentistId);
-      const others = dentistsData.filter((d) => d.id !== selectedDentistId);
-      const list = main
-        ? [main, ...others.slice(0, 2)]
-        : dentistsData.slice(0, 3);
-      setDentists(list);
-      // pre-select the active dentist so the Schedule button is enabled
-      setSelectedDentistIds([selectedDentistId]);
-    } else {
-      // default: Get first 3 dentists for comparison
-      setDentists(dentistsData.slice(0, 3));
-    }
-  }, []);
+    if (!showCompareModal) return;
 
-  const handleSelectDentist = (dentistId: string) => {
-    setSelectedDentistIds((prev) => {
-      if (prev.includes(dentistId)) {
-        return prev.filter((id) => id !== dentistId);
-      } else {
-        if (prev.length >= 2) {
-          return prev;
-        }
-        return [...prev, dentistId];
-      }
+    if (dentistsToCompare.length > 0) {
+      setDentists(dentistsToCompare);
+      setSelectedIds(dentistsToCompare.map((d) => d.id));
+      return;
+    }
+
+    // Fallback: load from storage (postBooking flow or direct open)
+    const stored = getDentistsFromStorage();
+    if (isPostBooking && selectedDentistId) {
+      const main = stored.find((d) => d.id === selectedDentistId);
+      const others = stored.filter((d) => d.id !== selectedDentistId);
+      const list = main ? [main, ...others.slice(0, 2)] : stored.slice(0, 3);
+      setDentists(list);
+      setSelectedIds([selectedDentistId]);
+    } else {
+      setDentists(stored.slice(0, 3));
+      setSelectedIds([]);
+    }
+  }, [showCompareModal, dentistsToCompare]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) return prev.filter((i) => i !== id);
+      if (prev.length >= 2) return prev;
+      return [...prev, id];
     });
   };
 
-  const handleBookConsultations = () => {
+  const handleBook = () => {
+    if (selectedIds.length === 0) return;
+    setSelectedDentistId(selectedIds[0]);
     if (schedule) {
       router.push("/schedule");
       return;
     }
-    if (selectedDentistIds.length > 0) {
-      // Set the first selected dentist as the active one
-      setSelectedDentistId(selectedDentistIds[0]);
-      if (compareModalPurpose === "postBooking") {
-        // navigate to schedule page with selected dentist ids
-        const q = selectedDentistIds.join(",");
-        setShowCompareModal(false);
-        setCompareModalPurpose("compare");
-        router.push(`/schedule?dentistIds=${encodeURIComponent(q)}`);
-      } else {
-        setShowBookingModal("startBooking");
-        setShowCompareModal(false);
-      }
+    if (isPostBooking) {
+      const q = selectedIds.join(",");
+      setShowCompareModal(false);
+      setCompareModalPurpose("compare");
+      router.push(`/schedule?dentistIds=${encodeURIComponent(q)}`);
+    } else {
+      setShowBookingModal("startBooking");
+      setShowCompareModal(false);
     }
   };
 
+  const colCount = dentists.length;
+
   return (
     <Dialog open={showCompareModal} onOpenChange={setShowCompareModal}>
-      <DialogContent className="sm:max-w-7xl w-full p-0 border-none rounded-2xl overflow-hidden bg-white border max-h-[90vh] overflow-y-auto">
-        <DialogTitle className="sr-only">Compare Dentists</DialogTitle>
-        <div className="flex items-center justify-between px-8 py-6 border-b border-[#F3F4F6]">
-          <h2 className="text-[24px] font-bold text-[#1A1A2E]">
-            Compare Dentists
-          </h2>
+      <DialogContent className="sm:max-w-4xl w-full p-0 rounded-2xl overflow-hidden bg-white max-h-[92vh] flex flex-col">
+        <DialogTitle className="sr-only">
+          {isPostBooking ? "Your personalised estimates are ready" : "Compare Dentists"}
+        </DialogTitle>
+
+        {/* ── Header ── */}
+        <div className="shrink-0 px-8 py-6 border-b border-border">
+          {isPostBooking ? (
+            <>
+              <h2 className="text-2xl font-bold text-foreground">
+                Your personalised estimates are ready
+              </h2>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Select a dentist to continue
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-foreground">
+                Compare Dentists
+              </h2>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Compare verified dentist data, not marketing claims
+              </p>
+            </>
+          )}
         </div>
 
-        <div className="overflow-x-auto w-full">
-          <div className="w-full min-w-200">
-            <div className="grid grid-cols-4 px-8 pt-8 pb-4 items-end">
+        {/* ── Scrollable table ── */}
+        <div className="flex-1 overflow-auto">
+          <div style={{ minWidth: `${200 + colCount * 220}px` }}>
+
+            {/* Dentist header row */}
+            <div
+              className="px-8 pt-8 pb-4"
+              style={{
+                display: "grid",
+                gridTemplateColumns: `180px repeat(${colCount}, 1fr)`,
+              }}
+            >
               <div />
               {dentists.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex flex-col items-center text-center"
-                >
-                  <div className="relative mb-4">
-                    <img
-                      src={doc.image}
-                      alt={doc.name}
-                      className="w-10 lg:w-20 h-10 lg:h-20 rounded-full bg-[#F3F4F6] object-cover"
-                    />
-                  </div>
-                  <div className="flex flex-col lg:flex-row items-center gap-2 mb-1">
+                <div key={doc.id} className="flex flex-col items-center text-center px-4">
+                  <Image
+                    src={doc.image}
+                    alt={doc.name}
+                    width={80}
+                    height={80}
+                    className="size-20 rounded-full object-cover bg-muted mb-4"
+                  />
+                  <div className="flex items-center gap-2 mb-1">
                     <button
                       type="button"
-                      className="cursor-pointer transition-transform active:scale-90"
-                      onClick={() => handleSelectDentist(doc.id)}
+                      aria-label={`${selectedIds.includes(doc.id) ? "Deselect" : "Select"} ${doc.name}`}
+                      onClick={() => toggleSelect(doc.id)}
+                      className="shrink-0 transition-transform active:scale-90"
                     >
-                      {selectedDentistIds.includes(doc.id) ? (
-                        <CheckCircle2 className="w-5 h-5 text-[#113254] fill-[#113254] stroke-white rounded-full" />
+                      {selectedIds.includes(doc.id) ? (
+                        <CheckCircle2 className="size-5 fill-primary text-primary stroke-white" />
                       ) : (
                         <Circle
-                          className={`w-5 h-5 transition-colors ${
-                            selectedDentistIds.length >= 2
+                          className={`size-5 transition-colors ${
+                            selectedIds.length >= 2
                               ? "text-gray-200 cursor-not-allowed"
-                              : "text-[#9EA9AA] hover:text-[#113254]"
+                              : "text-gray-400 hover:text-primary"
                           }`}
                         />
                       )}
                     </button>
-
-                    <span className="text-[17px] font-semibold text-[#1A1A2E]">
+                    <span className="text-[15px] font-semibold text-foreground">
                       {doc.name}
                     </span>
                   </div>
-                  <span className="text-[14px] text-[#1A1A2E] font-medium">
+                  <span className="text-sm text-muted-foreground mb-2">
                     {doc.specialty}
                   </span>
+                  {isPostBooking && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-border text-xs font-medium text-muted-foreground">
+                      96% Estimate accuracy
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
 
-            <ComparisonRow
+            {/* Comparison rows */}
+            <Row
               label="RDV SCORE"
+              colCount={colCount}
               values={dentists.map((d) => `${d.rdvScore}/100`)}
             />
-            <ComparisonRow
+            <Row
               label="EXPERIENCE"
-              values={dentists.map((d) => `${d.reviewCount} reviews`)}
+              colCount={colCount}
+              values={dentists.map((d) => `${d.experience} years`)}
             />
-            <ComparisonRow
+            <Row
               label="PATIENT RATING"
+              colCount={colCount}
               values={dentists.map((d) => (
-                <div className="flex items-center justify-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold text-[#1A1A2E]">
-                    {d.rating}
+                <span className="inline-flex items-center justify-center gap-1.5">
+                  <Star className="size-4 shrink-0 fill-yellow-400 text-yellow-400" />
+                  <span className="font-semibold text-foreground">{d.rating}</span>
+                  <span className="text-muted-foreground text-sm">
+                    ({d.reviewCount} Reviews)
                   </span>
-                </div>
-              ))}
-            />
-            <ComparisonRow
-              label="LOCATION"
-              values={dentists.map((d) => d.location)}
-            />
-            <ComparisonRow
-              label="LANGUAGES"
-              values={dentists.map((d) => d.languages.join(", "))}
-            />
-            <ComparisonRow
-              label="ESTIMATE RANGE"
-              isLast
-              values={dentists.map((d) => (
-                <span className="text-[#113254] font-bold text-[18px]">
-                  ${d.price}
                 </span>
               ))}
             />
+            <Row
+              label="LOCATION"
+              colCount={colCount}
+              values={dentists.map((d) => d.location)}
+            />
+            <Row
+              label="LANGUAGES"
+              colCount={colCount}
+              values={dentists.map((d) => langAbbr(d.languages))}
+            />
+            <Row
+              label="ESTIMATE RANGE"
+              colCount={colCount}
+              isLast={!isPostBooking}
+              values={dentists.map((d) =>
+                isPostBooking ? (
+                  <span className="text-lg font-bold text-primary">
+                    ${estimateLow(d.price).toLocaleString()} –{" "}
+                    ${estimateHigh(d.price).toLocaleString()}
+                  </span>
+                ) : (
+                  <span className="text-lg font-bold text-primary">
+                    ${d.price.toLocaleString()}
+                  </span>
+                ),
+              )}
+            />
+
+            {/* Guarantee banner — post-booking only */}
+            {isPostBooking && (
+              <div className="px-8 py-4 border-b border-border">
+                <div className="flex items-center justify-center gap-2 px-6 py-3 bg-primary/5 border border-primary/20 rounded-xl">
+                  <ShieldCheck className="size-4 shrink-0 text-primary" />
+                  <p className="text-sm text-primary font-medium text-center">
+                    These estimates are binding and protected by the No Surprise
+                    Guarantee.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Footer Section */}
-        <div className="flex flex-col items-center py-8 px-8 border-t border-[#F3F4F6]">
+        {/* ── Footer ── */}
+        <div className="shrink-0 flex flex-col items-center gap-3 border-t border-border px-8 py-7">
           <button
-            onClick={handleBookConsultations}
-            disabled={selectedDentistIds.length === 0}
-            className="flex items-center gap-3 bg-[#113254] hover:bg-[#0d2844] disabled:bg-gray-300 text-white px-10 py-4 rounded-xl transition-all mb-4"
+            onClick={handleBook}
+            disabled={selectedIds.length === 0}
+            className="inline-flex items-center gap-3 rounded-xl bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-40"
           >
-            <span className="text-[16px] font-semibold">
+            <span>
               {schedule
-                ? `Schedule ${selectedDentistIds.length} Consult${
-                    selectedDentistIds.length > 1 ? "s" : ""
-                  }`
-                : "Book consultations"}
+                ? `Schedule ${selectedIds.length} Consult${selectedIds.length !== 1 ? "s" : ""}`
+                : isPostBooking
+                  ? `Schedule ${selectedIds.length} Consult${selectedIds.length !== 1 ? "s" : ""}`
+                  : "Book consultation"}
             </span>
-            <span className="bg-white text-[#113254] w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold">
-              {selectedDentistIds.length}
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-primary">
+              {selectedIds.length}
             </span>
           </button>
-          <p className="text-[#6B7280] text-[14px] text-center">
-            {schedule
-              ? "You'll only fill in your details once."
-              : "You'll complete one intake form and your information is shared with all selected doctors."}
-          </p>
+
+          {isPostBooking ? (
+            <p className="text-sm text-muted-foreground text-center">
+              You&apos;ll only fill in your details once.
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center">
+              By continuing you are agree with our{" "}
+              <button className="text-primary underline underline-offset-2 hover:opacity-80 transition-opacity">
+                terms and Conditions
+              </button>
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-function ComparisonRow({
+// ─── Row ──────────────────────────────────────────────────────────────────────
+
+function Row({
   label,
   values,
+  colCount,
   isLast = false,
 }: {
   label: string;
-  values: any[];
+  values: React.ReactNode[];
+  colCount: number;
   isLast?: boolean;
 }) {
   return (
     <div
-      className={`grid grid-cols-4 px-8 py-5 items-center border-b border-[#F3F4F6] ${isLast ? "border-b-0" : ""}`}
+      className={`px-8 py-5 items-center ${isLast ? "" : "border-b border-border"}`}
+      style={{
+        display: "grid",
+        gridTemplateColumns: `180px repeat(${colCount}, 1fr)`,
+      }}
     >
-      <div className=" font-medium text-[#6B7280]">{label}</div>
-      {values.map((val, idx) => (
+      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      {values.map((val, i) => (
         <div
-          key={idx}
-          className="text-center text-[15px] text-[#1A1A2E] font-medium"
+          key={i}
+          className="px-4 text-center text-[15px] font-medium text-foreground"
         >
           {val}
         </div>

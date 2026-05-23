@@ -10,14 +10,21 @@ export default function ToggleButton() {
         className={`px-4 lg:px-12 border-b-3 py-3 ${activeTab === "estimate" ? "border-[#0E3E65]" : "border-transparent"}`}
         onClick={() => setActiveTab("estimate")}
       >
-        Estimate Updates
+        In progress
       </button>
       <button
         className={`px-4 lg:px-12 border-b-3 py-3 ${activeTab === "treatment" ? "border-[#0E3E65]" : "border-transparent"}`}
         onClick={() => setActiveTab("treatment")}
       >
-        Treatment
+        Completed
+      </button>
+      <button
+        className={`px-4 lg:px-12 border-b-3 py-3 ${activeTab === "treatment" ? "border-[#0E3E65]" : "border-transparent"}`}
+        onClick={() => setActiveTab("treatment")}
+      >
+        Rejected
       </button>
     </div>
   );
 }
+

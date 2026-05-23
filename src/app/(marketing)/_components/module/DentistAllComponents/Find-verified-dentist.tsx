@@ -49,7 +49,7 @@ export default function FindDentist() {
 
   // Simulated auth state — replace with real session check when backend is ready
   const user = true;
-  const { setShowSignupModal, setShowPersonalizeModal } = useStateContext();
+  const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare } = useStateContext();
 
   const filteredDentists = useMemo(() => {
     return dentists.filter((dentist) => {
@@ -323,6 +323,7 @@ export default function FindDentist() {
                       <Button
                         onClick={() => {
                           if (user) {
+                            setDentistsToCompare(compareList);
                             setShowPersonalizeModal(true);
                           } else {
                             setShowSignupModal(true);

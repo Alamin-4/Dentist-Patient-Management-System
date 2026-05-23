@@ -17,7 +17,7 @@ export default function VerifiedDentists() {
   const [dentists, setDentists] = useState<any[]>([]);
   // Simulated auth state — replace with real session check when backend is ready
   const user = true;
-  const { setShowSignupModal, setShowPersonalizeModal } = useStateContext();
+  const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare } = useStateContext();
 
   // Load dentists from storage and filter by specialty
   useEffect(() => {
@@ -115,6 +115,7 @@ export default function VerifiedDentists() {
                 <Button
                   onClick={() => {
                     if (user) {
+                      setDentistsToCompare(selectedDentists);
                       setShowPersonalizeModal(true);
                     } else {
                       setShowSignupModal(true);

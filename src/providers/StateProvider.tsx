@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { initializeDentistData } from "@/lib/storage/dentistData";
 import { initializeBookingData } from "@/lib/storage/bookingService";
+import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 
 interface StateContextType {
   verificationStatus: "idle" | "match" | "no-match";
@@ -29,6 +30,8 @@ interface StateContextType {
   schedule: boolean;
   activeTab: string;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  dentistsToCompare: Dentist[];
+  setDentistsToCompare: React.Dispatch<React.SetStateAction<Dentist[]>>;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
@@ -54,6 +57,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const [schedule, setSchedule] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState("estimate");
+  const [dentistsToCompare, setDentistsToCompare] = useState<Dentist[]>([]);
 
   // Initialize storage data on mount
   useEffect(() => {
@@ -82,6 +86,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setSchedule,
     activeTab,
     setActiveTab,
+    dentistsToCompare,
+    setDentistsToCompare,
   };
 
   return (
