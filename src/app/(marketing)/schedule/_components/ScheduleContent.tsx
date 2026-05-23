@@ -90,7 +90,7 @@ export default function ScheduleContent() {
   };
 
   const handleGoToBookings = () => {
-    router.push("/dashboard/patient/bookings");
+    router.push("/patient/bookings");
   };
 
   return (

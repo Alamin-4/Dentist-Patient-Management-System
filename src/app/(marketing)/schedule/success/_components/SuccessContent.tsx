@@ -131,7 +131,7 @@ export default function SuccessContent() {
 
         <button
           type="button"
-          onClick={() => router.push("/dashboard/patient/bookings")}
+          onClick={() => router.push("/patient/bookings")}
           className="mt-6 px-8 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-xl active:scale-95 transition-all"
         >
           Go to my Bookings

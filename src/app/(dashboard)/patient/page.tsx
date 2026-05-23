@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CalendarCheck, DollarSign, FileText, Video } from "lucide-react";
 import Link from "next/link";
-import { StatCard } from "./_components/Module/Overview/StatsCard";
-import { ConsultationCard } from "./_components/Module/Overview/ConsultationCard";
+import { StatCard } from "@/app/(dashboard)/patient/_components/Module/Overview/StatsCard";
+import { ConsultationCard } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCard";
+import { consultationFlowData, type ConsultationFlowItem } from "@/app/(dashboard)/patient/_components/Module/MyBooking/data";
+import { RescheduleConsultationModal } from "@/app/(dashboard)/patient/_components/Module/Overview/RescheduleConsultationModal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,11 +39,24 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Overview() {
-  const [activeTab, setActiveTab] = useState<Tab>("upcoming");
+  const [activeTab, setActiveTab] = useState<Tab>("active");
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationFlowItem | null>(null);
+  const router = useRouter();
 
-  // Demo: "upcoming" tab has 2 consultations; others are empty
-  const hasConsultations = activeTab === "upcoming";
+  const consultationsToShow =
+    activeTab === "active"
+      ? consultationFlowData.filter((item) => item.status !== "completed")
+      : activeTab === "estimate-updates"
+        ? consultationFlowData.filter((item) => item.status === "completed")
+        : consultationFlowData.filter((item) => item.status === "upcoming");
+
   const empty = EMPTY_STATE[activeTab];
+
+  const openReschedule = (consultation: ConsultationFlowItem) => {
+    setSelectedConsultation(consultation);
+    setRescheduleOpen(true);
+  };
 
   return (
     <div>
@@ -88,10 +104,22 @@ export default function Overview() {
         </div>
 
         {/* Content */}
-        {hasConsultations ? (
+        {consultationsToShow.length ? (
           <div className="space-y-5">
-            <ConsultationCard />
-            <ConsultationCard />
+            {consultationsToShow.map((consultation) => (
+              <ConsultationCard
+                key={consultation.id}
+                consultation={consultation}
+                onPrimaryAction={() => {
+                  if (consultation.status === "missed") {
+                    openReschedule(consultation);
+                    return;
+                  }
+
+                  router.push(`/consultation/${consultation.slug}`);
+                }}
+              />
+            ))}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -113,6 +141,20 @@ export default function Overview() {
           </div>
         )}
       </div>
+
+      {selectedConsultation ? (
+        <RescheduleConsultationModal
+          open={rescheduleOpen}
+          onClose={() => setRescheduleOpen(false)}
+          consultation={selectedConsultation}
+          onConfirmed={() => {
+            setActiveTab("active");
+          }}
+          onAddToCalendar={() => {
+            router.push(`/consultation/${selectedConsultation.slug}`);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

@@ -27,14 +27,15 @@ export interface BookingFormData {
 
 const BOOKING_STORAGE_KEY = "booking_form_data";
 const SELECTED_DENTIST_KEY = "selected_dentist";
+const BOOKINGS_KEY = "submitted_bookings";
 
 const INITIAL_BOOKING_DATA: BookingFormData = {
   personalInfo: {
-    firstName: "",
-    lastName: "",
-    email: "",
-    dateOfBirth: "",
-    country: "",
+    firstName: "James",
+    lastName: "William",
+    email: "james.william@example.com",
+    dateOfBirth: "1991-05-14",
+    country: "United States",
   },
   procedure: "Porcelain Veneers",
   budget: "",
@@ -52,11 +53,41 @@ const INITIAL_BOOKING_DATA: BookingFormData = {
   xray: null,
 };
 
+const INITIAL_SUBMITTED_BOOKINGS: SubmittedBooking[] = [
+  {
+    ...INITIAL_BOOKING_DATA,
+    id: "booking_demo_1",
+    dentistId: "dentist-eliza-mick",
+    submittedAt: "2026-05-20T10:30:00.000Z",
+  },
+  {
+    ...INITIAL_BOOKING_DATA,
+    personalInfo: {
+      ...INITIAL_BOOKING_DATA.personalInfo,
+      firstName: "Sophia",
+      lastName: "Turner",
+      email: "sophia.turner@example.com",
+    },
+    procedure: "All-on-4 Full Arch",
+    budget: "$3,500 - $4,500",
+    travelFrom: "London, UK",
+    travelTo: "Cancun, Mexico",
+    id: "booking_demo_2",
+    dentistId: "dentist-lucas-ramos",
+    submittedAt: "2026-05-21T14:15:00.000Z",
+  },
+];
+
 export function initializeBookingData() {
   if (typeof window !== "undefined") {
     const existing = localStorage.getItem(BOOKING_STORAGE_KEY);
     if (!existing) {
       localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(INITIAL_BOOKING_DATA));
+    }
+
+    const submittedBookings = localStorage.getItem(BOOKINGS_KEY);
+    if (!submittedBookings) {
+      localStorage.setItem(BOOKINGS_KEY, JSON.stringify(INITIAL_SUBMITTED_BOOKINGS));
     }
   }
 }
@@ -135,7 +166,6 @@ export function clearSelectedDentist() {
 }
 
 // Booking Submissions
-const BOOKINGS_KEY = "submitted_bookings";
 
 export interface SubmittedBooking extends BookingFormData {
   id: string;
