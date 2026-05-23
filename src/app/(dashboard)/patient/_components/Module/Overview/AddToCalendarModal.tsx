@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Check } from "lucide-react";
+import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
@@ -147,12 +148,13 @@ export function AddToCalendarModal({
       downloadIcs(appointment);
     }
     onClose();
+    toast.success("Added to calendar successfully", { icon: "✅" });
   };
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
-        className="w-full max-w-110 rounded-3xl p-0 overflow-hidden border-0 shadow-xl"
+        className="w-full sm:max-w-110 rounded-3xl p-0 overflow-hidden border-0 shadow-xl"
         showCloseButton={false}
       >
         <div className="p-6">

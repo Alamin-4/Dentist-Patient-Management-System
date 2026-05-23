@@ -6,8 +6,9 @@ import { CalendarCheck, DollarSign, FileText, Video } from "lucide-react";
 import Link from "next/link";
 import { StatCard } from "@/app/(dashboard)/patient/_components/Module/Overview/StatsCard";
 import { ConsultationCard } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCard";
-import { consultationFlowData, type ConsultationFlowItem } from "@/app/(dashboard)/patient/_components/Module/MyBooking/data";
+import { consultationFlowData, treatmentPlansData, type ConsultationFlowItem } from "@/app/(dashboard)/patient/_components/Module/MyBooking/data";
 import { RescheduleConsultationModal } from "@/app/(dashboard)/patient/_components/Module/Overview/RescheduleConsultationModal";
+import DoctorCard from "@/app/(dashboard)/patient/_components/Module/MyBooking/Card";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -18,8 +19,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "active", label: "Active" },
   { key: "estimate-updates", label: "Estimate Updates" },
 ];
-
-// ─── Empty state ──────────────────────────────────────────────────────────────
 
 const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   upcoming: {
@@ -36,22 +35,41 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   },
 };
 
+// ─── Empty state UI ───────────────────────────────────────────────────────────
+
+function EmptySlate({ tab }: { tab: Tab }) {
+  const { title, body } = EMPTY_STATE[tab];
+  return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="size-14 rounded-2xl bg-[#113254] flex items-center justify-center mb-5">
+        <Video className="size-7 text-white" />
+      </div>
+      <p className="text-[17px] font-bold text-[#1A1A2E] mb-2">{title}</p>
+      <p className="text-[14px] text-[#6B7280] max-w-xs leading-relaxed mb-6">{body}</p>
+      <Link
+        href="/find-dentist"
+        className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-xl transition-all active:scale-95"
+      >
+        Find a dentist
+      </Link>
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Overview() {
-  const [activeTab, setActiveTab] = useState<Tab>("active");
+  const [activeTab, setActiveTab] = useState<Tab>("upcoming");
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [selectedConsultation, setSelectedConsultation] = useState<ConsultationFlowItem | null>(null);
   const router = useRouter();
 
   const consultationsToShow =
-    activeTab === "active"
-      ? consultationFlowData.filter((item) => item.status !== "completed")
-      : activeTab === "estimate-updates"
-        ? consultationFlowData.filter((item) => item.status === "completed")
-        : consultationFlowData.filter((item) => item.status === "upcoming");
-
-  const empty = EMPTY_STATE[activeTab];
+    activeTab === "upcoming"
+      ? consultationFlowData.filter((item) => item.status === "upcoming")
+      : activeTab === "active"
+        ? consultationFlowData.filter((item) => item.status === "active" || item.status === "missed")
+        : [];
 
   const openReschedule = (consultation: ConsultationFlowItem) => {
     setSelectedConsultation(consultation);
@@ -104,7 +122,17 @@ export default function Overview() {
         </div>
 
         {/* Content */}
-        {consultationsToShow.length ? (
+        {activeTab === "estimate-updates" ? (
+          treatmentPlansData.length ? (
+            <div className="space-y-5">
+              {treatmentPlansData.map((plan) => (
+                <DoctorCard key={plan.id} data={plan} />
+              ))}
+            </div>
+          ) : (
+            <EmptySlate tab={activeTab} />
+          )
+        ) : consultationsToShow.length ? (
           <div className="space-y-5">
             {consultationsToShow.map((consultation) => (
               <ConsultationCard
@@ -115,30 +143,13 @@ export default function Overview() {
                     openReschedule(consultation);
                     return;
                   }
-
                   router.push(`/consultation/${consultation.slug}`);
                 }}
               />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="size-14 rounded-2xl bg-[#113254] flex items-center justify-center mb-5">
-              <Video className="size-7 text-white" />
-            </div>
-            <p className="text-[17px] font-bold text-[#1A1A2E] mb-2">
-              {empty.title}
-            </p>
-            <p className="text-[14px] text-[#6B7280] max-w-xs leading-relaxed mb-6">
-              {empty.body}
-            </p>
-            <Link
-              href="/find-dentist"
-              className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-xl transition-all active:scale-95"
-            >
-              Find a dentist
-            </Link>
-          </div>
+          <EmptySlate tab={activeTab} />
         )}
       </div>
 
@@ -147,13 +158,10 @@ export default function Overview() {
           open={rescheduleOpen}
           onClose={() => setRescheduleOpen(false)}
           consultation={selectedConsultation}
-          onConfirmed={() => {
-            setActiveTab("active");
-          }}
-          onAddToCalendar={() => {
-            router.push(`/consultation/${selectedConsultation.slug}`);
-          }}
-        />
+          onConfirmed={() => setActiveTab("active")}
+          onAddToCalendar={() => router.push(`/consultation/${selectedConsultation.slug}`)}
+
+          />
       ) : null}
     </div>
   );

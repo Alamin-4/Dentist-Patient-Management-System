@@ -198,6 +198,54 @@ export interface ConsultationFlowItem {
 }
 
 export const consultationFlowData: ConsultationFlowItem[] = [
+  // ── Upcoming ─────────────────────────────────────────────────────────────────
+  {
+    id: "consultation-004",
+    slug: "dr-alex-hemsworth",
+    status: "upcoming",
+    doctor: {
+      name: "Dr. Alex Hemsworth",
+      specialty: "Implantologist",
+      image: "/images/dentist.png",
+      rating: 4.9,
+      reviewCount: 34,
+    },
+    procedure: "Single Tooth Implant",
+    estimateBudget: "$2,200 - $2,600",
+    accuracy: "94% Accuracy",
+    rdvScore: 97,
+    date: "Monday, 02 June 2026",
+    isoDate: "2026-06-02",
+    time: "11:00 AM EST",
+    timezone: "EST",
+    duration: "15-minute video call",
+    primaryActionLabel: "Join Consultation",
+    secondaryActionLabel: "Add to calendar",
+  },
+  {
+    id: "consultation-005",
+    slug: "dr-sarah-jenkins",
+    status: "upcoming",
+    doctor: {
+      name: "Dr. Sarah Jenkins",
+      specialty: "Periodontist",
+      image: "/images/dentist.png",
+      rating: 4.8,
+      reviewCount: 21,
+    },
+    procedure: "Gum Grafting",
+    estimateBudget: "$1,800 - $2,100",
+    accuracy: "93% Accuracy",
+    rdvScore: 95,
+    date: "Wednesday, 04 June 2026",
+    isoDate: "2026-06-04",
+    time: "2:30 PM GMT",
+    timezone: "GMT",
+    duration: "15-minute video call",
+    primaryActionLabel: "Join Consultation",
+    secondaryActionLabel: "Add to calendar",
+  },
+  // ── Active / Missed ───────────────────────────────────────────────────────────
   {
     id: "consultation-001",
     slug: "dr-eliza-mick",
@@ -246,6 +294,7 @@ export const consultationFlowData: ConsultationFlowItem[] = [
     primaryActionLabel: "Reschedule",
     secondaryActionLabel: "Add to calendar",
   },
+  // ── Completed (Estimate Updates tab) ─────────────────────────────────────────
   {
     id: "consultation-003",
     slug: "dr-eliza-will",
