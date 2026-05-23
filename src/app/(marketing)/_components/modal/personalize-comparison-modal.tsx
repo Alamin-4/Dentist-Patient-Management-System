@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useStateContext } from "@/providers/StateProvider";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
@@ -80,15 +81,6 @@ const TREATMENTS = [
   "General Checkup",
 ];
 
-// ─── Props ────────────────────────────────────────────────────────────────────
-
-export interface PersonalizeComparisonModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit?: (data: FormValues) => void;
-  onSkip?: () => void;
-}
-
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
 function FieldLabel({
@@ -111,9 +103,7 @@ function DateInputField({
   placeholder = "MM/DD/YYYY",
   className,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & {
-  hasError?: boolean;
-}) {
+}: React.InputHTMLAttributes<HTMLInputElement> & { hasError?: boolean }) {
   return (
     <div className="relative">
       <Input
@@ -129,12 +119,13 @@ function DateInputField({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function PersonalizeComparisonModal({
-  open,
-  onOpenChange,
-  onSubmit,
-  onSkip,
-}: PersonalizeComparisonModalProps) {
+export default function PersonalizeComparisonModal() {
+  const {
+    showPersonalizeModal,
+    setShowPersonalizeModal,
+    setShowCompareModal,
+  } = useStateContext();
+
   const {
     register,
     handleSubmit,
@@ -142,15 +133,16 @@ export default function PersonalizeComparisonModal({
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      budget: "",
-      travelFrom: "",
-      travelTo: "",
-    },
+    defaultValues: { budget: "", travelFrom: "", travelTo: "" },
   });
 
+  const openCompare = () => {
+    setShowPersonalizeModal(false);
+    setShowCompareModal(true);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={showPersonalizeModal} onOpenChange={setShowPersonalizeModal}>
       <DialogContent className="sm:max-w-[590px] gap-6 p-8 rounded-2xl">
         <DialogHeader className="gap-2">
           <DialogTitle className="text-2xl font-bold font-heading text-foreground leading-tight">
@@ -162,7 +154,7 @@ export default function PersonalizeComparisonModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit((data) => onSubmit?.(data))} noValidate>
+        <form onSubmit={handleSubmit(openCompare)} noValidate>
           <div className="grid grid-cols-2 gap-x-4 gap-y-5">
             {/* First Name */}
             <div className="flex flex-col gap-1.5">
@@ -206,16 +198,14 @@ export default function PersonalizeComparisonModal({
                     <SelectTrigger
                       className={cn(
                         "w-full !h-12 rounded-xl",
-                        errors.country && "border-destructive"
+                        errors.country && "border-destructive",
                       )}
                     >
                       <SelectValue placeholder="Select Country" />
                     </SelectTrigger>
                     <SelectContent>
                       {COUNTRIES.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -234,16 +224,14 @@ export default function PersonalizeComparisonModal({
                     <SelectTrigger
                       className={cn(
                         "w-full !h-12 rounded-xl",
-                        errors.gender && "border-destructive"
+                        errors.gender && "border-destructive",
                       )}
                     >
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
                       {GENDERS.map((g) => (
-                        <SelectItem key={g} value={g}>
-                          {g}
-                        </SelectItem>
+                        <SelectItem key={g} value={g}>{g}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -271,16 +259,14 @@ export default function PersonalizeComparisonModal({
                     <SelectTrigger
                       className={cn(
                         "w-full !h-12 rounded-xl",
-                        errors.treatment && "border-destructive"
+                        errors.treatment && "border-destructive",
                       )}
                     >
                       <SelectValue placeholder="Select Procedures" />
                     </SelectTrigger>
                     <SelectContent>
                       {TREATMENTS.map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {t}
-                        </SelectItem>
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -329,7 +315,7 @@ export default function PersonalizeComparisonModal({
             </Button>
             <button
               type="button"
-              onClick={onSkip}
+              onClick={openCompare}
               className="text-center text-sm font-medium text-primary hover:underline"
             >
               Skip , just show the comparison

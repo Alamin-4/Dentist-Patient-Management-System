@@ -8,13 +8,16 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { useStateContext } from "@/providers/StateProvider";
 import { getDentistsFromStorage } from "@/lib/storage/dentistData";
+import Link from "next/link";
 
 export default function VerifiedDentists() {
   const [procedure, setProcedure] = useState("Orthodontist");
   const [compareMode, setCompareMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [dentists, setDentists] = useState<any[]>([]);
-  const { setShowSignupModal } = useStateContext();
+  // Simulated auth state — replace with real session check when backend is ready
+  const user = true;
+  const { setShowSignupModal, setShowPersonalizeModal } = useStateContext();
 
   // Load dentists from storage and filter by specialty
   useEffect(() => {
@@ -110,7 +113,13 @@ export default function VerifiedDentists() {
               </div>
               <div>
                 <Button
-                  onClick={() => setShowSignupModal(true)}
+                  onClick={() => {
+                    if (user) {
+                      setShowPersonalizeModal(true);
+                    } else {
+                      setShowSignupModal(true);
+                    }
+                  }}
                   className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg cursor-pointer"
                 >
                   Compare
@@ -131,9 +140,9 @@ export default function VerifiedDentists() {
           </div>
 
           <div className="mt-12 text-center">
-            <button className="text-[#10436B] font-bold text-sm hover:underline decoration-2 underline-offset-4">
+            <Link href={"/find-dentist"} className="text-[#10436B] font-bold text-sm hover:underline decoration-2 underline-offset-4">
               View all specialties
-            </button>
+            </Link>
           </div>
         </div>
       </div>

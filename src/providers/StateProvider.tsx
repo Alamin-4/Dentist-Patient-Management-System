@@ -13,6 +13,8 @@ interface StateContextType {
   setVerificationStep: React.Dispatch<React.SetStateAction<number>>;
   showSignupModal: boolean;
   setShowSignupModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showPersonalizeModal: boolean;
+  setShowPersonalizeModal: React.Dispatch<React.SetStateAction<boolean>>;
   showCompareModal: boolean;
   setShowCompareModal: React.Dispatch<React.SetStateAction<boolean>>;
   compareModalPurpose: "compare" | "postBooking" | null;
@@ -41,6 +43,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   >("idle");
   const [verificationStep, setVerificationStep] = useState<number>(1);
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
+  const [showPersonalizeModal, setShowPersonalizeModal] = useState<boolean>(false);
   const [showCompareModal, setShowCompareModal] = useState<boolean>(false);
   const [compareModalPurpose, setCompareModalPurpose] = useState<
     "compare" | "postBooking" | null
@@ -65,6 +68,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setVerificationStep,
     showSignupModal,
     setShowSignupModal,
+    showPersonalizeModal,
+    setShowPersonalizeModal,
     showCompareModal,
     setShowCompareModal,
     compareModalPurpose,
