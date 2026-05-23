@@ -1,16 +1,19 @@
 import CtaSearchSection from "./_components/module/Home/find-verified-dentist/cta-section";
 import Hero from "./_components/module/Home/Hero/hero";
-import PatientStories from "./_components/module/Home/testimonial/patient-stories";
+import AiSmilePreview from "./_components/module/Home/Ai-Smile-Preview/ai-smile-preview";
+import SmileTransformations from "./_components/module/Home/smile-transformations/smile-transformations";
 import VerifiedDentists from "./_components/module/Home/verified-dentist-section/verified-dentist";
 import WhyTrust from "./_components/module/Home/WhyTrsut/why-trust";
 
 export default function HomePage() {
   return (
     <div>
-     <Hero/>
-     <VerifiedDentists/>
-     <WhyTrust/>
-     <CtaSearchSection/>
+      <Hero />
+      <VerifiedDentists />
+      <WhyTrust />
+      <SmileTransformations />
+      <AiSmilePreview />
+      <CtaSearchSection />
     </div>
   );
 }

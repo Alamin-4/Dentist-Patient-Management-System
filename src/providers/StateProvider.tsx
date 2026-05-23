@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { initializeDentistData } from "@/lib/storage/dentistData";
 import { initializeBookingData } from "@/lib/storage/bookingService";
+import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 
 interface StateContextType {
   verificationStatus: "idle" | "match" | "no-match";
@@ -13,6 +14,8 @@ interface StateContextType {
   setVerificationStep: React.Dispatch<React.SetStateAction<number>>;
   showSignupModal: boolean;
   setShowSignupModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showPersonalizeModal: boolean;
+  setShowPersonalizeModal: React.Dispatch<React.SetStateAction<boolean>>;
   showCompareModal: boolean;
   setShowCompareModal: React.Dispatch<React.SetStateAction<boolean>>;
   compareModalPurpose: "compare" | "postBooking" | null;
@@ -27,6 +30,8 @@ interface StateContextType {
   schedule: boolean;
   activeTab: string;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  dentistsToCompare: Dentist[];
+  setDentistsToCompare: React.Dispatch<React.SetStateAction<Dentist[]>>;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
@@ -41,6 +46,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   >("idle");
   const [verificationStep, setVerificationStep] = useState<number>(1);
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
+  const [showPersonalizeModal, setShowPersonalizeModal] = useState<boolean>(false);
   const [showCompareModal, setShowCompareModal] = useState<boolean>(false);
   const [compareModalPurpose, setCompareModalPurpose] = useState<
     "compare" | "postBooking" | null
@@ -51,6 +57,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const [schedule, setSchedule] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState("estimate");
+  const [dentistsToCompare, setDentistsToCompare] = useState<Dentist[]>([]);
 
   // Initialize storage data on mount
   useEffect(() => {
@@ -65,6 +72,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setVerificationStep,
     showSignupModal,
     setShowSignupModal,
+    showPersonalizeModal,
+    setShowPersonalizeModal,
     showCompareModal,
     setShowCompareModal,
     compareModalPurpose,
@@ -77,6 +86,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setSchedule,
     activeTab,
     setActiveTab,
+    dentistsToCompare,
+    setDentistsToCompare,
   };
 
   return (

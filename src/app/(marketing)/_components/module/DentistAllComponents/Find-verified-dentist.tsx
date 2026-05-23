@@ -27,7 +27,6 @@ const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 const defaultPriceRange: [number, number] = [900, 1800];
 
 export default function FindDentist() {
-  let user = true;
   const [query, setQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "map" | "filter">("list");
   const [procedure, setProcedure] = useState("All Procedures");
@@ -48,8 +47,9 @@ export default function FindDentist() {
   const [showMapFilters, setShowMapFilters] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Signup modal
-  const { setShowSignupModal, setShowCompareModal } = useStateContext();
+  // Simulated auth state — replace with real session check when backend is ready
+  const user = true;
+  const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare } = useStateContext();
 
   const filteredDentists = useMemo(() => {
     return dentists.filter((dentist) => {
@@ -322,8 +322,9 @@ export default function FindDentist() {
                     <div>
                       <Button
                         onClick={() => {
-                          if (user === true) {
-                            setShowCompareModal(true);
+                          if (user) {
+                            setDentistsToCompare(compareList);
+                            setShowPersonalizeModal(true);
                           } else {
                             setShowSignupModal(true);
                           }

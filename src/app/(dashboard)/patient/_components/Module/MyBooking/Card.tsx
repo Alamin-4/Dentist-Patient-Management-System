@@ -131,7 +131,7 @@ const DoctorCard = ({ data }: CardProps) => {
         {data.estimate_status === "accepted" && activeTab === "estimate" && (
           <button
             onClick={() =>
-              router.push(`/dashboard/patient/bookings/review/${data.slug}`)
+              router.push(`/patient/bookings/review/${data.slug}`)
             }
             className="whitespace-nowrap bg-[#0F3659] hover:bg-[#0A2640] text-white px-8 py-3 rounded-lg transition-colors"
           >
@@ -141,7 +141,7 @@ const DoctorCard = ({ data }: CardProps) => {
         {data.payment_status === "paid" && activeTab === "treatment" && (
           <button
             onClick={() =>
-              router.push(`/dashboard/patient/bookings/treatment/${data.slug}`)
+              router.push(`/patient/bookings/treatment/${data.slug}`)
             }
             className="whitespace-nowrap bg-[#0F3659] hover:bg-[#0A2640] text-white px-8 py-3 rounded-lg transition-colors"
           >

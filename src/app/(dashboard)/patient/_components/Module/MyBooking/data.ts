@@ -171,3 +171,154 @@ export const treatmentPlansData: TreatmentPlan[] = [
     },
   },
 ];
+
+export interface ConsultationFlowItem {
+  id: string;
+  slug: string;
+  status: "upcoming" | "active" | "missed" | "completed";
+  doctor: {
+    name: string;
+    specialty: string;
+    image: string;
+    rating: number;
+    reviewCount: number;
+  };
+  procedure: string;
+  estimateBudget: string;
+  accuracy: string;
+  rdvScore: number;
+  date: string;
+  time: string;
+  timezone: string;
+  duration: string;
+  isoDate: string;
+  alertMessage?: string;
+  primaryActionLabel: string;
+  secondaryActionLabel?: string;
+}
+
+export const consultationFlowData: ConsultationFlowItem[] = [
+  // ── Upcoming ─────────────────────────────────────────────────────────────────
+  {
+    id: "consultation-004",
+    slug: "dr-alex-hemsworth",
+    status: "upcoming",
+    doctor: {
+      name: "Dr. Alex Hemsworth",
+      specialty: "Implantologist",
+      image: "/images/dentist.png",
+      rating: 4.9,
+      reviewCount: 34,
+    },
+    procedure: "Single Tooth Implant",
+    estimateBudget: "$2,200 - $2,600",
+    accuracy: "94% Accuracy",
+    rdvScore: 97,
+    date: "Monday, 02 June 2026",
+    isoDate: "2026-06-02",
+    time: "11:00 AM EST",
+    timezone: "EST",
+    duration: "15-minute video call",
+    primaryActionLabel: "Join Consultation",
+    secondaryActionLabel: "Add to calendar",
+  },
+  {
+    id: "consultation-005",
+    slug: "dr-sarah-jenkins",
+    status: "upcoming",
+    doctor: {
+      name: "Dr. Sarah Jenkins",
+      specialty: "Periodontist",
+      image: "/images/dentist.png",
+      rating: 4.8,
+      reviewCount: 21,
+    },
+    procedure: "Gum Grafting",
+    estimateBudget: "$1,800 - $2,100",
+    accuracy: "93% Accuracy",
+    rdvScore: 95,
+    date: "Wednesday, 04 June 2026",
+    isoDate: "2026-06-04",
+    time: "2:30 PM GMT",
+    timezone: "GMT",
+    duration: "15-minute video call",
+    primaryActionLabel: "Join Consultation",
+    secondaryActionLabel: "Add to calendar",
+  },
+  // ── Active / Missed ───────────────────────────────────────────────────────────
+  {
+    id: "consultation-001",
+    slug: "dr-eliza-mick",
+    status: "active",
+    doctor: {
+      name: "Dr. Eliza Mick",
+      specialty: "Orthodontist",
+      image: "/images/dentist.png",
+      rating: 5,
+      reviewCount: 8,
+    },
+    procedure: "All-on-4 Full Arch",
+    estimateBudget: "$3,760 - $4,300",
+    accuracy: "96% Accuracy",
+    rdvScore: 100,
+    date: "Tuesday, 29 April 2025",
+    isoDate: "2025-04-29",
+    time: "10:30 AM EST",
+    timezone: "EST",
+    duration: "15-minute video call",
+    primaryActionLabel: "Join Consultation",
+    secondaryActionLabel: "Add to calendar",
+  },
+  {
+    id: "consultation-002",
+    slug: "dr-eliza-mick-reschedule",
+    status: "missed",
+    doctor: {
+      name: "Dr. Eliza Mick",
+      specialty: "Orthodontist",
+      image: "/images/dentist.png",
+      rating: 5,
+      reviewCount: 8,
+    },
+    procedure: "All-on-4 Full Arch",
+    estimateBudget: "$3,760 - $4,300",
+    accuracy: "96% Accuracy",
+    rdvScore: 100,
+    date: "Tuesday, 29 April 2025",
+    isoDate: "2025-04-29",
+    time: "10:30 AM EST",
+    timezone: "EST",
+    duration: "15-minute video call",
+    alertMessage:
+      "You missed your consultation. You can book any available slot in the next 24 hours. After that, this option will expire.",
+    primaryActionLabel: "Reschedule",
+    secondaryActionLabel: "Add to calendar",
+  },
+  // ── Completed (Estimate Updates tab) ─────────────────────────────────────────
+  {
+    id: "consultation-003",
+    slug: "dr-eliza-will",
+    status: "completed",
+    doctor: {
+      name: "Dr. Eliza Will",
+      specialty: "Consultant Dentist",
+      image: "/images/dentist.png",
+      rating: 5,
+      reviewCount: 12,
+    },
+    procedure: "Smile Analysis",
+    estimateBudget: "$1,700",
+    accuracy: "95% Accuracy",
+    rdvScore: 100,
+    date: "Thursday, 16 April 2026",
+    isoDate: "2026-04-16",
+    time: "5:00 PM GMT",
+    timezone: "GMT",
+    duration: "15-minute video call",
+    primaryActionLabel: "View Summary",
+  },
+];
+
+export function getConsultationFlowItemBySlug(slug: string) {
+  return consultationFlowData.find((item) => item.slug === slug) ?? consultationFlowData[0];
+}
