@@ -1,41 +1,66 @@
 "use client";
 
+import { CheckCircle2, Circle, CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export function VerificationBanner() {
   const router = useRouter();
-  return (
-    <div className="relative overflow-hidden rounded-2xl bg-[#163E5C] p-8 md:p-12 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-8">
-      <div className="z-10 flex flex-col space-y-4 max-w-2xl">
-        <span className="text-sm font-medium opacity-90 uppercase tracking-wide">
-          Verification Progress
-        </span>
-        <h2 className="text-3xl md:text-4xl font-bold">
-          Start your verification
-        </h2>
-        <p className="text-blue-100 text-lg leading-relaxed">
-          Complete your RDV verification in phases to unlock your profile,
-          search visibility, and booking access.
-        </p>
-        <div className="pt-4">
-          <Button
-            onClick={() => router.push("/dashboard/dentist/verification")}
-            className="h-12 px-8 bg-white text-[#163E5C] hover:bg-gray-100 font-bold rounded-lg cursor-pointer transition-all"
-          >
-            Start Verification
-          </Button>
-        </div>
-      </div>
 
-      <div className="relative flex items-center justify-center">
-        <div className="h-40 w-40 md:h-48 md:w-48 rounded-full border-12 border-white/10 flex items-center justify-center bg-white/5">
-          <div className="absolute inset-0 rounded-full border-12 border-[#163E5C] border-t-transparent -rotate-45 opacity-20" />
-          <div className="flex flex-col items-center">
-            <span className="text-4xl font-bold">0%</span>
-            <span className="text-[10px] md:text-xs font-bold uppercase tracking-tighter opacity-70">
-              RDV Score
-            </span>
+  const phases = [
+    { title: "Phase 1 — License Verification", subtitle: "~5 min · RDV +30%", done: false },
+    { title: "Phase 2 — Operations", subtitle: "~20–30 min · RDV +40%", done: false },
+    { title: "Phase 3 — Clinical depth", subtitle: "Async · RDV +30%", done: false },
+  ];
+
+  return (
+    <div className="max-w-xl bg-white p-6 lg:p-8 rounded-4xl shadow-2xl">
+      <div className="flex flex-col items-center text-center">
+        <div className="relative mb-8 h-44 w-44 sm:h-52 sm:w-52">
+          <div className="absolute inset-0 rounded-full bg-sidebar-primary shadow-inner" />
+          <div className="absolute inset-6 rounded-full bg-card" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center text-center">
+              <span className="text-3xl font-semibold text-yellow">0%</span>
+              <span className="mt-1 text-sm font-semibold uppercase tracking-widest text-yellow">RDV Score</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 className="text-2xl font-semibold text-foreground">Start your verification</h3>
+        <p className="mt-2 text-sm text-muted-foreground max-w-xl">
+          Complete your RDV verification in phases to unlock your profile.
+        </p>
+
+        <div className="mt-8 w-full">
+          <div className="max-w-xs mx-auto space-y-6">
+            {phases.map((p, i) => (
+              <div key={p.title} className="flex items-center gap-4">
+                <div className="relative flex h-8 w-8 flex-col items-center">
+                  <div className={`flex items-center justify-center rounded-full ${p.done ? 'bg-primary text-white' : 'text-gray-400'}`}>
+                    {p.done ? (
+                      <CircleCheck />
+                    ) : (
+                     <Circle/>
+                    )}
+                  </div>
+                  {i < phases.length - 1 && (
+                    <div className="absolute top-8 left-1/2 -translate-x-1/2 h-6 w-px bg-border" />
+                  )}
+                </div>
+
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-semibold text-foreground">{p.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{p.subtitle}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <Button className="w-full rounded-xl bg-sidebar-primary hover:bg-sidebar-primary/90 text-white" onClick={() => router.push('/dashboard/dentist/verification') }>
+              Start Verification
+            </Button>
           </div>
         </div>
       </div>

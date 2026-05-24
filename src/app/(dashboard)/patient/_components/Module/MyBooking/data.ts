@@ -322,3 +322,159 @@ export const consultationFlowData: ConsultationFlowItem[] = [
 export function getConsultationFlowItemBySlug(slug: string) {
   return consultationFlowData.find((item) => item.slug === slug) ?? consultationFlowData[0];
 }
+
+export interface ProgressStep {
+  label: string;
+  completed: boolean;
+}
+
+export interface TimelineStep {
+  title: string;
+  description: string;
+  completed: boolean;
+  link?: { label: string };
+}
+
+export interface InProgressBooking {
+  id: string;
+  slug: string;
+  bookingStatus: "in_progress" | "completed" | "rejected";
+  doctor: {
+    name: string;
+    specialty: string;
+    image: string;
+    rating: number;
+    reviewCount: number;
+    rdvScore: number;
+    isVerified: boolean;
+  };
+  procedure: string;
+  appointmentDate: string;
+  estimateBudget: number;
+  paymentStatus: "in_escrow" | "paid" | "pending" | "refunded";
+  progressSteps: ProgressStep[];
+  infoMessage: string;
+  treatmentPlan: {
+    breakdown: Array<{ label: string; price: number | string }>;
+    totalEstimate: number;
+    leewayPercent: number;
+  };
+  timeline: TimelineStep[];
+  clinicLocation: {
+    address: string;
+    city: string;
+    country: string;
+    lat: number;
+    lng: number;
+  };
+  arrivalCode: string;
+  paymentCode: string;
+  finalPlan?: {
+    breakdown: Array<{ label: string; price: number | string }>;
+    finalTotal: number;
+    isWithinLeeway: boolean;
+  };
+  journeyCompleted?: {
+    finalAmount: number;
+    treatmentDuration: string;
+    location: string;
+  };
+}
+
+export const inProgressBookingsData: InProgressBooking[] = [
+  {
+    id: "IB-001",
+    slug: "all-on-4-full-arch",
+    bookingStatus: "in_progress",
+    doctor: {
+      name: "Dr. Eliza Mick",
+      specialty: "Orthodontist",
+      image: "/images/dentist.png",
+      rating: 5,
+      reviewCount: 8,
+      rdvScore: 100,
+      isVerified: true,
+    },
+    procedure: "All-on-4 Full Arch",
+    appointmentDate: "June 15, 2026 · 9:00 AM",
+    estimateBudget: 1200,
+    paymentStatus: "in_escrow",
+    progressSteps: [
+      { label: "Payment Confirmed", completed: true },
+      { label: "Travel destination", completed: true },
+      { label: "Day 1 arrival, CBCT examination", completed: true },
+      { label: "Final Treatment Plan Confirm", completed: false },
+      { label: "Treatment Done", completed: false },
+    ],
+    infoMessage:
+      "Review your treatment details, including arrival date and any updates, to confirm next steps.",
+    treatmentPlan: {
+      breakdown: [
+        { label: "Initial examination", price: "Included" },
+        { label: "CBCT scan (if needed)", price: 693 },
+        { label: "Temporary prosthesis", price: 1039 },
+        { label: "Temporary prosthesis", price: 1200 },
+        { label: "Final fitting & adjustments", price: 346 },
+      ],
+      totalEstimate: 1075,
+      leewayPercent: 15,
+    },
+    timeline: [
+      {
+        title: "Payment Confirmed",
+        description: "$1075 held in escrow • April 30, 2026",
+        completed: true,
+      },
+      {
+        title: "Travel destination",
+        description: "Cancun, Mexico • May 02, 2026",
+        completed: true,
+        link: { label: "View map location" },
+      },
+      {
+        title: "Day 1 arrival, CBCT examination",
+        description: "Show arrival code at clinic • May 03, 2026",
+        completed: true,
+      },
+      {
+        title: "Final Treatment Plan Confirm",
+        description: "Dr Alex submit final price you confirm via sms • May 02, 2026",
+        completed: true,
+      },
+      {
+        title: "Treatment Done",
+        description: "Review to the doctor",
+        completed: true,
+      },
+    ],
+    clinicLocation: {
+      address: "123 Smile Avenue, Suite 202, Mexico City, Mexico 01010",
+      city: "Mexico City",
+      country: "Mexico",
+      lat: 19.4326,
+      lng: -99.1332,
+    },
+    arrivalCode: "7623",
+    paymentCode: "5263",
+    finalPlan: {
+      breakdown: [
+        { label: "Initial examination", price: "Included" },
+        { label: "CBCT scan (if needed)", price: 693 },
+        { label: "Temporary prosthesis", price: 1039 },
+        { label: "Temporary prosthesis", price: 1200 },
+        { label: "Final fitting & adjustments", price: 346 },
+      ],
+      finalTotal: 1150,
+      isWithinLeeway: true,
+    },
+    journeyCompleted: {
+      finalAmount: 1150,
+      treatmentDuration: "April 30 – May 5, 2026",
+      location: "Cancun, Mexico",
+    },
+  },
+];
+
+export function getInProgressBookingBySlug(slug: string): InProgressBooking | undefined {
+  return inProgressBookingsData.find((b) => b.slug === slug);
+}
