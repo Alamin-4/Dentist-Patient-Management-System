@@ -1,413 +1,519 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import {
   ChevronLeft,
   ChevronDown,
   ShieldCheck,
-  Award,
   CheckCircle2,
   MapPin,
-  Copy,
-  Hourglass,
   Star,
-  Flag,
+  Copy,
+  ShieldAlert,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import PaymentSuccessModal from "../../../_components/Module/MyBooking/Modal/PaySuccessModal";
-import { treatmentPlansData } from "../../../_components/Module/MyBooking/data";
-import { useStateContext } from "@/providers/StateProvider";
+import { cn } from "@/lib/utils";
+import {
+  inProgressBookingsData,
+  type InProgressBooking,
+  type TimelineStep,
+} from "../../../_components/Module/MyBooking/data";
+import ClinicLocationModal from "../../../_components/Module/MyBooking/Modal/ClinicLocationModal";
 import { ConfirmReleaseModal } from "../../../_components/Module/MyBooking/Modal/ApproveModal";
 import { LeaveReviewModal } from "../../../_components/Module/MyBooking/Modal/LeaveReviewModal";
 import { RejectPlanModal } from "../../../_components/Module/MyBooking/Modal/RejectModal";
-
-const SectionCard = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div
-    className={cn(
-      "bg-white rounded-2xl p-6 border border-slate-100 shadow-sm",
-      className,
-    )}
-  >
-    {children}
-  </div>
-);
+import { NoSurpriseRejectModal } from "../../../_components/Module/MyBooking/Modal/NoSurpriseRejectModal";
 
 export default function TreatmentDetailsPage() {
   const { slug } = useParams();
   const router = useRouter();
-  const [showSuccess, setShowSuccess] = useState(false);
-  const { activeTab } = useStateContext();
-  const [approveModalOpen, setApproveModalOpen] = useState(false);
-  const [approved, setApproved] = useState(false);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejected, setRejected] = useState(false);
 
-  const plan =
-    treatmentPlansData.find((p) => p.slug === slug) || treatmentPlansData[0];
+  const booking: InProgressBooking =
+    inProgressBookingsData.find((b) => b.slug === slug) ??
+    inProgressBookingsData[0];
+
+  const finalPlan = booking.finalPlan;
+  const isWithinLeeway = finalPlan?.isWithinLeeway ?? true;
+
+  const [isApproved, setIsApproved] = useState(false);
+  const [estimatePlanOpen, setEstimatePlanOpen] = useState(!finalPlan);
+  const [finalPlanOpen, setFinalPlanOpen] = useState(true);
+  const [journeyOpen, setJourneyOpen] = useState(true);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [noSurpriseRejectModalOpen, setNoSurpriseRejectModalOpen] = useState(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(booking.paymentCode);
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
+  };
 
   return (
-    <div className="">
-      <PaymentSuccessModal
-        isOpen={showSuccess}
-        onClose={() => setShowSuccess(false)}
+    <div className="pb-24">
+      {/* Modals */}
+      <ClinicLocationModal
+        isOpen={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
+        address={booking.clinicLocation.address}
+        lat={booking.clinicLocation.lat}
+        lng={booking.clinicLocation.lng}
       />
       <ConfirmReleaseModal
         isOpen={approveModalOpen}
         onClose={() => setApproveModalOpen(false)}
-        onConfirm={() => {
-          setApproveModalOpen(false);
-          setApproved(true);
-        }}
-        doctorName={plan.doctor.name}
+        doctorName={booking.doctor.name}
+        paymentCode={booking.paymentCode}
       />
       <RejectPlanModal
-        isOpen={showRejectModal}
-        onClose={() => setShowRejectModal(false)}
-        onConfirm={() => {
-          setShowRejectModal(false);
-          setRejected(true);
-        }}
+        isOpen={rejectModalOpen}
+        onClose={() => setRejectModalOpen(false)}
+        onConfirm={() => setRejectModalOpen(false)}
+        totalEstimate={booking.treatmentPlan.totalEstimate}
       />
-
+      <NoSurpriseRejectModal
+        isOpen={noSurpriseRejectModalOpen}
+        onClose={() => setNoSurpriseRejectModalOpen(false)}
+        onConfirm={() => setNoSurpriseRejectModalOpen(false)}
+      />
       <LeaveReviewModal
-        isOpen={showReviewModal}
-        onClose={() => setShowReviewModal(false)}
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
         doctor={{
-          name: plan.doctor.name,
-          specialty: plan.doctor.specialty,
-          image: plan.doctor.image,
-          rating: plan.doctor.rating,
-          reviewCount: plan.doctor.reviewCount,
-          location: "Cancun, Mexico",
+          name: booking.doctor.name,
+          specialty: booking.doctor.specialty,
+          image: booking.doctor.image,
+          rating: booking.doctor.rating,
+          reviewCount: booking.doctor.reviewCount,
+          location: `${booking.clinicLocation.city}, ${booking.clinicLocation.country}`,
         }}
       />
 
+      {/* Back */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-slate-500 mb-4 hover:text-slate-800 transition-colors"
+        className="flex items-center gap-1.5 text-slate-500 mb-4 hover:text-slate-800 transition-colors cursor-pointer"
       >
         <ChevronLeft className="size-4" />
         <span className="text-sm">Back</span>
       </button>
 
-      <h1 className="text-2xl font-bold text-[#1A1A2E] mb-6">
-        Treatment Detail
-      </h1>
+      <h1 className="text-2xl font-bold text-[#1A1A2E] mb-5">Treatment Detail</h1>
 
-      {/* Top Header Card - Based on image_396c7c.png */}
-      <SectionCard className="mb-6">
-        <div className="p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-6">
-          {/* Left: Avatar */}
-          <div className="flex flex-col items-center gap-2 shrink-0">
-            <div className="relative w-16 lg:w-20 h-16 lg:h-20 rounded-full overflow-hidden bg-slate-100 border-2 border-slate-50">
+      {/* Doctor Header Card */}
+      <div className="bg-white border border-[#CEE0F4] rounded-2xl p-5 md:p-6 mb-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+          {/* Avatar + badges */}
+          <div className="flex flex-col items-center gap-1.5 shrink-0">
+            <div className="relative w-16 h-16 rounded-full overflow-hidden bg-slate-100">
               <Image
-                src={plan.doctor.image}
-                alt={plan.doctor.name}
+                src={booking.doctor.image}
+                alt={booking.doctor.name}
                 fill
                 className="object-cover"
               />
             </div>
-            <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-              <ShieldCheck className="size-4 text-[#4CA30D]" />
-              VERIFIED
+            {booking.doctor.isVerified && (
+              <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
+                <ShieldCheck className="size-3.5 text-[#4CA30D]" />
+                <span>VERIFIED</span>
+              </div>
+            )}
+            <div className="border border-[#1A1A2E] rounded px-2 py-0.5 text-[11px] font-bold text-[#1A1A2E]">
+              {booking.doctor.rdvScore} RDV Score
             </div>
           </div>
 
-          {/* Middle: Doctor Info */}
-          <div className="flex-1 space-y-1">
-            <h2 className="text-xl md:text-2xl font-bold text-[#1A1A2E]">
-              {plan.doctor.name}
-            </h2>
-            <p className="text-base font-medium text-[#475569]">
-              {plan.doctor.specialty}
-            </p>
-            <div className="flex items-center gap-1 pt-1">
-              <span className="text-[#1A1A2E] font-semibold mr-1">
-                {plan.doctor.rating}
+          {/* Doctor info */}
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-bold text-[#1A1A2E]">{booking.doctor.name}</h2>
+            <p className="text-sm text-[#475569] mt-0.5">{booking.doctor.specialty}</p>
+            <div className="flex items-center gap-1 mt-1.5">
+              <span className="font-semibold text-sm text-[#1A1A2E] mr-0.5">
+                {booking.doctor.rating}
               </span>
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={cn(
-                    "w-4 h-4",
-                    i < plan.doctor.rating
+                    "w-3.5 h-3.5",
+                    i < booking.doctor.rating
                       ? "fill-[#FBBF24] text-[#FBBF24]"
-                      : "text-slate-200",
+                      : "fill-slate-200 text-slate-200"
                   )}
                 />
               ))}
-              <span className="text-slate-400 text-xs ml-1">
-                ({plan.doctor.reviewCount} Ratings)
+              <span className="text-slate-400 text-xs ml-0.5">
+                ({booking.doctor.reviewCount} Ratings)
               </span>
             </div>
           </div>
 
-          {/* Right: Procedure Info */}
-          <div className="flex-1 space-y-1">
-            <p className="text-slate-500 text-sm font-medium">Procedure</p>
-            <p className="text-lg font-semibold text-[#1A1A2E]">
-              {plan.procedure.name}
-            </p>
+          {/* Procedure */}
+          <div className="shrink-0 space-y-1 min-w-32.5">
+            <p className="text-xs text-slate-500 font-medium">Procedure</p>
+            <p className="text-sm font-semibold text-[#1A1A2E]">{booking.procedure}</p>
           </div>
-          {activeTab === "treatment" && plan.estimate_status === "accepted" && (
-            <div className="flex-1 space-y-1">
-              <p className="text-slate-500 text-sm font-medium">Next Step</p>
-              <p className="text-lg font-semibold text-[#CA8504]">
-                Pending Travel
-              </p>
+
+          {/* Appointment Dates */}
+          <div className="shrink-0 space-y-1 min-w-40">
+            <p className="text-xs text-slate-500 font-medium">Appointment Dates</p>
+            <p className="text-sm font-semibold text-[#1A1A2E]">{booking.appointmentDate}</p>
+          </div>
+
+          {/* Budget / Status */}
+          <div className="shrink-0 space-y-1 text-right">
+            <p className="text-xs text-slate-500 font-medium">Estimate Budget</p>
+            <p className="text-xl font-bold text-[#0E3E65]">
+              ${booking.estimateBudget.toLocaleString()}
+            </p>
+            {isApproved ? (
+              <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
+            ) : (
+              <p className="text-xs font-bold text-[#CA8504] mt-0.5">In Escrow</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 2-column main grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── Left column ─────────────────────────────────────────────────── */}
+        <div className="lg:col-span-7 space-y-4">
+
+          {/* Estimate Treatment plan (collapsible) */}
+          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+            <button
+              onClick={() => setEstimatePlanOpen((v) => !v)}
+              className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
+            >
+              <h4 className="font-bold text-[#1A1A2E]">Estimate Treatment plan</h4>
+              <ChevronDown
+                className={cn(
+                  "size-5 text-slate-400 transition-transform",
+                  estimatePlanOpen ? "rotate-180" : ""
+                )}
+              />
+            </button>
+
+            {estimatePlanOpen && (
+              <div className="px-5 md:px-6 pb-5">
+                <PlanTable
+                  breakdown={booking.treatmentPlan.breakdown}
+                  totalLabel="Estimate amount"
+                  total={booking.treatmentPlan.totalEstimate}
+                />
+                <div className="mt-4 bg-[#F0F9FF] p-4 rounded-xl border border-[#B3D8FF]">
+                  <p className="text-[#0E3E65] font-bold text-sm mb-1">
+                    {booking.treatmentPlan.leewayPercent}% leeway
+                  </p>
+                  <p className="text-[#203A55] text-xs leading-relaxed">
+                    Your final price on Day 1 will be within{" "}
+                    {booking.treatmentPlan.leewayPercent}%. If{" "}
+                    {booking.doctor.name}&apos;s final price exceeds 15%, you can
+                    Reject for a full refund. No questions asked.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Final Treatment Plan (visible when finalPlan exists) */}
+          {finalPlan && (
+            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+              <button
+                onClick={() => setFinalPlanOpen((v) => !v)}
+                className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
+              >
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h4 className="font-bold text-[#1A1A2E]">Final treatment Plan</h4>
+                  {isWithinLeeway ? (
+                    <span className="flex items-center gap-1 text-xs font-semibold text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5">
+                      <ShieldCheck className="size-3" />
+                      Within 15% protected range
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-xs font-semibold text-[#BE185D] bg-[#FDF2F8] border border-[#FBCFE8] rounded-full px-2.5 py-0.5">
+                      <ShieldAlert className="size-3" />
+                      Exceed 15% protected range
+                    </span>
+                  )}
+                </div>
+                <ChevronDown
+                  className={cn(
+                    "size-5 text-slate-400 transition-transform shrink-0",
+                    finalPlanOpen ? "rotate-180" : ""
+                  )}
+                />
+              </button>
+
+              {finalPlanOpen && (
+                <div className="px-5 md:px-6 pb-5">
+                  <PlanTable
+                    breakdown={finalPlan.breakdown}
+                    totalLabel="Final total"
+                    total={finalPlan.finalTotal}
+                    isFinal
+                  />
+
+                  {/* No Surprise Reject — only when exceeds leeway */}
+                  {!isWithinLeeway && !isApproved && (
+                    <button
+                      onClick={() => setNoSurpriseRejectModalOpen(true)}
+                      className="mt-4 w-full py-3 rounded-xl border border-[#F43F5E] text-[#F43F5E] text-sm font-semibold hover:bg-[#FFF1F2] transition-colors cursor-pointer"
+                    >
+                      No surprise reject
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
-          {/* Action Area: Logic Swaps Here */}
-          <div className="flex flex-col items-end gap-3 shrink-0 w-full md:w-auto">
-            {plan.estimate_status === "accepted" ? (
-              <div className="text-right">
-                <p className="text-[#6B7280] text-sm font-medium mb-1">
-                  Estimate Budget
-                </p>
-                <p className="lg:text-xl font-bold text-[#0E3E65]">
-                  ${plan.procedure.totalEstimate.toLocaleString()}
-                </p>
-                <p className="text-[#4CA30D] text-sm font-bold pt-2">
-                  In Escrow
-                </p>
+          {/* Journey Completed (visible when approved) */}
+          {isApproved && booking.journeyCompleted && (
+            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+              <button
+                onClick={() => setJourneyOpen((v) => !v)}
+                className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
+              >
+                <h4 className="font-bold text-[#1A1A2E]">Journey Completed</h4>
+                <ChevronDown
+                  className={cn(
+                    "size-5 text-slate-400 transition-transform",
+                    journeyOpen ? "rotate-180" : ""
+                  )}
+                />
+              </button>
+
+              {journeyOpen && (
+                <div className="px-5 md:px-6 pb-5">
+                  <div className="divide-y divide-slate-50">
+                    <SummaryRow
+                      label="Final Amount"
+                      value={`$${booking.journeyCompleted.finalAmount.toLocaleString()}`}
+                    />
+                    <SummaryRow
+                      label="Treatment Duration"
+                      value={booking.journeyCompleted.treatmentDuration}
+                    />
+                    <SummaryRow
+                      label="Location"
+                      value={booking.journeyCompleted.location}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ── Right column ────────────────────────────────────────────────── */}
+        <div className="lg:col-span-5 space-y-4">
+
+          {/* Treatment Timeline */}
+          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 md:p-6">
+            <h4 className="font-bold text-[#1A1A2E] mb-6">Treatment Timeline</h4>
+            <div className="space-y-0">
+              {booking.timeline.map((step, i) => (
+                <TimelineStepItem
+                  key={i}
+                  step={step}
+                  isLast={i === booking.timeline.length - 1}
+                  onViewMap={
+                    step.link ? () => setLocationModalOpen(true) : undefined
+                  }
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Payment Code (visible when approved) */}
+          {isApproved && (
+            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 md:p-6">
+              <p className="text-sm font-bold text-[#1A1A2E] mb-3">Payment Code</p>
+              <div className="flex items-center justify-between">
+                <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">
+                  {booking.paymentCode}
+                </span>
+                <button
+                  onClick={handleCopyCode}
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 cursor-pointer"
+                  title="Copy code"
+                >
+                  <Copy className="size-5" />
+                </button>
               </div>
+              <p className="text-xs text-slate-500 mt-3">
+                {codeCopied ? "Copied!" : `Show this to Dr. Alex on for release Amount`}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Sticky footer ───────────────────────────────────────────────── */}
+      <div className="sticky bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
+            Dispute
+          </button>
+
+          <div className="flex items-center gap-3">
+            {isApproved ? (
+              <>
+                <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
+                  View Document
+                </button>
+                <button
+                  onClick={() => setReviewModalOpen(true)}
+                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Review Doctor
+                </button>
+              </>
             ) : (
               <>
-                <button className="w-full md:w-auto bg-[#F79009] hover:bg-[#EA580C] text-white px-4 py-2.5 rounded-lg text-sm transition-all">
-                  Estimate Pending
+                {isWithinLeeway && finalPlan && (
+                  <button
+                    onClick={() => setRejectModalOpen(true)}
+                    className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Reject Plan
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setIsApproved(true);
+                    setApproveModalOpen(true);
+                  }}
+                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Approve
                 </button>
-                <div className="text-right">
-                  <p className="font-bold text-[#1A1A2E] text-lg tabular-nums">
-                    {plan.timeline.remainingTime}
-                  </p>
-                  <p className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">
-                    Time remaining
-                  </p>
-                </div>
               </>
             )}
           </div>
         </div>
-      </SectionCard>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Estimate Treatment Plan Breakdown */}
-          <SectionCard className="p-0 overflow-hidden">
-            <div className="p-6 flex justify-between items-center border-b border-slate-50">
-              <h4 className="font-bold text-[#1A1A2E]">
-                Estimate Treatment plan
-              </h4>
-              <ChevronDown className="size-5 text-slate-400" />
-            </div>
-
-            <div className="p-6">
-              <div className="border border-slate-100 rounded-xl overflow-hidden">
-                <div className="flex justify-between bg-slate-50/50 px-4 py-3 border-b border-slate-100 font-bold text-xs text-slate-500 uppercase">
-                  <span>Procedure breakdown</span>
-                  <span>Price</span>
-                </div>
-                <div className="divide-y divide-slate-50">
-                  {plan.procedure.breakdown.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between px-4 py-4 text-sm"
-                    >
-                      <span className="text-slate-500">{item.label}</span>
-                      <span className="text-[#1E293B] font-medium">
-                        {item.price === 0
-                          ? "Included"
-                          : `$${item.price.toLocaleString()}`}
-                      </span>
-                    </div>
-                  ))}
-                  <div className="flex justify-between px-4 py-4 bg-white border-t border-slate-100">
-                    <span className="text-[#0F3659] font-bold">
-                      Estimate amount
-                    </span>
-                    <span className="text-[#0F3659] font-bold text-lg">
-                      ${plan.procedure.totalEstimate.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 bg-[#F0F9FF] p-5 rounded-xl border border-[#B3D8FF]">
-                <p className="text-[#0E3E65] font-bold mb-2 text-sm">
-                  15% leeway
-                </p>
-                <p className="text-[#203A55] text-xs leading-relaxed">
-                  Your final price on Day 1 will be within $161 of $
-                  {plan.procedure.totalEstimate.toLocaleString()}. If Dr.
-                  Mick&apos;s final price exceeds $1,236, you can cancel for a
-                  full refund. No questions asked.
-                </p>
-              </div>
-            </div>
-          </SectionCard>
-
-          {/* Final Treatment Plan (Empty State) */}
-          <SectionCard className="p-0 overflow-hidden">
-            <div className="p-6 flex justify-between items-center">
-              <h4 className="font-bold text-[#1A1A2E]">Final Treatment plan</h4>
-              <ChevronDown className="size-5 text-slate-400" />
-            </div>
-            <div className="px-6 pb-10 text-center flex flex-col items-center">
-              <Hourglass className="size-10 text-slate-300 mb-4 animate-pulse" />
-              <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
-                Final treatment plan will show here. Dr. Mick&apos;s final price
-                exceeds $1,236, you can cancel for a full refund. No questions
-                asked.
-              </p>
-            </div>
-          </SectionCard>
-        </div>
-
-        {/* Right Column */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Pending Steps - Vertical Tracker */}
-          <SectionCard>
-            <h4 className="font-bold text-[#1A1A2E] mb-8">Pending Steps</h4>
-            <div className="space-y-0">
-              <StepItem
-                title="Payment Confirmed"
-                desc="$1075 held in escrow • April 30, 2026"
-                status="completed"
-                isFirst
-              />
-              <StepItem
-                title="Travel destination"
-                desc="Cancun, Mexico • May 02, 2026"
-                status="pending"
-                rightElement={
-                  <button className="flex items-center gap-1 text-[#0F3659] text-[10px] font-bold underline">
-                    <MapPin className="size-3" /> View map location
-                  </button>
-                }
-              />
-              <StepItem
-                title="Day 1 arrival, CBCT examination"
-                desc="Show arrival code at clinic • May 03, 2026"
-                status="pending"
-              />
-              <StepItem
-                title="Final Treatment Plan Confirm"
-                desc="Dr Alex submit final price you confirm via sms • May 02, 2026"
-                status="pending"
-              />
-              <StepItem
-                title="Treatment Done"
-                desc="Review to the doctor"
-                status="pending"
-                isLast
-              />
-            </div>
-          </SectionCard>
-
-          {/* Arrival Code Card */}
-          <SectionCard className="bg-[#FAFAFA]">
-            <p className="text-sm font-bold text-[#1A1A2E] mb-4">
-              Arrival Code
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">
-                5263
-              </span>
-              <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400">
-                <Copy className="size-5" />
-              </button>
-            </div>
-            <p className="text-[11px] text-slate-500 mt-4">
-              Show this to Dr. Alex on day 1 at clinic
-            </p>
-          </SectionCard>
-        </div>
       </div>
-
-      {approved ? (
-        <div className="border-t pt-6 mt-6 flex items-center justify-end gap-4">
-          <button className="flex cursor-pointer items-center gap-2 underline py-2 px-4">
-            Upload After Photo
-          </button>
-          <button className="flex cursor-pointer items-center gap-2 border border-[#6B7280] text-[#1A1A2E] py-2 px-4 rounded-lg">
-            View Document
-          </button>
-          <button
-            onClick={() => setShowReviewModal(true)}
-            className="flex cursor-pointer items-center gap-2 text-white bg-[#0E3E65] py-2 px-4 rounded-lg"
-          >
-            Review Doctor
-          </button>
-        </div>
-      ) : (
-        <div className="border-t pt-6 mt-6 flex items-center justify-end gap-4">
-          <button className="flex cursor-pointer items-center gap-2 border border-red-400 text-red-400 py-2 px-4 rounded-lg">
-            <Flag />
-            Report
-          </button>
-          <button
-            onClick={() => setShowRejectModal(true)}
-            className="flex cursor-pointer items-center gap-2 border border-[#6B7280] text-[#1A1A2E] py-2 px-4 rounded-lg"
-          >
-            Reject Plan
-          </button>
-          <button
-            onClick={() => setApproveModalOpen(true)}
-            className="flex cursor-pointer items-center gap-2 text-white bg-[#0E3E65] py-2 px-4 rounded-lg"
-          >
-            Approve & release
-          </button>
-        </div>
-      )}
     </div>
   );
 }
 
-// Helper Components for the Tracker
-const StepItem = ({ title, desc, status, isLast, rightElement }: any) => (
-  <div className="flex gap-4 min-h-20">
-    <div className="flex flex-col items-center">
-      <div
-        className={cn(
-          "size-5 rounded-full border-2 flex items-center justify-center z-10 bg-white",
-          status === "completed"
-            ? "bg-[#0F3659] border-[#0F3659]"
-            : "border-slate-300",
-        )}
-      >
-        {status === "completed" && (
-          <CheckCircle2 className="size-3 text-white fill-[#0F3659]" />
-        )}
+/* ── Sub-components ─────────────────────────────────────────────────────── */
+
+function PlanTable({
+  breakdown,
+  totalLabel,
+  total,
+  isFinal = false,
+}: {
+  breakdown: Array<{ label: string; price: number | string }>;
+  totalLabel: string;
+  total: number;
+  isFinal?: boolean;
+}) {
+  return (
+    <div className="border border-slate-100 rounded-xl overflow-hidden">
+      <div className="flex justify-between bg-slate-50 px-4 py-3 border-b border-slate-100">
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+          Procedure breakdown
+        </span>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+          Price
+        </span>
       </div>
-      {!isLast && <div className="w-0.5 h-full bg-slate-100 -my-1" />}
+      <div className="divide-y divide-slate-50">
+        {breakdown.map((item, idx) => (
+          <div key={idx} className="flex justify-between px-4 py-3.5 text-sm">
+            <span className="text-slate-500">{item.label}</span>
+            <span className="text-[#1E293B] font-medium">
+              {typeof item.price === "number"
+                ? `$${item.price.toLocaleString()}`
+                : item.price}
+            </span>
+          </div>
+        ))}
+        <div className="flex justify-between px-4 py-4 border-t border-slate-100">
+          <span
+            className={cn(
+              "font-bold",
+              isFinal ? "text-[#0F3659]" : "text-[#0F3659]"
+            )}
+          >
+            {totalLabel}
+          </span>
+          <span className="text-[#0F3659] font-bold text-lg">
+            ${total.toLocaleString()}
+          </span>
+        </div>
+      </div>
     </div>
-    <div className="flex-1 pb-6">
-      <div className="flex justify-between items-start">
-        <h5
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between py-3 text-sm">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-semibold text-[#1A1A2E]">{value}</span>
+    </div>
+  );
+}
+
+function TimelineStepItem({
+  step,
+  isLast,
+  onViewMap,
+}: {
+  step: TimelineStep;
+  isLast: boolean;
+  onViewMap?: () => void;
+}) {
+  return (
+    <div className="flex gap-3 min-h-16">
+      <div className="flex flex-col items-center">
+        <div
           className={cn(
-            "text-sm font-bold",
-            status === "completed" ? "text-[#1A1A2E]" : "text-slate-600",
+            "size-5 rounded-full border-2 flex items-center justify-center z-10 shrink-0",
+            step.completed
+              ? "bg-[#0F3659] border-[#0F3659]"
+              : "bg-white border-slate-300"
           )}
         >
-          {title}
-        </h5>
-        {rightElement}
+          {step.completed && (
+            <CheckCircle2 className="size-3.5 text-white fill-[#0F3659]" />
+          )}
+        </div>
+        {!isLast && <div className="w-0.5 flex-1 bg-slate-100 mt-1" />}
       </div>
-      <p className="text-xs text-slate-400 mt-1">{desc}</p>
-    </div>
-  </div>
-);
 
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
+      <div className="flex-1 pb-5">
+        <div className="flex items-start justify-between gap-2">
+          <h5
+            className={cn(
+              "text-sm font-semibold leading-tight",
+              step.completed ? "text-[#1A1A2E]" : "text-slate-600"
+            )}
+          >
+            {step.title}
+          </h5>
+          {step.link && onViewMap && (
+            <button
+              onClick={onViewMap}
+              className="flex items-center gap-1 text-[#0F3659] text-xs font-semibold underline shrink-0 cursor-pointer hover:opacity-75 transition-opacity"
+            >
+              <MapPin className="size-3" />
+              {step.link.label}
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-slate-400 mt-1 leading-relaxed">{step.description}</p>
+      </div>
+    </div>
+  );
 }
