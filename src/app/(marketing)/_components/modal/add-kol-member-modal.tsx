@@ -12,10 +12,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { kolSteps, useStateContext } from "@/providers/StateProvider";
-import BasicInfoForm from "./kol-member-modal-form/basic-info";
-import BioLanguageInfoForm from "./kol-member-modal-form/bio-language-info";
-import ContactInfoForm from "./kol-member-modal-form/contact-info";
-import MediaNotesInfoForm from "./kol-member-modal-form/media-notes-info";
+import BasicInfoForm from "./kol-member-modal/basic-info";
+import BioLanguageInfoForm from "./kol-member-modal/bio-language-info";
+import ContactInfoForm from "./kol-member-modal/contact-info";
+import MediaNotesInfoForm from "./kol-member-modal/media-notes-info";
 
 const steps: kolSteps[] = [
   "Basic Info",
