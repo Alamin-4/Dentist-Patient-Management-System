@@ -8,23 +8,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-interface RejectPlanModalProps {
+interface NoSurpriseRejectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (reason: string) => void;
-  totalEstimate?: number;
 }
 
-export function RejectPlanModal({
+export function NoSurpriseRejectModal({
   isOpen,
   onClose,
   onConfirm,
-  totalEstimate = 1075,
-}: RejectPlanModalProps) {
+}: NoSurpriseRejectModalProps) {
   const [reason, setReason] = useState("");
-
-  const fee = Math.round(totalEstimate * 0.1 * 100) / 100;
-  const refund = Math.round((totalEstimate - fee) * 100) / 100;
 
   const handleConfirm = () => {
     onConfirm(reason);
@@ -35,10 +30,15 @@ export function RejectPlanModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-lg p-8 gap-6 border-none rounded-3xl shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#1A1A2E] text-left">
-            Reject Treatment Plan?
+          <DialogTitle className="text-2xl font-bold text-[#1A1A2E] text-left leading-snug">
+            Rejected Plan No Surprise Guarantee
           </DialogTitle>
         </DialogHeader>
+
+        <p className="text-sm text-slate-600 leading-relaxed -mt-2">
+          The final price exceeds the 15% leeway. Rejecting will trigger the No
+          Surprise Guarantee and a full refund.
+        </p>
 
         <div className="space-y-2">
           <label className="text-[15px] font-semibold text-[#1A1A2E]">Reason</label>
@@ -50,11 +50,6 @@ export function RejectPlanModal({
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F3659] resize-none"
           />
         </div>
-
-        <p className="text-sm text-[#D97706] leading-relaxed">
-          A 10% Rejection fee (${fee.toLocaleString()}) will be deducted as per policy.
-          You&apos;ll receive ${refund.toLocaleString()} within 5 business days.
-        </p>
 
         <div className="flex items-center gap-3">
           <button
@@ -69,7 +64,7 @@ export function RejectPlanModal({
             onClick={handleConfirm}
             className="flex-1 py-3 rounded-xl bg-[#0F3659] font-bold text-white hover:bg-[#0A2640] transition-colors cursor-pointer"
           >
-            Yes, Reject treatment
+            Yes Reject
           </button>
         </div>
       </DialogContent>
