@@ -19,7 +19,7 @@ export default function DashboardLayout({
 
         <div className="flex flex-1 overflow-hidden">
           {/* Desktop sidebar — always visible on lg+ */}
-          <aside className="hidden h-full border-r lg:block">
+          <aside className="hidden h-full border-r lg:block pt-6">
             <Sidebar />
           </aside>
 
