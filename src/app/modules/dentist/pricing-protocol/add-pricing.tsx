@@ -271,13 +271,13 @@ export default function AddPricing() {
               <button
                 type="button"
                 onClick={() => append({ name: "", pricing: "", notes: "" })}
-                className="h-10 rounded-lg bg-sidebar px-5 text-sm font-semibold text-white transition-colors hover:bg-sidebar/90"
+                className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
               >
                 Add Procedure
               </button>
               <button
                 type="button"
-                className="h-10 rounded-lg border border-sidebar bg-card px-5 text-sm font-semibold text-sidebar transition-colors hover:bg-muted/40"
+                className="h-10 rounded-lg border border-primary bg-card px-5 text-sm font-semibold text-primary transition-colors hover:bg-muted/40"
               >
                 Upload CSV price list
               </button>
@@ -363,7 +363,7 @@ export default function AddPricing() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="h-11 rounded-lg bg-sidebar px-8 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sidebar/90 disabled:opacity-60"
+            className="h-11 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer disabled:opacity-60"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>

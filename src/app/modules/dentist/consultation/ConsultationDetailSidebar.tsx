@@ -17,7 +17,6 @@ export const ConsultationDetailsSidebar = ({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/20 z-40 transition-opacity"
         onClick={onClose}
@@ -141,7 +140,6 @@ export const ConsultationDetailsSidebar = ({
           </div>
         </div>
 
-        {/* Footer Actions - Matches image_00a12b.png */}
         <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
           <button className="flex-1 h-12 rounded-xl border border-red-200 text-red-500 font-bold text-sm hover:bg-red-50 transition-colors">
             Reject
@@ -155,7 +153,6 @@ export const ConsultationDetailsSidebar = ({
   );
 };
 
-// Sub-components for cleaner structure
 const DetailItem = ({ label, value }: { label: string; value: string }) => (
   <div className="space-y-1">
     <p className="text-xs text-[#777779]">{label}</p>

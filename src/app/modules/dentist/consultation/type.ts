@@ -1,4 +1,4 @@
-export type TabType = "Requested" | "Upcoming" | "Completed";
+export type TabType = "Upcoming" | "Active" | "Treatment Estimate";
 
 export interface Consultation {
   id: string;
@@ -13,7 +13,7 @@ export interface Consultation {
 }
 
 export const dummyData: Consultation[] = [
-  // Data for "Requested" Tab (image_9de405.png)
+  // Data for "Upcoming" Tab (image_9de405.png)
   {
     id: "1",
     patientName: "Jacob Smith",
@@ -22,7 +22,7 @@ export const dummyData: Consultation[] = [
     budget: "$1254",
     date: "Wed 24 Jan, 2024",
     timeSlot: "09:00PM",
-    status: "Requested",
+    status: "Upcoming",
   },
   {
     id: "2",
@@ -32,7 +32,7 @@ export const dummyData: Consultation[] = [
     budget: "$1254",
     date: "Wed 24 Jan, 2024",
     timeSlot: "09:00PM",
-    status: "Requested",
+    status: "Upcoming",
   },
   {
     id: "3",
@@ -42,7 +42,7 @@ export const dummyData: Consultation[] = [
     budget: "$1254",
     date: "Wed 24 Jan, 2024",
     timeSlot: "09:00PM",
-    status: "Requested",
+    status: "Upcoming",
   },
 
   // Data for "Upcoming" Tab (image_9ddd1b.png)
@@ -76,7 +76,7 @@ export const dummyData: Consultation[] = [
     budget: "$980",
     date: "Thu 25 Jan, 2024",
     timeSlot: "11:30AM",
-    status: "Completed",
+    status: "Treatment Estimate",
     treatmentPlanStatus: "Not Sent",
   },
   {
@@ -87,7 +87,7 @@ export const dummyData: Consultation[] = [
     budget: "$1,350",
     date: "Fri 26 Jan, 2024",
     timeSlot: "2:00PM",
-    status: "Completed",
+    status: "Treatment Estimate",
     treatmentPlanStatus: "Awaiting response",
   },
   {
@@ -98,7 +98,7 @@ export const dummyData: Consultation[] = [
     budget: "$1,350",
     date: "Fri 26 Jan, 2024",
     timeSlot: "2:00PM",
-    status: "Completed",
+    status: "Treatment Estimate",
     treatmentPlanStatus: "Rejected",
   },
 ];

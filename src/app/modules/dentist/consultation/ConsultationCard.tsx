@@ -1,4 +1,4 @@
-import { X, FileText } from "lucide-react";
+import { X } from "lucide-react";
 import { Consultation, TabType } from "./type";
 
 interface CardProps {
@@ -35,8 +35,7 @@ export const ConsultationCard = ({
 
       <hr className="border-slate-50 mb-4" />
 
-      {/* Treatment Plan Status (Only for Completed Tab - image 257088.png) */}
-      {type === "Completed" && data.treatmentPlanStatus && (
+      {type === "Treatment Estimate" && data.treatmentPlanStatus && (
         <div className="flex justify-between items-center mb-4">
           <span className="text-sm font-bold text-[#111113]">
             Treatment Plan Status
@@ -84,13 +83,7 @@ export const ConsultationCard = ({
           View Details
         </button>
 
-        {type === "Requested" && (
-          <button className="w-11 h-11 border border-red-500 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-50">
-            <X size={20} />
-          </button>
-        )}
-
-        {type === "Upcoming" &&
+        {type === "Active" &&
           (data.id === "5" ? ( // Example logic for different buttons in image 470877.png
             <button className="flex-1 h-11 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:opacity-90">
               Join Meeting
@@ -101,7 +94,7 @@ export const ConsultationCard = ({
             </button>
           ))}
 
-        {type === "Completed" && (
+        {type === "Treatment Estimate" && (
           <button
             onClick={() => CreateTreatmentModalOpen(true)}
             className="flex-1 h-11 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:opacity-90"
