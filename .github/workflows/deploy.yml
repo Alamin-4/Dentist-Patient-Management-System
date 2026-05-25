@@ -6,9 +6,6 @@ on:
       - main
 
 jobs:
-  # ──────────────────────────────────────────────
-  # 1. Build Docker image and push to Docker Hub
-  # ──────────────────────────────────────────────
   docker:
     name: Build & Push Image
     runs-on: ubuntu-latest
@@ -62,18 +59,18 @@ jobs:
             echo "→ Pulling latest image..."
             docker pull "$IMAGE"
 
-            echo "→ Stopping old container (if running)..."
-            docker stop rated-docs-website 2>/dev/null || true
-            docker rm   rated-docs-website 2>/dev/null || true
+            echo "→ Stopping old container..."
+            docker stop rated-docs-website || true
+            docker rm rated-docs-website || true
 
-            echo "→ Starting new container..."
+            echo "→ Running new container..."
             docker run -d \
               --name rated-docs-website \
               --restart unless-stopped \
               -p 80:3000 \
               "$IMAGE"
 
-            echo "→ Removing dangling images..."
+            echo "→ Cleaning up..."
             docker image prune -f
 
-            echo "✓ Deployment complete."
+            echo "✓ Deployment successful"
