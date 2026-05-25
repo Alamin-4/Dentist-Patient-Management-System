@@ -1,8 +1,9 @@
+import BookingManage from "@/app/modules/dentist/booking-manage/booking-manage";
 
-export default function BookingManage() {
+export default function BookingManagePage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800">Booking Manage</h1>
+      <BookingManage />
     </div>
   );
 }

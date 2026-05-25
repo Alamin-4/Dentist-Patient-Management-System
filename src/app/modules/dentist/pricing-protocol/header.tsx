@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useStateContext } from "@/providers/StateProvider";
 import { useRouter } from "next/navigation";
+import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-page-header";
 
 export default function Header() {
   const router = useRouter();
@@ -12,14 +13,10 @@ export default function Header() {
   };
   return (
     <div className="flex items-start justify-between">
-      <div>
-        <h1 className="text-xl lg:text-2xl font-semibold text-gray-800 mb-4">
-          Pricing Protocol
-        </h1>
-        <p className="text-tertiary text-sm lg:text-[16px]">
-          Manage and edit pricing protocols
-        </p>
-      </div>
+      <DashboardPageHeader
+        heading="Pricing Protocol"
+        subHeading="Manage and edit pricing protocols"
+      />
       <div>
         <Button
           className="h-14 px-6 bg-primary text-white lg:text-lg font-semibold cursor-pointer"
