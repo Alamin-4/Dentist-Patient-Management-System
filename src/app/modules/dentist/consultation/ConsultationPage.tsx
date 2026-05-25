@@ -34,6 +34,7 @@ export default function ConsultationPage() {
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabType)}
+        storageKey={tabs[0].id}
       />
 
       {/* Responsive Grid */}

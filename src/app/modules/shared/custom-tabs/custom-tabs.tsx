@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface TabOption {
   id: string;
@@ -12,6 +12,9 @@ interface CustomTabsProps {
   defaultTab?: string;
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
+
+  // NEW
+  storageKey?: string;
 }
 
 export default function CustomTabs({
@@ -19,11 +22,25 @@ export default function CustomTabs({
   defaultTab,
   activeTab,
   onTabChange,
+  storageKey,
 }: CustomTabsProps) {
-  // Fallback to internal state if activeTab isn't controlled by the parent component
-  const [internalActiveTab, setInternalActiveTab] = useState(
-    defaultTab || tabs[0]?.id || "",
-  );
+  const [internalActiveTab, setInternalActiveTab] = useState("");
+
+  // Load saved tab from localStorage
+  useEffect(() => {
+    if (!storageKey) {
+      setInternalActiveTab(defaultTab || tabs[0]?.id || "");
+      return;
+    }
+
+    const savedTab = localStorage.getItem(storageKey);
+
+    if (savedTab) {
+      setInternalActiveTab(savedTab);
+    } else {
+      setInternalActiveTab(defaultTab || tabs[0]?.id || "");
+    }
+  }, [storageKey, defaultTab, tabs]);
 
   const currentActiveTab =
     activeTab !== undefined ? activeTab : internalActiveTab;
@@ -32,7 +49,12 @@ export default function CustomTabs({
     if (onTabChange) {
       onTabChange(tabId);
     }
-    // Update local state if the component is being used in an uncontrolled manner
+
+    // Save tab to localStorage
+    if (storageKey) {
+      localStorage.setItem(storageKey, tabId);
+    }
+
     if (activeTab === undefined) {
       setInternalActiveTab(tabId);
     }
@@ -57,9 +79,8 @@ export default function CustomTabs({
             >
               <span>{tab.label}</span>
 
-              {/* Active Underline Indicator */}
               {isActive && (
-                <div className="absolute bottom-0 left-0 h-0.75 w-full rounded-full bg-[#163E5C] transition-all" />
+                <div className="absolute bottom-0 left-0 h-0.75 w-full rounded-full bg-[#163E5C]" />
               )}
             </button>
           );

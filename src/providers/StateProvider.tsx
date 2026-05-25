@@ -42,10 +42,7 @@ interface StateContextType {
   setKolModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   addKolStep: kolSteps;
   setAddKolStep: React.Dispatch<React.SetStateAction<kolSteps>>;
-  activeTabToDentistBooking: dentistBookingTabs;
-  setActiveTabToDentistBooking: React.Dispatch<
-    React.SetStateAction<dentistBookingTabs>
-  >;
+
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   isNewestFirst: boolean;
@@ -84,8 +81,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // tabbar state for dentist booking manage page
 
-  const [activeTabToDentistBooking, setActiveTabToDentistBooking] =
-    useState<dentistBookingTabs>("In Progress");
   const [searchQuery, setSearchQuery] = useState("");
   const [isNewestFirst, setIsNewestFirst] = useState(true);
 
@@ -122,8 +117,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setKolModalOpen,
     addKolStep,
     setAddKolStep,
-    activeTabToDentistBooking,
-    setActiveTabToDentistBooking,
     searchQuery,
     setSearchQuery,
     isNewestFirst,
