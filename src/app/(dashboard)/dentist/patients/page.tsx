@@ -1,7 +1,9 @@
-export default function PatientsManage() {
+import PatientManage from "@/app/modules/dentist/patients-manage/patient-manage";
+
+export default function PatientsManagePage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800">Patients Manage</h1>
+      <PatientManage />
     </div>
   );
 }

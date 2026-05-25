@@ -34,9 +34,6 @@ export default function TabBarAndSearch() {
       <div className="flex gap-10 border-b border-slate-100">
         <CustomTabs
           tabs={tabs}
-          activeTab={activeTab}
-          defaultTab={tabs[0].id}
-          onTabChange={setActiveTab}
           storageKey="booking-tabs"
         />
       </div>
