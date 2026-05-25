@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/context/sidebar-context";
+import { useStateContext } from "@/providers/StateProvider";
 
 interface NavItem {
   icon: LucideIcon;
@@ -48,14 +49,30 @@ const patientNav: NavGroup[] = [
   {
     items: [
       { icon: LayoutDashboard, label: "Overview", href: "/patient" },
-      { icon: Search, label: "Find Verified Dentist", href: "/patient/find-dentist" },
+      {
+        icon: Search,
+        label: "Find Verified Dentist",
+        href: "/patient/find-dentist",
+      },
       { icon: CalendarDays, label: "My Bookings", href: "/patient/bookings" },
       { icon: FolderOpen, label: "Document Vault", href: "/patient/documents" },
       { icon: Activity, label: "My Results", href: "/patient/results" },
       { icon: Users, label: "Referrals", href: "/patient/referrals" },
-      { icon: Plane, label: "Travel Checklist", href: "/patient/travel-checklist" },
-      { icon: BookOpen, label: "KOL Directory", href: "/patient/kol-directory" },
-      { icon: Settings, label: "Profile & Settings", href: "/patient/settings" },
+      {
+        icon: Plane,
+        label: "Travel Checklist",
+        href: "/patient/travel-checklist",
+      },
+      {
+        icon: BookOpen,
+        label: "KOL Directory",
+        href: "/patient/kol-directory",
+      },
+      {
+        icon: Settings,
+        label: "Profile & Settings",
+        href: "/patient/settings",
+      },
     ],
   },
 ];
@@ -65,7 +82,11 @@ const dentistNav: NavGroup[] = [
     items: [
       { icon: LayoutDashboard, label: "Dashboard", href: "/dentist" },
       { icon: User, label: "Profile", href: "/dentist/profile" },
-      { icon: Tag, label: "Pricing Protocols", href: "/dentist/pricing-protocols" },
+      {
+        icon: Tag,
+        label: "Pricing Protocols",
+        href: "/dentist/pricing-protocols",
+      },
       { icon: Video, label: "Consultations", href: "/dentist/consultations" },
       { icon: Calendar, label: "Bookings", href: "/dentist/bookings" },
       { icon: Users, label: "Patients", href: "/dentist/patients" },
@@ -87,7 +108,12 @@ const adminNav: NavGroup[] = [
       { icon: Stethoscope, label: "Dentists", href: "/admin/dentists" },
       { icon: Users, label: "Patients", href: "/admin/patients" },
       { icon: Calendar, label: "Bookings", href: "/admin/bookings" },
-      { icon: ShieldCheck, label: "Verification Queue", href: "/admin/verification-queue", badge: 12 },
+      {
+        icon: ShieldCheck,
+        label: "Verification Queue",
+        href: "/admin/verification-queue",
+        badge: 12,
+      },
     ],
   },
   {
@@ -106,13 +132,25 @@ const adminNav: NavGroup[] = [
   },
   {
     label: "DIRECTORY",
-    items: [{ icon: Globe, label: "KOL Management", href: "/admin/kol-management" }],
+    items: [
+      { icon: Globe, label: "KOL Management", href: "/admin/kol-management" },
+    ],
   },
   {
     label: "TRUST & SAFETY",
     items: [
-      { icon: ShieldAlert, label: "Anti-Collusion", href: "/admin/anti-collusion", badge: 7 },
-      { icon: Globe, label: "SEO Review Pages", href: "/admin/seo-review-pages", badge: 4 },
+      {
+        icon: ShieldAlert,
+        label: "Anti-Collusion",
+        href: "/admin/anti-collusion",
+        badge: 7,
+      },
+      {
+        icon: Globe,
+        label: "SEO Review Pages",
+        href: "/admin/seo-review-pages",
+        badge: 4,
+      },
     ],
   },
   {
@@ -146,8 +184,10 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex h-full w-64 flex-col",
+        "flex h-full w-64 flex-col pt-4",
         isAdmin ? "bg-[#163E5C]" : "bg-white",
+
+        pathname === "/dentist/add-pricing" && "hidden", // Hide sidebar on Add Pricing page
       )}
     >
       {/* Mobile close button */}

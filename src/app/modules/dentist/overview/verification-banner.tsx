@@ -58,7 +58,7 @@ export function VerificationBanner() {
           </div>
 
           <div className="mt-8">
-            <Button className="w-full rounded-xl bg-sidebar-primary hover:bg-sidebar-primary/90 text-white" onClick={() => router.push('/dashboard/dentist/verification') }>
+            <Button size="lg" className="w-full h-14 rounded-xl bg-sidebar-primary hover:bg-sidebar-primary/90 text-white" onClick={() => router.push('/dentist/verification') }>
               Start Verification
             </Button>
           </div>
