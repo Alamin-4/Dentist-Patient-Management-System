@@ -10,7 +10,7 @@ import { HamburgerButton } from "./hamburger-button";
 
 export function Navbar() {
   return (
-    <header className="border-b bg-white w-full">
+    <header className="border-b border-border/80 bg-white w-full">
       <nav className="px-4 lg:px-8 flex h-20 items-center justify-between">
         <div className="flex items-center gap-3">
           <HamburgerButton />

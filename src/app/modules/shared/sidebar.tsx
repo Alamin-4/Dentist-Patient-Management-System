@@ -146,7 +146,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex h-full w-64 flex-col",
+        "flex h-full w-64 flex-col pt-4",
         isAdmin ? "bg-[#163E5C]" : "bg-white",
       )}
     >

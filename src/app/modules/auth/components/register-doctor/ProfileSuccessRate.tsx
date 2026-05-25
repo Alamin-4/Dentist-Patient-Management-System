@@ -30,7 +30,7 @@ export function EmailSuccessState() {
       {/* Action Button */}
       <Button
         className="w-full h-14 bg-[#163E5C] hover:bg-[#113149] text-white text-lg font-semibold rounded-xl transition-all shadow-md active:scale-[0.98]"
-        onClick={() => router.push("/dashboard/dentist/profile")}
+        onClick={() => router.push("/dentist/profile")}
       >
         Go To Dashboard
       </Button>
