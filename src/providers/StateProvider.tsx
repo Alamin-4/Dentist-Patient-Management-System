@@ -5,7 +5,11 @@ import { initializeDentistData } from "@/lib/storage/dentistData";
 import { initializeBookingData } from "@/lib/storage/bookingService";
 import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 
-export type kolSteps = "Basic Info" | "Bio & Languages" | "Contact" | "Media & Notes";
+export type kolSteps =
+  | "Basic Info"
+  | "Bio & Languages"
+  | "Contact"
+  | "Media & Notes";
 
 interface StateContextType {
   verificationStatus: "idle" | "match" | "no-match";

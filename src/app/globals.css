@@ -26,6 +26,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-yellow: var(--yellow);
+  --color-tertiary: var(--tertiary);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -64,6 +65,7 @@
   --muted: #edf3f8;
   --muted-foreground: #617084;
   --accent: #d9e9f6;
+  --tertiary: #777779;
   --accent-foreground: #0e3e65;
   --destructive: #c83c51;
   --border: #d5e1ea;
