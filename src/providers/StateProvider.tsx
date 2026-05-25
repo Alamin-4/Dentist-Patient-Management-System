@@ -77,7 +77,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     null,
   );
   const [schedule, setSchedule] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState("estimate");
+  const [activeTab, setActiveTab] = useState("");
   const [dentistsToCompare, setDentistsToCompare] = useState<Dentist[]>([]);
   const [kolModalOpen, setKolModalOpen] = useState(false);
   const [addKolStep, setAddKolStep] = useState<kolSteps>("Basic Info");

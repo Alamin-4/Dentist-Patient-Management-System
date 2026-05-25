@@ -35,6 +35,7 @@ export default function TabBarAndSearch() {
         <CustomTabs
           tabs={tabs}
           activeTab={activeTab}
+          defaultTab={tabs[0].id}
           onTabChange={setActiveTab}
         />
       </div>
