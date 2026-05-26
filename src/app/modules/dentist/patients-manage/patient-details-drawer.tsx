@@ -1,22 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import type { PatientCardItem } from "./patient-card";
+import {
+  getTreatmentPlanBadgeClasses,
+  type PatientRecord,
+} from "./patients-data";
 
 type ActiveTab = "patient-info" | "treatment-plan";
-
-const TREATMENT_ITEMS = [
-  { label: "Initial examination", price: "Included" },
-  { label: "CBCT scan (if needed)", price: "$693" },
-  { label: "Temporary prosthesis", price: "$1,039" },
-  { label: "Temporary prosthesis", price: "$1,200" },
-  { label: "Final fitting & adjustments", price: "$346" },
-];
-
-const ESTIMATE_TOTAL = "$1,075";
 
 function getInitials(name: string) {
   return name
@@ -26,13 +19,6 @@ function getInitials(name: string) {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
-}
-
-function statusBadgeClass(status: PatientCardItem["treatmentPlan"]) {
-  if (status === "Rejected") return "border-rose-300 bg-rose-50 text-rose-600";
-  if (status === "Not Sent")
-    return "border-slate-300 bg-slate-50 text-slate-600";
-  return "border-amber-300 bg-amber-50 text-amber-600";
 }
 
 function InfoCard({
@@ -72,7 +58,7 @@ function InfoField({
 }
 
 interface PatientDetailsDrawerProps {
-  patient: PatientCardItem | null;
+  patient: PatientRecord | null;
   onClose: () => void;
 }
 
@@ -82,6 +68,13 @@ export default function PatientDetailsDrawer({
 }: PatientDetailsDrawerProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("patient-info");
   const [additionalNotes, setAdditionalNotes] = useState("");
+
+  useEffect(() => {
+    if (!patient) {
+      setActiveTab("patient-info");
+      setAdditionalNotes("");
+    }
+  }, [patient]);
 
   const tabs: Array<{ id: ActiveTab; label: string }> = [
     { id: "patient-info", label: "Patient Info" },
@@ -104,7 +97,6 @@ export default function PatientDetailsDrawer({
         className="flex w-full max-h-[calc(100vh-2rem)] my-auto rounded-2xl overflow-hidden flex-col gap-0 border-l border-border bg-card p-0 mx-6 sm:max-w-md data-[side=right]:w-full data-[side=right]:sm:max-w-md"
       >
         <header className="shrink-0 border-b border-border bg-card px-5 pt-5 pb-0">
-          {/* Title row */}
           <div className="mb-4 flex items-center justify-between">
             <SheetTitle className="text-sm font-medium text-muted-foreground">
               Treatment Plan
@@ -119,7 +111,6 @@ export default function PatientDetailsDrawer({
             </button>
           </div>
 
-          {/* Tabs */}
           <div className="flex">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -150,7 +141,7 @@ export default function PatientDetailsDrawer({
               <div className="border-b border-border px-5 py-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-500">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
                       {getInitials(patient.name)}
                     </div>
                     <div className="min-w-0">
@@ -164,7 +155,7 @@ export default function PatientDetailsDrawer({
                   </div>
 
                   <span
-                    className={`mt-0.5 shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${statusBadgeClass(
+                    className={`mt-0.5 shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${getTreatmentPlanBadgeClasses(
                       patient.treatmentPlan,
                     )}`}
                   >
@@ -172,14 +163,13 @@ export default function PatientDetailsDrawer({
                   </span>
                 </div>
 
-                {/* Stats */}
                 <div className="mt-4 grid grid-cols-3 divide-x divide-border">
                   <div className="pr-3">
                     <p className="text-xs text-muted-foreground">
                       Treatment Procedure
                     </p>
                     <p className="mt-0.5 text-sm font-semibold text-foreground">
-                      Dental Implants
+                      {patient.procedure}
                     </p>
                   </div>
                   <div className="px-3">
@@ -201,10 +191,26 @@ export default function PatientDetailsDrawer({
                 </div>
               </div>
 
-              {/* ── Patient Info tab ── */}
+              {(patient.treatmentNote || patient.consultationSummary) && (
+                <div className="border-b border-border px-5 py-4">
+                  <div
+                    className={`rounded-xl border px-4 py-3 text-sm font-medium ${
+                      patient.treatmentPlan === "rejected"
+                        ? "border-rose-200 bg-rose-50 text-rose-600"
+                        : patient.treatmentPlan === "awaiting response"
+                          ? "border-amber-200 bg-amber-50 text-amber-700"
+                          : patient.treatmentPlan === "accepted"
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-slate-200 bg-slate-50 text-slate-600"
+                    }`}
+                  >
+                    {patient.treatmentNote ?? patient.consultationSummary}
+                  </div>
+                </div>
+              )}
+
               {activeTab === "patient-info" && (
                 <div className="space-y-3 p-4">
-                  {/* Schedule Details */}
                   <InfoCard title="Schedule Details">
                     <div className="grid grid-cols-2 divide-x divide-border">
                       <InfoField label="Date" value={patient.schedule.date} />
@@ -212,7 +218,6 @@ export default function PatientDetailsDrawer({
                     </div>
                   </InfoCard>
 
-                  {/* Dental History */}
                   <InfoCard title="Dental History">
                     <div className="grid grid-cols-2 divide-x divide-border border-b border-border">
                       <InfoField
@@ -229,7 +234,6 @@ export default function PatientDetailsDrawer({
                     </div>
                   </InfoCard>
 
-                  {/* Media */}
                   <InfoCard title="Media">
                     <div className="grid grid-cols-3 gap-3 p-4">
                       {patient.media.map((item) => (
@@ -255,12 +259,9 @@ export default function PatientDetailsDrawer({
                 </div>
               )}
 
-              {/* ── Treatment Plan tab ── */}
               {activeTab === "treatment-plan" && (
                 <div className="space-y-4 p-4">
-                  {/* Procedure breakdown */}
                   <InfoCard title="">
-                    {/* Header row */}
                     <div className="flex items-center justify-between border-b border-border px-4 py-3">
                       <p className="text-sm font-semibold text-foreground">
                         Procedure breakdown
@@ -270,10 +271,9 @@ export default function PatientDetailsDrawer({
                       </p>
                     </div>
 
-                    {/* Line items */}
-                    {TREATMENT_ITEMS.map((item, i) => (
+                    {patient.estimateBreakdown.map((item) => (
                       <div
-                        key={i}
+                        key={item.label}
                         className="flex items-center justify-between border-b border-border px-4 py-3 last:border-b-0"
                       >
                         <p className="text-sm text-muted-foreground">
@@ -285,18 +285,51 @@ export default function PatientDetailsDrawer({
                       </div>
                     ))}
 
-                    {/* Estimate total */}
                     <div className="flex items-center justify-between border-t border-border px-4 py-3">
-                      <p className="text-sm font-semibold text-sidebar">
+                      <p className="text-sm font-semibold text-primary">
                         Estimate amount
                       </p>
-                      <p className="text-sm font-bold text-sidebar">
-                        {ESTIMATE_TOTAL}
+                      <p className="text-sm font-bold text-primary">
+                        {patient.estimateTotal}
                       </p>
                     </div>
                   </InfoCard>
 
-                  {/* Additional notes */}
+                  {patient.finalStatusTag && (
+                    <InfoCard title="Final treatment plan">
+                      <div className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
+                        {patient.finalStatusTag}
+                      </div>
+                      {patient.finalBreakdown.length > 0 ? (
+                        patient.finalBreakdown.map((item) => (
+                          <div
+                            key={item.label}
+                            className="flex items-center justify-between border-b border-border px-4 py-3 last:border-b-0"
+                          >
+                            <p className="text-sm text-muted-foreground">
+                              {item.label}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.price}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="px-4 py-4 text-sm text-muted-foreground">
+                          No final plan has been added yet.
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between border-t border-border px-4 py-3">
+                        <p className="text-sm font-semibold text-primary">
+                          Final total
+                        </p>
+                        <p className="text-sm font-bold text-primary">
+                          {patient.finalTotal}
+                        </p>
+                      </div>
+                    </InfoCard>
+                  )}
+
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">
                       Any other information to share?

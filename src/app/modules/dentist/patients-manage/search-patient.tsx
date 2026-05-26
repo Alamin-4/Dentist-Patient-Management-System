@@ -10,33 +10,43 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface FilterSectionProps {
+  searchQuery: string;
+  selectedProcedure: string;
+  selectedStatus: string;
+  procedureOptions?: string[];
+  statusOptions?: string[];
   onSearchChange?: (value: string) => void;
   onProcedureSelect?: (procedure: string) => void;
   onStatusSelect?: (status: string) => void;
 }
 
 export default function FilterSection({
+  searchQuery,
+  selectedProcedure,
+  selectedStatus,
+  procedureOptions = [
+    "All Procedures",
+    "Dental Implants",
+    "All-on-6 Dental Implants",
+    "Bone Grafting & Sinus Lift",
+    "Invisalign Clear Aligners",
+    "6 Porcelain Veneers",
+  ],
+  statusOptions = ["All Statuses", "In Progress", "Completed", "Cancelled"],
   onSearchChange,
   onProcedureSelect,
   onStatusSelect,
 }: FilterSectionProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProcedure, setSelectedProcedure] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchQuery(value);
     if (onSearchChange) onSearchChange(value);
   };
 
   const handleProcedureChange = (procedure: string) => {
-    setSelectedProcedure(procedure);
     if (onProcedureSelect) onProcedureSelect(procedure);
   };
 
   const handleStatusChange = (status: string) => {
-    setSelectedStatus(status);
     if (onStatusSelect) onStatusSelect(status);
   };
 
@@ -67,34 +77,19 @@ export default function FilterSection({
               align="end"
               className="w-48 bg-white border border-[#E2E8F0] rounded-xl shadow-md z-50"
             >
-              <DropdownMenuItem
-                onClick={() => handleProcedureChange("")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                All Procedures{" "}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleProcedureChange("Dental Implants")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                Dental Implants{" "}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleProcedureChange("Teeth Whitening")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                Teeth Whitening{" "}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleProcedureChange("Orthodontics")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                Orthodontics{" "}
-              </DropdownMenuItem>
+              {procedureOptions.map((option) => (
+                <DropdownMenuItem
+                  key={option}
+                  onClick={() =>
+                    handleProcedureChange(
+                      option === "All Procedures" ? "" : option,
+                    )
+                  }
+                  className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
+                >
+                  {option}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -108,34 +103,17 @@ export default function FilterSection({
               align="end"
               className="w-40 bg-white border border-[#E2E8F0] rounded-xl shadow-md z-50"
             >
-              <DropdownMenuItem
-                onClick={() => handleStatusChange("")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                All Statuses{" "}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleStatusChange("In Escrow")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                In Escrow{" "}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleStatusChange("Completed")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                Completed{" "}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleStatusChange("Rejected")}
-                className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
-              >
-                {" "}
-                Rejected{" "}
-              </DropdownMenuItem>
+              {statusOptions.map((option) => (
+                <DropdownMenuItem
+                  key={option}
+                  onClick={() =>
+                    handleStatusChange(option === "All Statuses" ? "" : option)
+                  }
+                  className="text-sm text-[#475569] focus:bg-slate-50 cursor-pointer py-2 px-3"
+                >
+                  {option}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

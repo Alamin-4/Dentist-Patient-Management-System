@@ -1,0 +1,1182 @@
+[
+  {
+    "patient_info": {
+      "name": "Amara Okafor",
+      "image": "https://randomuser.me/api/portraits/women/44.jpg",
+      "treatment_plan": "awaiting response",
+      "email": "amara.o@sample.com",
+      "procedure": "Bone Grafting & Sinus Lift",
+      "status": "In Progress",
+      "payment_status": "Pending",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 650,
+        "bone_graft_material": 1800,
+        "sinus_lift_procedure": 2200,
+        "post_op_medications": 150
+      },
+      "estimate_amount_total": 4800
+    },
+    "final_treatment_plan": {
+      "status_tag": "Awaiting Patient Approval",
+      "procedure_breakdown": {},
+      "final_total": 0
+    },
+    "patient_timeline": [
+      {
+        "event": "Initial Consultation",
+        "date": "2026-05-20",
+        "details": "Virtual consultation completed"
+      },
+      {
+        "event": "Estimate Sent",
+        "date": "2026-05-22",
+        "details": "Waiting for patient to review and secure escrow funds"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Proposed_BoneGraft_Plan.pdf",
+        "file_size": "1.9 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Liam Henderson",
+      "image": "https://randomuser.me/api/portraits/men/32.jpg",
+      "treatment_plan": "rejected",
+      "email": "l.henderson@sample.com",
+      "procedure": "Invisalign Clear Aligners",
+      "status": "Cancelled",
+      "payment_status": "Refunded",
+      "final_budget": 3500
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "3d_digital_scan": 400,
+        "aligner_sets_full_course": 3100
+      },
+      "estimate_amount_total": 3500
+    },
+    "final_treatment_plan": {
+      "status_tag": "Rejected by Patient",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "3d_digital_scan": 400,
+        "aligner_sets_full_course": 3100,
+        "required_extractions_addition": 900
+      },
+      "final_total": 4400
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-01",
+        "details": "$3500 held in escrow"
+      },
+      {
+        "event": "Day 1 arrival, Clinic Scan",
+        "date": "2026-05-05",
+        "details": "Scan revealed extractions needed before alignment"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-05-06",
+        "details": "Price increased by $900 for extractions"
+      },
+      {
+        "event": "Plan Rejected",
+        "date": "2026-05-07",
+        "details": "Patient declined extractions and requested a refund"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Revised_Invisalign_Plan.pdf",
+        "file_size": "2.1 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Chloe Dubois",
+      "image": "https://randomuser.me/api/portraits/women/12.jpg",
+      "treatment_plan": "not-send",
+      "email": "chloe.dubois@sample.com",
+      "procedure": "6 Porcelain Veneers",
+      "status": "On Hold",
+      "payment_status": "Unpaid",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "mock_up_smile_design": 450,
+        "porcelain_veneers_x6": 5400
+      },
+      "estimate_amount_total": 5850
+    },
+    "final_treatment_plan": {
+      "status_tag": "Drafting",
+      "procedure_breakdown": {},
+      "final_total": 0
+    },
+    "patient_timeline": [
+      {
+        "event": "Inquiry Submitted",
+        "date": "2026-05-24",
+        "details": "Patient uploaded local dental X-rays"
+      },
+      {
+        "event": "Estimate Generated",
+        "date": "2026-05-25",
+        "details": "Draft created, awaiting clinic head approval before sending"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": null
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Carlos Mendez",
+      "image": "https://randomuser.me/api/portraits/men/81.jpg",
+      "treatment_plan": "accepted",
+      "email": "carlos.m@sample.com",
+      "procedure": "All-on-6 Dental Implants",
+      "status": "Completed",
+      "payment_status": "Paid",
+      "final_budget": 16000
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 700,
+        "temporary_fixed_bridge": 2300,
+        "final_zirconia_bridge": 12500,
+        "extractions_and_cleanup": 500
+      },
+      "estimate_amount_total": 16000
+    },
+    "final_treatment_plan": {
+      "status_tag": "Accepted & Confirmed",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 700,
+        "temporary_fixed_bridge": 2300,
+        "final_zirconia_bridge": 12500,
+        "extractions_and_cleanup": 500
+      },
+      "final_total": 16000
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-04-10",
+        "details": "$16000 held in escrow"
+      },
+      {
+        "event": "Patient in Travel",
+        "date": "2026-04-14",
+        "details": "Arrived at destination hotel"
+      },
+      {
+        "event": "Final Treatment Plan Confirm",
+        "date": "2026-04-15",
+        "details": "Patient signed and accepted final matching breakdown"
+      },
+      {
+        "event": "Treatment Done",
+        "date": "2026-04-22",
+        "details": "Final bridge successfully attached"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 16000,
+      "attached_document": {
+        "file_name": "AllOn6_Final_Report.pdf",
+        "file_size": "4.2 MB"
+      }
+    },
+    "review": {
+      "text": "Accepting the plan online made everything fast. The actual surgery went exactly according to the initial estimate without surprise fees.",
+      "ratings": {
+        "communication": 4.9,
+        "value_for_money": 5.0,
+        "follow_through": 5.0
+      }
+    }
+  },
+  {
+    "patient_info": {
+      "name": "Yuki Tanaka",
+      "image": "https://randomuser.me/api/portraits/women/68.jpg",
+      "treatment_plan": "awaiting response",
+      "email": "yuki.t@sample.com",
+      "procedure": "Single Implant & Porcelain Crown",
+      "status": "In Progress",
+      "payment_status": "Partial",
+      "final_budget": 2100
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 600,
+        "titanium_implant_fixture": 1200,
+        "healing_abutment": 300
+      },
+      "estimate_amount_total": 2100
+    },
+    "final_treatment_plan": {
+      "status_tag": "Awaiting Patient Approval",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 600,
+        "titanium_implant_fixture": 1200,
+        "healing_abutment": 300,
+        "unexpected_socket_preservation": 450
+      },
+      "final_total": 2550
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-18",
+        "details": "$2100 held in escrow"
+      },
+      {
+        "event": "Day 1 arrival, Clinic Scan",
+        "date": "2026-05-22",
+        "details": "Scan showed low bone density around extraction socket"
+      },
+      {
+        "event": "Updated Treatment Plan Sent",
+        "date": "2026-05-23",
+        "details": "Awaiting patient response for socket preservation fee ($450)"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Socket_Preservation_Justification.pdf",
+        "file_size": "1.5 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "David Miller",
+      "image": "https://randomuser.me/api/portraits/men/45.jpg",
+      "treatment_plan": "rejected",
+      "email": "david.m@sample.com",
+      "procedure": "Periodontal Laser Therapy",
+      "status": "Cancelled",
+      "payment_status": "Refunded",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "deep_scaling_root_planing": 800,
+        "laser_pocket_disinfection": 1400
+      },
+      "estimate_amount_total": 2200
+    },
+    "final_treatment_plan": {
+      "status_tag": "Rejected by Patient",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "deep_scaling_root_planing": 800,
+        "laser_pocket_disinfection": 1400,
+        "antibiotic_arrest_spheres_addition": 600
+      },
+      "final_total": 2800
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-10",
+        "details": "$2200 held in escrow"
+      },
+      {
+        "event": "Clinical Examination",
+        "date": "2026-05-12",
+        "details": "Severe pocket depths required localized antibiotic spheres"
+      },
+      {
+        "event": "Plan Rejected",
+        "date": "2026-05-13",
+        "details": "Patient decided to postpone additional care and requested escrow refund"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": null
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Sofia Rossi",
+      "image": "https://randomuser.me/api/portraits/women/29.jpg",
+      "treatment_plan": "not-send",
+      "email": "sofia.rossi@sample.com",
+      "procedure": "Teeth Whitening & Bonding",
+      "status": "Draft",
+      "payment_status": "Unpaid",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "in_office_laser_whitening": 650,
+        "composite_bonding_x2": 800
+      },
+      "estimate_amount_total": 1450
+    },
+    "final_treatment_plan": {
+      "status_tag": "Awaiting Lab Pricing",
+      "procedure_breakdown": {},
+      "final_total": 0
+    },
+    "patient_timeline": [
+      {
+        "event": "Online Registration",
+        "date": "2026-05-25",
+        "details": "Patient submitted photos of front teeth"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": null
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Ahmed Mansoor",
+      "image": "https://randomuser.me/api/portraits/men/19.jpg",
+      "treatment_plan": "accepted",
+      "email": "ahmed.m@sample.com",
+      "procedure": "Full Arch Bridge Restorations",
+      "status": "Completed",
+      "payment_status": "Paid",
+      "final_budget": 9800
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 700,
+        "bridge_framework_milling": 4500,
+        "zirconia_layering": 4600
+      },
+      "estimate_amount_total": 9800
+    },
+    "final_treatment_plan": {
+      "status_tag": "Accepted (Exact Match)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 700,
+        "bridge_framework_milling": 4500,
+        "zirconia_layering": 4600
+      },
+      "final_total": 9800
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-04-01",
+        "details": "$9800 held in escrow"
+      },
+      {
+        "event": "Patient in Travel",
+        "date": "2026-04-04",
+        "details": "Airport pickup coordinated"
+      },
+      {
+        "event": "Final Treatment Plan Confirm",
+        "date": "2026-04-05",
+        "details": "Patient accepted plan via digital portal"
+      },
+      {
+        "event": "Treatment Done",
+        "date": "2026-04-12",
+        "details": "All restorations successfully cemented"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 9800,
+      "attached_document": {
+        "file_name": "Prosthetic_Lab_Release.pdf",
+        "file_size": "2.9 MB"
+      }
+    },
+    "review": {
+      "text": "Extremely clear dashboard layout. I knew exactly what steps were left while traveling abroad for my bridge work.",
+      "ratings": {
+        "communication": 5.0,
+        "value_for_money": 4.8,
+        "follow_through": 5.0
+      }
+    }
+  },
+  {
+    "patient_info": {
+      "name": "Fatima Al-Sayed",
+      "image": "https://randomuser.me/api/portraits/women/50.jpg",
+      "treatment_plan": "accepted",
+      "email": "fatima.as@sample.com",
+      "procedure": "Implant-Supported Dentures (Lower Arch)",
+      "status": "In Progress",
+      "payment_status": "Paid",
+      "final_budget": 8900
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 700,
+        "mini_implants_x4": 4000,
+        "overdenture_stabilization": 3800,
+        "soft_liner_modifications": 400
+      },
+      "estimate_amount_total": 8900
+    },
+    "final_treatment_plan": {
+      "status_tag": "Accepted (Exact Match)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 700,
+        "mini_implants_x4": 4000,
+        "overdenture_stabilization": 3800,
+        "soft_liner_modifications": 400
+      },
+      "final_total": 8900
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-10",
+        "details": "$8900 held in escrow"
+      },
+      {
+        "event": "Patient in Travel",
+        "date": "2026-05-14",
+        "details": "Hotel check-in confirmed"
+      },
+      {
+        "event": "Day 1 arrival, CBCT examination",
+        "date": "2026-05-15",
+        "details": "Bone density optimal for mini implants"
+      },
+      {
+        "event": "Final Treatment Plan Confirm",
+        "date": "2026-05-15",
+        "details": "Digital agreement signed by patient"
+      },
+      {
+        "event": "Treatment Done",
+        "date": null,
+        "details": "Implants placed; awaiting osseointegration window before final loading"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 4700,
+      "attached_document": {
+        "file_name": "Surgical_Placement_LowerArch.pdf",
+        "file_size": "3.4 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Oliver Hansen",
+      "image": "https://randomuser.me/api/portraits/men/62.jpg",
+      "treatment_plan": "rejected",
+      "email": "oliver.h@sample.com",
+      "procedure": "Full Mouth Rehabilitation",
+      "status": "Cancelled",
+      "payment_status": "Refunded",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 693,
+        "segmental_osteotomy": 5500,
+        "orthodontic_decompensation": 4200
+      },
+      "estimate_amount_total": 10393
+    },
+    "final_treatment_plan": {
+      "status_tag": "Rejected due to Scope Increase",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "cbct_scan": 693,
+        "segmental_osteotomy": 5500,
+        "orthodontic_decompensation": 4200,
+        "general_anesthesia_facility_fee": 2500,
+        "overnight_icu_monitoring": 1800
+      },
+      "final_total": 14693
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-04-20",
+        "details": "$10393 held in escrow"
+      },
+      {
+        "event": "Day 1 arrival, Maxillofacial Consultation",
+        "date": "2026-04-25",
+        "details": "Airway evaluation required surgical setting adjustment"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-04-26",
+        "details": "Hospital and anesthesia additions sent to portal"
+      },
+      {
+        "event": "Plan Rejected",
+        "date": "2026-04-27",
+        "details": "Patient opted out due to sudden budget variance; full escrow refund processed"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Anesthesia_Risk_Assessment.pdf",
+        "file_size": "5.1 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Zoe Kastner",
+      "image": "https://randomuser.me/api/portraits/women/15.jpg",
+      "treatment_plan": "not-send",
+      "email": "zoe.k@sample.com",
+      "procedure": "Periodontal Regeneration Therapy",
+      "status": "Awaiting Lab Review",
+      "payment_status": "Unpaid",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "microbiome_dna_testing": 320,
+        "enamel_matrix_derivative_application": 1900,
+        "guided_tissue_regeneration_membrane": 1400
+      },
+      "estimate_amount_total": 3620
+    },
+    "final_treatment_plan": {
+      "status_tag": "Pending DNA Lab Results",
+      "procedure_breakdown": {},
+      "final_total": 0
+    },
+    "patient_timeline": [
+      {
+        "event": "Digital Intake Submitted",
+        "date": "2026-05-22",
+        "details": "Medical history flags mild Type 2 Diabetes"
+      },
+      {
+        "event": "Saliva Swab Received",
+        "date": "2026-05-24",
+        "details": "Sent to pathology lab to finalize active bacterial targeting specs"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": null
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Jean-Pierre Laurent",
+      "image": "https://randomuser.me/api/portraits/men/88.jpg",
+      "treatment_plan": "awaiting response",
+      "email": "jp.laurent@sample.com",
+      "procedure": "CAD/CAM Zirconia Inlays",
+      "status": "In Progress",
+      "payment_status": "Partial",
+      "final_budget": 2400
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "digital_optical_impression": 300,
+        "zirconia_inlays_x3": 2100
+      },
+      "estimate_amount_total": 2400
+    },
+    "final_treatment_plan": {
+      "status_tag": "Revision Sent (Under Budget)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "digital_optical_impression": 300,
+        "zirconia_inlays_x2": 1400,
+        "composite_filling_alternative": 350
+      },
+      "final_total": 2050
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-19",
+        "details": "$2400 held in escrow"
+      },
+      {
+        "event": "Clinical Scan",
+        "date": "2026-05-23",
+        "details": "Tooth #14 required standard filling instead of full inlay"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-05-24",
+        "details": "Awaiting approval for lower-cost updated modification ($350 savings)"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Modified_Restoration_Map.pdf",
+        "file_size": "1.7 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Maya Lin",
+      "image": "https://randomuser.me/api/portraits/women/82.jpg",
+      "treatment_plan": "accepted",
+      "email": "maya.lin@sample.com",
+      "procedure": "Cosmetic Smile Makeover",
+      "status": "Completed",
+      "payment_status": "Paid",
+      "final_budget": 6200
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "gingivectomy_laser_contouring": 1200,
+        "eMax_porcelain_veneers_x4": 4800,
+        "night_guard_protection": 200
+      },
+      "estimate_amount_total": 6200
+    },
+    "final_treatment_plan": {
+      "status_tag": "Accepted (Exact Match)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "gingivectomy_laser_contouring": 1200,
+        "eMax_porcelain_veneers_x4": 4800,
+        "night_guard_protection": 200
+      },
+      "final_total": 6200
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-04-12",
+        "details": "$6200 held in escrow"
+      },
+      {
+        "event": "Patient in Travel",
+        "date": "2026-04-15",
+        "details": "Arrived at clinic center"
+      },
+      {
+        "event": "Final Treatment Plan Confirm",
+        "date": "2026-04-16",
+        "details": "Laser mapping parameters accepted"
+      },
+      {
+        "event": "Treatment Done",
+        "date": "2026-04-22",
+        "details": "Veneers bonded, night guard delivered"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 6200,
+      "attached_document": {
+        "file_name": "Cosmetic_Release_Form.pdf",
+        "file_size": "2.1 MB"
+      }
+    },
+    "review": {
+      "text": "The portal allowed me to lock down my package pricing upfront. Laser gum reshaping didn't cost a penny more than what was estimated.",
+      "ratings": {
+        "communication": 5.0,
+        "value_for_money": 4.9,
+        "follow_through": 5.0
+      }
+    }
+  },
+  {
+    "patient_info": {
+      "name": "Kofi Mensah",
+      "image": "https://randomuser.me/api/portraits/men/22.jpg",
+      "treatment_plan": "accepted",
+      "email": "k.mensah@sample.com",
+      "procedure": "Biocompatible Ceramic Implants",
+      "status": "In Progress",
+      "payment_status": "Paid",
+      "final_budget": 5900
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "3d_cbct_surgical_guide": 850,
+        "zirconia_ceramic_implant": 2200,
+        "custom_ceramic_abutment": 950,
+        "holistic_ozonated_flushing": 400
+      },
+      "estimate_amount_total": 4400
+    },
+    "final_treatment_plan": {
+      "status_tag": "Accepted (Within 10% Range)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "3d_cbct_surgical_guide": 850,
+        "zirconia_ceramic_implant": 2200,
+        "custom_ceramic_abutment": 950,
+        "holistic_ozonated_flushing": 400,
+        "platelet_rich_fibrin_l-prf": 450
+      },
+      "final_total": 4850
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-02",
+        "details": "$4400 held in escrow"
+      },
+      {
+        "event": "Patient in Travel",
+        "date": "2026-05-08",
+        "details": "Flight arrival logged"
+      },
+      {
+        "event": "Day 1 arrival, CBCT examination",
+        "date": "2026-05-09",
+        "details": "Surgical team added L-PRF to accelerate healing"
+      },
+      {
+        "event": "Final Treatment Plan Confirm",
+        "date": "2026-05-09",
+        "details": "Patient verified and approved update in app"
+      },
+      {
+        "event": "Treatment Done",
+        "date": null,
+        "details": "Ceramic fixture set safely; integration ongoing"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 4850,
+      "attached_document": {
+        "file_name": "Holistic_Surgical_Specs.pdf",
+        "file_size": "2.8 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Emma Watson",
+      "image": "https://randomuser.me/api/portraits/women/33.jpg",
+      "treatment_plan": "rejected",
+      "email": "emma.w@sample.com",
+      "procedure": "Lingual Braces (Hidden)",
+      "status": "Cancelled",
+      "payment_status": "Refunded",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "precision_digital_setup": 600,
+        "lingual_bracket_customization": 4800
+      },
+      "estimate_amount_total": 5400
+    },
+    "final_treatment_plan": {
+      "status_tag": "Rejected - Alternative Chosen",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "precision_digital_setup": 600,
+        "lingual_bracket_customization": 4800,
+        "speech_therapy_coordination_fee": 700
+      },
+      "final_total": 6100
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-04-18",
+        "details": "$5400 held in escrow"
+      },
+      {
+        "event": "Day 1 Ortho Profiling",
+        "date": "2026-04-22",
+        "details": "Anatomical limitations required specialized tracking additions"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-04-23",
+        "details": "Price increased due to secondary lab markup"
+      },
+      {
+        "event": "Plan Rejected",
+        "date": "2026-04-24",
+        "details": "Patient cancelled setup; shifted contract to clear alignment system"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Lingual_Lab_Refusal.pdf",
+        "file_size": "1.1 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Hiroshi Sato",
+      "image": "https://randomuser.me/api/portraits/men/55.jpg",
+      "treatment_plan": "not-send",
+      "email": "h.sato@sample.com",
+      "procedure": "Sedation Root Canal & Crown",
+      "status": "Drafting",
+      "payment_status": "Unpaid",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "iv_sedation_first_hour": 950,
+        "microscopic_endodontics": 1100,
+        "composite_core_rebuild": 450
+      },
+      "estimate_amount_total": 2500
+    },
+    "final_treatment_plan": {
+      "status_tag": "Internal Medical Clearance Pending",
+      "procedure_breakdown": {},
+      "final_total": 0
+    },
+    "patient_timeline": [
+      {
+        "event": "Emergency Intake Uploaded",
+        "date": "2026-05-25",
+        "details": "Severe acute pain reported in tooth #3"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": null
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Clara Novak",
+      "image": "https://randomuser.me/api/portraits/women/74.jpg",
+      "treatment_plan": "awaiting response",
+      "email": "clara.n@sample.com",
+      "procedure": "Sleep Apnea Mandibular Device",
+      "status": "In Progress",
+      "payment_status": "Partial",
+      "final_budget": 1800
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "airway_volume_analysis": 500,
+        "custom_somnomed_appliance": 1300
+      },
+      "estimate_amount_total": 1800
+    },
+    "final_treatment_plan": {
+      "status_tag": "Revised Proposal Awaiting Approval",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "airway_volume_analysis": 500,
+        "custom_somnomed_appliance": 1300,
+        "compliance_sensor_chip_integration": 350
+      },
+      "final_total": 2150
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-12",
+        "details": "$1800 held in escrow"
+      },
+      {
+        "event": "Day 1 Airway Scan",
+        "date": "2026-05-20",
+        "details": "Insurance compliance rules require verifiable tracker data"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-05-22",
+        "details": "Awaiting patient approval for tracking chip add-on ($350)"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Sleep_Appliance_Specs.pdf",
+        "file_size": "2.2 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Luca Moretti",
+      "image": "https://randomuser.me/api/portraits/men/41.jpg",
+      "treatment_plan": "accepted",
+      "email": "l.moretti@sample.com",
+      "procedure": "Full Mouth Zirconia Bridges",
+      "status": "Completed",
+      "payment_status": "Paid",
+      "final_budget": 24500
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "dual_arch_cbct_mapping": 1200,
+        "immediate_load_hybrids": 4800,
+        "prelaser_tissue_conditioning": 1500,
+        "final_monolithic_zirconia_bridges": 17000
+      },
+      "estimate_amount_total": 24500
+    },
+    "final_treatment_plan": {
+      "status_tag": "Accepted (Exact Match)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "dual_arch_cbct_mapping": 1200,
+        "immediate_load_hybrids": 4800,
+        "prelaser_tissue_conditioning": 1500,
+        "final_monolithic_zirconia_bridges": 17000
+      },
+      "final_total": 24500
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-03-15",
+        "details": "$24500 held in escrow"
+      },
+      {
+        "event": "Patient in Travel",
+        "date": "2026-03-20",
+        "details": "VIP transport from airport active"
+      },
+      {
+        "event": "Day 1 arrival, CBCT examination",
+        "date": "2026-03-21",
+        "details": "Bone anatomy matched initial templates perfectly"
+      },
+      {
+        "event": "Final Treatment Plan Confirm",
+        "date": "2026-03-21",
+        "details": "Digital authorization submitted"
+      },
+      {
+        "event": "Treatment Done",
+        "date": "2026-04-02",
+        "details": "Final bridges torqued to specifications"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 24500,
+      "attached_document": {
+        "file_name": "Full_Mouth_Lab_Certificates.pdf",
+        "file_size": "6.8 MB"
+      }
+    },
+    "review": {
+      "text": "Splitting this high-budget treatment plan into clear system checkpoints gave me total peace of mind while traveling. Outstanding application interface.",
+      "ratings": {
+        "communication": 5.0,
+        "value_for_money": 4.9,
+        "follow_through": 5.0
+      }
+    }
+  },
+  {
+    "patient_info": {
+      "name": "Saanvi Patel",
+      "image": "https://randomuser.me/api/portraits/women/61.jpg",
+      "treatment_plan": "rejected",
+      "email": "saanvi.p@sample.com",
+      "procedure": "Segmental Orthodontic Alignment",
+      "status": "Cancelled",
+      "payment_status": "Refunded",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "panoramic_radiograph_3d": 450,
+        "ceramic_bracket_bonding": 2800
+      },
+      "estimate_amount_total": 3250
+    },
+    "final_treatment_plan": {
+      "status_tag": "Rejected - Budget Overrun",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "panoramic_radiograph_3d": 450,
+        "ceramic_bracket_bonding": 2800,
+        "surgical_impacted_canine_exposure": 1400,
+        "anchorage_device_tad_placement": 650
+      },
+      "final_total": 5300
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-01",
+        "details": "$3250 held in escrow"
+      },
+      {
+        "event": "Day 1 Orthodontic Screening",
+        "date": "2026-05-05",
+        "details": "Discovered fully impacted canine requiring minor oral surgery"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-05-06",
+        "details": "Plan revised to include surgical fees and anchorage units"
+      },
+      {
+        "event": "Plan Rejected",
+        "date": "2026-05-08",
+        "details": "Patient chose not to proceed with surgical requirements; escrow returned"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Impacted_Canine_Report.pdf",
+        "file_size": "2.5 MB"
+      }
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Gaston Dupont",
+      "image": "https://randomuser.me/api/portraits/men/14.jpg",
+      "treatment_plan": "not-send",
+      "email": "g.dupont@sample.com",
+      "procedure": "Microscopic Apicoectomy",
+      "status": "Awaiting Verification",
+      "payment_status": "Unpaid",
+      "final_budget": 0
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "digital_periapical_scans": 200,
+        "surgical_root_end_resection": 1150,
+        "retrograde_mta_filling": 450
+      },
+      "estimate_amount_total": 1800
+    },
+    "final_treatment_plan": {
+      "status_tag": "Awaiting Endodontist Check",
+      "procedure_breakdown": {},
+      "final_total": 0
+    },
+    "patient_timeline": [
+      {
+        "event": "Case Files Imported",
+        "date": "2026-05-24",
+        "details": "Patient sent history of failing root canal treatment on tooth #9"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": null
+    },
+    "review": null
+  },
+  {
+    "patient_info": {
+      "name": "Freja Nielsen",
+      "image": "https://randomuser.me/api/portraits/women/90.jpg",
+      "treatment_plan": "awaiting response",
+      "email": "freja.n@sample.com",
+      "procedure": "Computer-Guided Crown Lengthening",
+      "status": "In Progress",
+      "payment_status": "Partial",
+      "final_budget": 3100
+    },
+    "estimate_treatment_plan": {
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "aesthetic_gingival_mapping": 500,
+        "piezosurgery_osseous_contouring": 2600
+      },
+      "estimate_amount_total": 3100
+    },
+    "final_treatment_plan": {
+      "status_tag": "Revision Sent (Under Budget Option)",
+      "procedure_breakdown": {
+        "initial_examination": "Included",
+        "aesthetic_gingival_mapping": 500,
+        "soft_tissue_only_laser_recontouring": 1800
+      },
+      "final_total": 2300
+    },
+    "patient_timeline": [
+      {
+        "event": "Payment Confirmed",
+        "date": "2026-05-19",
+        "details": "$3100 held in escrow"
+      },
+      {
+        "event": "Clinical Periodontal Mapping",
+        "date": "2026-05-22",
+        "details": "Bone sounding indicated bone removal wasn't necessary for ideal symmetry"
+      },
+      {
+        "event": "Final Treatment Plan Sent",
+        "date": "2026-05-23",
+        "details": "Switched to simpler soft-tissue laser protocol, saving the patient $800"
+      }
+    ],
+    "payment_and_documents": {
+      "payment_received_from_escrow": 0,
+      "attached_document": {
+        "file_name": "Laser_Aesthetic_Analysis.pdf",
+        "file_size": "1.9 MB"
+      }
+    },
+    "review": null
+  }
+]
