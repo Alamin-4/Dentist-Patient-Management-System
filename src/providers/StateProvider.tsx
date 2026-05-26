@@ -42,11 +42,18 @@ interface StateContextType {
   setKolModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   addKolStep: kolSteps;
   setAddKolStep: React.Dispatch<React.SetStateAction<kolSteps>>;
+
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  isNewestFirst: boolean;
+  setIsNewestFirst: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
   undefined,
 );
+
+export type dentistBookingTabs = "In Progress" | "Completed" | "Rejected";
 
 export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -67,10 +74,15 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     null,
   );
   const [schedule, setSchedule] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState("estimate");
+  const [activeTab, setActiveTab] = useState("");
   const [dentistsToCompare, setDentistsToCompare] = useState<Dentist[]>([]);
   const [kolModalOpen, setKolModalOpen] = useState(false);
   const [addKolStep, setAddKolStep] = useState<kolSteps>("Basic Info");
+
+  // tabbar state for dentist booking manage page
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isNewestFirst, setIsNewestFirst] = useState(true);
 
   // Initialize storage data on mount
   useEffect(() => {
@@ -105,6 +117,10 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setKolModalOpen,
     addKolStep,
     setAddKolStep,
+    searchQuery,
+    setSearchQuery,
+    isNewestFirst,
+    setIsNewestFirst,
   };
 
   return (
