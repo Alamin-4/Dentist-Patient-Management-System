@@ -3,18 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import type { PatientCardItem } from "./patient-card";
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  Types                                                                       */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
 type ActiveTab = "patient-info" | "treatment-plan";
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  Mock treatment line items (replace with real data from patient prop)        */
-/* ─────────────────────────────────────────────────────────────────────────── */
 
 const TREATMENT_ITEMS = [
   { label: "Initial examination", price: "Included" },
@@ -25,10 +17,6 @@ const TREATMENT_ITEMS = [
 ];
 
 const ESTIMATE_TOTAL = "$1,075";
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  Helpers                                                                     */
-/* ─────────────────────────────────────────────────────────────────────────── */
 
 function getInitials(name: string) {
   return name
@@ -41,16 +29,11 @@ function getInitials(name: string) {
 }
 
 function statusBadgeClass(status: PatientCardItem["treatmentPlan"]) {
-  if (status === "Rejected")
-    return "border-rose-300 bg-rose-50 text-rose-600";
+  if (status === "Rejected") return "border-rose-300 bg-rose-50 text-rose-600";
   if (status === "Not Sent")
     return "border-slate-300 bg-slate-50 text-slate-600";
   return "border-amber-300 bg-amber-50 text-amber-600";
 }
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  Sub-components                                                              */
-/* ─────────────────────────────────────────────────────────────────────────── */
 
 function InfoCard({
   title,
@@ -88,10 +71,6 @@ function InfoField({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  Main drawer                                                                 */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
 interface PatientDetailsDrawerProps {
   patient: PatientCardItem | null;
   onClose: () => void;
@@ -122,15 +101,14 @@ export default function PatientDetailsDrawer({
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="flex w-full flex-col gap-0 overflow-hidden border-l border-border bg-card p-0 sm:max-w-[480px]"
+        className="flex w-full max-h-[calc(100vh-2rem)] my-auto rounded-2xl overflow-hidden flex-col gap-0 border-l border-border bg-card p-0 mx-6 sm:max-w-md data-[side=right]:w-full data-[side=right]:sm:max-w-md"
       >
-        {/* ── Sticky header ── */}
         <header className="shrink-0 border-b border-border bg-card px-5 pt-5 pb-0">
           {/* Title row */}
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm font-medium text-muted-foreground">
+            <SheetTitle className="text-sm font-medium text-muted-foreground">
               Treatment Plan
-            </p>
+            </SheetTitle>
             <button
               type="button"
               onClick={onClose}
@@ -150,15 +128,15 @@ export default function PatientDetailsDrawer({
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative mr-6 pb-3 text-sm transition-colors ${
+                  className={`relative mr-6 pb-3 text-sm transition-colors px-4 ${
                     isActive
-                      ? "font-semibold text-sidebar"
+                      ? "font-semibold text-primary"
                       : "font-medium text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {tab.label}
                   {isActive && (
-                    <span className="absolute -bottom-px left-0 right-0 h-0.5 rounded-full bg-sidebar" />
+                    <span className="absolute -bottom-px left-0 right-0 h-1 rounded-t-full bg-primary" />
                   )}
                 </button>
               );
@@ -166,13 +144,10 @@ export default function PatientDetailsDrawer({
           </div>
         </header>
 
-        {/* ── Scrollable content ── */}
         <div className="flex-1 overflow-y-auto">
           {patient && (
             <>
-              {/* Patient summary — visible on both tabs */}
               <div className="border-b border-border px-5 py-4">
-                {/* Avatar + name + badge */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-500">
