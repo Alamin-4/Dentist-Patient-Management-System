@@ -21,8 +21,8 @@ export function VerificationSteps() {
               className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
                 step.step <= verificationStep
-                  ? "border-[#163E5C] bg-[#163E5C] text-white"
-                  : "border-gray-100 bg-white text-gray-300",
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-card text-muted-foreground",
               )}
             >
               <step.icon className="h-5 w-5" />
@@ -31,8 +31,8 @@ export function VerificationSteps() {
               className={cn(
                 "hidden md:block text-sm text-center",
                 step.step <= verificationStep
-                  ? "text-[#0A2533] font-medium"
-                  : "text-gray-400",
+                  ? "font-medium text-foreground"
+                  : "text-muted-foreground",
               )}
             >
               {step.label}

@@ -1,5 +1,5 @@
 import Referrals from "../../../modules/dentist/referrals/Referrals";
 
 export default function ReferralsPage() {
-  return <Referrals />;
+  return <div className="min-h-full "><Referrals /></div>;
 }

@@ -1,9 +1,9 @@
-import { VerificationBanner } from "../../modules/dentist/overview/verification-banner";
+import { OverviewPageSwitcher } from "@/app/modules/dentist/overview/overview-page-switcher";
 
 export default function OverviewPage() {
   return (
-    <div className="flex justify-center items-center animate-in fade-in duration-500 w-full h-full">
-      <VerificationBanner />
+    <div className="w-full min-h-full animate-in fade-in duration-500 ">
+      <OverviewPageSwitcher />
     </div>
   );
 }
