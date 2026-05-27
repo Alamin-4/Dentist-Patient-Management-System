@@ -2,7 +2,7 @@ import Result from "../../../modules/dentist/results/Result";
 
 export default function ResultsManage() {
   return (
-    <div className="min-h-full pb-6 lg:pb-8">
+    <div className="min-h-full ">
       <Result />
     </div>
   );

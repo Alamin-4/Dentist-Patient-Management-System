@@ -21,7 +21,7 @@ export function VerificationBanner() {
   ];
 
   return (
-    <div className="mx-auto max-w-xl bg-white p-6 lg:p-8 rounded-xl border border-gray-200">
+    <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-xl border border-gray-200">
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-8 h-44 w-44 sm:h-52 sm:w-52">
           <div className="absolute inset-0 rounded-full bg-sidebar-primary shadow-inner" />

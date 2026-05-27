@@ -5,7 +5,7 @@ export default async function PatientsManagePage() {
   const patients = await loadPatientRecords();
 
   return (
-    <div className="min-h-full pb-6 lg:pb-8">
+    <div className="min-h-full ">
       <PatientManage patients={patients} />
     </div>
   );

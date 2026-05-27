@@ -2,7 +2,7 @@ import ProfileAndSettings from "../../../modules/dentist/settings/Profile-and-se
 
 export default function SettingsManage() {
   return (
-    <main className="min-h-full pb-6 lg:pb-8">
+    <main className="min-h-full ">
       <div className="">
         <ProfileAndSettings />
       </div>
