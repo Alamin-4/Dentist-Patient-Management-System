@@ -6,7 +6,7 @@ import { VerificationSidebar } from "../../../modules/dentist/profile/verificati
 
 export default function ProfilePage() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-6 lg:pb-8">
       {/* Top Section: Full Width Header */}
       <div className="w-full">
         <ProfileHeader />

@@ -30,7 +30,7 @@ export default function VerificationLayout({
 
       {/* Middle Part - Changeable Content */}
       <main className="flex-1 py-10 pb-32">
-        <div className="">
+        <div className="min-h-full pb-6 lg:pb-8">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
             {children}
           </div>

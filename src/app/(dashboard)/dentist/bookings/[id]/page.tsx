@@ -87,7 +87,7 @@ export default function BookingDetailPage() {
   const initials = (booking.personalInfo.firstName[0] || "") + (booking.personalInfo.lastName[0] || "");
 
   return (
-    <div className="">
+    <div className="min-h-full pb-6 lg:pb-8">
       <button
         onClick={() => router.push("/dentist/bookings")}
         className="mb-4 inline-flex items-center gap-2 text-sm text-slate-600"

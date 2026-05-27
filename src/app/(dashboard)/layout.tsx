@@ -26,8 +26,8 @@ export default function DashboardLayout({
           {/* Mobile drawer + backdrop — visible below lg */}
           <MobileSidebarDrawer />
 
-          <main className="flex-1 min-h-0 overflow-y-auto p-4 lg:p-6">
-            <div className="min-h-full">{children}</div>
+          <main className="flex-1 min-h-0 overflow-y-auto p-6">
+            <div className="h-full">{children}</div>
           </main>
         </div>
 
