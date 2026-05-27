@@ -19,19 +19,11 @@ import {
   BookOpen,
   Tag,
   Share2,
-  Bell,
-  CreditCard,
-  Globe,
-  Star,
-  ShieldCheck,
-  ShieldAlert,
   X,
-  Stethoscope,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/context/sidebar-context";
-import { useStateContext } from "@/providers/StateProvider";
 
 interface NavItem {
   icon: LucideIcon;
@@ -97,84 +89,14 @@ const dentistNav: NavGroup[] = [
   },
 ];
 
-const adminNav: NavGroup[] = [
-  {
-    label: "OVERVIEW",
-    items: [{ icon: LayoutDashboard, label: "Dashboard", href: "/admin" }],
-  },
-  {
-    label: "PRACTICE",
-    items: [
-      { icon: Stethoscope, label: "Dentists", href: "/admin/dentists" },
-      { icon: Users, label: "Patients", href: "/admin/patients" },
-      { icon: Calendar, label: "Bookings", href: "/admin/bookings" },
-      {
-        icon: ShieldCheck,
-        label: "Verification Queue",
-        href: "/admin/verification-queue",
-        badge: 12,
-      },
-    ],
-  },
-  {
-    label: "ENGAGEMENT",
-    items: [
-      { icon: Star, label: "Reviews & Ratings", href: "/admin/reviews" },
-      { icon: Bell, label: "Notifications", href: "/admin/notifications" },
-    ],
-  },
-  {
-    label: "FINANCE",
-    items: [
-      { icon: CreditCard, label: "Payments & Escrow", href: "/admin/payments" },
-      { icon: BarChart3, label: "Reports", href: "/admin/reports" },
-    ],
-  },
-  {
-    label: "DIRECTORY",
-    items: [
-      { icon: Globe, label: "KOL Management", href: "/admin/kol-management" },
-    ],
-  },
-  {
-    label: "TRUST & SAFETY",
-    items: [
-      {
-        icon: ShieldAlert,
-        label: "Anti-Collusion",
-        href: "/admin/anti-collusion",
-        badge: 7,
-      },
-      {
-        icon: Globe,
-        label: "SEO Review Pages",
-        href: "/admin/seo-review-pages",
-        badge: 4,
-      },
-    ],
-  },
-  {
-    label: "SYSTEM",
-    items: [{ icon: Settings, label: "Settings", href: "/admin/settings" }],
-  },
-];
-
-const DASHBOARD_ROOTS = ["/dentist", "/patient", "/admin"];
+const DASHBOARD_ROOTS = ["/dentist", "/patient"];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { close } = useSidebar();
 
-  const role = pathname.startsWith("/admin")
-    ? "admin"
-    : pathname.startsWith("/dentist")
-      ? "dentist"
-      : "patient";
-
-  const navGroups =
-    role === "admin" ? adminNav : role === "dentist" ? dentistNav : patientNav;
-
-  const isAdmin = role === "admin";
+  const role = pathname.startsWith("/dentist") ? "dentist" : "patient";
+  const navGroups = role === "dentist" ? dentistNav : patientNav;
 
   function isActive(href: string) {
     if (DASHBOARD_ROOTS.includes(href)) return pathname === href;
@@ -182,26 +104,13 @@ export function Sidebar() {
   }
 
   return (
-    <aside
-      className={cn(
-        "flex h-full w-64 flex-col pt-4",
-        isAdmin ? "bg-[#163E5C]" : "bg-white",
-
-        pathname === "/dentist/add-pricing" && "hidden", // Hide sidebar on Add Pricing page
-        pathname === "/dentist/verification" && "hidden", // Hide sidebar on Verification page
-      )}
-    >
+    <aside className="flex h-full w-64 flex-col pt-4 bg-white">
       {/* Mobile close button */}
       <div className="flex items-center justify-end px-4 pt-4 pb-2 lg:hidden">
         <button
           onClick={close}
           aria-label="Close sidebar"
-          className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
-            isAdmin
-              ? "text-slate-300 hover:bg-white/10 hover:text-white"
-              : "text-gray-500 hover:bg-gray-100 hover:text-gray-900",
-          )}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
@@ -212,12 +121,7 @@ export function Sidebar() {
         {navGroups.map((group, gi) => (
           <div key={gi} className={cn(gi > 0 && "mt-4", "space-y-3")}>
             {group.label && (
-              <p
-                className={cn(
-                  "mb-1 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest",
-                  isAdmin ? "text-slate-400" : "text-slate-400",
-                )}
-              >
+              <p className="mb-1 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                 {group.label}
               </p>
             )}
@@ -230,13 +134,9 @@ export function Sidebar() {
                   onClick={close}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                    isAdmin
-                      ? active
-                        ? "bg-white/15 text-white"
-                        : "text-slate-300 hover:bg-white/10 hover:text-white"
-                      : active
-                        ? "bg-[#163E5C] text-white"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
+                    active
+                      ? "bg-[#163E5C] text-white"
+                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                   )}
                 >
                   <item.icon className="h-4.5 w-4.5 shrink-0" />
@@ -247,9 +147,7 @@ export function Sidebar() {
                         "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold",
                         active
                           ? "bg-white text-[#163E5C]"
-                          : isAdmin
-                            ? "bg-white/20 text-white"
-                            : "bg-[#163E5C] text-white",
+                          : "bg-[#163E5C] text-white"
                       )}
                     >
                       {item.badge}
@@ -263,20 +161,8 @@ export function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div
-        className={cn(
-          "border-t p-3",
-          isAdmin ? "border-white/10" : "border-slate-100",
-        )}
-      >
-        <button
-          className={cn(
-            "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-            isAdmin
-              ? "text-slate-300 hover:bg-white/10 hover:text-white"
-              : "text-red-500 hover:bg-red-50",
-          )}
-        >
+      <div className="border-t border-slate-100 p-3">
+        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
           <LogOut className="h-4.5 w-4.5" />
           Log Out
         </button>
