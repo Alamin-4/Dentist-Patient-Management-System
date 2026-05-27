@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { initializeDentistData } from "@/lib/storage/dentistData";
 import { initializeBookingData } from "@/lib/storage/bookingService";
 import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
@@ -18,6 +24,13 @@ interface StateContextType {
   >;
   verificationStep: number;
   setVerificationStep: React.Dispatch<React.SetStateAction<number>>;
+  verificationStepReady: Record<number, boolean>;
+  setVerificationStepReady: (
+    step: number,
+    ready: boolean,
+  ) => void;
+  verificationCompletedStep: number | null;
+  setVerificationCompletedStep: React.Dispatch<React.SetStateAction<number | null>>;
   showSignupModal: boolean;
   setShowSignupModal: React.Dispatch<React.SetStateAction<boolean>>;
   showPersonalizeModal: boolean;
@@ -62,6 +75,12 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     "idle" | "match" | "no-match"
   >("idle");
   const [verificationStep, setVerificationStep] = useState<number>(1);
+  const [verificationStepReady, setVerificationStepReadyState] = useState<Record<number, boolean>>({
+    1: false,
+    2: false,
+    3: false,
+  });
+  const [verificationCompletedStep, setVerificationCompletedStep] = useState<number | null>(null);
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   const [showPersonalizeModal, setShowPersonalizeModal] =
     useState<boolean>(false);
@@ -90,11 +109,31 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     initializeBookingData();
   }, []);
 
+  const setVerificationStepReady = useCallback(
+    (step: number, ready: boolean) => {
+      setVerificationStepReadyState((current) => {
+        if (current[step] === ready) {
+          return current;
+        }
+
+        return {
+          ...current,
+          [step]: ready,
+        };
+      });
+    },
+    [],
+  );
+
   const value = {
     verificationStatus,
     setVerificationStatus,
     verificationStep,
     setVerificationStep,
+    verificationStepReady,
+    setVerificationStepReady,
+    verificationCompletedStep,
+    setVerificationCompletedStep,
     showSignupModal,
     setShowSignupModal,
     showPersonalizeModal,

@@ -2,7 +2,7 @@ import PricingProtocol from "@/app/modules/dentist/pricing-protocol/pricing-prot
 
 export default function PricingProtocolPage() {
   return (
-    <div>
+    <div className="min-h-full ">
       <PricingProtocol/>
     </div>
   );

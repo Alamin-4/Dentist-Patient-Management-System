@@ -7,10 +7,10 @@ export default function PhaseStep({
 }) {
   return (
     <div>
-      <span className="text-xs font-medium uppercase text-[#0E3E65]">
+      <span className="text-xs font-medium uppercase text-primary">
         Step {step}
       </span>
-      <p className="text-lg lg:text-xl font-medium text-[#1A1A2E]">
+      <p className="text-lg font-medium text-foreground lg:text-xl">
         {title}
       </p>
     </div>

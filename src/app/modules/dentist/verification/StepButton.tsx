@@ -1,29 +1,78 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { VerificationNextStepModal } from "./verification-next-step-modal";
 import { useStateContext } from "@/providers/StateProvider";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function StepButton() {
-  const { setVerificationStep, verificationStep } = useStateContext();
+  const {
+    setVerificationStep,
+    verificationStep,
+    verificationStepReady,
+    verificationCompletedStep,
+    setVerificationCompletedStep,
+  } = useStateContext();
+  const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const isReady = verificationStepReady[verificationStep];
+
+  const isPhase2 = verificationStep === 2;
+  const isPhase3 = verificationStep === 3;
+
+  const buttonLabel = verificationStep === 1 ? "Continue to Phase 2" : "Submit";
+
+  const buttonProps = isPhase2
+    ? { type: "submit" as const, form: "phase-2-verification-form" }
+    : isPhase3
+      ? { type: "submit" as const, form: "phase-3-verification-form" }
+      : { type: "button" as const };
+
+  useEffect(() => {
+    if (verificationCompletedStep === 2 || verificationCompletedStep === 3) {
+      setIsModalOpen(true);
+    }
+  }, [verificationCompletedStep]);
+
+  const handleContinue = () => {
+    if (verificationCompletedStep === 1 || verificationStep === 1) {
+      setVerificationStep(2);
+    } else if (verificationCompletedStep === 2 || verificationStep === 2) {
+      setVerificationStep(3);
+    } else {
+      router.push("/dentist");
+    }
+
+    setVerificationCompletedStep(null);
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="mx-auto flex max-w-11/12 justify-end">
-      <button
-        onClick={() => {
-          if (verificationStep < 3) {
-            setVerificationStep(verificationStep + 1);
-          } else {
-            // Handle completion logic here, e.g., show a success message or redirect
-            alert("Verification process completed!");
-            redirect("/dashboard"); // Redirect to dashboard or another page after completion
-          }
-        }}
-        className="h-12 px-10 bg-[#0E3E65] text-white font-bold rounded-lg transition-colors"
-      >
-        {/* here is after step 3 show this button but 3 is final step show if step 3 then show Complete Verification button */}
-        {verificationStep === 3
-          ? "Complete Verification"
-          : `Continue to Phase ${verificationStep + 1}`}
-      </button>
-    </div>
+    <>
+      <div className="flex w-full justify-end px-4 sm:px-6 lg:px-8">
+        <Button
+          {...buttonProps}
+          size="lg"
+          disabled={!isReady}
+          onClick={() => {
+            if (verificationStep === 1) {
+              setIsModalOpen(true);
+            }
+          }}
+          className="h-12 rounded-lg px-10 font-semibold"
+        >
+          {buttonLabel}
+        </Button>
+      </div>
+
+      <VerificationNextStepModal
+        open={isModalOpen}
+        step={verificationCompletedStep ?? verificationStep}
+        onOpenChange={setIsModalOpen}
+        onContinue={handleContinue}
+      />
+    </>
   );
 }

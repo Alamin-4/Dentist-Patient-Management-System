@@ -2,7 +2,7 @@ import ConsultationPage from "../../../modules/dentist/consultation/Consultation
 
 export default function ConsultationManage() {
   return (
-    <div>
+    <div className="min-h-full ">
       <ConsultationPage />
     </div>
   );
