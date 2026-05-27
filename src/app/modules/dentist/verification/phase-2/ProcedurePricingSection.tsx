@@ -4,67 +4,84 @@ import PhaseStep from "../PhaseStep";
 
 export const ProcedurePricingSection = () => {
   const { control, register } = useFormContext();
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "procedures",
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10 py-10 border-t border-slate-100">
+    <section className="grid grid-cols-1 gap-8 border-t border-border px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
       <PhaseStep step={2} title="Procedure pricing" />
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-5">
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_2fr] gap-4"
+            className="grid grid-cols-1 gap-3 md:grid-cols-[1.5fr_1fr_2fr_auto] md:items-end"
           >
             <div className="space-y-2">
-              <label className="text-xs font-medium text-[#414651] inline-block">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
                 Name
               </label>
               <input
                 {...register(`procedures.${index}.name`)}
                 placeholder="Implant consultation"
-                className="w-full h-11 px-4 rounded-lg border border-slate-200 focus:ring-1 focus:ring-blue-900 outline-none"
+                className="h-11 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-[#414651] inline-block">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
                 Pricing
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                   $
                 </span>
                 <input
                   type="number"
                   {...register(`procedures.${index}.pricing`)}
-                  className="w-full h-11 pl-8 pr-4 rounded-lg border border-slate-200 focus:ring-1 focus:ring-blue-900 outline-none"
+                  className="h-11 w-full rounded-lg border border-border bg-card pl-8 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-[#414651] inline-block">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
                 Option Notes
               </label>
               <input
                 {...register(`procedures.${index}.notes`)}
                 placeholder="Includes treatment plan review"
-                className="w-full h-11 px-4 rounded-lg border border-slate-200 focus:ring-1 focus:ring-blue-900 outline-none"
+                className="h-11 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
               />
             </div>
+            <button
+              type="button"
+              aria-label="Remove procedure"
+              onClick={() => remove(index)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-destructive-100 text-destructive-600 transition hover:bg-destructive-50"
+            >
+              ×
+            </button>
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={() => append({ name: "", pricing: 0, notes: "" })}
-          className="mt-2 px-6 h-11 bg-[#0A2540] text-white rounded-lg font-bold text-sm hover:bg-slate-800 transition-colors"
-        >
-          Add Procedure
-        </button>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            type="button"
+            onClick={() => append({ name: "", pricing: 0, notes: "" })}
+            className="h-11 rounded-lg px-4 text-sm font-semibold"
+          >
+            Add Procedure
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 rounded-lg px-4 text-sm font-semibold"
+          >
+            Upload CSV price list
+          </Button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };

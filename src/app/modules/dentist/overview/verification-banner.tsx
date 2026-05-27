@@ -3,9 +3,16 @@
 import { CheckCircle2, Circle, CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useStateContext } from "@/providers/StateProvider";
 
 export function VerificationBanner() {
   const router = useRouter();
+  const { verificationStep, verificationCompletedStep } = useStateContext();
+
+  // Hide the banner if Phase 3 has been reached or completed
+  if ((verificationCompletedStep ?? 0) >= 3 || verificationStep >= 3) {
+    return null;
+  }
 
   const phases = [
     { title: "Phase 1 — License Verification", subtitle: "~5 min · RDV +30%", done: false },
@@ -14,7 +21,7 @@ export function VerificationBanner() {
   ];
 
   return (
-    <div className="max-w-xl bg-white p-6 lg:p-8 rounded-4xl shadow-2xl">
+    <div className="mx-auto max-w-xl bg-white p-6 lg:p-8 rounded-xl border border-gray-200">
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-8 h-44 w-44 sm:h-52 sm:w-52">
           <div className="absolute inset-0 rounded-full bg-sidebar-primary shadow-inner" />

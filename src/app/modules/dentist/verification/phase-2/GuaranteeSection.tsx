@@ -4,50 +4,57 @@ export const GuaranteeSection = () => {
   const { register } = useFormContext();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10 py-10 border-t border-slate-100">
+    <section className="grid grid-cols-1 gap-8 border-t border-border px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
       <div className="space-y-4">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Step 3</span>
-          <h2 className="text-2xl font-bold text-slate-800">No Surprise Guarantee</h2>
+          <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+            Step 3
+          </span>
+          <h2 className="mt-1 text-2xl font-semibold text-foreground">
+            No Surprise Guarantee
+          </h2>
         </div>
-        <div className="p-5 bg-blue-50/50 border border-blue-100 rounded-xl">
-          <p className="text-sm leading-relaxed text-[#10436B] font-medium">
-            The 15% rule means patients should not receive surprise increases beyond the disclosed starting price unless
-            clearly explained and approved before treatment.
+
+        <div className="rounded-xl border border-border bg-background p-4 sm:p-5">
+          <p className="text-sm leading-6 font-medium text-primary">
+            You agree that final treatment prices will remain within 15% of your quoted estimate unless approved by the patient.
           </p>
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium inline-block text-[#414651]">Signer Full Name</label>
+            <label className="inline-block text-sm font-medium text-foreground">
+              Signer Full Name
+            </label>
             <input
               {...register("signerFullName")}
-              className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:ring-1 focus:ring-blue-900 outline-none"
+              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium inline-block text-[#414651]">Typed Signature</label>
+            <label className="inline-block text-sm font-medium text-foreground">
+              Typed Signature
+            </label>
             <input
               {...register("typedSignature")}
-              className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:ring-1 focus:ring-blue-900 outline-none italic"
+              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm italic text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
             />
           </div>
         </div>
 
-        <label className="flex items-center gap-3 cursor-pointer group">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-background">
           <input
             type="checkbox"
             {...register("agreeToGuarantee")}
-            style={{ accentColor: "#0E3E65" }}
-            className="w-4 h-4 rounded-xl border-slate-300 text-[#0E3E65] focus:ring-[#0E3E65]"
+            className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary/40"
           />
-          <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900">
-            I agree to the No Surprise Guarantee and understand today's date is {new Date().toLocaleDateString()}.
+          <span className="text-sm leading-6 text-muted-foreground">
+            I agree to keep final prices within 15% unless approved by the patient.
           </span>
         </label>
       </div>
-    </div>
+    </section>
   );
 };
