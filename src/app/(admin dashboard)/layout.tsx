@@ -21,14 +21,12 @@ export default function AdminDashboardLayout({
           {/* Mobile drawer + backdrop — only below lg */}
           <AdminMobileSidebarDrawer />
 
-          {/* Main content */}
-          <main className="flex-1 min-h-0">
+          <section className="flex-1 h-screen overflow-y-auto">
             <AdminNavbar />
-            <div className="min-h-full p-4 sm:p-6 overflow-y-auto">
-              {/* Top navbar */}
-              {children}
-            </div>
-          </main>
+            <main className="overflow-y-auto">
+              <div className="min-h-full p-4 sm:p-6 overflow-y-auto">{children}</div>
+            </main>
+          </section>
         </div>
 
         <Toaster position="top-center" />
