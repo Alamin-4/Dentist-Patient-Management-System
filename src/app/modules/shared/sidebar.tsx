@@ -188,6 +188,7 @@ export function Sidebar() {
         isAdmin ? "bg-[#163E5C]" : "bg-white",
 
         pathname === "/dentist/add-pricing" && "hidden", // Hide sidebar on Add Pricing page
+        pathname === "/dentist/verification" && "hidden", // Hide sidebar on Verification page
       )}
     >
       {/* Mobile close button */}

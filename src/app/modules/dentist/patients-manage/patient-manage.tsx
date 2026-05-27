@@ -86,7 +86,7 @@ export default function PatientManage({ patients }: PatientManageProps) {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6">
       <DashboardPageHeader
         heading="Patients"
         subHeading="All patients with confirmed bookings, past and present."
