@@ -1,0 +1,472 @@
+[
+  {
+    "id": "dr-maya-patel",
+    "name": "Dr. Maya Patel",
+    "initials": "DM",
+    "email": "maya@clinicx.com",
+    "phone": "+1 415 555 0192",
+    "location": "San Francisco, CA",
+    "specialization": "Orthodontics",
+    "experience_years": 11,
+    "languages": ["English", "Spanish"],
+    "status": "active",
+    "rdv_score": 98,
+    "rdv_verified": true,
+    "rating": 4.9,
+    "total_reviews": 184,
+    "stats": {
+      "total_bookings": 312,
+      "bookings_this_month": 18,
+      "revenue_lifetime": 48200,
+      "avg_revenue_per_visit": 754,
+      "cancellation_rate": 3.2,
+      "estimate_accuracy": 94,
+      "avg_response_time_minutes": 72
+    },
+    "performance": {
+      "show_up_rate": 96.8,
+      "five_star_reviews": 76,
+      "repeat_patients": 62,
+      "estimate_accuracy": 94
+    },
+    "verification": {
+      "phase_1_identity": {
+        "label": "Phase 1 — Identity",
+        "status": "completed",
+        "country": "USA",
+        "city": "California",
+        "registration_authority": "California Medical Board",
+        "registration_no": "CA-005-44192",
+        "documents": [
+          {
+            "name": "License Certificate.pdf",
+            "size_mb": 2.4,
+            "status": "approved"
+          }
+        ]
+      },
+      "phase_2_operations": {
+        "label": "Phase 2 — Operations",
+        "status": "in_review",
+        "documents": [
+          {
+            "name": "JCI License Certificate.pdf",
+            "size_mb": 2.4,
+            "status": "approved"
+          },
+          {
+            "name": "My self.Vid",
+            "size_mb": 2.4,
+            "type": "video",
+            "status": "pending"
+          }
+        ]
+      },
+      "phase_3_clinical": {
+        "label": "Phase 3 — Clinical",
+        "status": "in_progress",
+        "clinic_location": "88 Market St, Suite 202, San Francisco, CA 94105",
+        "specializations": {
+          "implants": {
+            "status": "approved",
+            "documents": [
+              {
+                "name": "CE certificate.pdf",
+                "size_mb": 2.4,
+                "status": "approved"
+              },
+              {
+                "name": "Material brands.pdf",
+                "size_mb": 2.4,
+                "status": "approved"
+              },
+              { "name": "Invoice.pdf", "size_mb": 1.8, "status": "approved" },
+              {
+                "name": "JCI License Certificate.pdf",
+                "size_mb": 3.1,
+                "status": "approved"
+              }
+            ]
+          },
+          "veneers": { "status": "pending", "documents": [] },
+          "orthodontics": { "status": "not_started", "documents": [] }
+        }
+      }
+    },
+    "services": [
+      {
+        "name": "Professional teeth whitening",
+        "description": "One-hour session with custom trays",
+        "price": 450,
+        "status": "active"
+      },
+      {
+        "name": "Full orthodontic braces",
+        "description": "Includes initial consultation and adjustments",
+        "price": 3500,
+        "status": "active"
+      },
+      {
+        "name": "Single dental implant",
+        "description": "Includes treatment plan review",
+        "price": 1200,
+        "status": "active"
+      },
+      {
+        "name": "Invisalign fitting",
+        "description": "Full aligner set with 3-month check-ins",
+        "price": 480,
+        "status": "active"
+      },
+      {
+        "name": "Veneer (per tooth)",
+        "description": "Porcelain veneer, lab-crafted",
+        "price": 380,
+        "status": "active"
+      }
+    ],
+    "tabs": {
+      "bookings": 6,
+      "consultations": 7,
+      "reviews": 4,
+      "patient_results": 4
+    }
+  },
+  {
+    "id": "dr-james-carter",
+    "name": "Dr. James Carter",
+    "initials": "JC",
+    "email": "james@dentalcare.com",
+    "phone": "+1 312 555 0847",
+    "location": "Chicago, IL",
+    "specialization": "Implants",
+    "experience_years": 8,
+    "languages": ["English"],
+    "status": "suspended",
+    "rdv_score": 74,
+    "rdv_verified": false,
+    "rating": 3.8,
+    "total_reviews": 57,
+    "stats": {
+      "total_bookings": 145,
+      "bookings_this_month": 3,
+      "revenue_lifetime": 21500,
+      "avg_revenue_per_visit": 520,
+      "cancellation_rate": 9.1,
+      "estimate_accuracy": 71,
+      "avg_response_time_minutes": 380
+    },
+    "performance": {
+      "show_up_rate": 78.2,
+      "five_star_reviews": 41,
+      "repeat_patients": 30,
+      "estimate_accuracy": 71
+    },
+    "verification": {
+      "phase_1_identity": {
+        "label": "Phase 1 — Identity",
+        "status": "completed",
+        "country": "USA",
+        "city": "Illinois",
+        "registration_authority": "Illinois Medical Board",
+        "registration_no": "IL-012-88731",
+        "documents": [
+          {
+            "name": "License Certificate.pdf",
+            "size_mb": 1.9,
+            "status": "approved"
+          }
+        ]
+      },
+      "phase_2_operations": {
+        "label": "Phase 2 — Operations",
+        "status": "rejected",
+        "documents": [
+          {
+            "name": "JCI License Certificate.pdf",
+            "size_mb": 1.7,
+            "status": "rejected"
+          },
+          {
+            "name": "Intro Video.mp4",
+            "size_mb": 5.1,
+            "type": "video",
+            "status": "rejected"
+          }
+        ]
+      },
+      "phase_3_clinical": {
+        "label": "Phase 3 — Clinical",
+        "status": "not_started",
+        "clinic_location": "204 N Michigan Ave, Chicago, IL 60601",
+        "specializations": {
+          "implants": { "status": "not_started", "documents": [] },
+          "veneers": { "status": "not_started", "documents": [] },
+          "orthodontics": { "status": "not_started", "documents": [] }
+        }
+      }
+    },
+    "services": [
+      {
+        "name": "Single dental implant",
+        "description": "Includes treatment plan review",
+        "price": 1100,
+        "status": "inactive"
+      },
+      {
+        "name": "Full arch restoration",
+        "description": "Complete upper or lower arch",
+        "price": 8000,
+        "status": "inactive"
+      },
+      {
+        "name": "Bone grafting",
+        "description": "Pre-implant bone augmentation",
+        "price": 950,
+        "status": "inactive"
+      }
+    ],
+    "tabs": {
+      "bookings": 2,
+      "consultations": 1,
+      "reviews": 3,
+      "patient_results": 1
+    }
+  },
+  {
+    "id": "dr-priya-nair",
+    "name": "Dr. Priya Nair",
+    "initials": "PN",
+    "email": "priya@smilestudio.com",
+    "phone": "+1 646 555 0231",
+    "location": "New York, NY",
+    "specialization": "Cosmetic Dentistry",
+    "experience_years": 15,
+    "languages": ["English", "Hindi", "Tamil"],
+    "status": "active",
+    "rdv_score": 91,
+    "rdv_verified": true,
+    "rating": 4.7,
+    "total_reviews": 312,
+    "stats": {
+      "total_bookings": 540,
+      "bookings_this_month": 34,
+      "revenue_lifetime": 97400,
+      "avg_revenue_per_visit": 890,
+      "cancellation_rate": 2.1,
+      "estimate_accuracy": 97,
+      "avg_response_time_minutes": 28
+    },
+    "performance": {
+      "show_up_rate": 98.1,
+      "five_star_reviews": 88,
+      "repeat_patients": 74,
+      "estimate_accuracy": 97
+    },
+    "verification": {
+      "phase_1_identity": {
+        "label": "Phase 1 — Identity",
+        "status": "completed",
+        "country": "USA",
+        "city": "New York",
+        "registration_authority": "New York State Board of Dentistry",
+        "registration_no": "NY-034-11029",
+        "documents": [
+          {
+            "name": "License Certificate.pdf",
+            "size_mb": 3.1,
+            "status": "approved"
+          }
+        ]
+      },
+      "phase_2_operations": {
+        "label": "Phase 2 — Operations",
+        "status": "completed",
+        "documents": [
+          {
+            "name": "JCI License Certificate.pdf",
+            "size_mb": 2.8,
+            "status": "approved"
+          },
+          {
+            "name": "Clinic Tour.mp4",
+            "size_mb": 6.2,
+            "type": "video",
+            "status": "approved"
+          }
+        ]
+      },
+      "phase_3_clinical": {
+        "label": "Phase 3 — Clinical",
+        "status": "completed",
+        "clinic_location": "150 W 57th St, Suite 11A, New York, NY 10019",
+        "specializations": {
+          "implants": {
+            "status": "approved",
+            "documents": [
+              {
+                "name": "CE certificate.pdf",
+                "size_mb": 2.1,
+                "status": "approved"
+              },
+              {
+                "name": "Material brands.pdf",
+                "size_mb": 1.9,
+                "status": "approved"
+              },
+              { "name": "Invoice.pdf", "size_mb": 1.4, "status": "approved" },
+              {
+                "name": "JCI License Certificate.pdf",
+                "size_mb": 2.7,
+                "status": "approved"
+              }
+            ]
+          },
+          "veneers": {
+            "status": "approved",
+            "documents": [
+              {
+                "name": "Veneer Certification.pdf",
+                "size_mb": 2.0,
+                "status": "approved"
+              },
+              {
+                "name": "Lab Partnership.pdf",
+                "size_mb": 1.6,
+                "status": "approved"
+              }
+            ]
+          },
+          "orthodontics": { "status": "not_started", "documents": [] }
+        }
+      }
+    },
+    "services": [
+      {
+        "name": "Professional teeth whitening",
+        "description": "One-hour session with custom trays",
+        "price": 500,
+        "status": "active"
+      },
+      {
+        "name": "Veneer (per tooth)",
+        "description": "Porcelain veneer, lab-crafted",
+        "price": 420,
+        "status": "active"
+      },
+      {
+        "name": "Composite bonding",
+        "description": "Tooth reshaping and gap correction",
+        "price": 300,
+        "status": "active"
+      },
+      {
+        "name": "Smile makeover package",
+        "description": "Full cosmetic treatment plan",
+        "price": 4500,
+        "status": "active"
+      },
+      {
+        "name": "Gum contouring",
+        "description": "Laser gum reshaping",
+        "price": 650,
+        "status": "draft"
+      }
+    ],
+    "tabs": {
+      "bookings": 14,
+      "consultations": 19,
+      "reviews": 11,
+      "patient_results": 9
+    }
+  },
+  {
+    "id": "dr-luca-romano",
+    "name": "Dr. Luca Romano",
+    "initials": "LR",
+    "email": "luca@romanodental.it",
+    "phone": "+39 02 555 0193",
+    "location": "Milan, Italy",
+    "specialization": "Periodontics",
+    "experience_years": 6,
+    "languages": ["Italian", "English"],
+    "status": "pending",
+    "rdv_score": 61,
+    "rdv_verified": false,
+    "rating": 4.2,
+    "total_reviews": 28,
+    "stats": {
+      "total_bookings": 67,
+      "bookings_this_month": 9,
+      "revenue_lifetime": 11800,
+      "avg_revenue_per_visit": 410,
+      "cancellation_rate": 6.4,
+      "estimate_accuracy": 83,
+      "avg_response_time_minutes": 145
+    },
+    "performance": {
+      "show_up_rate": 84.5,
+      "five_star_reviews": 58,
+      "repeat_patients": 44,
+      "estimate_accuracy": 83
+    },
+    "verification": {
+      "phase_1_identity": {
+        "label": "Phase 1 — Identity",
+        "status": "in_review",
+        "country": "Italy",
+        "city": "Milan",
+        "registration_authority": "Ordine dei Medici di Milano",
+        "registration_no": "IT-MI-00442",
+        "documents": [
+          {
+            "name": "License Certificate.pdf",
+            "size_mb": 2.0,
+            "status": "pending"
+          }
+        ]
+      },
+      "phase_2_operations": {
+        "label": "Phase 2 — Operations",
+        "status": "not_started",
+        "documents": []
+      },
+      "phase_3_clinical": {
+        "label": "Phase 3 — Clinical",
+        "status": "not_started",
+        "clinic_location": "Via Montenapoleone 8, 20121 Milan, Italy",
+        "specializations": {
+          "implants": { "status": "not_started", "documents": [] },
+          "veneers": { "status": "not_started", "documents": [] },
+          "orthodontics": { "status": "not_started", "documents": [] }
+        }
+      }
+    },
+    "services": [
+      {
+        "name": "Periodontal deep cleaning",
+        "description": "Scaling and root planing",
+        "price": 320,
+        "status": "active"
+      },
+      {
+        "name": "Gum graft surgery",
+        "description": "Connective tissue graft for recession",
+        "price": 1400,
+        "status": "active"
+      },
+      {
+        "name": "Osseous surgery",
+        "description": "Pocket reduction procedure",
+        "price": 1800,
+        "status": "draft"
+      }
+    ],
+    "tabs": {
+      "bookings": 3,
+      "consultations": 4,
+      "reviews": 2,
+      "patient_results": 1
+    }
+  }
+]
