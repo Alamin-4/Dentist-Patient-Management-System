@@ -1,7 +1,5 @@
+import Result from "../../../modules/dentist/results/Result";
+
 export default function ResultsManage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-800">Results Manage</h1>
-    </div>
-  )
+  return <Result />;
 }

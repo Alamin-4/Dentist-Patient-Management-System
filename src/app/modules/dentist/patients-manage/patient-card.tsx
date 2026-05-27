@@ -111,7 +111,6 @@ export default function PatientCardsSection({
       </div>
     );
   }
-
   return (
     <section className="space-y-3 sm:space-y-4" aria-label="Patient bookings">
       {patients.map((patient) => (
