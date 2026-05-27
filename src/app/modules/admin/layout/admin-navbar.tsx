@@ -21,7 +21,7 @@ export function AdminNavbar() {
   }
 
   return (
-    <header className="shrink-0 border-b border-gray-200 bg-white w-full z-30">
+    <header className="shrink-0 border-b border-gray-200 bg-white w-full z-30 sticky top-0 left-0">
       <nav className="px-4 lg:px-6 flex h-14 items-center justify-between">
         {/* Left: hamburger (mobile only) */}
         <div className="flex items-center">
