@@ -1,4 +1,3 @@
-
 "use client";
 
 import ChangePassword from "./components/change-password";
@@ -17,10 +16,12 @@ export default function ProfileAndSettings() {
         </div>
 
         <div className="order-1 lg:order-2">
-          <PaymentInfo connected={true} card={{ brand: 'Mastercard', last4: '3800', expiry: '12/12/2026' }} />
+          <PaymentInfo
+            connected={true}
+            card={{ brand: "Mastercard", last4: "3800", expiry: "12/12/2026" }}
+          />
         </div>
       </div>
     </div>
   );
 }
-
