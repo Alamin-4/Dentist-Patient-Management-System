@@ -189,7 +189,7 @@ function FilterDropdown({ label, options, value, onChange }: {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute top-full z-20 mt-1 min-w-[160px] rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+          <div className="absolute top-full z-20 mt-1 min-w-40 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={() => { onChange(""); setOpen(false); }}
               className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50",
