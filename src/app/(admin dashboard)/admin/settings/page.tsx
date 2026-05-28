@@ -1,5 +1,5 @@
-import ProfilePage from "@/app/(admin dashboard)/modules/profile/profile-page";
+import SettingPage from "@/app/(admin dashboard)/modules/setting/setting-page";
 
-export default function AdminProfilePage() {
-  return <ProfilePage />;
+export default function SettingsPage() {
+  return <SettingPage />;
 }
