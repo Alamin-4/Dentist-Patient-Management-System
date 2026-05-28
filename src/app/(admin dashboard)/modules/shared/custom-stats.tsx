@@ -5,7 +5,9 @@ import { cn } from "@/lib/utils";
 interface StatItem {
   label: string;
   value: string;
-  sub: string;
+  sub?: string;
+  icon?: React.ReactNode;
+  valueColor?: string;
 }
 
 interface CustomStatsProps {
@@ -21,13 +23,18 @@ export function CustomStats({ stats, className }: CustomStatsProps) {
           key={i}
           className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 sm:text-[11px]">
-            {stat.label}
-          </p>
-          <p className="mt-1.5 text-2xl font-bold tracking-tight text-[#1A1A2E] sm:text-[28px]">
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 sm:text-[11px]">
+              {stat.label}
+            </p>
+            {stat.icon && (
+              <span className="shrink-0 text-gray-300">{stat.icon}</span>
+            )}
+          </div>
+          <p className={cn("mt-1.5 text-2xl font-bold tracking-tight sm:text-[28px]", stat.valueColor ?? "text-[#1A1A2E]")}>
             {stat.value}
           </p>
-          <p className="mt-1 text-xs text-gray-500">{stat.sub}</p>
+          {stat.sub && <p className="mt-1 text-xs text-gray-500">{stat.sub}</p>}
         </div>
       ))}
     </div>

@@ -1,0 +1,396 @@
+{
+  "meta": {
+    "total_submitted": 12,
+    "auto_published": 5,
+    "flagged_for_review": 4,
+    "rejected": 2
+  },
+  "reviews": [
+    {
+      "id": "rv-001",
+      "tab": "flagged",
+      "reviewer_name": "Marcus H.",
+      "reviewer_initials": "MH",
+      "reviewer_avatar_color": "#DC2626",
+      "rating": 5.0,
+      "ai_confidence": "High confidence",
+      "has_photos": false,
+      "dentist_name": "Dr. Aisha Patel",
+      "dentist_initials": "AP",
+      "dentist_avatar_color": "#16A34A",
+      "dentist_specialty": "Orthodontics",
+      "procedure": "Invisalign",
+      "booking_id": "B-3051",
+      "date": "May 2, 2026",
+      "location": "New York, NY",
+      "review_content": "Dr. Patel is literally the BEST dentist in the entire world. I've told every single person I know to go to her. She fixed my smile in record time and I've already referred 12 people this month alone. The office gives you a gift card when you refer friends, which is why I'm writing this.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 5 },
+        { "label": "Follow through", "rating": 5 }
+      ],
+      "ai_flag": {
+        "reason": "Potential incentivised review — patient explicitly mentions receiving a referral reward in exchange for writing this review.",
+        "confidence": "High confidence"
+      },
+      "submission_context": {
+        "submitted": "May 2, 2026",
+        "rejected": null,
+        "published": null
+      }
+    },
+    {
+      "id": "rv-002",
+      "tab": "flagged",
+      "reviewer_name": "Diana F.",
+      "reviewer_initials": "DF",
+      "reviewer_avatar_color": "#2563EB",
+      "rating": 1.0,
+      "ai_confidence": "High confidence",
+      "has_photos": false,
+      "dentist_name": "Dr. Marcus Webb",
+      "dentist_initials": "MW",
+      "dentist_avatar_color": "#7C3AED",
+      "dentist_specialty": "Cosmetic",
+      "procedure": "Teeth Whitening",
+      "booking_id": "B-3052",
+      "date": "May 2, 2026",
+      "location": "Chicago, IL",
+      "review_content": "Absolutely terrible experience. The whitening did nothing for my teeth and I'm demanding a full refund. The dentist was rude and dismissive. I'm reporting this to the dental board and will be leaving reviews everywhere I can. DO NOT GO HERE. This place is a scam.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 1 },
+        { "label": "Value for money", "rating": 1 },
+        { "label": "Follow through", "rating": 1 }
+      ],
+      "ai_flag": {
+        "reason": "Review contains threatening language and refund solicitation. Flagged for potential policy violation and emotional distress language.",
+        "confidence": "High confidence"
+      },
+      "submission_context": {
+        "submitted": "May 2, 2026",
+        "rejected": null,
+        "published": null
+      }
+    },
+    {
+      "id": "rv-003",
+      "tab": "flagged",
+      "reviewer_name": "Tyler S.",
+      "reviewer_initials": "TS",
+      "reviewer_avatar_color": "#0891B2",
+      "rating": 5.0,
+      "ai_confidence": "Medium confidence",
+      "has_photos": false,
+      "dentist_name": "Dr. Carlos Ruiz",
+      "dentist_initials": "CR",
+      "dentist_avatar_color": "#9333EA",
+      "dentist_specialty": "Implants",
+      "procedure": "Dental Implant",
+      "booking_id": "B-3053",
+      "date": "May 1, 2026",
+      "location": "Boston, MA",
+      "review_content": "Outstanding implant work. Dr. Ruiz is incredibly skilled and the whole process was smooth from consultation to final fitting. Highly recommend to anyone considering dental implants. The team made me feel at ease every step of the way.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 5 },
+        { "label": "Follow through", "rating": 5 }
+      ],
+      "ai_flag": {
+        "reason": "Review pattern matches known review-swap network. Reviewer account is new with no prior booking history on record.",
+        "confidence": "Medium confidence"
+      },
+      "submission_context": {
+        "submitted": "May 1, 2026",
+        "rejected": null,
+        "published": null
+      }
+    },
+    {
+      "id": "rv-004",
+      "tab": "flagged",
+      "reviewer_name": "Priya N.",
+      "reviewer_initials": "PN",
+      "reviewer_avatar_color": "#D97706",
+      "rating": 2.3,
+      "ai_confidence": "High confidence",
+      "has_photos": true,
+      "dentist_name": "Dr. Brian Lee",
+      "dentist_initials": "BL",
+      "dentist_avatar_color": "#7C3AED",
+      "dentist_specialty": "Cosmetic",
+      "procedure": "Veneers",
+      "booking_id": "B-3054",
+      "date": "Apr 30, 2026",
+      "location": "Miami, FL",
+      "review_content": "I am really unhappy with my veneers. They look completely unnatural and two of them have already started to chip. I've tried to contact the clinic multiple times and no one has responded. The before/after photos I'm attaching show the poor quality. Very disappointed.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 2 },
+        { "label": "Value for money", "rating": 2 },
+        { "label": "Follow through", "rating": 3 }
+      ],
+      "ai_flag": {
+        "reason": "Review contains unverified clinical claims and attached photos could not be matched to treatment records. Flagged for content verification.",
+        "confidence": "High confidence"
+      },
+      "submission_context": {
+        "submitted": "Apr 30, 2026",
+        "rejected": null,
+        "published": null
+      }
+    },
+    {
+      "id": "rv-005",
+      "tab": "published",
+      "publish_type": "auto",
+      "reviewer_name": "Emily C.",
+      "reviewer_initials": "EC",
+      "reviewer_avatar_color": "#DC2626",
+      "rating": 5.0,
+      "has_photos": true,
+      "dentist_name": "Dr. Marcus Webb",
+      "dentist_initials": "MW",
+      "dentist_avatar_color": "#7C3AED",
+      "dentist_specialty": "Cosmetic",
+      "procedure": "Teeth Whitening",
+      "booking_id": "B-3039",
+      "date": "Apr 29, 2026",
+      "location": "San Francisco, CA",
+      "review_preview": "Dr. Webb and his team were absolutely incredible. The whitening results exceeded my...",
+      "review_content": "Dr. Webb and his team were absolutely incredible. The whitening results exceeded my expectations — my teeth went from a 6 shade to a 1 shade in just one session. The clinic is spotless and the staff are warm and attentive. Would 100% recommend to anyone looking for cosmetic dental work.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 5 },
+        { "label": "Follow through", "rating": 5 }
+      ],
+      "ai_flag": null,
+      "submission_context": {
+        "submitted": null,
+        "rejected": null,
+        "published": "Apr 29, 2026"
+      }
+    },
+    {
+      "id": "rv-006",
+      "tab": "published",
+      "publish_type": "auto",
+      "reviewer_name": "James T.",
+      "reviewer_initials": "JT",
+      "reviewer_avatar_color": "#D97706",
+      "rating": 4.0,
+      "has_photos": false,
+      "dentist_name": "Dr. Aisha Patel",
+      "dentist_initials": "AP",
+      "dentist_avatar_color": "#16A34A",
+      "dentist_specialty": "Orthodontics",
+      "procedure": "Invisalign",
+      "booking_id": "B-3038",
+      "date": "Apr 28, 2026",
+      "location": "New York, NY",
+      "review_preview": "Really happy with my Invisalign results after 14 months. Dr. Patel was patient, thorough, and always",
+      "review_content": "Really happy with my Invisalign results after 14 months. Dr. Patel was patient, thorough, and always available to answer my questions. The whole process was well-organised and the results speak for themselves. Would definitely recommend RatedDocs for finding dental care abroad.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 4 },
+        { "label": "Value for money", "rating": 4 },
+        { "label": "Follow through", "rating": 4 }
+      ],
+      "ai_flag": null,
+      "submission_context": {
+        "submitted": null,
+        "rejected": null,
+        "published": "Apr 28, 2026"
+      }
+    },
+    {
+      "id": "rv-007",
+      "tab": "published",
+      "publish_type": "auto",
+      "reviewer_name": "Sophie M.",
+      "reviewer_initials": "SM",
+      "reviewer_avatar_color": "#7C3AED",
+      "rating": 4.7,
+      "has_photos": false,
+      "dentist_name": "Dr. Carlos Ruiz",
+      "dentist_initials": "CR",
+      "dentist_avatar_color": "#9333EA",
+      "dentist_specialty": "Implants",
+      "procedure": "Dental Implant",
+      "booking_id": "B-3037",
+      "date": "Apr 27, 2026",
+      "location": "Austin, TX",
+      "review_preview": "Dr. Ruiz made the entire process completely stress-free. The procedure was pain-free and the...",
+      "review_content": "Dr. Ruiz made the entire process completely stress-free. The procedure was pain-free and the implant feels completely natural. I had mine done 3 months ago and I honestly can't tell the difference from my real teeth. The team was professional, warm, and the clinic was spotless.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 5 },
+        { "label": "Follow through", "rating": 4 }
+      ],
+      "ai_flag": null,
+      "submission_context": {
+        "submitted": null,
+        "rejected": null,
+        "published": "Apr 27, 2026"
+      }
+    },
+    {
+      "id": "rv-008",
+      "tab": "published",
+      "publish_type": "auto",
+      "reviewer_name": "Mark B.",
+      "reviewer_initials": "MB",
+      "reviewer_avatar_color": "#DC2626",
+      "rating": 5.0,
+      "has_photos": false,
+      "dentist_name": "Dr. Brian Lee",
+      "dentist_initials": "BL",
+      "dentist_avatar_color": "#7C3AED",
+      "dentist_specialty": "Cosmetic",
+      "procedure": "Veneers",
+      "booking_id": "B-3041",
+      "date": "Apr 25, 2026",
+      "location": "Los Angeles, CA",
+      "review_preview": "Absolutely amazing results. Can't believe how natural the veneers look. Dr. Lee took so much care...",
+      "review_content": "Absolutely amazing results. Can't believe how natural the veneers look. Dr. Lee took so much care in designing my smile and made sure everything was perfect before we signed off. The whole trip was well worth it — the veneers are better than I ever imagined.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 5 },
+        { "label": "Follow through", "rating": 5 }
+      ],
+      "ai_flag": null,
+      "submission_context": {
+        "submitted": null,
+        "rejected": null,
+        "published": "Apr 25, 2026"
+      }
+    },
+    {
+      "id": "rv-009",
+      "tab": "published",
+      "publish_type": "auto",
+      "reviewer_name": "Laura D.",
+      "reviewer_initials": "LD",
+      "reviewer_avatar_color": "#1D4ED8",
+      "rating": 3.7,
+      "has_photos": false,
+      "dentist_name": "Dr. Noah Kim",
+      "dentist_initials": "NK",
+      "dentist_avatar_color": "#0891B2",
+      "dentist_specialty": "General",
+      "procedure": "Cleaning",
+      "booking_id": "B-3042",
+      "date": "Apr 24, 2026",
+      "location": "Seattle, WA",
+      "review_preview": "Good experience overall, the clinic was clean and the staff were friendly. Dr. Kim was thorough and",
+      "review_content": "Good experience overall, the clinic was clean and the staff were friendly. Dr. Kim was thorough and professional. The cleaning was thorough but there was a bit of a wait. I would return for future appointments.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 4 },
+        { "label": "Value for money", "rating": 3 },
+        { "label": "Follow through", "rating": 4 }
+      ],
+      "ai_flag": null,
+      "submission_context": {
+        "submitted": null,
+        "rejected": null,
+        "published": "Apr 24, 2026"
+      }
+    },
+    {
+      "id": "rv-010",
+      "tab": "published",
+      "publish_type": "admin",
+      "reviewer_name": "Owen P.",
+      "reviewer_initials": "OP",
+      "reviewer_avatar_color": "#6D28D9",
+      "rating": 4.3,
+      "has_photos": false,
+      "dentist_name": "Dr. Sara Chen",
+      "dentist_initials": "SC",
+      "dentist_avatar_color": "#1E3A5F",
+      "dentist_specialty": "Orthodontics",
+      "procedure": "Braces",
+      "booking_id": "B-3043",
+      "date": "Apr 22, 2026",
+      "location": "Boston, MA",
+      "review_preview": "Dr. Chen was brilliant throughout my braces journey. Two years felt like it flew by. Really pleased...",
+      "review_content": "Dr. Chen was brilliant throughout my braces journey. Two years felt like it flew by. Really pleased with the final result. She was always available to make adjustments and answered every question I had along the way. Highly recommend for anyone considering orthodontic treatment.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 4 },
+        { "label": "Follow through", "rating": 4 }
+      ],
+      "ai_flag": null,
+      "submission_context": {
+        "submitted": null,
+        "rejected": null,
+        "published": "Apr 22, 2026"
+      }
+    },
+    {
+      "id": "rv-011",
+      "tab": "rejected",
+      "reviewer_name": "Emily C.",
+      "reviewer_initials": "EC",
+      "reviewer_avatar_color": "#DC2626",
+      "rating": 1.0,
+      "has_photos": false,
+      "dentist_name": "Dr. Sara Chen",
+      "dentist_initials": "SC",
+      "dentist_avatar_color": "#1E3A5F",
+      "dentist_specialty": "Orthodontics",
+      "procedure": "Braces",
+      "booking_id": "B-3040",
+      "date": "Rejected Apr 27, 2026",
+      "location": "Denver, CO",
+      "rejection_reason_short": "Booking could not be verified against platform records. Patient profile is flagged as incomplete...",
+      "review_content": "These braces have been a nightmare. Nothing like what was promised. I want a refund immediately.",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 1 },
+        { "label": "Value for money", "rating": 1 },
+        { "label": "Follow through", "rating": 1 }
+      ],
+      "ai_flag": {
+        "reason": "Promotional external link detected. Review contains solicitation content that violates platform guidelines.",
+        "confidence": "High confidence"
+      },
+      "rejection_reason": "Booking could not be verified against platform records. Patient profile is flagged as incomplete. Review removed from queue pending account verification.",
+      "submission_context": {
+        "submitted": "Apr 26, 2026",
+        "rejected": "Apr 27, 2026",
+        "published": null
+      }
+    },
+    {
+      "id": "rv-012",
+      "tab": "rejected",
+      "reviewer_name": "Alex R.",
+      "reviewer_initials": "AR",
+      "reviewer_avatar_color": "#16A34A",
+      "rating": 5.0,
+      "has_photos": false,
+      "dentist_name": "Dr. Noah Kim",
+      "dentist_initials": "NK",
+      "dentist_avatar_color": "#0891B2",
+      "dentist_specialty": "General",
+      "procedure": "Root Canal",
+      "booking_id": "B-3044",
+      "date": "Rejected Apr 21, 2026",
+      "location": "Miami, FL",
+      "rejection_reason_short": "Review contained an external promotional link and solicitation content. Rejected per platform...",
+      "review_content": "Noah Kim is the best. Check out his website for more deals: [LINK REMOVED]. Seriously great dentist though!",
+      "ratings_breakdown": [
+        { "label": "Communication", "rating": 5 },
+        { "label": "Value for money", "rating": 5 },
+        { "label": "Follow through", "rating": 5 }
+      ],
+      "ai_flag": {
+        "reason": "Promotional external link detected. Review contains solicitation content that violates platform guidelines.",
+        "confidence": "High confidence"
+      },
+      "rejection_reason": "Review contained an external promotional link and solicitation content. Rejected per platform content policy. Patient may resubmit without the offending content.",
+      "submission_context": {
+        "submitted": "Apr 20, 2026",
+        "rejected": "Apr 21, 2026",
+        "published": null
+      }
+    }
+  ]
+}
