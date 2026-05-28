@@ -1,6 +1,5 @@
+import DentistsPage from "@/app/(admin dashboard)/modules/dentists/dentists-page";
 
-export default function DentistsPage() {
-    return (
-        <div>DentistsPage</div>
-    )
+export default function Page() {
+    return <DentistsPage />;
 }

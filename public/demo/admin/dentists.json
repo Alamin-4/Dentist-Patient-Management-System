@@ -1,0 +1,1001 @@
+{
+  "meta": {
+    "total_dentists": 1418,
+    "weekly_growth": 34,
+    "active": 1284,
+    "active_pct": "90.5%",
+    "pending_verification": 12,
+    "suspended": 8,
+    "suspended_pct": "0.6%",
+    "tab_counts": {
+      "all": 1418,
+      "active": 1284,
+      "pending": 12,
+      "suspended": 8,
+      "rejected": 3
+    }
+  },
+  "dentists": [
+    {
+      "id": "DEN-001",
+      "name": "Dr. Maya Patel",
+      "initials": "DM",
+      "avatar_color": "#1A3A5C",
+      "email": "maya@clinicx.com",
+      "phone": "+1 415 555 0192",
+      "location": "San Francisco, CA",
+      "specialty": "Orthodontics",
+      "experience_years": 11,
+      "languages": ["English", "Spanish"],
+      "status": "active",
+      "rating": 4.9,
+      "review_count": 184,
+      "bookings": 312,
+      "joined": "2024-08-12",
+      "rdv_score": 98,
+      "rdv_verified": true,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 312, "growth_this_month": 18 },
+          "revenue_lifetime": { "amount": 48200, "avg_per_visit": 754 },
+          "cancellation_rate": { "pct": "3.2%", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "94%", "note": "Within 15% of estimate" },
+          "avg_response_time": { "value": "1h 12m", "note": "Typically < 24hrs" }
+        },
+        "performance": {
+          "show_up_rate": 96.8,
+          "five_star_reviews": 76,
+          "repeat_patients": 62,
+          "estimate_accuracy": 94
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "California",
+            "registration_authority": "California Medical Board",
+            "registration_no": "CA-005-44192",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "2.4 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "complete",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Professional teeth whitening", "description": "One-hour session with custom trays", "price": 450 },
+              { "name": "Full orthodontic braces", "description": "Includes initial consultation and adjustments", "price": 3500 },
+              { "name": "Single dental implant", "description": "Includes treatment plan review", "price": 1200 },
+              { "name": "Invisalign fitting", "description": "Full aligner set with 3-month check-ins", "price": 480 },
+              { "name": "Veneer (per tooth)", "description": "Porcelain veneer, lab-crafted", "price": 380 }
+            ],
+            "files": [
+              { "name": "JCI License Certificate.pdf", "size": "2.4 MB", "type": "pdf" },
+              { "name": "My self.Vid", "size": "2.4 MB", "type": "video" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "complete",
+            "clinic_location": "88 Market St, Suite 202, San Francisco, CA 94105",
+            "categories": [
+              {
+                "name": "Implants",
+                "files": [
+                  { "name": "CE certificate.pdf", "size": "2.4 MB", "type": "pdf" },
+                  { "name": "Material brands.pdf", "size": "2.4 MB", "type": "pdf" },
+                  { "name": "Invoice.pdf", "size": "1.8 MB", "type": "pdf" },
+                  { "name": "JCI License Certificate.pdf", "size": "3.1 MB", "type": "pdf" }
+                ]
+              },
+              { "name": "Veneers", "files": [] },
+              { "name": "Orthodontics", "files": [] }
+            ]
+          }
+        },
+        "bookings": [
+          {
+            "id": "B-2044",
+            "patient_name": "Sophie Bennett",
+            "patient_initials": "SB",
+            "patient_color": "#6366F1",
+            "procedure": "Braces Consultation",
+            "date": "May 06, 2026",
+            "status": "In Progress",
+            "payment_status": "In Escrow",
+            "amount": 320
+          },
+          {
+            "id": "B-2041",
+            "patient_name": "Olivia Martinez",
+            "patient_initials": "OM",
+            "patient_color": "#7C3AED",
+            "procedure": "All-on-4 Full Arch",
+            "date": "Apr 30, 2026",
+            "status": "In Progress",
+            "payment_status": "In Escrow",
+            "amount": 1075
+          },
+          {
+            "id": "B-2038",
+            "patient_name": "Ethan Wright",
+            "patient_initials": "EW",
+            "patient_color": "#0891B2",
+            "procedure": "Invisalign Fitting",
+            "date": "Apr 22, 2026",
+            "status": "Completed",
+            "payment_status": "Released",
+            "amount": 480
+          },
+          {
+            "id": "B-2031",
+            "patient_name": "Daniel Nguyen",
+            "patient_initials": "DN",
+            "patient_color": "#065F46",
+            "procedure": "Single Implant",
+            "date": "Apr 15, 2026",
+            "status": "Completed",
+            "payment_status": "Released",
+            "amount": 1200
+          },
+          {
+            "id": "B-2019",
+            "patient_name": "Zoe Robinson",
+            "patient_initials": "ZR",
+            "patient_color": "#9F1239",
+            "procedure": "Crown",
+            "date": "Apr 08, 2026",
+            "status": "Cancelled",
+            "payment_status": "Refunded",
+            "amount": 750
+          },
+          {
+            "id": "B-2007",
+            "patient_name": "James Thompson",
+            "patient_initials": "JT",
+            "patient_color": "#92400E",
+            "procedure": "Veneer (per tooth)",
+            "date": "Mar 28, 2026",
+            "status": "Completed",
+            "payment_status": "Released",
+            "amount": 380
+          }
+        ],
+        "consultations": [
+          {
+            "id": "CONS-101",
+            "patient_name": "Sophie Bennett",
+            "patient_email": "sophie@mail.com",
+            "patient_initials": "SB",
+            "patient_color": "#6366F1",
+            "treatment_procedure": "Braces Consultation",
+            "approx_budget": 320,
+            "date": "May 06, 2026",
+            "time_slot": "9:00 - 9:15 PM",
+            "sub_status": "upcoming",
+            "treatment_plan_status": null,
+            "request_details": {
+              "traveling_dates": "06–08 May, 2026",
+              "schedule": { "date": "May 06, 2026", "slot": "09:00 PM" },
+              "dental_history": { "last_visited": "Jan 10, 2025", "existing_conditions": [] },
+              "notes": null,
+              "media": [
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "X-Ray", "type": "image" }
+              ]
+            },
+            "treatment_plan": null
+          },
+          {
+            "id": "CONS-102",
+            "patient_name": "Olivia Martinez",
+            "patient_email": "olivia@gmail.com",
+            "patient_initials": "OM",
+            "patient_color": "#7C3AED",
+            "treatment_procedure": "All-on-4 Full Arch",
+            "approx_budget": 1075,
+            "date": "Apr 30, 2026",
+            "time_slot": "10:00 - 10:15 AM",
+            "sub_status": "upcoming",
+            "treatment_plan_status": null,
+            "request_details": {
+              "traveling_dates": "28 Apr–02 May, 2026",
+              "schedule": { "date": "Apr 30, 2026", "slot": "10:00 AM" },
+              "dental_history": { "last_visited": "Sep 12, 2025", "existing_conditions": ["Bone loss"] },
+              "notes": null,
+              "media": [
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "X-Ray", "type": "image" }
+              ]
+            },
+            "treatment_plan": null
+          },
+          {
+            "id": "CONS-103",
+            "patient_name": "Daniel Nguyen",
+            "patient_email": "dnguyen@mail.com",
+            "patient_initials": "DN",
+            "patient_color": "#065F46",
+            "treatment_procedure": "Teeth Whitening",
+            "approx_budget": 350,
+            "date": "May 12, 2026",
+            "time_slot": "2:00 - 2:15 PM",
+            "sub_status": "active",
+            "treatment_plan_status": null,
+            "request_details": {
+              "traveling_dates": "10–14 May, 2026",
+              "schedule": { "date": "May 12, 2026", "slot": "02:00 PM" },
+              "dental_history": { "last_visited": "Feb 20, 2026", "existing_conditions": [] },
+              "notes": "Patient prefers morning slots if rescheduled.",
+              "media": [
+                { "label": "Front Teeth", "type": "image" }
+              ]
+            },
+            "treatment_plan": null
+          },
+          {
+            "id": "CONS-104",
+            "patient_name": "Zoe Robinson",
+            "patient_email": "zoe.r@mail.com",
+            "patient_initials": "ZR",
+            "patient_color": "#9F1239",
+            "treatment_procedure": "Orthodontic Review",
+            "approx_budget": 180,
+            "date": "Apr 22, 2026",
+            "time_slot": "11:00 - 11:15 AM",
+            "sub_status": "active",
+            "treatment_plan_status": null,
+            "request_details": {
+              "traveling_dates": "20–24 Apr, 2026",
+              "schedule": { "date": "Apr 22, 2026", "slot": "11:00 AM" },
+              "dental_history": { "last_visited": "Oct 08, 2025", "existing_conditions": [] },
+              "notes": null,
+              "media": []
+            },
+            "treatment_plan": null
+          },
+          {
+            "id": "CONS-105",
+            "patient_name": "Ethan Wright",
+            "patient_email": "ethan.w@mail.com",
+            "patient_initials": "EW",
+            "patient_color": "#0891B2",
+            "treatment_procedure": "Implant Consultation",
+            "approx_budget": 2800,
+            "date": "Mar 18, 2026",
+            "time_slot": "3:00 - 3:15 PM",
+            "sub_status": "waiting_estimate",
+            "treatment_plan_status": "Not Sent",
+            "request_details": {
+              "traveling_dates": "16–20 Mar, 2026",
+              "schedule": { "date": "Mar 18, 2026", "slot": "03:00 PM" },
+              "dental_history": { "last_visited": "Nov 15, 2025", "existing_conditions": ["Bone loss", "Gum Disease"] },
+              "notes": null,
+              "media": [
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "Lower Arch", "type": "image" },
+                { "label": "X-Ray", "type": "image" }
+              ]
+            },
+            "treatment_plan": {
+              "procedure_breakdown": [
+                { "procedure": "Initial examination", "price": "Included" },
+                { "procedure": "CBCT scan (if needed)", "price": 693 },
+                { "procedure": "Temporary prosthesis", "price": 1039 },
+                { "procedure": "Temporary prosthesis", "price": 1200 },
+                { "procedure": "Final fitting & adjustments", "price": 346 }
+              ],
+              "estimate_amount": 1075,
+              "additional_info": ""
+            }
+          },
+          {
+            "id": "CONS-106",
+            "patient_name": "Lucas Diaz",
+            "patient_email": "lucas.d@gmail.com",
+            "patient_initials": "LD",
+            "patient_color": "#B45309",
+            "treatment_procedure": "Crown & Bridge",
+            "approx_budget": 1400,
+            "date": "Apr 05, 2026",
+            "time_slot": "9:30 - 9:45 AM",
+            "sub_status": "waiting_estimate",
+            "treatment_plan_status": "Awaiting response",
+            "request_details": {
+              "traveling_dates": "03–07 Apr, 2026",
+              "schedule": { "date": "Apr 05, 2026", "slot": "09:30 AM" },
+              "dental_history": { "last_visited": "Dec 01, 2025", "existing_conditions": ["Gum Disease"] },
+              "notes": null,
+              "media": [
+                { "label": "Upper Arch", "type": "image" },
+                { "label": "X-Ray", "type": "image" }
+              ]
+            },
+            "treatment_plan": {
+              "procedure_breakdown": [
+                { "procedure": "Initial consultation", "price": "Included" },
+                { "procedure": "Crown preparation", "price": 620 },
+                { "procedure": "Bridge fitting", "price": 780 }
+              ],
+              "estimate_amount": 1400,
+              "additional_info": ""
+            }
+          },
+          {
+            "id": "CONS-107",
+            "patient_name": "Mia Thompson",
+            "patient_email": "mia.t@gmail.com",
+            "patient_initials": "MT",
+            "patient_color": "#6B7280",
+            "treatment_procedure": "Veneers Consultation",
+            "approx_budget": 950,
+            "date": "Feb 12, 2026",
+            "time_slot": "4:00 - 4:15 PM",
+            "sub_status": "waiting_estimate",
+            "treatment_plan_status": "Rejected",
+            "request_details": {
+              "traveling_dates": "10–14 Feb, 2026",
+              "schedule": { "date": "Feb 12, 2026", "slot": "04:00 PM" },
+              "dental_history": { "last_visited": "Jul 22, 2025", "existing_conditions": [] },
+              "notes": null,
+              "media": [
+                { "label": "Front View", "type": "image" }
+              ]
+            },
+            "treatment_plan": {
+              "procedure_breakdown": [
+                { "procedure": "Consultation & planning", "price": "Included" },
+                { "procedure": "Veneer preparation (×4)", "price": 760 },
+                { "procedure": "Lab & bonding", "price": 190 }
+              ],
+              "estimate_amount": 950,
+              "additional_info": ""
+            }
+          }
+        ],
+        "reviews": [
+          {
+            "id": "REV-001",
+            "reviewer_name": "Emily C.",
+            "reviewer_initials": "E",
+            "reviewer_color": "#4B5563",
+            "rating": 5,
+            "treatment": "Teeth Whitening",
+            "date": "Apr 29, 2026",
+            "text": "Dr. Patel was absolutely incredible. From the very first consultation to the final result, everything was handled with care and professionalism."
+          },
+          {
+            "id": "REV-002",
+            "reviewer_name": "James T.",
+            "reviewer_initials": "J",
+            "reviewer_color": "#1A3A5C",
+            "rating": 4,
+            "treatment": "Invisalign",
+            "date": "Apr 28, 2026",
+            "text": "Really happy with my Invisalign results after 14 months. The process was smooth and Dr. Patel kept me informed at every stage."
+          },
+          {
+            "id": "REV-003",
+            "reviewer_name": "Sophie M.",
+            "reviewer_initials": "S",
+            "reviewer_color": "#7C3AED",
+            "rating": 5,
+            "treatment": "Dental Implant",
+            "date": "Apr 27, 2026",
+            "text": "Dr. Ruiz made the entire process stress-free. I was nervous but the team was incredibly supportive."
+          },
+          {
+            "id": "REV-004",
+            "reviewer_name": "Priya S.",
+            "reviewer_initials": "P",
+            "reviewer_color": "#065F46",
+            "rating": 5,
+            "treatment": "Extraction",
+            "date": "Apr 23, 2026",
+            "text": "Super quick and totally painless. Was in and out in under an hour — no complications at all."
+          }
+        ]
+      }
+    },
+    {
+      "id": "DEN-002",
+      "name": "Dr. Brian Lee",
+      "initials": "DB",
+      "avatar_color": "#1E40AF",
+      "email": "blee@smilecare.io",
+      "phone": "+1 212 555 0341",
+      "location": "New York, NY",
+      "specialty": "Endodontics",
+      "experience_years": 9,
+      "languages": ["English", "Korean"],
+      "status": "active",
+      "rating": 4.8,
+      "review_count": 142,
+      "bookings": 268,
+      "joined": "2024-09-03",
+      "rdv_score": 92,
+      "rdv_verified": true,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 268, "growth_this_month": 12 },
+          "revenue_lifetime": { "amount": 38600, "avg_per_visit": 680 },
+          "cancellation_rate": { "pct": "4.1%", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "91%", "note": "Within 15% of estimate" },
+          "avg_response_time": { "value": "45m", "note": "Typically < 24hrs" }
+        },
+        "performance": {
+          "show_up_rate": 94.2,
+          "five_star_reviews": 71,
+          "repeat_patients": 58,
+          "estimate_accuracy": 91
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "New York",
+            "registration_authority": "New York State Board of Dentistry",
+            "registration_no": "NY-034-22187",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "1.9 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "complete",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Root canal treatment", "description": "Single canal, includes X-ray", "price": 890 },
+              { "name": "Root canal re-treatment", "description": "Complex cases", "price": 1200 },
+              { "name": "Pulpotomy", "description": "Partial nerve removal", "price": 350 }
+            ],
+            "files": [
+              { "name": "NYS License.pdf", "size": "2.1 MB", "type": "pdf" },
+              { "name": "Clinic Overview.mp4", "size": "4.7 MB", "type": "video" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "complete",
+            "clinic_location": "320 5th Ave, Suite 14B, New York, NY 10001",
+            "categories": [
+              {
+                "name": "Endodontics",
+                "files": [
+                  { "name": "CE certificate.pdf", "size": "2.0 MB", "type": "pdf" },
+                  { "name": "Specialization Cert.pdf", "size": "1.6 MB", "type": "pdf" }
+                ]
+              },
+              { "name": "Implants", "files": [] }
+            ]
+          }
+        },
+        "bookings": [
+          {
+            "id": "B-3011",
+            "patient_name": "Mark Anderson",
+            "patient_initials": "MA",
+            "patient_color": "#1E40AF",
+            "procedure": "Root Canal Treatment",
+            "date": "May 10, 2026",
+            "status": "In Progress",
+            "payment_status": "In Escrow",
+            "amount": 890
+          },
+          {
+            "id": "B-2995",
+            "patient_name": "Fatima Khan",
+            "patient_initials": "FK",
+            "patient_color": "#065F46",
+            "procedure": "Root Canal Re-treatment",
+            "date": "Apr 28, 2026",
+            "status": "Completed",
+            "payment_status": "Released",
+            "amount": 1200
+          }
+        ],
+        "consultations": [
+          {
+            "id": "CONS-201",
+            "patient_name": "Mark Anderson",
+            "patient_email": "mark.a@mail.com",
+            "patient_initials": "MA",
+            "patient_color": "#1E40AF",
+            "treatment_procedure": "Root Canal Treatment",
+            "approx_budget": 890,
+            "date": "May 10, 2026",
+            "time_slot": "11:00 - 11:15 AM",
+            "sub_status": "upcoming",
+            "treatment_plan_status": null,
+            "request_details": {
+              "traveling_dates": "08–12 May, 2026",
+              "schedule": { "date": "May 10, 2026", "slot": "11:00 AM" },
+              "dental_history": { "last_visited": "Mar 04, 2026", "existing_conditions": ["Abscess"] },
+              "notes": null,
+              "media": [
+                { "label": "X-Ray", "type": "image" }
+              ]
+            },
+            "treatment_plan": null
+          }
+        ],
+        "reviews": [
+          {
+            "id": "REV-201",
+            "reviewer_name": "Mark A.",
+            "reviewer_initials": "M",
+            "reviewer_color": "#1E40AF",
+            "rating": 5,
+            "treatment": "Root Canal",
+            "date": "Apr 28, 2026",
+            "text": "Painless procedure, very professional. Dr. Lee explained everything clearly and made me feel at ease."
+          },
+          {
+            "id": "REV-202",
+            "reviewer_name": "Fatima K.",
+            "reviewer_initials": "F",
+            "reviewer_color": "#065F46",
+            "rating": 5,
+            "treatment": "Root Canal Re-treatment",
+            "date": "Apr 20, 2026",
+            "text": "Second root canal with Dr. Lee and just as good as the first. Highly recommend."
+          }
+        ]
+      }
+    },
+    {
+      "id": "DEN-003",
+      "name": "Dr. Amelia Garcia",
+      "initials": "DA",
+      "avatar_color": "#1A3A5C",
+      "email": "amelia@brightd.com",
+      "phone": "+1 512 555 0102",
+      "location": "Austin, TX",
+      "specialty": "Pediatric",
+      "experience_years": 4,
+      "languages": ["English", "Spanish"],
+      "status": "pending",
+      "rating": null,
+      "review_count": null,
+      "bookings": null,
+      "joined": "2026-04-22",
+      "rdv_score": 0,
+      "rdv_verified": false,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 0, "growth_this_month": 0 },
+          "revenue_lifetime": { "amount": 0, "avg_per_visit": 0 },
+          "cancellation_rate": { "pct": "—", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "—", "note": "No data yet" },
+          "avg_response_time": { "value": "—", "note": "No data yet" }
+        },
+        "performance": {
+          "show_up_rate": 0,
+          "five_star_reviews": 0,
+          "repeat_patients": 0,
+          "estimate_accuracy": 0
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "Texas",
+            "registration_authority": "Texas State Board of Dental Examiners",
+            "registration_no": "TX-019-55301",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "1.7 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "pending",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Routine check-up & clean", "description": "Includes X-rays and scale & polish", "price": 180 },
+              { "name": "White composite filling", "description": "Per surface, tooth-coloured resin", "price": 220 },
+              { "name": "Fluoride treatment", "description": "In-chair application, all ages", "price": 60 },
+              { "name": "Nightguard", "description": "Custom-fitted occlusal splint", "price": 420 }
+            ],
+            "files": [
+              { "name": "General Dentistry cert.pdf", "size": "1.4 MB", "type": "pdf" },
+              { "name": "Clinic walkthrough.mp4", "size": "5.8 MB", "type": "video" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "not_started",
+            "clinic_location": "412 E 6th St, Austin, TX 78701",
+            "categories": [
+              { "name": "Implants", "files": [] },
+              { "name": "Veneers", "files": [] },
+              { "name": "Orthodontics", "files": [] }
+            ]
+          }
+        },
+        "bookings": [],
+        "consultations": [],
+        "reviews": []
+      }
+    },
+    {
+      "id": "DEN-004",
+      "name": "Dr. Noah Kim",
+      "initials": "DN",
+      "avatar_color": "#0F172A",
+      "email": "noah@northdent.com",
+      "phone": "+1 206 555 0194",
+      "location": "Seattle, WA",
+      "specialty": "Cosmetic",
+      "experience_years": 7,
+      "languages": ["English"],
+      "status": "active",
+      "rating": 4.7,
+      "review_count": 96,
+      "bookings": 198,
+      "joined": "2025-01-10",
+      "rdv_score": 87,
+      "rdv_verified": true,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 198, "growth_this_month": 9 },
+          "revenue_lifetime": { "amount": 29400, "avg_per_visit": 590 },
+          "cancellation_rate": { "pct": "5.0%", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "88%", "note": "Within 15% of estimate" },
+          "avg_response_time": { "value": "2h 30m", "note": "Typically < 24hrs" }
+        },
+        "performance": {
+          "show_up_rate": 91.5,
+          "five_star_reviews": 66,
+          "repeat_patients": 51,
+          "estimate_accuracy": 88
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "Washington",
+            "registration_authority": "Washington State Dental Quality Assurance Commission",
+            "registration_no": "WA-044-77821",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "2.2 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "complete",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Teeth whitening", "description": "In-chair laser whitening", "price": 480 },
+              { "name": "Composite veneers", "description": "Per tooth", "price": 350 },
+              { "name": "Smile makeover", "description": "Full cosmetic package", "price": 4200 }
+            ],
+            "files": [
+              { "name": "WA License.pdf", "size": "1.8 MB", "type": "pdf" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "complete",
+            "clinic_location": "1420 5th Ave, Suite 900, Seattle, WA 98101",
+            "categories": [
+              {
+                "name": "Veneers",
+                "files": [
+                  { "name": "Veneer Cert.pdf", "size": "1.5 MB", "type": "pdf" }
+                ]
+              },
+              { "name": "Orthodontics", "files": [] }
+            ]
+          }
+        },
+        "bookings": [],
+        "consultations": [],
+        "reviews": []
+      }
+    },
+    {
+      "id": "DEN-005",
+      "name": "Dr. Priya Shah",
+      "initials": "DP",
+      "avatar_color": "#7C3AED",
+      "email": "priya@dentalp.co",
+      "phone": "+1 617 555 0285",
+      "location": "Boston, MA",
+      "specialty": "Periodontics",
+      "experience_years": 6,
+      "languages": ["English", "Hindi"],
+      "status": "suspended",
+      "rating": 3.9,
+      "review_count": 58,
+      "bookings": 74,
+      "joined": "2024-11-19",
+      "rdv_score": 61,
+      "rdv_verified": false,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 74, "growth_this_month": 0 },
+          "revenue_lifetime": { "amount": 11200, "avg_per_visit": 380 },
+          "cancellation_rate": { "pct": "9.4%", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "71%", "note": "Within 15% of estimate" },
+          "avg_response_time": { "value": "6h 20m", "note": "Typically < 24hrs" }
+        },
+        "performance": {
+          "show_up_rate": 78.1,
+          "five_star_reviews": 38,
+          "repeat_patients": 28,
+          "estimate_accuracy": 71
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "Massachusetts",
+            "registration_authority": "Massachusetts Board of Registration in Dentistry",
+            "registration_no": "MA-007-33041",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "2.0 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "rejected",
+            "rejection_reason": "Document is not relevant",
+            "services": [],
+            "files": [
+              { "name": "Clinic Overview.pdf", "size": "1.2 MB", "type": "pdf" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "not_started",
+            "clinic_location": "44 Harvard St, Boston, MA 02115",
+            "categories": [
+              { "name": "Implants", "files": [] },
+              { "name": "Periodontics", "files": [] }
+            ]
+          }
+        },
+        "bookings": [],
+        "consultations": [],
+        "reviews": []
+      }
+    },
+    {
+      "id": "DEN-006",
+      "name": "Dr. Liam O'Connor",
+      "initials": "DL",
+      "avatar_color": "#0891B2",
+      "email": "liam@oaktree.dent",
+      "phone": "+1 312 555 0467",
+      "location": "Chicago, IL",
+      "specialty": "Oral Surgery",
+      "experience_years": 13,
+      "languages": ["English"],
+      "status": "active",
+      "rating": 4.6,
+      "review_count": 211,
+      "bookings": 402,
+      "joined": "2024-06-04",
+      "rdv_score": 95,
+      "rdv_verified": true,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 402, "growth_this_month": 21 },
+          "revenue_lifetime": { "amount": 72100, "avg_per_visit": 920 },
+          "cancellation_rate": { "pct": "2.8%", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "96%", "note": "Within 15% of estimate" },
+          "avg_response_time": { "value": "55m", "note": "Typically < 24hrs" }
+        },
+        "performance": {
+          "show_up_rate": 97.4,
+          "five_star_reviews": 79,
+          "repeat_patients": 68,
+          "estimate_accuracy": 96
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "Illinois",
+            "registration_authority": "Illinois State Dental Society",
+            "registration_no": "IL-028-60714",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "2.3 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "complete",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Tooth extraction (simple)", "description": "Routine removal", "price": 280 },
+              { "name": "Wisdom tooth removal", "description": "Surgical extraction", "price": 750 },
+              { "name": "Bone graft", "description": "Socket preservation", "price": 950 }
+            ],
+            "files": [
+              { "name": "IL License.pdf", "size": "2.0 MB", "type": "pdf" },
+              { "name": "Surgical Suite Tour.mp4", "size": "7.2 MB", "type": "video" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "complete",
+            "clinic_location": "200 E Randolph St, Chicago, IL 60601",
+            "categories": [
+              {
+                "name": "Implants",
+                "files": [
+                  { "name": "Implant Cert.pdf", "size": "2.5 MB", "type": "pdf" },
+                  { "name": "CE Certificate.pdf", "size": "1.9 MB", "type": "pdf" }
+                ]
+              },
+              { "name": "Oral Surgery", "files": [] }
+            ]
+          }
+        },
+        "bookings": [],
+        "consultations": [],
+        "reviews": []
+      }
+    },
+    {
+      "id": "DEN-007",
+      "name": "Dr. Sara Chen",
+      "initials": "DS",
+      "avatar_color": "#BE185D",
+      "email": "sara@chendent.com",
+      "phone": "+1 323 555 0618",
+      "location": "Los Angeles, CA",
+      "specialty": "General",
+      "experience_years": 3,
+      "languages": ["English", "Mandarin"],
+      "status": "pending",
+      "rating": null,
+      "review_count": null,
+      "bookings": null,
+      "joined": "2026-04-25",
+      "rdv_score": 0,
+      "rdv_verified": false,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 0, "growth_this_month": 0 },
+          "revenue_lifetime": { "amount": 0, "avg_per_visit": 0 },
+          "cancellation_rate": { "pct": "—", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "—", "note": "No data yet" },
+          "avg_response_time": { "value": "—", "note": "No data yet" }
+        },
+        "performance": {
+          "show_up_rate": 0,
+          "five_star_reviews": 0,
+          "repeat_patients": 0,
+          "estimate_accuracy": 0
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "California",
+            "registration_authority": "Dental Board of California",
+            "registration_no": "CA-041-90210",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "1.5 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "pending",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Check-up & clean", "description": "Exam, scale and polish", "price": 160 },
+              { "name": "Composite filling", "description": "Per surface", "price": 200 },
+              { "name": "Tooth extraction", "description": "Simple removal", "price": 250 }
+            ],
+            "files": [
+              { "name": "General Dentistry cert.pdf", "size": "1.3 MB", "type": "pdf" },
+              { "name": "Clinic intro.mp4", "size": "3.9 MB", "type": "video" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "not_started",
+            "clinic_location": "9200 Sunset Blvd, Los Angeles, CA 90069",
+            "categories": [
+              { "name": "Implants", "files": [] },
+              { "name": "Orthodontics", "files": [] }
+            ]
+          }
+        },
+        "bookings": [],
+        "consultations": [],
+        "reviews": []
+      }
+    },
+    {
+      "id": "DEN-008",
+      "name": "Dr. Marcus Hall",
+      "initials": "DM",
+      "avatar_color": "#92400E",
+      "email": "marcus@hall.dental",
+      "phone": "+1 720 555 0899",
+      "location": "Denver, CO",
+      "specialty": "Prosthodontics",
+      "experience_years": 10,
+      "languages": ["English"],
+      "status": "active",
+      "rating": 4.5,
+      "review_count": 73,
+      "bookings": 124,
+      "joined": "2025-03-15",
+      "rdv_score": 83,
+      "rdv_verified": true,
+      "profile": {
+        "stats": {
+          "total_bookings": { "count": 124, "growth_this_month": 6 },
+          "revenue_lifetime": { "amount": 19800, "avg_per_visit": 620 },
+          "cancellation_rate": { "pct": "4.8%", "benchmark": "5.7%" },
+          "estimate_accuracy": { "pct": "86%", "note": "Within 15% of estimate" },
+          "avg_response_time": { "value": "1h 45m", "note": "Typically < 24hrs" }
+        },
+        "performance": {
+          "show_up_rate": 89.7,
+          "five_star_reviews": 62,
+          "repeat_patients": 47,
+          "estimate_accuracy": 86
+        },
+        "verification": {
+          "phase1": {
+            "label": "Phase 1 — Identity",
+            "status": "complete",
+            "country": "USA",
+            "city": "Colorado",
+            "registration_authority": "Colorado Dental Board",
+            "registration_no": "CO-015-80201",
+            "files": [
+              { "name": "License Certificate.pdf", "size": "2.1 MB", "type": "pdf" }
+            ]
+          },
+          "phase2": {
+            "label": "Phase 2 — Operations",
+            "status": "complete",
+            "rejection_reason": null,
+            "services": [
+              { "name": "Full dentures", "description": "Upper or lower arch", "price": 2200 },
+              { "name": "Partial dentures", "description": "Custom partial set", "price": 1400 },
+              { "name": "Crown & bridge", "description": "Per unit", "price": 950 }
+            ],
+            "files": [
+              { "name": "CO License.pdf", "size": "1.7 MB", "type": "pdf" }
+            ]
+          },
+          "phase3": {
+            "label": "Phase 3 — Clinical",
+            "status": "complete",
+            "clinic_location": "1600 Glenarm Pl, Denver, CO 80202",
+            "categories": [
+              {
+                "name": "Prosthodontics",
+                "files": [
+                  { "name": "Prostho Cert.pdf", "size": "2.2 MB", "type": "pdf" }
+                ]
+              }
+            ]
+          }
+        },
+        "bookings": [],
+        "consultations": [],
+        "reviews": []
+      }
+    }
+  ]
+}
