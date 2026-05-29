@@ -2,7 +2,7 @@ import { Lock } from "lucide-react";
 
 export function PricingPlaceholder() {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
       <div className="border-b border-gray-50 px-6 py-4">
         <h3 className="text-lg font-bold text-gray-900">Pricings</h3>
       </div>

@@ -32,7 +32,7 @@ export function ApprovePhaseModal({
         onClick={onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">

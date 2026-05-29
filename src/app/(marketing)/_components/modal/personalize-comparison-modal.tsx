@@ -143,7 +143,7 @@ export default function PersonalizeComparisonModal() {
 
   return (
     <Dialog open={showPersonalizeModal} onOpenChange={setShowPersonalizeModal}>
-      <DialogContent className="sm:max-w-[590px] gap-6 p-8 rounded-2xl">
+      <DialogContent className="sm:max-w-[590px] gap-6 p-8 rounded-xl">
         <DialogHeader className="gap-2">
           <DialogTitle className="text-2xl font-bold font-heading text-foreground leading-tight">
             Personalize your comparison

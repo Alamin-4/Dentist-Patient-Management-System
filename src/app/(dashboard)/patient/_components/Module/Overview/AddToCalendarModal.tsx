@@ -154,7 +154,7 @@ export function AddToCalendarModal({
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
-        className="w-full sm:max-w-110 rounded-3xl p-0 overflow-hidden border-0 shadow-xl"
+        className="w-full sm:max-w-110 rounded-3xl p-0 overflow-hidden border-0 shadow"
         showCloseButton={false}
       >
         <div className="p-6">
@@ -173,7 +173,7 @@ export function AddToCalendarModal({
           </div>
 
           {/* Doctor info card */}
-          <div className="flex items-center justify-between gap-4 bg-[#F9FAFB] rounded-2xl px-4 py-3.5 mb-5">
+          <div className="flex items-center justify-between gap-4 bg-[#F9FAFB] rounded-xl px-4 py-3.5 mb-5">
             <div className="flex items-center gap-3 min-w-0">
               <img
                 src={appointment.avatarSrc}
@@ -214,7 +214,7 @@ export function AddToCalendarModal({
                   key={key}
                   type="button"
                   onClick={() => setSelected(key)}
-                  className={`relative flex flex-col items-center gap-2.5 rounded-2xl border-2 py-4 px-2 transition-all ${
+                  className={`relative flex flex-col items-center gap-2.5 rounded-xl border-2 py-4 px-2 transition-all ${
                     isSelected
                       ? "border-[#113254] bg-[#F0F5FA]"
                       : "border-[#E5E7EB] bg-white hover:border-[#113254]/30"

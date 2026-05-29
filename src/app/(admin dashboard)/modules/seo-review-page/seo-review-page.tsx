@@ -99,7 +99,7 @@ function RemoveModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm:
     <>
       <div className="fixed inset-0 z-40 bg-black/30" onClick={onCancel} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <Trash className="h-5 w-5 text-red-500" />
           </div>

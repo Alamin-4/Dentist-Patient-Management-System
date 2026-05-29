@@ -26,7 +26,7 @@ export function PaymentMethodsView() {
         {cards.map((card) => (
           <div
             key={card.id}
-            className="flex items-center justify-between p-6 rounded-2xl border border-slate-100 bg-white"
+            className="flex items-center justify-between p-6 rounded-xl border border-slate-100 bg-white"
           >
             <div className="flex items-center gap-6">
               <div

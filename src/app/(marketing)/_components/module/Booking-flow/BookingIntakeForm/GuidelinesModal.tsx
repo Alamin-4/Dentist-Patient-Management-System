@@ -60,7 +60,7 @@ export default function GuidelinesModal({
           {GUIDELINES.map((item, index) => (
             <div key={index} className="flex flex-col gap-3">
               <div
-                className={`relative aspect-square rounded-2xl overflow-hidden ${item.bg} flex items-center justify-center`}
+                className={`relative aspect-square rounded-xl overflow-hidden ${item.bg} flex items-center justify-center`}
               >
                 <div className="absolute top-3 left-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
                   <span className="text-[#113254] font-bold text-sm">

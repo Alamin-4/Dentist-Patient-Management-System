@@ -62,7 +62,7 @@ export default function BookingManage() {
         <div className="h-12 w-full bg-slate-100 animate-pulse rounded-xl" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-72 bg-white rounded-2xl animate-pulse border border-slate-100" />
+            <div key={i} className="h-72 bg-white rounded-xl animate-pulse border border-slate-100" />
           ))}
         </div>
       </div>

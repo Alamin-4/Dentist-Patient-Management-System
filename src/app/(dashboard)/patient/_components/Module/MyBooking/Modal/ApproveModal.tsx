@@ -18,7 +18,7 @@ export function ConfirmReleaseModal({
 }: ConfirmReleaseModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg p-8 gap-5 border-none rounded-3xl shadow-xl">
+      <DialogContent className="sm:max-w-lg p-8 gap-5 border-none rounded-3xl shadow">
         {/* Custom close button */}
         <button
           onClick={onClose}

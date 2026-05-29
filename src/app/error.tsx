@@ -72,7 +72,7 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
         </div>
 
         {/* Error detail card */}
-        <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-6">
+        <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-6">
           {/* Error summary */}
           <div className="flex items-start gap-3 px-5 py-4 bg-red-50/60 border-b border-red-100">
             <div className="mt-0.5 shrink-0 size-2 rounded-full bg-red-400 animate-pulse" />

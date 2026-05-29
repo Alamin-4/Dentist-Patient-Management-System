@@ -1,6 +1,6 @@
 export function KolHeroBanner() {
   return (
-    <div className="rounded-2xl bg-[#113254] px-7 py-6 shadow-sm">
+    <div className="rounded-xl bg-[#113254] px-7 py-6 shadow-sm">
       <h2 className="text-xl font-bold text-white">
         Meet our Key Opinion Leaders
       </h2>

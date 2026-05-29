@@ -103,7 +103,7 @@ export default function AddPricing() {
       </div>
 
       {/* Form Card */}
-      <div className="rounded-2xl border border-border bg-card shadow-sm">
+      <div className="rounded-xl border border-border bg-card shadow-sm">
         {/* ─── Sterilization ─── */}
         <div className="grid grid-cols-1 gap-8 p-8 lg:grid-cols-12">
           <div className="lg:col-span-4">

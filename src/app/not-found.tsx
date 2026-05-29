@@ -29,7 +29,7 @@ export default function NotFound() {
               viewBox="0 0 220 220"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-36 h-36 sm:w-44 sm:h-44 drop-shadow-xl"
+              className="w-36 h-36 sm:w-44 sm:h-44 drop-shadow"
               aria-hidden="true"
             >
               {/* Glass circle */}

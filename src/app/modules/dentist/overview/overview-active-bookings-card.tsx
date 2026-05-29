@@ -32,7 +32,7 @@ function actionText(status: string) {
 
 export function OverviewActiveBookingsCard() {
   return (
-    <section className="rounded-2xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-lg font-semibold text-foreground">

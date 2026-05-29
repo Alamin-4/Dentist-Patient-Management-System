@@ -138,7 +138,7 @@ Mapped from observed radii in the Figma.
 | `rounded-md`     | 6px     | Inputs, small buttons                |
 | `rounded-lg` ⭐  | 8px     | **Buttons, icon containers, badges with backgrounds** |
 | `rounded-xl` ⭐  | 12px    | **Cards, modals, major surfaces**    |
-| `rounded-2xl`    | 16px    | Featured cards, hero surfaces        |
+| `rounded-xl`    | 16px    | Featured cards, hero surfaces        |
 | `rounded-full` ⭐ | Circle  | **Avatars, status dots, pills**     |
 
 ---
@@ -153,7 +153,7 @@ The Figma uses very subtle shadows — mostly just relying on borders.
 | `shadow-sm`   | Subtle elevation (hovering state on cards)   |
 | `shadow-md`   | Dropdowns, popovers                          |
 | `shadow-lg`   | Modals, dialogs                              |
-| `shadow-xl`   | Avoid in this design language — too heavy    |
+| `shadow`   | Avoid in this design language — too heavy    |
 
 **Rule of thumb:** Prefer `border-border` over `shadow-*` for static
 surfaces. Reserve shadows for floating UI (dropdowns, modals, toasts).

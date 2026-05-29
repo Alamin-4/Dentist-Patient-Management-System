@@ -47,7 +47,7 @@ export default function SettingPage() {
       {/* Two-column layout */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         {/* Left nav */}
-        <aside className="w-full shrink-0 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm lg:w-56 xl:w-64">
+        <aside className="w-full shrink-0 rounded-xl border border-gray-100 bg-white p-3 shadow-sm lg:w-56 xl:w-64">
           <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
             Configuration
           </p>
@@ -95,7 +95,7 @@ export default function SettingPage() {
         </aside>
 
         {/* Right content */}
-        <div className="flex-1 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+        <div className="flex-1 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
           {active === "rdv-weights" && (
             <RdvScoreWeights initialWeights={settingsData.rdvWeights} />
           )}

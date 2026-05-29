@@ -355,7 +355,7 @@ export default function FindDentist() {
 
               {viewMode === "map" && (
                 <div className={`max-w-full w-full h-screen`}>
-                  <div className="sticky top-24 h-full w-full overflow-hidden rounded-lg border border-slate-100 shadow-xl">
+                  <div className="sticky top-24 h-full w-full overflow-hidden rounded-lg border border-slate-100 shadow">
                     <DentistMap
                       dentists={filteredDentists}
                       activeDentistId={activeDentistId}

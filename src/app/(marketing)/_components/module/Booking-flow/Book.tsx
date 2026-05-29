@@ -99,7 +99,7 @@ export default function IntakeModal() {
 
   return (
     <Dialog open={showBookingModal === "book"} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-2xl bg-white">
+      <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-xl bg-white">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">
           <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">

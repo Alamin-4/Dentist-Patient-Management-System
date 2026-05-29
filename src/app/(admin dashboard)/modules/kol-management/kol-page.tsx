@@ -91,7 +91,7 @@ function StatCard({ icon, label, value, sub, iconBg, valueColor }: {
   valueColor: string;
 }) {
   return (
-    <div className="flex items-start gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex items-start gap-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", iconBg)}>
         {icon}
       </div>
@@ -360,7 +360,7 @@ export default function KolPage() {
         </div>
 
         {/* Table card */}
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
           {/* Filter bar */}
           <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 p-4">
             <div className="relative flex-1 min-w-50">

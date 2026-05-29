@@ -58,7 +58,7 @@ export default function PhotoUploadForm() {
       </h2>
 
       {/* Tip banner */}
-      <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-2xl mb-8">
+      <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-xl mb-8">
         <div>
           <p className="font-bold text-[#1A1A2E] text-[15px] mb-1">
             Tip for best results
@@ -146,7 +146,7 @@ function UploadCard({ label, slot, onFile }: UploadCardProps) {
   };
 
   return (
-    <div className="relative min-h-40 rounded-2xl overflow-hidden border-2 border-dashed border-[#E5E7EB] hover:border-[#113254] transition-colors cursor-pointer group">
+    <div className="relative min-h-40 rounded-xl overflow-hidden border-2 border-dashed border-[#E5E7EB] hover:border-[#113254] transition-colors cursor-pointer group">
       <input
         ref={inputRef}
         type="file"

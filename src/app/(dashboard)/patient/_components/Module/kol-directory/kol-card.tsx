@@ -31,7 +31,7 @@ export function KolCard({ kol, onAsk }: KolCardProps) {
   const languageList = kol.languages.join(" · ");
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-[#CEE0F4] bg-white p-5 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
+    <div className="flex flex-col gap-4 rounded-xl border border-[#CEE0F4] bg-white p-5 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
       {/* Top: avatar + info */}
       <div className="flex gap-4">
         <KolAvatar kol={kol} />

@@ -233,7 +233,7 @@ export function AddEditKolModal({ open, mode, kol, onClose, onSave }: AddEditKol
         onClick={onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="relative flex w-full max-w-[520px] flex-col rounded-2xl bg-white shadow-2xl">
+        <div className="relative flex w-full max-w-[520px] flex-col rounded-xl bg-white shadow-2xl">
           {/* Header */}
           <div className="flex items-start justify-between border-b border-gray-100 px-6 py-5">
             <div>

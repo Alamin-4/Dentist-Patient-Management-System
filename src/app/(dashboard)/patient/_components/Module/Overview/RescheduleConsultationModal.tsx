@@ -96,7 +96,7 @@ export function RescheduleConsultationModal({
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-[#E6EEF6] bg-white p-0">
+              <div className="rounded-xl border border-[#E6EEF6] bg-white p-0">
                 <div className="px-4 py-4 md:px-5">
                   <p className="text-[16px] font-bold text-[#0F3659]">
                     {selectedDate}
@@ -111,7 +111,7 @@ export function RescheduleConsultationModal({
                     <SelectTrigger className="h-12 rounded-xl border-[#E5E7EB] bg-white text-[14px] text-[#1A1A2E] focus:ring-[#113254]">
                       <SelectValue placeholder="Select Time Zone" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-[#E5E7EB]">
+                    <SelectContent className="rounded-xl border-[#E5E7EB]">
                       {TIME_ZONES.map((zone) => (
                         <SelectItem key={zone} value={zone} className="py-3">
                           {zone}

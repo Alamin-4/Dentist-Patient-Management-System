@@ -56,7 +56,7 @@ export default function SearchBar() {
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-xl border border-gray-100 bg-white p-2 shadow-xl animate-in fade-in zoom-in duration-150">
+          <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-xl border border-gray-100 bg-white p-2 shadow animate-in fade-in zoom-in duration-150">
             {PROCEDURES.map((item) => (
               <button
                 key={item}

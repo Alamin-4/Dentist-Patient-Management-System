@@ -77,7 +77,7 @@ export default function TravelChecklistPageComponent() {
       </h1>
 
       {/* Before you travel Section */}
-      <div className="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
         <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
           Before you travel
         </h2>
@@ -93,7 +93,7 @@ export default function TravelChecklistPageComponent() {
       </div>
 
       {/* After you travel Section */}
-      <div className="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
         <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
           After you travel
         </h2>

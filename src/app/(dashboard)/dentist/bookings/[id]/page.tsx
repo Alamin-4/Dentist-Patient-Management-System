@@ -184,7 +184,7 @@ export default function BookingDetailPage() {
       <div className="animate-pulse space-y-6">
         <div className="h-6 w-32 bg-slate-200 rounded" />
         <div className="h-8 w-52 bg-slate-200 rounded" />
-        <div className="bg-white rounded-2xl p-6 border border-slate-100">
+        <div className="bg-white rounded-xl p-6 border border-slate-100">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-slate-200" />
@@ -198,8 +198,8 @@ export default function BookingDetailPage() {
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 h-72 bg-white rounded-2xl border border-slate-100" />
-          <div className="h-72 bg-white rounded-2xl border border-slate-100" />
+          <div className="lg:col-span-2 h-72 bg-white rounded-xl border border-slate-100" />
+          <div className="h-72 bg-white rounded-xl border border-slate-100" />
         </div>
       </div>
     );
@@ -223,7 +223,7 @@ export default function BookingDetailPage() {
         </div>
 
         {/* ── Patient Info Card ── */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm">
+        <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-100 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             {/* Avatar + Name + Status */}
             <div className="flex items-start sm:items-center gap-4">
@@ -263,7 +263,7 @@ export default function BookingDetailPage() {
           {/* ── Left Column ── */}
           <div className="lg:col-span-2 space-y-5">
             {/* Estimate Treatment Plan */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
               <button
                 type="button"
                 onClick={() => setTreatmentPlanOpen((v) => !v)}
@@ -327,7 +327,7 @@ export default function BookingDetailPage() {
             {step === "day1_arrival" && (
               <div className="space-y-4">
                 {/* Dark verification banner */}
-                <div className="bg-[#0A2540] rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
+                <div className="bg-[#0A2540] rounded-xl px-5 py-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
                       <KeyRound className="w-5 h-5 text-white" />
@@ -400,7 +400,7 @@ export default function BookingDetailPage() {
 
             {/* Step: Final Treatment Plan */}
             {step === "final_plan" && (
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
                 <h3 className="font-bold text-[#0F172A] text-base mb-5">
                   Final Treatment plan
                 </h3>
@@ -420,7 +420,7 @@ export default function BookingDetailPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-4 py-4 text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center">
                       <Target className="w-7 h-7 text-slate-400" />
                     </div>
                     <p className="text-sm text-slate-500 max-w-xs leading-relaxed">
@@ -442,7 +442,7 @@ export default function BookingDetailPage() {
           </div>
 
           {/* ── Right Column: Patient Timeline ── */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 h-fit">
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 h-fit">
             <h4 className="font-bold text-[#0F172A] mb-6">Patient Timeline</h4>
             <ol className="space-y-0">
               {timelineItems.map((item, i) => (

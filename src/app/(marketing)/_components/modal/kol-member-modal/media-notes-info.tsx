@@ -50,7 +50,7 @@ export default function MediaNotesInfoForm({
 		<div className="space-y-6">
 			<div className="space-y-3">
 				<Label className="text-sm font-medium text-foreground">Headshot</Label>
-				<div className="rounded-2xl border border-border bg-background p-4 sm:p-5">
+				<div className="rounded-xl border border-border bg-background p-4 sm:p-5">
 					<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
 						<div className="flex items-center gap-4">
 							<div className="grid size-16 shrink-0 place-items-center rounded-full bg-sidebar text-lg font-semibold text-sidebar-primary-foreground sm:size-20">
@@ -143,7 +143,7 @@ export default function MediaNotesInfoForm({
 					onChange={(event) => onFieldChange("internalNotes", event.target.value)}
 					placeholder="Admin-only notes about this KOL - never visible to dentists."
 					rows={5}
-					className="min-h-32 rounded-2xl border-input px-4 py-3 text-base shadow-none focus-visible:ring-ring md:text-base"
+					className="min-h-32 rounded-xl border-input px-4 py-3 text-base shadow-none focus-visible:ring-ring md:text-base"
 				/>
 				<p className="text-sm text-muted-foreground">Only visible to platform admins.</p>
 			</div>

@@ -105,7 +105,7 @@ export default function TreatmentDetailsPage() {
       <h1 className="text-2xl font-bold text-[#1A1A2E] mb-5">Treatment Detail</h1>
 
       {/* Doctor Header Card */}
-      <div className="bg-white border border-[#CEE0F4] rounded-2xl p-5 md:p-6 mb-6">
+      <div className="bg-white border border-[#CEE0F4] rounded-xl p-5 md:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
           {/* Avatar + badges */}
           <div className="flex flex-col items-center gap-1.5 shrink-0">
@@ -186,7 +186,7 @@ export default function TreatmentDetailsPage() {
         <div className="lg:col-span-7 space-y-4">
 
           {/* Estimate Treatment plan (collapsible) */}
-          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
             <button
               onClick={() => setEstimatePlanOpen((v) => !v)}
               className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
@@ -224,7 +224,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Final Treatment Plan (visible when finalPlan exists) */}
           {finalPlan && (
-            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
               <button
                 onClick={() => setFinalPlanOpen((v) => !v)}
                 className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
@@ -276,7 +276,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Journey Completed (visible when approved) */}
           {isApproved && booking.journeyCompleted && (
-            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
               <button
                 onClick={() => setJourneyOpen((v) => !v)}
                 className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
@@ -316,7 +316,7 @@ export default function TreatmentDetailsPage() {
         <div className="lg:col-span-5 space-y-4">
 
           {/* Treatment Timeline */}
-          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 md:p-6">
+          <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-5 md:p-6">
             <h4 className="font-bold text-[#1A1A2E] mb-6">Treatment Timeline</h4>
             <div className="space-y-0">
               {booking.timeline.map((step, i) => (
@@ -334,7 +334,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Payment Code (visible when approved) */}
           {isApproved && (
-            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 md:p-6">
+            <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-5 md:p-6">
               <p className="text-sm font-bold text-[#1A1A2E] mb-3">Payment Code</p>
               <div className="flex items-center justify-between">
                 <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">

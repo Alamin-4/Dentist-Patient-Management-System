@@ -19,7 +19,7 @@ function PatientCard({ patient, mode, onViewDetails }: PatientCardProps) {
     mode === "bookings" ? patient.appointmentDate : patient.consultationSummary;
 
   return (
-    <article className="group w-full rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:border-border/80 hover:shadow-md sm:p-5">
+    <article className="group w-full rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:border-border/80 hover:shadow-md sm:p-5">
       <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,0.9fr)_auto] lg:items-center lg:gap-6">
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#0F2745] to-[#163E5C] text-base font-semibold tracking-tight text-white sm:size-14 sm:text-lg">
@@ -106,7 +106,7 @@ export default function PatientCardsSection({
 }: PatientCardsSectionProps) {
   if (patients.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-10 text-center text-sm text-muted-foreground">
+      <div className="rounded-xl border border-dashed border-border bg-card px-6 py-10 text-center text-sm text-muted-foreground">
         No patients found for the current filters.
       </div>
     );

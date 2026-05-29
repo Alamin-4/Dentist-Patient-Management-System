@@ -77,7 +77,7 @@ export default function Phase1() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-2xl border border-border bg-card shadow-sm">
+      <div className="rounded-xl border border-border bg-card shadow-sm">
         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
           <PhaseStep step={1} title="Verify your dental licence" />
 

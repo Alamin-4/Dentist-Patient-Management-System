@@ -8,7 +8,7 @@ export default function TreatmentDetailLoading() {
       <Skeleton className="w-44 h-8 rounded mb-5" />
 
       {/* Doctor header card */}
-      <div className="bg-white border border-[#CEE0F4] rounded-2xl p-5 md:p-6 mb-6">
+      <div className="bg-white border border-[#CEE0F4] rounded-xl p-5 md:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
           <div className="flex flex-col items-center gap-2 shrink-0">
             <Skeleton className="w-16 h-16 rounded-full" />
@@ -39,7 +39,7 @@ export default function TreatmentDetailLoading() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left — plan table */}
         <div className="lg:col-span-7">
-          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 md:p-6 space-y-4">
+          <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-5 md:p-6 space-y-4">
             <div className="flex justify-between items-center">
               <Skeleton className="w-44 h-5 rounded" />
               <Skeleton className="w-5 h-5 rounded" />
@@ -66,7 +66,7 @@ export default function TreatmentDetailLoading() {
 
         {/* Right — timeline */}
         <div className="lg:col-span-5">
-          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 md:p-6">
+          <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-5 md:p-6">
             <Skeleton className="w-36 h-5 rounded mb-6" />
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (

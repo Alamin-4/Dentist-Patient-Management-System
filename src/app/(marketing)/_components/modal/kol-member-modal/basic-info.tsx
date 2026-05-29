@@ -122,7 +122,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
             />
           </div>
 
-          <div className="max-h-[45vh] overflow-y-auto rounded-2xl border border-border bg-background">
+          <div className="max-h-[45vh] overflow-y-auto rounded-xl border border-border bg-background">
             {options.length ? (
               options.map((option) => (
                 <button

@@ -14,7 +14,7 @@ export function OverviewPageSkeleton() {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="rounded-2xl border border-border bg-card p-5"
+            className="rounded-xl border border-border bg-card p-5"
           >
             <div className="flex items-start justify-between gap-3">
               <Skeleton className="h-4 w-32 rounded-full bg-muted" />
@@ -29,7 +29,7 @@ export function OverviewPageSkeleton() {
       {/* Performance + Alerts */}
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         {/* Performance card */}
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center">
             <Skeleton className="size-44 shrink-0 rounded-full bg-muted" />
             <div className="flex-1 space-y-4">
@@ -46,7 +46,7 @@ export function OverviewPageSkeleton() {
         </div>
 
         {/* Alerts card */}
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
           <Skeleton className="h-6 w-16 rounded-xl bg-muted" />
           <div className="mt-5 space-y-4">
             {[0, 1].map((i) => (
@@ -63,7 +63,7 @@ export function OverviewPageSkeleton() {
       </div>
 
       {/* Active bookings */}
-      <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+      <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-40 rounded-xl bg-muted" />
           <Skeleton className="h-4 w-14 rounded-full bg-muted" />
@@ -97,7 +97,7 @@ export function OverviewPageSkeleton() {
       </div>
 
       {/* Referral code */}
-      <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+      <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
         <Skeleton className="h-4 w-32 rounded-full bg-muted" />
         <div className="mt-3 flex items-center justify-between gap-4">
           <Skeleton className="h-10 w-56 rounded-xl bg-muted" />

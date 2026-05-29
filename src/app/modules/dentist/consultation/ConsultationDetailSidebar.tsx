@@ -106,7 +106,7 @@ export const ConsultationDetailsSidebar = ({
             </SectionCard>
 
             {/* Media Section */}
-            <div className=" border border-[#E5E7EB] rounded-2xl space-y-4">
+            <div className=" border border-[#E5E7EB] rounded-xl space-y-4">
               <h4 className="text-sm font-bold text-[#4A4A4C] pt-4 pl-4">
                 Media
               </h4>

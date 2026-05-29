@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function ProfileHeader() {
   return (
-    <div className="flex flex-col items-center justify-between rounded-2xl border border-gray-100 bg-white p-8 md:flex-row">
+    <div className="flex flex-col items-center justify-between rounded-xl border border-gray-100 bg-white p-8 md:flex-row">
       <div className="flex items-center gap-6">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#E8F1F8] text-2xl font-bold text-[#163E5C]">
           AH

@@ -22,7 +22,7 @@ const steps = [
 export function VerificationSidebar() {
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-gray-100 bg-white p-6">
+      <div className="rounded-xl border border-gray-100 bg-white p-6">
         <h3 className="mb-6 font-bold text-gray-900">Verification Progress</h3>
         <div className="space-y-8 relative">
           <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-100" />
@@ -51,7 +51,7 @@ export function VerificationSidebar() {
         </Button>
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-6">
+      <div className="rounded-xl border border-gray-100 bg-white p-6">
         <h3 className="mb-4 font-bold text-gray-900">Profile completeness</h3>
         <div className="space-y-4">
           {[

@@ -39,7 +39,7 @@ export default function ClinicLocationModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.18 }}
-            className="relative bg-white rounded-2xl p-6 w-full max-w-[520px] shadow-2xl z-10"
+            className="relative bg-white rounded-xl p-6 w-full max-w-[520px] shadow-2xl z-10"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">

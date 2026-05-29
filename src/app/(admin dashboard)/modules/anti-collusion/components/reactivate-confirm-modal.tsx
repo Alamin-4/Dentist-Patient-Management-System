@@ -21,7 +21,7 @@ export function ReactivateConfirmModal({ open, dentistName, onClose, onConfirm }
     <>
       <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
           <h3 className="text-base font-bold text-[#1A1A2E]">Reactivate {dentistName}?</h3>
           <p className="mt-2 text-sm text-gray-500 leading-relaxed">
             Their profile will become visible in patient search immediately and they can accept new

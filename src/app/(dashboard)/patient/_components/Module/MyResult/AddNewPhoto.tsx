@@ -32,7 +32,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
             <p className="text-xl font-semibold text-[#1A1A2E]">Photos</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Before Upload */}
-              <label className="cursor-pointer border-2 border-dashed border-slate-200 rounded-2xl h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors">
+              <label className="cursor-pointer border-2 border-dashed border-slate-200 rounded-xl h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors">
                 <Upload className="size-7 text-slate-400" />
                 <span className="text-lg font-semibold text-[#1A1A2E]">
                   Upload Before Image
@@ -41,7 +41,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
               </label>
 
               {/* After Upload */}
-              <label className="cursor-pointer border-2 border-dashed border-slate-200 rounded-2xl h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors">
+              <label className="cursor-pointer border-2 border-dashed border-slate-200 rounded-xl h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors">
                 <Upload className="size-7 text-slate-400" />
                 <span className="text-lg font-semibold text-[#1A1A2E]">
                   Upload After Image

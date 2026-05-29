@@ -78,7 +78,7 @@ export default function ProcedureSelectionForm() {
               onClick={() => handleSelectProcedure(item.id)}
               className={`
                 group cursor-pointer relative flex items-center justify-between 
-                p-5 rounded-2xl border-2 transition-all duration-200
+                p-5 rounded-xl border-2 transition-all duration-200
                 ${
                   isSelected
                     ? "border-[#113254] bg-[#F8FAFC]"

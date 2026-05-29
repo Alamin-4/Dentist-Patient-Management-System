@@ -41,7 +41,7 @@ function EmptySlate({ tab }: { tab: Tab }) {
   const { title, body } = EMPTY_STATE[tab];
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="size-14 rounded-2xl bg-[#113254] flex items-center justify-center mb-5">
+      <div className="size-14 rounded-xl bg-[#113254] flex items-center justify-center mb-5">
         <Video className="size-7 text-white" />
       </div>
       <p className="text-[17px] font-bold text-[#1A1A2E] mb-2">{title}</p>

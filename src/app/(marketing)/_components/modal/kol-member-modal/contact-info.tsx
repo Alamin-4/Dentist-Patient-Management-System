@@ -73,7 +73,7 @@ export default function ContactInfoForm({
 						<div
 							key={option.id}
 							className={cn(
-								"rounded-2xl border bg-background transition-all",
+								"rounded-xl border bg-background transition-all",
 								isSelected
 									? "border-primary bg-primary/5 shadow-sm"
 									: "border-border hover:border-primary/40 hover:bg-muted/40",

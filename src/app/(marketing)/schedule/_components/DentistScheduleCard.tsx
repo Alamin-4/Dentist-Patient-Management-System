@@ -58,7 +58,7 @@ export default function DentistScheduleCard({
   onUpdate,
 }: DentistScheduleCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-[#E9EDEE] overflow-hidden shadow-sm">
+    <div className="bg-white rounded-xl border border-[#E9EDEE] overflow-hidden shadow-sm">
       {/* ── Doctor header ── */}
       <div className="flex items-start justify-between gap-4 p-6 border-b border-[#F3F4F6]">
         <div className="flex items-center gap-4">

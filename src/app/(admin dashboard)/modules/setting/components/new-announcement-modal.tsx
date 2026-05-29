@@ -55,7 +55,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+        <div className="w-full max-w-md rounded-xl bg-white shadow-2xl">
           {/* Header */}
           <div className="flex items-start gap-3 border-b border-gray-100 p-5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning-50">

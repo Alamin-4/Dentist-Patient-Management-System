@@ -33,7 +33,7 @@ export function OverviewStatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border bg-card p-5 shadow-[0_4px_20px_rgba(15,35,61,0.06)]",
+        "rounded-xl border border-border bg-card p-5 shadow-[0_4px_20px_rgba(15,35,61,0.06)]",
         className,
       )}
     >

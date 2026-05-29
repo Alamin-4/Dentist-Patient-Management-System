@@ -94,7 +94,7 @@ export default function PatientDetailsDrawer({
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="flex w-full max-h-[calc(100vh-2rem)] my-auto rounded-2xl overflow-hidden flex-col gap-0 border-l border-border bg-card p-0 mx-6 sm:max-w-md data-[side=right]:w-full data-[side=right]:sm:max-w-md"
+        className="flex w-full max-h-[calc(100vh-2rem)] my-auto rounded-xl overflow-hidden flex-col gap-0 border-l border-border bg-card p-0 mx-6 sm:max-w-md data-[side=right]:w-full data-[side=right]:sm:max-w-md"
       >
         <header className="shrink-0 border-b border-border bg-card px-5 pt-5 pb-0">
           <div className="mb-4 flex items-center justify-between">

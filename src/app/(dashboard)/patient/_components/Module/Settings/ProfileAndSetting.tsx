@@ -24,7 +24,7 @@ export default function ProfileSettingsPage() {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar Navigation - Matches image_2d8437.png */}
-        <div className="w-full lg:w-[320px] bg-white rounded-2xl border border-slate-100 p-8 flex flex-col items-center">
+        <div className="w-full lg:w-[320px] bg-white rounded-xl border border-slate-100 p-8 flex flex-col items-center">
           <div className="relative group mb-4">
             <div className="size-24 rounded-full overflow-hidden border-2 border-slate-50 relative">
               <Image
@@ -65,7 +65,7 @@ export default function ProfileSettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-2xl border border-slate-100 p-8 lg:p-12">
+        <div className="flex-1 bg-white rounded-xl border border-slate-100 p-8 lg:p-12">
           {activeTab === "personal" && <PersonalInfoForm />}
           {activeTab === "password" && <ChangePasswordForm />}
           {activeTab === "payment" && <PaymentMethodsView />}

@@ -30,7 +30,7 @@ export default function UploadDocumentModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-175 w-full p-0 border-none rounded-2xl overflow-hidden bg-white shadow-2xl">
+      <DialogContent className="sm:max-w-175 w-full p-0 border-none rounded-xl overflow-hidden bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
           <DialogTitle className="text-[22px] font-bold text-[#1A1A2E]">
@@ -46,7 +46,7 @@ export default function UploadDocumentModal({
             onDrop={onDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`
-              relative flex flex-col items-center justify-center w-full py-20 border-2 border-dashed rounded-2xl cursor-pointer transition-all
+              relative flex flex-col items-center justify-center w-full py-20 border-2 border-dashed rounded-xl cursor-pointer transition-all
               ${isDragging ? "border-[#113254] bg-[#F0F9FF]" : "border-[#D1D5DB] hover:border-[#113254] bg-white"}
             `}
           >

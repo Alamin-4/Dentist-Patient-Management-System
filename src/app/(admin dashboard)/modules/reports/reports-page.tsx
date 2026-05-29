@@ -38,7 +38,7 @@ function Section({ title, sub, action, children }: {
   title: string; sub?: string; action?: React.ReactNode; children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2 border-b border-gray-100 px-5 py-4">
         <div>
           <h3 className="text-sm font-bold text-[#1A1A2E]">{title}</h3>
@@ -173,7 +173,7 @@ function KpiCards() {
         const meta = KPI_ICONS[kpi.id];
         const Icon = meta.icon;
         return (
-          <div key={kpi.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div key={kpi.id} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-2">
               <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", meta.iconBg)}>
                 <Icon className={cn("h-4.5 w-4.5", meta.iconColor)} />
@@ -553,7 +553,7 @@ function ComplianceTab() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {complianceData.map((item) => (
-          <div key={item.label} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm text-center">
+          <div key={item.label} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm text-center">
             <p className={cn("text-2xl font-bold", item.color)}>{item.value}</p>
             <p className="mt-1 text-xs font-semibold text-[#1A1A2E]">{item.label}</p>
             <p className="mt-0.5 text-[10px] text-gray-400">{item.sub}</p>
@@ -698,7 +698,7 @@ export default function ReportsPage() {
       <KpiCards />
 
       {/* Tabs */}
-      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <CustomTab
             tabs={TABS}

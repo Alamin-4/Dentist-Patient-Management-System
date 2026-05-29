@@ -105,7 +105,7 @@ export default function CompareModal() {
 
   return (
     <Dialog open={showCompareModal} onOpenChange={setShowCompareModal}>
-      <DialogContent className="sm:max-w-4xl w-full p-0 rounded-2xl overflow-hidden bg-white max-h-[92vh] flex flex-col">
+      <DialogContent className="sm:max-w-4xl w-full p-0 rounded-xl overflow-hidden bg-white max-h-[92vh] flex flex-col">
         <DialogTitle className="sr-only">
           {isPostBooking ? "Your personalised estimates are ready" : "Compare Dentists"}
         </DialogTitle>

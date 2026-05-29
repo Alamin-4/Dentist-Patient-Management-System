@@ -9,7 +9,7 @@ const details = [
 
 export function BasicDetailsCard() {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-lg font-bold text-gray-900">Basic Details</h3>
         <button className="text-gray-400 hover:text-[#163E5C] transition-colors">

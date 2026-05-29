@@ -108,7 +108,7 @@ export default function DocumentsPage() {
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 hover:border-[#113254]/20 hover:shadow-md transition-all group"
+              className="bg-white p-5 md:p-6 rounded-xl border border-gray-100 hover:border-[#113254]/20 hover:shadow-md transition-all group"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* Info Section */}

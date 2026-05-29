@@ -40,7 +40,7 @@ export default function MultiStepForm() {
       <form
         id="phase-2-verification-form"
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="space-y-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+        className="space-y-0 overflow-hidden rounded-xl border border-border bg-card shadow-sm"
       >
         <SterilizationSection />
         <ProcedurePricingSection />

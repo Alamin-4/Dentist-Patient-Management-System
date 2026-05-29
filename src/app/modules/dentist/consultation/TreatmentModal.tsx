@@ -79,7 +79,7 @@ export default function CreateTreatmentPlanModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
         <DialogOverlay className="bg-black/20 backdrop-blur-sm" />
-        <DialogContent className="sm:max-w-275 w-[95vw] rounded-2xl overflow-y-auto p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none">
+        <DialogContent className="sm:max-w-275 w-[95vw] rounded-xl overflow-y-auto p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none">
           {/* Header */}
           <div className="px-8 py-6 border-b border-slate-200">
             <DialogTitle className="text-lg lg:text-xl font-semibold text-[#1A1A2E]">

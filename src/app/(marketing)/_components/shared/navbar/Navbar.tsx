@@ -87,7 +87,7 @@ export default function Navbar() {
       </div>
 
       {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-white border-b border-gray-100 p-4 lg:hidden flex flex-col gap-4 shadow-xl">
+        <div className="absolute top-full left-0 w-full bg-white border-b border-gray-100 p-4 lg:hidden flex flex-col gap-4 shadow">
           <div className="relative md:hidden">
             <input
               type="text"

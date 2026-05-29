@@ -20,7 +20,7 @@ function SectionCard({
   className?: string;
 }) {
   return (
-    <div className={cn("bg-white rounded-2xl p-6 border border-slate-100", className)}>
+    <div className={cn("bg-white rounded-xl p-6 border border-slate-100", className)}>
       {children}
     </div>
   );
@@ -194,7 +194,7 @@ export default function ReviewPlanPage() {
             </div>
 
             {/* Sign to confirm */}
-            <div className="mt-8 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <div className="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-100">
               <h5 className="font-bold text-[#1A1A2E] mb-1">Sign to confirm plan</h5>
               <p className="text-[11px] text-slate-500 mb-4">
                 Read each point carefully. You must agree to all three before your payment is processed.

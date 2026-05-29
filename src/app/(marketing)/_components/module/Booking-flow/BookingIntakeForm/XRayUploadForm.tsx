@@ -90,7 +90,7 @@ export default function XRayUploadForm() {
       </div>
 
       {/* Warning Banner from image_e09336.png */}
-      <div className="mt-10 p-6 bg-[#FFFBEB] border border-[#FEF3C7] rounded-2xl">
+      <div className="mt-10 p-6 bg-[#FFFBEB] border border-[#FEF3C7] rounded-xl">
         <p className="text-[#1A1A2E] text-[15px] leading-relaxed font-medium">
           Without X-rays, your estimate range may be wider. Your doctors may
           also request them during your video consultation before confirming a

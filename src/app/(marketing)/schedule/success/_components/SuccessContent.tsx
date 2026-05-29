@@ -66,7 +66,7 @@ export default function SuccessContent() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
-      <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl px-8 pt-10 pb-8 flex flex-col items-center text-center">
+      <div className="w-full max-w-lg bg-white rounded-3xl shadow px-8 pt-10 pb-8 flex flex-col items-center text-center">
         {/* Check icon */}
         <div className="size-16 rounded-full bg-[#113254] flex items-center justify-center mb-6 shadow-lg">
           <CheckCircle2 className="size-9 text-white fill-white stroke-[#113254]" />
@@ -87,7 +87,7 @@ export default function SuccessContent() {
         </p>
 
         {/* Appointment summary */}
-        <div className="w-full mt-6 rounded-2xl border border-[#E9EDEE] overflow-hidden">
+        <div className="w-full mt-6 rounded-xl border border-[#E9EDEE] overflow-hidden">
           {dentists.map((doc) => {
             const sel = getSelection(doc.id);
             return (

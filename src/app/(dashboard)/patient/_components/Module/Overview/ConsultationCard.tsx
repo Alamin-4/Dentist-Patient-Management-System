@@ -33,7 +33,7 @@ export function ConsultationCard({
 
   return (
     <>
-      <div className="rounded-2xl border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
+      <div className="rounded-xl border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
         {consultation.alertMessage ? (
           <div className="mb-4 flex items-start gap-3 rounded-xl border border-[#FACC15]/40 bg-[#FFF7E6] px-4 py-3 text-[12px] leading-relaxed text-[#7A4A00]">
             <div className="mt-0.5 size-5 rounded-full bg-white flex items-center justify-center text-[#F59E0B] shrink-0">

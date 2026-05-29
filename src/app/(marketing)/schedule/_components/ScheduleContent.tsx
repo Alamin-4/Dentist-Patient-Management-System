@@ -165,7 +165,7 @@ export default function ScheduleContent() {
             </p>
 
             {/* Booked appointments */}
-            <div className="w-full mt-6 rounded-2xl border border-[#E9EDEE] overflow-hidden">
+            <div className="w-full mt-6 rounded-xl border border-[#E9EDEE] overflow-hidden">
               {dentists.map((doc, i) => {
                 const sel = selections[i];
                 return (

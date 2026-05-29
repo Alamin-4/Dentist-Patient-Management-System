@@ -28,7 +28,7 @@ export function NoSurpriseRejectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg p-8 gap-6 border-none rounded-3xl shadow-xl">
+      <DialogContent className="sm:max-w-lg p-8 gap-6 border-none rounded-3xl shadow">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#1A1A2E] text-left leading-snug">
             Rejected Plan No Surprise Guarantee

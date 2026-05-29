@@ -340,7 +340,7 @@ export default function AntiCollusion() {
         </div>
 
         {/* Table card */}
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
           {/* Tabs */}
           <div className="border-b border-gray-100">
             <CustomTab

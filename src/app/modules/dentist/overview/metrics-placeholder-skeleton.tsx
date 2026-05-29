@@ -11,7 +11,7 @@ export function MetricsPlaceholderSkeleton() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {[0, 1, 2].map((index) => (
-            <div key={index} className="rounded-2xl border border-border bg-background p-4">
+            <div key={index} className="rounded-xl border border-border bg-background p-4">
               <Skeleton className="h-4 w-20 rounded-full bg-muted" />
               <Skeleton className="mt-2 h-8 w-14 rounded-full bg-muted" />
             </div>
@@ -25,7 +25,7 @@ export function MetricsPlaceholderSkeleton() {
 
         <div className="mt-6 space-y-4">
           {[0, 1, 2].map((index) => (
-            <div key={index} className="rounded-2xl border border-border bg-background p-4">
+            <div key={index} className="rounded-xl border border-border bg-background p-4">
               <Skeleton className="h-4 w-[min(100%,18rem)] rounded-full bg-muted" />
               <Skeleton className="mt-2 h-4 w-[min(100%,14rem)] rounded-full bg-muted" />
             </div>

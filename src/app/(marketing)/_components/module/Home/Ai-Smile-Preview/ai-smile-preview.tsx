@@ -180,7 +180,7 @@ export default function AiSmilePreview() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="relative w-full overflow-hidden rounded-2xl"
+          className="relative w-full overflow-hidden rounded-xl"
           style={{
             aspectRatio: "2 / 1",
             background:

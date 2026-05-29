@@ -16,7 +16,7 @@ export const ConsultationCard = ({
   isTreatmentModalOpen,
 }: CardProps & { onClick: () => void }) => {
   return (
-    <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white border border-slate-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
       {/* Header: Avatar & Info */}
       <div className="flex items-center gap-4 mb-6">
         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#163E5C] font-bold text-sm">

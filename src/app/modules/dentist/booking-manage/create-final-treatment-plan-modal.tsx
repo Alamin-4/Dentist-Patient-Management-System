@@ -116,7 +116,7 @@ export default function CreateFinalTreatmentPlanModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
         <DialogOverlay className="bg-black/30 backdrop-blur-sm" />
-        <DialogContent className="w-[95vw] max-w-3xl rounded-2xl p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
+        <DialogContent className="w-[95vw] max-w-3xl rounded-xl p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
           {/* ── Modal Header ── */}
           <div className="flex items-center justify-between px-7 py-5 border-b border-slate-100 shrink-0">
             <DialogTitle className="text-lg font-bold text-[#1A1A2E]">

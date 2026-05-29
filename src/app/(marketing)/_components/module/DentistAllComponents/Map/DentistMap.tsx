@@ -47,7 +47,7 @@ export default function DentistMap({
   }, []);
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] shadow-xl">
+    <div className="relative h-full w-full overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] shadow">
       <MapContainer
         center={defaultPosition}
         zoom={13}

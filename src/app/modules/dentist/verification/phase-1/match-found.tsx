@@ -52,7 +52,7 @@ export function VerificationResult({
   // --- MATCH FOUND STATE ---
   if (status === "match") {
     return (
-      <div className="mt-6 rounded-2xl border border-success-100 bg-success-50/70 p-5 sm:p-6">
+      <div className="mt-6 rounded-xl border border-success-100 bg-success-50/70 p-5 sm:p-6">
         <div className="flex items-center gap-4">
           <p className="text-sm font-semibold text-foreground">Match Found</p>
         </div>
@@ -72,7 +72,7 @@ export function VerificationResult({
           </div>
         )}
 
-        <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-success-100 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-5 flex flex-col gap-4 rounded-xl border border-success-100 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
               <img src="/doctor-placeholder.png" alt="Doctor" className="h-full w-full object-cover" />
@@ -100,7 +100,7 @@ export function VerificationResult({
   return (
     <>
       {!selectedFile ? (
-        <div className="mt-6 space-y-4 rounded-2xl border border-destructive-100 bg-destructive-50/70 p-5 sm:p-6">
+        <div className="mt-6 space-y-4 rounded-xl border border-destructive-100 bg-destructive-50/70 p-5 sm:p-6">
           <h4 className="text-lg font-semibold text-foreground">Match not Found</h4>
           <p className="text-sm text-muted-foreground">
             Upload your registration certificate manually to continue verification.

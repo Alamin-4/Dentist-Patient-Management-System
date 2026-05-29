@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 
 export default function StickySidebar({ dentist }: { dentist: any }) {
   return (
-    <div className="rounded-[32px] border border-slate-100 bg-white p-8 shadow-xl">
+    <div className="rounded-[32px] border border-slate-100 bg-white p-8 shadow">
       <div className="flex items-start gap-5">
         <div className="relative h-24 w-24 overflow-hidden rounded-full ring-4 ring-slate-50">
           <Image
@@ -90,7 +90,7 @@ export default function StickySidebar({ dentist }: { dentist: any }) {
           </p>
           <p className="text-4xl font-black text-[#003366]">$1,500</p>
         </div>
-        <Button className="h-16 flex-1 rounded-2xl bg-[#003366] text-lg font-black text-white hover:bg-[#002850]">
+        <Button className="h-16 flex-1 rounded-xl bg-[#003366] text-lg font-black text-white hover:bg-[#002850]">
           Book consultation
         </Button>
       </div>

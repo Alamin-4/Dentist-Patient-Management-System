@@ -13,7 +13,7 @@ export function VerificationBannerSkeleton() {
 
         <div className="grid gap-3 sm:grid-cols-3">
           {[0, 1, 2].map((index) => (
-            <div key={index} className="rounded-2xl border border-border bg-background p-4">
+            <div key={index} className="rounded-xl border border-border bg-background p-4">
               <Skeleton className="size-5 rounded-md bg-muted" />
               <Skeleton className="mt-3 h-4 w-24 rounded-full bg-muted" />
               <Skeleton className="mt-2 h-4 w-full rounded-full bg-muted" />
@@ -34,7 +34,7 @@ export function VerificationBannerSkeleton() {
 
             <div className="mt-6 w-full space-y-3">
               {[0, 1, 2].map((index) => (
-                <div key={index} className="rounded-2xl border border-border bg-card p-4">
+                <div key={index} className="rounded-xl border border-border bg-card p-4">
                   <Skeleton className="h-5 w-32 rounded-full bg-muted" />
                   <Skeleton className="mt-2 h-4 w-24 rounded-full bg-muted" />
                 </div>

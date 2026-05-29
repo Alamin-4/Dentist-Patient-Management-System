@@ -84,7 +84,7 @@ const SignatureModal = ({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+        className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">

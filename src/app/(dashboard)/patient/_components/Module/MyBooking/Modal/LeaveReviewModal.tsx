@@ -55,7 +55,7 @@ export function LeaveReviewModal({
 
         <div className="p-6 space-y-6 overflow-y-auto">
           {/* Doctor Info Card - Matches image_2e7035.png */}
-          <div className="p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col md:flex-row items-center md:items-start gap-6">
+          <div className="p-6 rounded-xl border border-[#E2E8F0] bg-white flex flex-col md:flex-row items-center md:items-start gap-6">
             <div className="flex flex-col items-center gap-2">
               <div className="relative size-24 rounded-full overflow-hidden border-2 border-slate-50">
                 <Image
