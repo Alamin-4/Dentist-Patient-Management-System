@@ -55,22 +55,64 @@ jobs:
             set -e
 
             IMAGE="${{ secrets.DOCKER_USERNAME }}/rated-docs-website:latest"
+            DOMAIN="${{ secrets.DOMAIN_NAME }}"
+            if [ -z "$DOMAIN" ]; then
+              DOMAIN="localhost"
+            fi
 
-            echo "→ Pulling latest image..."
-            docker pull "$IMAGE"
+            echo "→ Creating deployment directory..."
+            mkdir -p ~/rateddocs-deploy
+            cd ~/rateddocs-deploy
 
-            echo "→ Stopping old container..."
+            echo "→ Writing Caddyfile..."
+            cat << EOF > Caddyfile
+            $DOMAIN {
+                reverse_proxy web:3000
+            }
+            EOF
+
+            echo "→ Writing docker-compose.yml..."
+            cat << EOF > docker-compose.yml
+            services:
+              web:
+                image: $IMAGE
+                restart: unless-stopped
+                expose:
+                  - "3000"
+                environment:
+                  - PORT=3000
+                  - HOSTNAME=0.0.0.0
+                  - NODE_ENV=production
+
+              caddy:
+                image: caddy:2-alpine
+                restart: unless-stopped
+                ports:
+                  - "80:80"
+                  - "443:443"
+                volumes:
+                  - ./Caddyfile:/etc/caddy/Caddyfile
+                  - caddy_data:/data
+                  - caddy_config:/config
+                depends_on:
+                  - web
+
+            volumes:
+              caddy_data:
+              caddy_config:
+            EOF
+
+            echo "→ Stopping old standalone containers if running..."
             docker stop rated-docs-website || true
             docker rm rated-docs-website || true
 
-            echo "→ Running new container..."
-            docker run -d \
-              --name rated-docs-website \
-              --restart unless-stopped \
-              -p 80:3000 \
-              "$IMAGE"
+            echo "→ Pulling latest image..."
+            docker compose pull web
 
-            echo "→ Cleaning up..."
+            echo "→ Deploying via Docker Compose..."
+            docker compose up -d --remove-orphans
+
+            echo "→ Cleaning up old images..."
             docker image prune -f
 
             echo "✓ Deployment successful"
