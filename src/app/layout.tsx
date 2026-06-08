@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StateProvider } from "@/providers/StateProvider";
@@ -12,10 +12,21 @@ const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#152238",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "RatedDocs",
   description:
     "Discover top-rated dentists with transparent pricing on RatedDocs. Compare verified dental professionals, read reviews, and book confidently for your oral health needs.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "RatedDocs",
+  },
 };
 
 export default function RootLayout({
