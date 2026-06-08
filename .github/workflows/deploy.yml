@@ -107,10 +107,10 @@ jobs:
             docker rm rated-docs-website || true
 
             echo "→ Pulling latest image..."
-            docker-compose pull web
+            docker compose pull web
 
             echo "→ Deploying via Docker Compose..."
-            docker-compose up -d --remove-orphans
+            docker compose up -d --remove-orphans
 
             echo "→ Cleaning up old images..."
             docker image prune -f
