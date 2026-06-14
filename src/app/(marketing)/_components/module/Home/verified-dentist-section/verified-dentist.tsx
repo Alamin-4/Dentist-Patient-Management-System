@@ -15,11 +15,9 @@ export default function VerifiedDentists() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [dentists, setDentists] = useState<any[]>([]);
-  // Simulated auth state — replace with real session check when backend is ready
-  const user = true;
-  const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare } = useStateContext();
+  const user = false;
+  const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare, setShowCompareModal } = useStateContext();
 
-  // Load dentists from storage and filter by specialty
   useEffect(() => {
     const allDentists = getDentistsFromStorage();
     const filtered = allDentists.filter((d) => d.specialty.includes(procedure));
@@ -35,6 +33,7 @@ export default function VerifiedDentists() {
           : prev,
     );
   };
+
   const removeSelectedDentist = (id: string) => {
     setSelectedIds((prev) => prev.filter((i) => i !== id));
   };
