@@ -11,12 +11,13 @@ export const endpoints = {
     resetPassword: "/auth/reset-password",
     refreshToken: "/auth/token/refresh/",
     verifyToken: "/auth/token/verify/",
+    verifyOtp: "/auth/verify-otp/",
+    resendOtp: "/auth/resend-otp/",
   },
   patient: {
     register: "/auth/signup/",
     login: "/auth/signin/",
-    verifyOtp: "/auth/verify-otp/",
-    resendOtp: "/auth/resend-otp/",
+
     profile: "/auth/profile",
   },
 

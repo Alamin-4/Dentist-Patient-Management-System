@@ -18,10 +18,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import {
-  usePatientResendOtp,
-  usePatientVerifyOtp,
-} from "@/hooks/authentication/patient/usePatient";
+import useAuth from "@/hooks/authentication/useAuth";
 import { getApiErrorMessage } from "@/lib/api";
 
 const otpVerifySchema = z.object({
@@ -49,8 +46,7 @@ export default function OtpVerifyModal({
   onOpenChange,
   onVerified,
 }: OtpVerifyModalProps) {
-  const verifyOtp = usePatientVerifyOtp();
-  const resendOtp = usePatientResendOtp();
+  const { otpVerifyMutation, resendOtpMutation } = useAuth();
 
   const {
     control,
@@ -65,7 +61,7 @@ export default function OtpVerifyModal({
   });
 
   const onSubmit = (data: OtpVerifyFormData) => {
-    verifyOtp.mutate(
+    otpVerifyMutation.mutate(
       {
         email,
         otp: data.otp,
@@ -78,7 +74,7 @@ export default function OtpVerifyModal({
           reset();
           onVerified();
         },
-        onError: (error) => {
+        onError: (error: any) => {
           toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
         },
       },
@@ -86,7 +82,7 @@ export default function OtpVerifyModal({
   };
 
   const handleResendOtp = () => {
-    resendOtp.mutate(
+    resendOtpMutation.mutate(
       { email },
       {
         onSuccess: () => {
@@ -94,7 +90,7 @@ export default function OtpVerifyModal({
             style: TOAST_STYLE,
           });
         },
-        onError: (error) => {
+        onError: (error: any) => {
           toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
         },
       },
@@ -152,10 +148,10 @@ export default function OtpVerifyModal({
 
           <button
             type="submit"
-            disabled={verifyOtp.isPending || !email}
+            disabled={otpVerifyMutation.isPending || !email}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {verifyOtp.isPending ? (
+            {otpVerifyMutation.isPending ? (
               <>
                 <Loader2 className="size-5 animate-spin" />
                 Verifying...
@@ -170,10 +166,10 @@ export default function OtpVerifyModal({
             <button
               type="button"
               onClick={handleResendOtp}
-              disabled={resendOtp.isPending || !email}
+              disabled={resendOtpMutation.isPending || !email}
               className="font-semibold text-[#113254] transition-colors hover:text-[#0d2844] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {resendOtp.isPending ? "Sending..." : "Resend"}
+              {resendOtpMutation.isPending ? "Sending..." : "Resend"}
             </button>
           </p>
         </form>

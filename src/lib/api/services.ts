@@ -1,25 +1,10 @@
+import { LoginPayload, OtpPayload, RegisterPayload } from "@/hooks/authentication/auth.interface";
 import { api, type ApiResponse, type PaginatedResponse } from "./client";
 import { endpoints } from "./endpoints";
 
 type Id = string | number;
 type ListParams = Record<string, string | number | boolean | undefined>;
 
-export interface LoginPayload {
-  email: string;
-  password: string;
-  role: "PATIENT" | "DENTIST" | "ADMIN";
-}
-/*
-{
-    "first_name": "osman2",
-    "last_name": "admin2",
-    "email": "osman2@gmail.com",
-    "phone": "3444444",
-    "username": "osman2",
-    "password": "osman2@123",
-    "role": "ADMIN"
-}
-*/
 export interface AddUserPayload {
   first_name: string;
   last_name: string;
@@ -30,20 +15,7 @@ export interface AddUserPayload {
   role: "ADMIN";
 }
 
-export interface RegisterPayload {
-  first_name?: string;
-  last_name?: string;
-  phone?: string;
-  email: string;
-  password: string;
-  confirm_password?: string;
-  role: "PATIENT" | "DENTIST";
-}
 
-export interface OtpPayload {
-  email: string;
-  otp: string;
-}
 
 export interface ResendOtpPayload {
   email: string;
@@ -66,9 +38,24 @@ export interface AuthResult {
 }
 
 export const authApi = {
+  register: (payload: RegisterPayload) =>
+    api.post<ApiResponse<AuthResult>, RegisterPayload>(
+      endpoints.auth.register,
+      payload,
+    ),
   login: (payload: LoginPayload) =>
     api.post<ApiResponse<AuthResult>, LoginPayload>(
       endpoints.auth.login,
+      payload,
+    ),
+  verifyOtp: (payload: OtpPayload) =>
+    api.post<ApiResponse<AuthResult>, OtpPayload>(
+      endpoints.auth.verifyOtp,
+      payload,
+    ),
+  resendOtp: (payload: ResendOtpPayload) =>
+    api.post<ApiResponse<unknown>, ResendOtpPayload>(
+      endpoints.auth.resendOtp,
       payload,
     ),
   logout: () => api.post<ApiResponse<unknown>>(endpoints.auth.logout),
@@ -85,29 +72,10 @@ export const authApi = {
       endpoints.auth.resetPassword,
       payload,
     ),
+
 };
 
 export const patientApi = {
-  register: (payload: RegisterPayload) =>
-    api.post<ApiResponse<AuthResult>, RegisterPayload>(
-      endpoints.patient.register,
-      payload,
-    ),
-  login: (payload: LoginPayload) =>
-    api.post<ApiResponse<AuthResult>, LoginPayload>(
-      endpoints.patient.login,
-      payload,
-    ),
-  verifyOtp: (payload: OtpPayload) =>
-    api.post<ApiResponse<AuthResult>, OtpPayload>(
-      endpoints.patient.verifyOtp,
-      payload,
-    ),
-  resendOtp: (payload: ResendOtpPayload) =>
-    api.post<ApiResponse<unknown>, ResendOtpPayload>(
-      endpoints.patient.resendOtp,
-      payload,
-    ),
   profile: <TProfile = unknown>() =>
     api.get<ApiResponse<TProfile>>(endpoints.patient.profile),
   updateProfile: <TProfile = unknown, TPayload = unknown>(payload: TPayload) =>
@@ -118,26 +86,6 @@ export const patientApi = {
 };
 
 export const dentistApi = {
-  register: (payload: RegisterPayload) =>
-    api.post<ApiResponse<AuthResult>, RegisterPayload>(
-      endpoints.dentist.register,
-      payload,
-    ),
-  login: (payload: LoginPayload) =>
-    api.post<ApiResponse<AuthResult>, LoginPayload>(
-      endpoints.dentist.login,
-      payload,
-    ),
-  verifyOtp: (payload: OtpPayload) =>
-    api.post<ApiResponse<AuthResult>, OtpPayload>(
-      endpoints.dentist.verifyOtp,
-      payload,
-    ),
-  resendOtp: (payload: ResendOtpPayload) =>
-    api.post<ApiResponse<unknown>, ResendOtpPayload>(
-      endpoints.dentist.resendOtp,
-      payload,
-    ),
   profile: <TProfile = unknown>() =>
     api.get<ApiResponse<TProfile>>(endpoints.dentist.profile),
   updateProfile: <TProfile = unknown, TPayload = unknown>(payload: TPayload) =>

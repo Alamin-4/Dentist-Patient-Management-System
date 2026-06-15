@@ -21,6 +21,7 @@ import {
   procedureOptions,
 } from "./types";
 import { useDentistFilters } from "@/hooks/authentication/dentist/useDentistFilters";
+import { getAccessToken } from "@/lib/auth/session";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
@@ -35,8 +36,11 @@ export default function FindDentist() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // App global state context
-  const { setShowSignupModal, setDentistsToCompare, setShowCompareModal } = useStateContext();
-  const user = true; // Replace with active server session auth when ready
+  const {
+    setShowSignupModal,
+    setDentistsToCompare,
+    setShowPersonalizeModal,
+  } = useStateContext();
 
   const handleCompareToggle = (dentist: Dentist) => {
     const exists = compareList.some((item) => item.id === dentist.id);
@@ -54,9 +58,10 @@ export default function FindDentist() {
   };
 
   const handleCompareSubmit = () => {
-    if (user) {
-      setShowCompareModal(true);
-      setDentistsToCompare(compareList);
+    setDentistsToCompare(compareList);
+    const token = getAccessToken();
+    if (token) {
+      setShowPersonalizeModal(true);
     } else {
       setShowSignupModal(true);
     }

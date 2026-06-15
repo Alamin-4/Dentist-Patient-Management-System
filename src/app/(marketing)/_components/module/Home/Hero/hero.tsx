@@ -4,7 +4,7 @@ import HeroContent from "./hero-content";
 export default function Hero() {
   return (
     <section className="relative w-full bg-white py-12 lg:py-24">
-      <div className="mx-auto flex max-w-360 w-11/12 flex-col items-center justify-between gap-12 lg:flex-row">
+      <div className="mx-auto flex max-w-400 w-11/12 flex-col items-center justify-between gap-12 lg:flex-row">
         
         <div className="w-full lg:w-3/5">
           <HeroContent />

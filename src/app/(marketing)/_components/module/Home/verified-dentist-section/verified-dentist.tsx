@@ -9,13 +9,13 @@ import { X } from "lucide-react";
 import { useStateContext } from "@/providers/StateProvider";
 import { getDentistsFromStorage } from "@/lib/storage/dentistData";
 import Link from "next/link";
+import { getAccessToken } from "@/lib/auth/session";
 
 export default function VerifiedDentists() {
   const [procedure, setProcedure] = useState("Orthodontist");
   const [compareMode, setCompareMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [dentists, setDentists] = useState<any[]>([]);
-  const user = false;
   const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare, setShowCompareModal } = useStateContext();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function VerifiedDentists() {
 
   return (
     <section className="py-20">
-      <div className="max-w-360 w-11/12 mx-auto mb-10 text-center lg:text-left">
+      <div className="max-w-400 w-11/12 mx-auto mb-10 text-center lg:text-left">
         <h2 className="text-4xl font-black text-[#10436B]">
           Verified Dentists
         </h2>
@@ -53,7 +53,7 @@ export default function VerifiedDentists() {
         </p>
       </div>
 
-      <div className="max-w-360 w-11/12 mx-auto border border-[#E9EDEE] rounded-md flex flex-col lg:flex-row">
+      <div className="max-w-400 w-11/12 mx-auto border border-[#E9EDEE] rounded-md flex flex-col lg:flex-row">
         <Sidebar active={procedure} onChange={setProcedure} />
 
         <div className="flex-1 p-6 md:p-10">
@@ -113,8 +113,9 @@ export default function VerifiedDentists() {
               <div>
                 <Button
                   onClick={() => {
-                    if (user) {
-                      setDentistsToCompare(selectedDentists);
+                    setDentistsToCompare(selectedDentists);
+                    const token = getAccessToken();
+                    if (token) {
                       setShowPersonalizeModal(true);
                     } else {
                       setShowSignupModal(true);

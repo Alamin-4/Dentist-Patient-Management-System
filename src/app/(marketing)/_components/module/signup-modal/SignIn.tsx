@@ -17,7 +17,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import { usePatientLogin } from "@/hooks/authentication/patient/usePatient"; // Adjust your hook path accordingly
+import useAuth from "@/hooks/authentication/useAuth";
 import { loginSchema } from "@/hooks/authentication/patient/schema";
 import { getApiErrorMessage } from "@/lib/api";
 import { TOAST_STYLE } from "./Signup-Modal";
@@ -33,9 +33,7 @@ export default function SigninModal() {
   } = useStateContext();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  // Assuming you have a parallel login mutation hook
-  const { mutate: loginPatient, isPending } = usePatientLogin();
+  const { loginMutation, isLoginLoading } = useAuth();
 
   const {
     register,
@@ -47,11 +45,12 @@ export default function SigninModal() {
     defaultValues: {
       email: "",
       password: "",
+      role: "PATIENT",
     },
   });
 
   const onSubmit = (data: LoginFormData) => {
-    loginPatient(data, {
+    loginMutation.mutate(data, {
       onSuccess: () => {
         toast.success("Welcome back!", { style: TOAST_STYLE });
         reset();
@@ -189,10 +188,10 @@ export default function SigninModal() {
 
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isLoginLoading}
             className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isPending ? (
+            {isLoginLoading ? (
               <>
                 <Loader2 className="size-5 animate-spin" />
                 Signing in...

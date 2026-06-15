@@ -17,10 +17,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import { usePatientRegister } from "@/hooks/authentication/patient/usePatient";
 import { signupSchema } from "@/hooks/authentication/patient/schema";
-import { getApiErrorMessage } from "@/lib/api";
 import OtpVerifyModal from "./Otp-Verify-Modal";
+import useAuth from "@/hooks/authentication/useAuth";
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
@@ -31,14 +30,26 @@ export const TOAST_STYLE = {
 };
 
 export default function SignupModal() {
-  const { showSignupModal, setShowSignupModal, setShowPersonalizeModal } =
-    useStateContext();
+  const {
+    showSignupModal,
+    setShowSignupModal,
+    setShowPersonalizeModal,
+    setShowSigninModal,
+  } = useStateContext();
+
+  const switchToSignin = () => {
+    setShowSignupModal(false);
+    setTimeout(() => {
+      setShowSigninModal(true);
+    }, 200);
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const [showconfirm_password, setShowconfirm_password] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
 
-  const { mutate: registerPatient, isPending } = usePatientRegister();
+  const { registerMutation, isRegisterLoading } = useAuth();
 
   const {
     register,
@@ -55,22 +66,22 @@ export default function SignupModal() {
     },
   });
 
-  const onSubmit = (data: SignupFormData) => {
-    console.table(data)
-    registerPatient(data, {
-      onSuccess: () => {
-        toast.success("Account created. Please verify your email.", {
+  const onSubmit = async(data: SignupFormData) => {
+   
+    try{
+      const res = await registerMutation.mutateAsync(data)
+      if(res){
+        toast.success("Account created successfully. Please verify your email.", {
           style: TOAST_STYLE,
         });
         setPendingEmail(data.email);
         reset();
         setShowSignupModal(false);
         setShowOtpModal(true);
-      },
-      onError: (error) => {
-        toast.error(error.message, { style: TOAST_STYLE });
-      },
-    });
+      } 
+    }catch(error: any){
+      toast.error(error.message, { style: TOAST_STYLE });
+    }
   };
 
   const handleSocialSignup = (provider: string) => {
@@ -212,10 +223,10 @@ export default function SignupModal() {
 
             <button
               type="submit"
-              disabled={isPending}
+              disabled={isRegisterLoading}
               className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isPending ? (
+              {isRegisterLoading ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
                   Creating account...
@@ -225,6 +236,18 @@ export default function SignupModal() {
               )}
             </button>
           </form>
+
+          {/* Footer Toggle Link */}
+          <p className="mt-6 text-center text-sm text-[#6B7280]">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={switchToSignin}
+              className="font-semibold text-[#113254] hover:underline"
+            >
+              Sign in
+            </button>
+          </p>
         </DialogContent>
       </Dialog>
 
