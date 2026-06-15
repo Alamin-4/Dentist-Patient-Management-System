@@ -7,6 +7,8 @@ import { CreateAccountForm } from "./create-account";
 import { useState } from "react";
 import { VerifyOtpForm } from "./verify-otp-form";
 import { useRouter } from "next/navigation";
+import { ProfessionalDetailsForm } from "./professional-details-form";
+import { ProfileSuccessState } from "./ProfileSuccessRate";
 
 export default function RegisterPageComponent() {
   const [step, setStep] = useState(1);
@@ -41,7 +43,7 @@ export default function RegisterPageComponent() {
 
       <section className="flex w-full items-center justify-center bg-white px-6 py-12 lg:w-2/5 xl:px-20">
         <div className="w-full max-w-11/12 md:max-w-10/12 mx-auto space-y-6 md:space-y-8 lg:space-y-12">
-          <div hidden={step === 3 || step === 5}>
+          <div hidden={step === 4}>
             <button
               onClick={() => {
                 if (step === 1) {
@@ -60,7 +62,9 @@ export default function RegisterPageComponent() {
             <h2 className="text-[28px] font-semibold text-[#1A1A1A]">
               {step === 4
                 ? "Enter your Professional Details"
-                : "Create an Account"}
+                : step === 3
+                  ? "Complete your Registration"
+                  : "Create an Account"}
             </h2>
           </div>
 
@@ -80,6 +84,8 @@ export default function RegisterPageComponent() {
           </div>
           {step === 1 && <CreateAccountForm setStep={setStep} />}
           {step === 2 && <VerifyOtpForm setStep={setStep} />}
+          {step === 3 && <ProfessionalDetailsForm setStep={setStep} />}
+          {step === 4 && <ProfileSuccessState />}
         </div>
       </section>
     </main>

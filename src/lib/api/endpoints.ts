@@ -23,12 +23,17 @@ export const endpoints = {
 
   // todo
   dentist: {
-    register: "/auth/signup/",
-    login: "/auth/signin/",
-    verifyOtp: "/auth/verify-otp",
-    resendOtp: "/auth/resend-otp",
     profile: "/auth/profile",
-    professionalDetails: "/auth/professional-details",
+    professionalDetails: "/dentist/enter-professional-details/",
+    verificationProgress: "/dentist/verification-progress/",
+    updateVerificationPhase: "/dentist/update-verification-phase/",  // body: { "verification_phase": "COMPLETE"}
+    // verification step 
+    stepOne: "/dentist/verification-step/license/",
+    stepOneCheck: "/dentist/verification-step/license/",  
+    stepTwo: "/dentist/verification-step/operations/",
+    stepTwoCheck: "/dentist/verification-step/operations/",
+    stepThree: "/dentist/verification-step/clinical-depth/",
+    stepThreeCheck: "/dentist/verification-step/clinical-depth/",
   },
 
   // todo

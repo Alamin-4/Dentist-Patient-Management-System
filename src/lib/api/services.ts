@@ -58,7 +58,11 @@ export const authApi = {
       endpoints.auth.resendOtp,
       payload,
     ),
-  logout: () => api.post<ApiResponse<unknown>>(endpoints.auth.logout),
+  logout: (refresh: string) =>
+    api.post<ApiResponse<unknown>, { refresh: string }>(
+      endpoints.auth.logout,
+      { refresh }
+    ),
   me: <TUser = unknown>() => api.get<ApiResponse<TUser>>(endpoints.auth.me),
   forgotPassword: (email: string) =>
     api.post<ApiResponse<unknown>, { email: string }>(
@@ -93,11 +97,60 @@ export const dentistApi = {
       endpoints.dentist.profile,
       payload,
     ),
+  professionalDetails: <TResult = unknown, TPayload = unknown>(
+    payload: TPayload,
+  ) =>
+    api.post<ApiResponse<TResult>, TPayload>(
+      endpoints.dentist.professionalDetails,
+      payload,
+    ),
   updateProfessionalDetails: <TResult = unknown, TPayload = unknown>(
     payload: TPayload,
   ) =>
     api.post<ApiResponse<TResult>, TPayload>(
       endpoints.dentist.professionalDetails,
+      payload,
+    ),
+
+  // step one
+  stepOne: (payload: FormData) =>
+    api.upload<ApiResponse<unknown>>(
+      endpoints.dentist.stepOne,
+      payload,
+    ),
+  stepOneCheck: () =>
+    api.get<ApiResponse<unknown>>(
+      endpoints.dentist.stepOneCheck,
+    ),
+
+  // step two
+  stepTwo: (payload: FormData) =>
+    api.upload<ApiResponse<unknown>>(
+      endpoints.dentist.stepTwo,
+      payload,
+    ),
+  stepTwoCheck: () =>
+    api.get<ApiResponse<unknown>>(
+      endpoints.dentist.stepTwoCheck,
+    ),
+
+  // step three
+  stepThree: (payload: FormData) =>
+    api.upload<ApiResponse<unknown>>(
+      endpoints.dentist.stepThree,
+      payload,
+    ),
+  stepThreeCheck: () =>
+    api.get<ApiResponse<unknown>>(
+      endpoints.dentist.stepThreeCheck,
+    ),
+  getVerificationProgress: () =>
+    api.get<ApiResponse<any>>(
+      endpoints.dentist.verificationProgress,
+    ),
+  updateVerificationPhase: (payload: { verification_phase: string }) =>
+    api.post<ApiResponse<unknown>, { verification_phase: string }>(
+      endpoints.dentist.updateVerificationPhase,
       payload,
     ),
 };

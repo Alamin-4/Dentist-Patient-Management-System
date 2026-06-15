@@ -20,7 +20,7 @@ import {
   countryOptions,
   procedureOptions,
 } from "./types";
-import { useDentistFilters } from "@/hooks/authentication/dentist/useDentistFilters";
+import { useDentistFilters } from "@/hooks/dentist/useDentistFilters";
 import { getAccessToken } from "@/lib/auth/session";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });

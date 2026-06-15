@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
 import useAuth from "@/hooks/authentication/useAuth";
-import { loginSchema } from "@/hooks/authentication/patient/schema";
+import { loginSchema } from "@/hooks/patient/schema";
 import { getApiErrorMessage } from "@/lib/api";
 import { TOAST_STYLE } from "./Signup-Modal";
 

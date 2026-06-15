@@ -1,5 +1,6 @@
-import { persistSession } from "@/hooks/shared/shared.function";
-import { adminApi, LoginPayload } from "@/lib/api";
+import { persistSession } from "@/hooks/authentication/useAuth";
+import { adminApi } from "@/lib/api";
+import { LoginPayload } from "@/hooks/authentication/auth.interface";
 import { useMutation } from "@tanstack/react-query";
 
 export function useAdminLogin() {

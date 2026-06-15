@@ -20,6 +20,13 @@ export interface PaginatedResponse<TData> {
   };
 }
 
+export const getcurrentSession = () => {
+  return {
+    accessToken: localStorage.getItem("access"),
+    refreshToken: localStorage.getItem("refresh"),
+  };
+}
+
 export const apiClient = attachInterceptors(
   axios.create({
     baseURL: API_BASE_URL,

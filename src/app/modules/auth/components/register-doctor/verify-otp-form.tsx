@@ -13,10 +13,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useRouter } from "next/navigation";
-import {
-  useDentistVerifyOtp,
-  useOtpResend,
-} from "@/hooks/authentication/dentist/useDentist";
+import useAuth from "@/hooks/authentication/useAuth";
 
 const otpSchema = z.object({
   otp: z.string().length(6, "Please enter a valid 6-digit code"),
@@ -33,8 +30,8 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
   const [resendCountdown, setResendCountdown] = useState(60); // 1-minute timer state
 
   const router = useRouter();
-  const { mutate: dentistVerifyOtp } = useDentistVerifyOtp();
-  const { mutate: otpResend, isPending: isResending } = useOtpResend();
+  const { otpVerifyMutation, resendOtpMutation } = useAuth();
+  const isResending = resendOtpMutation.isPending;
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -60,6 +57,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
+
   }, [resendCountdown]);
 
   const handleResendOtp = () => {
@@ -72,7 +70,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       return;
     }
 
-    otpResend(
+    resendOtpMutation.mutate(
       { email: registerEmail },
       {
         onSuccess: () => {
@@ -106,16 +104,9 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
 
     setIsLoading(true);
 
-    dentistVerifyOtp(payload, {
+    otpVerifyMutation.mutate(payload, {
       onSuccess: () => {
-        toast.success("OTP verified successfully!");
-        localStorage.removeItem("registerEmail");
-
-        if (setStep) {
-          setStep(3);
-        } else {
-          router.push("/dentist");
-        }
+        setStep && setStep(3);
       },
       onError: (error: any) => {
         const errorMessage =
@@ -174,11 +165,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
               className="font-bold text-[#163E5C] hover:underline transition-all focus:outline-none disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
               onClick={handleResendOtp}
             >
-              {isResending
-                ? "Sending..."
-                : resendCountdown > 0
-                  ? `Resend in ${resendCountdown}s`
-                  : "Resend"}
+               Resend OTP
             </button>
           </div>
         </div>

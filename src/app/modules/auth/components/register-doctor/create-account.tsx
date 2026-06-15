@@ -10,7 +10,15 @@ import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useDentistRegister } from "@/hooks/authentication/dentist/useDentist";
+import useAuth from "@/hooks/authentication/useAuth";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Define the validation schema
 const formSchema = z
@@ -19,6 +27,8 @@ const formSchema = z
     last_name: z.string().min(2, "Last name is required"),
     email: z.string().email("Invalid email address"),
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
+    gender: z.string().min(1, "Gender is required"),
+    referral_code: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirm_password: z.string(),
     role: z.literal("DENTIST"),
@@ -37,17 +47,14 @@ export function CreateAccountForm({
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    mutate: dentistRegister,
-    isPending: isRegistering,
-    isError: isRegistrationError,
-  } = useDentistRegister();
+  const { registerMutation } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +62,8 @@ export function CreateAccountForm({
       last_name: "",
       email: "",
       phone: "",
+      gender: "",
+      referral_code: "",
       password: "",
       confirm_password: "",
       role: "DENTIST",
@@ -65,7 +74,7 @@ export function CreateAccountForm({
     setIsLoading(true);
     localStorage.setItem("registerEmail", data.email);
 
-    dentistRegister(data, {
+    registerMutation.mutate(data, {
       onSuccess: () => {
         toast.success(
           "Account created successfully! Please verify your email.",
@@ -74,15 +83,14 @@ export function CreateAccountForm({
         setStep(2);
       },
       onError: (error: any) => {
-        // const errorMessage =
-        //   error?.response?.data?.message ||
-        //   "Registration failed. Please try again.";
-        // toast.error(errorMessage);
-        setStep(2);
+    
+          const errorRes = error?.detail?.message
+          
+         toast.error(`${errorRes}`)
+        
       },
       onSettled: () => {
         setIsLoading(false);
-        setStep(2);
       },
     });
   };
@@ -160,6 +168,57 @@ export function CreateAccountForm({
           {errors.phone && (
             <p className="text-xs text-red-500">{errors.phone.message}</p>
           )}
+        </div>
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label
+              htmlFor="gender"
+              className="text-sm font-medium text-gray-700"
+            >
+              Gender
+            </Label>
+            <Select onValueChange={(val) => setValue("gender", val)}>
+              <SelectTrigger
+                className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
+              >
+                <SelectValue placeholder="MALE" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem className="h-11!" value="MALE">
+                  MALE
+                </SelectItem>
+                <SelectItem className="h-11!" value="FEMALE">
+                  FEMALE
+                </SelectItem>
+                <SelectItem className="h-11!" value="OTHER">
+                  OTHER
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.gender && (
+              <p className="text-xs text-red-500">{errors.gender.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label
+              htmlFor="referral_code"
+              className="text-sm font-medium text-gray-700"
+            >
+              Referral Code
+            </Label>
+            <Input
+              id="referral_code"
+              {...register("referral_code")}
+              placeholder="John"
+              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referral_code ? "border-red-500" : ""}`}
+            />
+            {errors.referral_code && (
+              <p className="text-xs text-red-500">
+                {errors.referral_code.message}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-2">

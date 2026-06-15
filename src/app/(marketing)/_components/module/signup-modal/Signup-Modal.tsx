@@ -17,7 +17,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import { signupSchema } from "@/hooks/authentication/patient/schema";
+import { signupSchema } from "@/hooks/patient/schema";
 import OtpVerifyModal from "./Otp-Verify-Modal";
 import useAuth from "@/hooks/authentication/useAuth";
 

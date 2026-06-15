@@ -1,13 +1,14 @@
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authApi } from "@/lib/api";
+import { authApi, getcurrentSession } from "@/lib/api";
 import { LoginPayload, OtpPayload, RegisterPayload } from "./auth.interface";
 import { ApiResponse, AuthResult } from "@/lib/api";
-import { setAuthSession } from "@/lib/auth/session";
+import { clearAuthSession, getRefreshToken, setAuthSession } from "@/lib/auth/session";
 
 export const getAuthPayload = (response: ApiResponse<AuthResult> | AuthResult) => {
   return "data" in response ? response.data : response;
 };
+
 
 export const persistSession = (response: ApiResponse<AuthResult> | AuthResult) => {
   const payload = getAuthPayload(response);
@@ -32,44 +33,47 @@ export default function useAuth() {
   });
 
   const loginMutation = useMutation({
-     mutationFn: (data: LoginPayload) =>
+    mutationFn: (data: LoginPayload) =>
       authApi.login(data),
     onSuccess: persistSession,
   });
 
   const otpVerifyMutation = useMutation({
-      mutationFn: (data: OtpPayload) => authApi.verifyOtp(data),
+    mutationFn: (data: OtpPayload) => authApi.verifyOtp(data),
     onSuccess: persistSession,
   })
 
   const resendOtpMutation = useMutation({
-      mutationFn: (data: { email: string }) => authApi.resendOtp(data),
+    mutationFn: (data: { email: string }) => authApi.resendOtp(data),
   })
 
   const logoutMutation = useMutation({
-    mutationFn: authApi.logout,
+    mutationFn: () => authApi.logout(getRefreshToken() as string),
+    onSuccess: () => {
+      clearAuthSession()
+    },
   });
-  
-  return { 
-    registerMutation, 
+
+  return {
+    registerMutation,
     loginMutation,
     otpVerifyMutation,
     resendOtpMutation,
-    logoutMutation, 
-    isRegisterLoading: registerMutation.isPending, 
-    isLoginLoading: loginMutation.isPending, 
-    FisOtpVerifyLoading: otpVerifyMutation.isPending, 
-    isResendOtpLoading: resendOtpMutation.isPending, 
-    isLogoutLoading: logoutMutation.isPending, 
-    isRegisterError: registerMutation.isError, 
-    isLoginError: loginMutation.isError, 
-    isOtpVerifyError: otpVerifyMutation.isError, 
-    isResendOtpError: resendOtpMutation.isError, 
-    isLogoutError: logoutMutation.isError, 
-    registerError: registerMutation.error, 
-    loginError: loginMutation.error, 
-    otpVerifyError: otpVerifyMutation.error, 
-    resendOtpError: resendOtpMutation.error, 
-    logoutError: logoutMutation.error 
+    logoutMutation,
+    isRegisterLoading: registerMutation.isPending,
+    isLoginLoading: loginMutation.isPending,
+    FisOtpVerifyLoading: otpVerifyMutation.isPending,
+    isResendOtpLoading: resendOtpMutation.isPending,
+    isLogoutLoading: logoutMutation.isPending,
+    isRegisterError: registerMutation.isError,
+    isLoginError: loginMutation.isError,
+    isOtpVerifyError: otpVerifyMutation.isError,
+    isResendOtpError: resendOtpMutation.isError,
+    isLogoutError: logoutMutation.isError,
+    registerError: registerMutation.error,
+    loginError: loginMutation.error,
+    otpVerifyError: otpVerifyMutation.error,
+    resendOtpError: resendOtpMutation.error,
+    logoutError: logoutMutation.error
   };
 }

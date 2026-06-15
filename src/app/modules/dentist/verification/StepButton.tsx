@@ -5,6 +5,8 @@ import { VerificationNextStepModal } from "./verification-next-step-modal";
 import { useStateContext } from "@/providers/StateProvider";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import useDentist from "@/hooks/dentist/useDentist";
+import { Loader2 } from "lucide-react";
 
 export default function StepButton() {
   const {
@@ -17,29 +19,32 @@ export default function StepButton() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { stepOneMutation, stepTwoMutation, stepThreeMutation } = useDentist();
+  const isSubmitting = stepOneMutation.isPending || stepTwoMutation.isPending || stepThreeMutation.isPending;
+
   const isReady = verificationStepReady[verificationStep];
 
-  const isPhase2 = verificationStep === 2;
-  const isPhase3 = verificationStep === 3;
+  const buttonLabel = verificationStep === 3 ? "Submit & Complete" : `Continue to Phase ${verificationStep + 1}`;
 
-  const buttonLabel = verificationStep === 1 ? "Continue to Phase 2" : "Submit";
-
-  const buttonProps = isPhase2
-    ? { type: "submit" as const, form: "phase-2-verification-form" }
-    : isPhase3
-      ? { type: "submit" as const, form: "phase-3-verification-form" }
-      : { type: "button" as const };
+  const buttonProps = {
+    type: "submit" as const,
+    form: `phase-${verificationStep}-verification-form`,
+  };
 
   useEffect(() => {
-    if (verificationCompletedStep === 2 || verificationCompletedStep === 3) {
+    if (
+      verificationCompletedStep === 1 ||
+      verificationCompletedStep === 2 ||
+      verificationCompletedStep === 3
+    ) {
       setIsModalOpen(true);
     }
   }, [verificationCompletedStep]);
 
   const handleContinue = () => {
-    if (verificationCompletedStep === 1 || verificationStep === 1) {
+    if (verificationCompletedStep === 1) {
       setVerificationStep(2);
-    } else if (verificationCompletedStep === 2 || verificationStep === 2) {
+    } else if (verificationCompletedStep === 2) {
       setVerificationStep(3);
     } else {
       router.push("/dentist");
@@ -55,15 +60,17 @@ export default function StepButton() {
         <Button
           {...buttonProps}
           size="lg"
-          disabled={!isReady}
-          onClick={() => {
-            if (verificationStep === 1) {
-              setIsModalOpen(true);
-            }
-          }}
-          className="h-12 rounded-lg px-10 font-semibold"
+          disabled={!isReady || isSubmitting}
+          className="h-12 rounded-lg px-10 font-semibold bg-[#0E3E65] text-white hover:bg-[#0E3E65]/90 disabled:opacity-50"
         >
-          {buttonLabel}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            buttonLabel
+          )}
         </Button>
       </div>
 

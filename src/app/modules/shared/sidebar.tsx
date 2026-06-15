@@ -95,6 +95,12 @@ export function Sidebar() {
   const pathname = usePathname();
   const { close } = useSidebar();
 
+  const isVerificationPath = pathname === "/dentist/verification";
+  
+  if (isVerificationPath) {
+    return null;
+  }
+
   const role = pathname.startsWith("/dentist") ? "dentist" : "patient";
   const navGroups = role === "dentist" ? dentistNav : patientNav;
 
