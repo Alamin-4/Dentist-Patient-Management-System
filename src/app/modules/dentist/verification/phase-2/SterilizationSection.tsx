@@ -1,9 +1,17 @@
+"use client";
+
 import { useFormContext } from "react-hook-form";
 import { UploadCloud } from "lucide-react";
 import PhaseStep from "../PhaseStep";
+import { useRef } from "react";
 
 export const SterilizationSection = () => {
-  const { register } = useFormContext();
+  const { register, setValue, watch } = useFormContext();
+  const jciFile = watch("jciCertificate");
+  const videoFile = watch("videoWalkthrough");
+
+  const jciInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const methods = ["Autoclave", "Sealed Pouch", "Ultrasonic"];
 
@@ -16,13 +24,31 @@ export const SterilizationSection = () => {
           <label className="inline-block text-sm font-medium text-foreground">
             Upload JCI Certificate
           </label>
-          <div className="group flex cursor-pointer items-center rounded-xl border border-dashed border-border bg-background px-4 py-4 transition-all hover:border-primary hover:bg-card sm:px-5">
+          <input
+            type="file"
+            className="hidden"
+            ref={jciInputRef}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) setValue("jciCertificate", file, { shouldValidate: true });
+            }}
+            accept=".pdf,.jpg,.jpeg,.png"
+          />
+          <div
+            onClick={() => jciInputRef.current?.click()}
+            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background px-4 py-4 transition-all hover:border-primary hover:bg-card sm:px-5"
+          >
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
-              <span className="text-sm font-medium text-foreground">
-                Click to upload or drag and drop
+              <span className="text-sm font-medium text-[#0A2533]">
+                {jciFile ? jciFile.name : "Click to upload or drag and drop"}
               </span>
             </div>
+            {jciFile && (
+              <span className="text-xs text-muted-foreground">
+                {(jciFile.size / (1024 * 1024)).toFixed(2)} MB
+              </span>
+            )}
           </div>
         </div>
 
@@ -36,13 +62,31 @@ export const SterilizationSection = () => {
           <label className="inline-block text-sm font-medium text-foreground">
             Start Video Walkthrough
           </label>
-          <div className="group flex cursor-pointer items-center rounded-xl border border-dashed border-border bg-background px-4 py-4 transition-all hover:border-primary hover:bg-card sm:px-5">
+          <input
+            type="file"
+            className="hidden"
+            ref={videoInputRef}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) setValue("videoWalkthrough", file, { shouldValidate: true });
+            }}
+            accept="video/*"
+          />
+          <div
+            onClick={() => videoInputRef.current?.click()}
+            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background px-4 py-4 transition-all hover:border-primary hover:bg-card sm:px-5"
+          >
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
-              <span className="text-sm font-medium text-foreground">
-                Upload Video
+              <span className="text-sm font-medium text-[#0A2533]">
+                {videoFile ? videoFile.name : "Upload Video"}
               </span>
             </div>
+            {videoFile && (
+              <span className="text-xs text-muted-foreground">
+                {(videoFile.size / (1024 * 1024)).toFixed(2)} MB
+              </span>
+            )}
           </div>
         </div>
 

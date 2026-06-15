@@ -4,6 +4,7 @@ import StartBookingModal from "./_components/module/Booking-flow/StartBooking";
 import CompareModal from "./_components/module/CompareModal/CompareModal";
 import PersonalizeComparisonModal from "./_components/modal/personalize-comparison-modal";
 import SignupModal from "./_components/module/signup-modal/Signup-Modal";
+import SigninModal from "./_components/module/signup-modal/SignIn";
 import Footer from "./_components/shared/footer/footer";
 import Navbar from "./_components/shared/navbar/Navbar";
 
@@ -17,6 +18,7 @@ export default function PublicLayout({
       <Navbar />
       <main className="min-h-150 h-full">{children}</main>
       <SignupModal />
+      <SigninModal />
       <PersonalizeComparisonModal />
       <CompareModal />
       <StartBookingModal />

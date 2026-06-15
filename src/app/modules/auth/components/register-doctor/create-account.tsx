@@ -10,20 +10,32 @@ import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useAuth from "@/hooks/authentication/useAuth";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Define the validation schema
 const formSchema = z
   .object({
-    firstName: z.string().min(2, "First name is required"),
-    lastName: z.string().min(2, "Last name is required"),
+    first_name: z.string().min(2, "First name is required"),
+    last_name: z.string().min(2, "Last name is required"),
     email: z.string().email("Invalid email address"),
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
+    gender: z.string().min(1, "Gender is required"),
+    referral_code: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
+    confirm_password: z.string(),
+    role: z.literal("DENTIST"),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
+    path: ["confirm_password"],
   });
 
 type FormData = z.infer<typeof formSchema>;
@@ -35,31 +47,52 @@ export function CreateAccountForm({
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { registerMutation } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      gender: "",
+      referral_code: "",
+      password: "",
+      confirm_password: "",
+      role: "DENTIST",
+    },
   });
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
+    localStorage.setItem("registerEmail", data.email);
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Form Submitted:", data);
-      toast.success("Account created successfully!");
-      setStep(2);
-      reset();
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    registerMutation.mutate(data, {
+      onSuccess: () => {
+        toast.success(
+          "Account created successfully! Please verify your email.",
+        );
+        localStorage.setItem("registerEmail", data.email);
+        setStep(2);
+      },
+      onError: (error: any) => {
+    
+          const errorRes = error?.detail?.message
+          
+         toast.error(`${errorRes}`)
+        
+      },
+      onSettled: () => {
+        setIsLoading(false);
+      },
+    });
   };
 
   return (
@@ -76,29 +109,31 @@ export function CreateAccountForm({
             </Label>
             <Input
               id="firstName"
-              {...register("firstName")}
+              {...register("first_name")}
               placeholder="John"
-              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.firstName ? "border-red-500" : ""}`}
+              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.first_name ? "border-red-500" : ""}`}
             />
-            {errors.firstName && (
-              <p className="text-xs text-red-500">{errors.firstName.message}</p>
+            {errors.first_name && (
+              <p className="text-xs text-red-500">
+                {errors.first_name.message}
+              </p>
             )}
           </div>
           <div className="grid gap-2">
             <Label
-              htmlFor="lastName"
+              htmlFor="last_name"
               className="text-sm font-medium text-gray-700"
             >
               Last Name
             </Label>
             <Input
-              id="lastName"
-              {...register("lastName")}
+              id="last_name"
+              {...register("last_name")}
               placeholder="Doe"
-              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.lastName ? "border-red-500" : ""}`}
+              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.last_name ? "border-red-500" : ""}`}
             />
-            {errors.lastName && (
-              <p className="text-xs text-red-500">{errors.lastName.message}</p>
+            {errors.last_name && (
+              <p className="text-xs text-red-500">{errors.last_name.message}</p>
             )}
           </div>
         </div>
@@ -134,6 +169,57 @@ export function CreateAccountForm({
             <p className="text-xs text-red-500">{errors.phone.message}</p>
           )}
         </div>
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label
+              htmlFor="gender"
+              className="text-sm font-medium text-gray-700"
+            >
+              Gender
+            </Label>
+            <Select onValueChange={(val) => setValue("gender", val)}>
+              <SelectTrigger
+                className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
+              >
+                <SelectValue placeholder="MALE" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem className="h-11!" value="MALE">
+                  MALE
+                </SelectItem>
+                <SelectItem className="h-11!" value="FEMALE">
+                  FEMALE
+                </SelectItem>
+                <SelectItem className="h-11!" value="OTHER">
+                  OTHER
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.gender && (
+              <p className="text-xs text-red-500">{errors.gender.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label
+              htmlFor="referral_code"
+              className="text-sm font-medium text-gray-700"
+            >
+              Referral Code
+            </Label>
+            <Input
+              id="referral_code"
+              {...register("referral_code")}
+              placeholder="John"
+              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referral_code ? "border-red-500" : ""}`}
+            />
+            {errors.referral_code && (
+              <p className="text-xs text-red-500">
+                {errors.referral_code.message}
+              </p>
+            )}
+          </div>
+        </div>
 
         <div className="grid gap-2">
           <Label
@@ -156,18 +242,18 @@ export function CreateAccountForm({
 
         <div className="grid gap-2">
           <Label
-            htmlFor="confirmPassword"
+            htmlFor="confirm_password"
             className="text-sm font-medium text-gray-700"
           >
             Confirm Password
           </Label>
           <div className="relative">
             <Input
-              id="confirmPassword"
+              id="confirm_password"
               type={showPassword ? "text" : "password"}
-              {...register("confirmPassword")}
+              {...register("confirm_password")}
               placeholder="••••••••"
-              className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirmPassword ? "border-red-500" : ""}`}
+              className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirm_password ? "border-red-500" : ""}`}
             />
             <button
               type="button"
@@ -181,9 +267,9 @@ export function CreateAccountForm({
               )}
             </button>
           </div>
-          {errors.confirmPassword && (
+          {errors.confirm_password && (
             <p className="text-xs text-red-500">
-              {errors.confirmPassword.message}
+              {errors.confirm_password.message}
             </p>
           )}
         </div>
@@ -191,10 +277,16 @@ export function CreateAccountForm({
         <Button
           type="submit"
           disabled={isLoading}
-          className="mt-2 h-12 w-full bg-[#163E5C] text-white hover:bg-[#113149] transition-colors font-semibold flex items-center justify-center gap-2"
+          className="h-11 bg-[#163E5C] hover:bg-[#0E3E65] focus:ring-0 focus:ring-offset-0"
         >
-          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-          {isLoading ? "Creating Account..." : "Create Account"}
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating Account...
+            </>
+          ) : (
+            "Create Account"
+          )}
         </Button>
       </form>
     </>

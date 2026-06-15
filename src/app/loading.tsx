@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/feedback/skeleton";
 function NavbarSkeleton() {
   return (
     <div className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white py-5 shadow-sm">
-      <div className="mx-auto flex max-w-360 w-11/12 items-center justify-between gap-4">
+      <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between gap-4">
         <Skeleton className="h-8 w-36 rounded-md" />
         <div className="hidden lg:flex items-center gap-8">
           {[1, 2, 3, 4].map((i) => (
@@ -20,7 +20,7 @@ function NavbarSkeleton() {
 function HeroSkeleton() {
   return (
     <section className="bg-white pt-16 pb-20 px-6">
-      <div className="mx-auto max-w-360 w-11/12">
+      <div className="mx-auto max-w-400 w-11/12">
         <div className="max-w-2xl mx-auto text-center space-y-5">
           <Skeleton className="h-4 w-32 rounded-full mx-auto" />
           <Skeleton className="h-12 w-full rounded-xl" />
@@ -84,7 +84,7 @@ export default function GlobalLoading() {
 
       {/* Section: Featured dentists */}
       <section className="py-16 px-6 bg-[#F8FAFC]">
-        <div className="mx-auto max-w-360 w-11/12">
+        <div className="mx-auto max-w-400 w-11/12">
           <SectionTitleSkeleton />
           <DentistCardRowSkeleton />
           <div className="flex justify-center mt-8">
@@ -95,7 +95,7 @@ export default function GlobalLoading() {
 
       {/* Section: Why Trust */}
       <section className="py-16 px-6 bg-white">
-        <div className="mx-auto max-w-360 w-11/12">
+        <div className="mx-auto max-w-400 w-11/12">
           <SectionTitleSkeleton />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
@@ -115,7 +115,7 @@ export default function GlobalLoading() {
 
       {/* CTA section */}
       <section className="py-16 px-6 bg-[#003366]">
-        <div className="mx-auto max-w-360 w-11/12 flex flex-col items-center gap-4 text-center">
+        <div className="mx-auto max-w-400 w-11/12 flex flex-col items-center gap-4 text-center">
           <Skeleton className="h-8 w-72 rounded-xl bg-white/20" />
           <Skeleton className="h-4 w-96 max-w-full rounded bg-white/10" />
           <Skeleton className="h-12 w-40 rounded-xl bg-white/20 mt-2" />

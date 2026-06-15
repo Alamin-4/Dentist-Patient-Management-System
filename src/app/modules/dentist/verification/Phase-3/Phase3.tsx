@@ -4,11 +4,20 @@ import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ImplantDocsSection } from "./ImplantDocsSection";
 import { DocumentUpload } from "./DocumentUpload";
 import { useFieldArray } from "react-hook-form";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, Loader2 } from "lucide-react";
 import { useStateContext } from "@/providers/StateProvider";
+import useDentist, { useUpdateVerificationPhase } from "@/hooks/dentist/useDentist";
+import toast from "react-hot-toast";
+
+const mapProcedureNameToId = (name: string): number => {
+  const n = name.toLowerCase();
+  if (n.includes("implant")) return 1;
+  if (n.includes("veneer")) return 2;
+  if (n.includes("crown")) return 3;
+  return 1;
+};
 
 // Define the schema for Phase 3 (repeatable procedures)
 const procedureSchema = z.object({
@@ -44,6 +53,8 @@ export default function Phase3() {
   });
 
   const { setVerificationCompletedStep, setVerificationStep, setVerificationStepReady } = useStateContext();
+  const { stepThreeMutation } = useDentist();
+  const updatePhase = useUpdateVerificationPhase();
 
   const { control } = methods;
 
@@ -53,12 +64,44 @@ export default function Phase3() {
   });
 
   const onSubmit = (data: Phase3Values) => {
-    console.log("Phase 3 Data Submitted:", data);
-    // mark phase 3 completed in global state — this will open the confirmation modal
-    setVerificationCompletedStep(3);
-    setVerificationStep(3);
-    setVerificationStepReady(3, true);
-    // TODO: upload files to backend and handle errors/progress
+    // Map data to StepThreeI signature
+    const materials = data.procedures.map((p) => ({
+      own_procedure: mapProcedureNameToId(p.procedure),
+      brand_name: "Standard",
+      ce_certificate: p.ceCertificate,
+      material_brands: p.materialBrands || null,
+      invoice: p.invoice,
+      protocol_pdf: p.protocolPdf,
+      notes: "",
+    }));
+
+    stepThreeMutation.mutate(
+      { materials },
+      {
+        onSuccess: () => {
+          // Transition phase to complete in the backend
+          updatePhase.mutate(
+            { verification_phase: "COMPLETE" },
+            {
+              onSuccess: () => {
+                toast.success("Clinical Excellence verification completed!");
+                setVerificationCompletedStep(3);
+                setVerificationStep(3);
+                setVerificationStepReady(3, true);
+              },
+              onError: (error: any) => {
+                const errMsg = error?.response?.data?.message || "Verification submitted but phase completion update failed.";
+                toast.error(errMsg);
+              },
+            }
+          );
+        },
+        onError: (error: any) => {
+          const errMsg = error?.response?.data?.message || "Clinical depth submission failed. Please try again.";
+          toast.error(errMsg);
+        },
+      }
+    );
   };
 
   // Keep the global "ready" flag in sync with the form validity so the footer submit enables
@@ -66,6 +109,8 @@ export default function Phase3() {
     setVerificationStepReady(3, methods.formState.isValid);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [methods.formState.isValid]);
+
+  const isPending = stepThreeMutation.isPending || updatePhase.isPending;
 
   return (
     <FormProvider {...methods}>
@@ -123,6 +168,12 @@ export default function Phase3() {
             </button>
           </div>
         </div>
+        {isPending && (
+          <div className="flex justify-center items-center py-6 border-t bg-card">
+            <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
+            <span className="ml-2 text-sm text-muted-foreground">Submitting Phase 3...</span>
+          </div>
+        )}
       </form>
     </FormProvider>
   );

@@ -34,7 +34,7 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       {/* Minimal Navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white py-5 shadow-sm">
-        <div className="mx-auto flex max-w-360 w-11/12 items-center justify-between">
+        <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between">
           <Link href="/" className="flex items-center">
             <Image
               src="/logos/mainlogo.png"

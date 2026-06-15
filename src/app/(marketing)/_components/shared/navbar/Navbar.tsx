@@ -20,7 +20,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky shadow-md top-0 z-50 w-full border-b border-gray-100 bg-white py-6">
-      <div className="mx-auto flex max-w-360 w-11/12 items-center justify-between gap-4">
+      <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center">
           <div className="flex items-center gap-1">
@@ -37,13 +37,13 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex gap-8">
           {navConfig.map((item) => (
             <Link
               key={item.label}
               href={item.href}
               className={cn(
-                "group flex items-center gap-1 text-[15px] font-medium transition-colors",
+                "group flex gap-1 text-[15px] font-medium transition-colors",
                 pathName === item.href
                   ? "text-[#10436B] border-b-2 border-[#10436B] pb-1"
                   : "text-gray-600 hover:text-[#10436B]",

@@ -25,13 +25,9 @@ const LANG_CODE: Record<string, string> = {
 const langAbbr = (languages: string[]) =>
   languages.map((l) => LANG_CODE[l] ?? l.slice(0, 2).toUpperCase()).join(", ");
 
-const estimateLow = (price: number) =>
-  Math.round((price * 2.2) / 20) * 20;
+const estimateLow = (price: number) => Math.round((price * 2.2) / 20) * 20;
 
-const estimateHigh = (price: number) =>
-  Math.round((price * 2.87) / 20) * 20;
-
-// ─── CompareModal ─────────────────────────────────────────────────────────────
+const estimateHigh = (price: number) => Math.round((price * 2.87) / 20) * 20;
 
 export default function CompareModal() {
   const {
@@ -107,7 +103,9 @@ export default function CompareModal() {
     <Dialog open={showCompareModal} onOpenChange={setShowCompareModal}>
       <DialogContent className="sm:max-w-4xl w-full p-0 rounded-xl overflow-hidden bg-white max-h-[92vh] flex flex-col">
         <DialogTitle className="sr-only">
-          {isPostBooking ? "Your personalised estimates are ready" : "Compare Dentists"}
+          {isPostBooking
+            ? "Your personalised estimates are ready"
+            : "Compare Dentists"}
         </DialogTitle>
 
         {/* ── Header ── */}
@@ -136,7 +134,6 @@ export default function CompareModal() {
         {/* ── Scrollable table ── */}
         <div className="flex-1 overflow-auto">
           <div style={{ minWidth: `${200 + colCount * 220}px` }}>
-
             {/* Dentist header row */}
             <div
               className="px-8 pt-8 pb-4"
@@ -147,7 +144,10 @@ export default function CompareModal() {
             >
               <div />
               {dentists.map((doc) => (
-                <div key={doc.id} className="flex flex-col items-center text-center px-4">
+                <div
+                  key={doc.id}
+                  className="flex flex-col items-center text-center px-4"
+                >
                   <Image
                     src={doc.image}
                     alt={doc.name}
@@ -207,7 +207,9 @@ export default function CompareModal() {
               values={dentists.map((d) => (
                 <span className="inline-flex items-center justify-center gap-1.5">
                   <Star className="size-4 shrink-0 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold text-foreground">{d.rating}</span>
+                  <span className="font-semibold text-foreground">
+                    {d.rating}
+                  </span>
                   <span className="text-muted-foreground text-sm">
                     ({d.reviewCount} Reviews)
                   </span>
@@ -231,8 +233,8 @@ export default function CompareModal() {
               values={dentists.map((d) =>
                 isPostBooking ? (
                   <span className="text-lg font-bold text-primary">
-                    ${estimateLow(d.price).toLocaleString()} –{" "}
-                    ${estimateHigh(d.price).toLocaleString()}
+                    ${estimateLow(d.price).toLocaleString()} – $
+                    {estimateHigh(d.price).toLocaleString()}
                   </span>
                 ) : (
                   <span className="text-lg font-bold text-primary">

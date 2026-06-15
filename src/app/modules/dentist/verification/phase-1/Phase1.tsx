@@ -7,6 +7,9 @@ import { useStateContext } from "@/providers/StateProvider";
 import { HeadshotUpload } from "./headshot-upload";
 import { cn } from "@/lib/utils";
 import PhaseStep from "../PhaseStep";
+import useDentist from "@/hooks/dentist/useDentist";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 type SubmittedLicence = {
   country: string;
@@ -20,6 +23,7 @@ export default function Phase1() {
     verificationStatus,
     setVerificationStatus,
     setVerificationStepReady,
+    setVerificationCompletedStep,
   } = useStateContext();
   const [submittedLicence, setSubmittedLicence] =
     useState<SubmittedLicence | null>(null);
@@ -27,6 +31,12 @@ export default function Phase1() {
   const [isLicenceImported, setIsLicenceImported] = useState(false);
   const [hasHeadshot, setHasHeadshot] = useState(false);
 
+  // Store actual Files for API submission
+  const [headshotFile, setHeadshotFile] = useState<File | null>(null);
+  const [licenceFile, setLicenceFile] = useState<File | null>(null);
+
+  const { stepOneMutation, stepOneError } = useDentist();
+  
   const handleVerify = (data: SubmittedLicence) => {
     setSubmittedLicence(data);
     setIsProfileConfirmed(false);
@@ -66,17 +76,37 @@ export default function Phase1() {
     setIsLicenceImported(false);
   };
 
-  const licenceSummary = submittedLicence
-    ? [
-        { label: "Country", value: submittedLicence.country },
-        { label: "City", value: submittedLicence.city },
-        { label: "Authority", value: submittedLicence.authority },
-        { label: "Reg No", value: submittedLicence.regNo },
-      ]
-    : [];
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isStepReady || !submittedLicence || !headshotFile) {
+      toast.error("Please complete all verification steps first.");
+      return;
+    }
+
+    // Django expects a file. If matched, create a dummy file to satisfy Django validation.
+    const fileToUpload = licenceFile || new File(["verified match"], "licence.pdf", { type: "application/pdf" });
+
+    stepOneMutation.mutate(
+      {
+        country: submittedLicence.country,
+        city: submittedLicence.city,
+        registration_authority: submittedLicence.authority,
+        registration_no: submittedLicence.regNo,
+        professional_headshot: headshotFile,
+        file: fileToUpload,
+      },
+      {
+        onSuccess: () => {
+          toast.success("License verification details submitted!");
+          setVerificationCompletedStep(1);
+        },
+       
+      }
+    );
+  };
 
   return (
-    <section className="space-y-6">
+    <div className="space-y-6">
       <div className="rounded-xl border border-border bg-card shadow-sm">
         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
           <PhaseStep step={1} title="Verify your dental licence" />
@@ -92,7 +122,10 @@ export default function Phase1() {
                 licenceInfo={submittedLicence}
                 onConfirm={handleConfirmProfile}
                 onReject={handleRejectProfile}
-                onFileSelect={() => setIsLicenceImported(true)}
+                onFileSelect={(file) => {
+                  setIsLicenceImported(true);
+                  setLicenceFile(file);
+                }}
               />
             )}
           </div>
@@ -107,12 +140,15 @@ export default function Phase1() {
                 Professional headshot
               </p>
               <HeadshotUpload
-                onChange={(file) => setHasHeadshot(Boolean(file))}
+                onChange={(file) => {
+                  setHasHeadshot(Boolean(file));
+                  setHeadshotFile(file);
+                }}
               />
               <p
                 className={cn(
                   "text-xs",
-                  isStepReady ? "text-success-700" : "text-muted-foreground",
+                  isStepReady ? "text-green-600" : "text-muted-foreground",
                 )}
               >
                 {isStepReady
@@ -123,6 +159,17 @@ export default function Phase1() {
           </div>
         </div>
       </div>
-    </section>
+      {stepOneMutation.isPending && (
+        <div className="flex justify-center py-4">
+          <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
+          <span className="ml-2 text-sm text-muted-foreground">Submitting Phase 1...</span>
+        </div>
+      )}
+      <form
+        id="phase-1-verification-form"
+        onSubmit={onSubmit}
+        className="hidden"
+      />
+    </div>
   );
 }

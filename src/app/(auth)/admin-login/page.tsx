@@ -8,23 +8,20 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import { useAdminLogin } from "@/hooks/admin/user/useAdmin";
 
-// Schema — z.email() is the non-deprecated Zod v4 standalone email validator
-const adminLoginSchema = z.object({
-  email: z.email("Please enter a valid email address"),
+export const adminLoginSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+  role: z.literal("ADMIN"),
 });
 
 type AdminLoginFormValues = z.infer<typeof adminLoginSchema>;
 
-// Hardcoded admin credentials
-const ADMIN_EMAIL = "admin@gmail.com";
-const ADMIN_PASSWORD = "admin";
-
 export default function AdminLoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-
+  const { mutate: adminLogin, isError } = useAdminLogin();
   const {
     register,
     handleSubmit,
@@ -35,14 +32,31 @@ export default function AdminLoginPage() {
   });
 
   const onSubmit = async (data: AdminLoginFormValues) => {
-    await new Promise((res) => setTimeout(res, 900));
-
-    if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD) {
-      toast.success("Welcome back, Jordan!", { duration: 2000 });
-      setTimeout(() => router.push("/admin"), 500);
-    } else {
-      toast.error("Invalid email or password. Please try again.");
-    }
+    adminLogin(data, {
+      onSuccess: () => {
+        toast.success("Welcome back, Admin!", {
+          style: {
+            borderRadius: "10px",
+            background: "#1A1A2E",
+            color: "#fff",
+          },
+        });
+        router.push("/admin/");
+      },
+      onError: (error) => {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.";
+        toast.error(message, {
+          style: {
+            borderRadius: "10px",
+            background: "#1A1A2E",
+            color: "#fff",
+          },
+        });
+      },
+    });
   };
 
   return (
@@ -118,7 +132,7 @@ export default function AdminLoginPage() {
                       "focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C]",
                       errors.email
                         ? "border-red-400 bg-red-50 focus:ring-red-200 focus:border-red-400"
-                        : "border-gray-200 bg-white hover:border-gray-300"
+                        : "border-gray-200 bg-white hover:border-gray-300",
                     )}
                   />
                   {errors.email && (
@@ -148,13 +162,15 @@ export default function AdminLoginPage() {
                         "focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C]",
                         errors.password
                           ? "border-red-400 bg-red-50 focus:ring-red-200 focus:border-red-400"
-                          : "border-gray-200 bg-white hover:border-gray-300"
+                          : "border-gray-200 bg-white hover:border-gray-300",
                       )}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                       tabIndex={-1}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
@@ -190,7 +206,7 @@ export default function AdminLoginPage() {
                     "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
                     "bg-[#1A1A2E] hover:bg-[#0D2B3E]",
                     "focus:outline-none focus:ring-2 focus:ring-[#1A1A2E]/30 focus:ring-offset-2",
-                    "disabled:opacity-60 disabled:cursor-not-allowed"
+                    "disabled:opacity-60 disabled:cursor-not-allowed",
                   )}
                 >
                   {isSubmitting ? (
@@ -241,7 +257,6 @@ export default function AdminLoginPage() {
             aria-hidden="true"
             className="pointer-events-none absolute -top-16 -right-16 h-72 w-72 rounded-full border border-white/5 bg-[#0D2B3E]"
           />
-       
 
           {/* Content */}
           <div className="relative z-10 max-w-md">

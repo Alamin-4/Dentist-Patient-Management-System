@@ -59,18 +59,18 @@ jobs:
             echo "→ Pulling latest image..."
             docker pull "$IMAGE"
 
-            echo "→ Stopping old container..."
+            echo "→ Stopping old container if running..."
             docker stop rated-docs-website || true
             docker rm rated-docs-website || true
 
-            echo "→ Running new container..."
+            echo "→ Running container on port 80..."
             docker run -d \
               --name rated-docs-website \
               --restart unless-stopped \
               -p 80:3000 \
               "$IMAGE"
 
-            echo "→ Cleaning up..."
+            echo "→ Cleaning up old images..."
             docker image prune -f
 
             echo "✓ Deployment successful"

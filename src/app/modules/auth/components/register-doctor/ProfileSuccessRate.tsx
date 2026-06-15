@@ -4,7 +4,8 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-export function EmailSuccessState() {
+export function ProfileSuccessState() {
+  const email = typeof window !== "undefined" ? localStorage.getItem("registerEmail") : null;
   const router = useRouter();
   return (
     <div className="flex flex-col items-center justify-center text-center px-4 w-full max-w-130 mx-auto animate-in fade-in zoom-in duration-300">
@@ -22,7 +23,7 @@ export function EmailSuccessState() {
       <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-10 max-w-100">
         We've sent a confirmation link to{" "}
         <span className="font-semibold text-gray-900">
-          zakaullah@zenkoders.com
+          {email}
         </span>
         .
       </p>

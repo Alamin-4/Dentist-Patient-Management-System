@@ -25,12 +25,11 @@ interface StateContextType {
   verificationStep: number;
   setVerificationStep: React.Dispatch<React.SetStateAction<number>>;
   verificationStepReady: Record<number, boolean>;
-  setVerificationStepReady: (
-    step: number,
-    ready: boolean,
-  ) => void;
+  setVerificationStepReady: (step: number, ready: boolean) => void;
   verificationCompletedStep: number | null;
-  setVerificationCompletedStep: React.Dispatch<React.SetStateAction<number | null>>;
+  setVerificationCompletedStep: React.Dispatch<
+    React.SetStateAction<number | null>
+  >;
   showSignupModal: boolean;
   setShowSignupModal: React.Dispatch<React.SetStateAction<boolean>>;
   showPersonalizeModal: boolean;
@@ -60,6 +59,8 @@ interface StateContextType {
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   isNewestFirst: boolean;
   setIsNewestFirst: React.Dispatch<React.SetStateAction<boolean>>;
+  showSigninModal: boolean;
+  setShowSigninModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
@@ -75,12 +76,16 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     "idle" | "match" | "no-match"
   >("idle");
   const [verificationStep, setVerificationStep] = useState<number>(1);
-  const [verificationStepReady, setVerificationStepReadyState] = useState<Record<number, boolean>>({
+  const [verificationStepReady, setVerificationStepReadyState] = useState<
+    Record<number, boolean>
+  >({
     1: false,
     2: false,
     3: false,
   });
-  const [verificationCompletedStep, setVerificationCompletedStep] = useState<number | null>(null);
+  const [verificationCompletedStep, setVerificationCompletedStep] = useState<
+    number | null
+  >(null);
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   const [showPersonalizeModal, setShowPersonalizeModal] =
     useState<boolean>(false);
@@ -97,6 +102,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [dentistsToCompare, setDentistsToCompare] = useState<Dentist[]>([]);
   const [kolModalOpen, setKolModalOpen] = useState(false);
   const [addKolStep, setAddKolStep] = useState<kolSteps>("Basic Info");
+  const [showSigninModal, setShowSigninModal] = useState(false); // Added state for SignIn modal
 
   // tabbar state for dentist booking manage page
 
@@ -107,6 +113,20 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     initializeDentistData();
     initializeBookingData();
+
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope,
+          );
+        })
+        .catch((error) => {
+          console.error("Service Worker registration failed:", error);
+        });
+    }
   }, []);
 
   const setVerificationStepReady = useCallback(
@@ -160,6 +180,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setSearchQuery,
     isNewestFirst,
     setIsNewestFirst,
+    showSigninModal,
+    setShowSigninModal,
   };
 
   return (
