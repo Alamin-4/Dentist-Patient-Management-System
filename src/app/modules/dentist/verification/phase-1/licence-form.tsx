@@ -83,12 +83,12 @@ export default function LicenceForm({ onVerify }: { onVerify: (data: any) => voi
                   <SelectValue placeholder="Select Authority" />
                 </SelectTrigger>
                 <SelectContent className="px-2 *:py-2">
-                  <SelectItem value="California Medical Board">California Medical Board</SelectItem>
-                  <SelectItem value="Medical Board of California">Medical Board of California</SelectItem>
-                  <SelectItem value="California Dental Board">California Dental Board</SelectItem>
-                  <SelectItem value="California Board of Pharmacy">California Board of Pharmacy</SelectItem>
-                  <SelectItem value="California Board of Nursing">California Board of Nursing</SelectItem>
-                  <SelectItem value="California Board of Psychology">California Board of Psychology</SelectItem>
+                  <SelectItem value="1">California Medical Board</SelectItem>
+                  <SelectItem value="2">Medical Board of California</SelectItem>
+                  <SelectItem value="3">California Dental Board</SelectItem>
+                  <SelectItem value="4">California Board of Pharmacy</SelectItem>
+                  <SelectItem value="5">California Board of Nursing</SelectItem>
+                  <SelectItem value="6">California Board of Psychology</SelectItem>
                 </SelectContent>
               </Select>
             )}

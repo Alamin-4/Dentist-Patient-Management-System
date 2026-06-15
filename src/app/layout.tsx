@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StateProvider } from "@/providers/StateProvider";
+import TanstackProvider from "@/providers/query-provider";
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,7 +43,9 @@ export default function RootLayout({
       className={`${inter.variable} ${jakartaSans.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <StateProvider>{children}</StateProvider>
+        <StateProvider>
+          <TanstackProvider>{children}</TanstackProvider>
+        </StateProvider>
       </body>
     </html>
   );

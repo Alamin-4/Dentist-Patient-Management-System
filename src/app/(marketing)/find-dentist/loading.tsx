@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/feedback/skeleton";
 
 export default function FindDentistLoading() {
   return (
-    <div className="max-w-360 mx-auto w-11/12 min-h-screen text-slate-900">
+    <div className="max-w-400 mx-auto w-11/12 min-h-screen text-slate-900">
       {/* TopBar skeleton */}
       <div className="sticky top-0 z-40 mb-6 bg-white py-4 border-b border-slate-100">
         <div className="flex items-center gap-3">

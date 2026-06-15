@@ -55,7 +55,7 @@ export default function PatientStories() {
 
   return (
     <section className="py-24 overflow-hidden">
-      <div className="max-w-360 w-11/12 mx-auto">
+      <div className="max-w-400 w-11/12 mx-auto">
         
         <div className="flex justify-between items-end mb-12">
           <div className="max-w-2xl">

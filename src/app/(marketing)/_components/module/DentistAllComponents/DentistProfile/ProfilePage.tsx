@@ -15,7 +15,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
 
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
-      <div className="mx-auto max-w-360 w-11/12 py-8 lg:py-12">
+      <div className="mx-auto max-w-400 w-11/12 py-8 lg:py-12">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
           {/* Left Column */}
           <div className="w-full lg:flex-1 min-w-0 space-y-5">
