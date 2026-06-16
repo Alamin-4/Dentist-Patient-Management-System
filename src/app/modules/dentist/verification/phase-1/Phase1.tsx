@@ -1,90 +1,108 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LicenceForm from "./licence-form";
-import { VerificationResult } from "./match-found";
-import { useStateContext } from "@/providers/StateProvider";
 import { HeadshotUpload } from "./headshot-upload";
 import { cn } from "@/lib/utils";
 import PhaseStep from "../PhaseStep";
 import useDentist from "@/hooks/dentist/useDentist";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
-
+import useVerificationProgress from "@/hooks/dentist/useStepProgress";
+import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
+/*
+Type 'SubmittedLicence | null | undefined' is not assignable to type 'Partial<{ country: string; city: string; authority: number; regNo: string; }> | undefined'.
+  Type 'null' is not assignable to type 'Partial<{ country: string; city: string; authority: number; regNo: string; }> | undefined'.
+*/
 type SubmittedLicence = {
   country: string;
   city: string;
-  authority: string;
+  authority: number;
   regNo: string;
 };
 
+type LicenseProgressData = {
+  country: string;
+  city: string;
+  registration_authority: number;
+  registration_no: string;
+  professional_headshot?: string;
+};
+
 export default function Phase1() {
-  const {
-    verificationStatus,
-    setVerificationStatus,
-    setVerificationStepReady,
-    setVerificationCompletedStep,
-  } = useStateContext();
+  const { setVerificationStepReady, setVerificationCompletedStep, setVerificationStep } =
+    useVerificationStore();
+
   const [submittedLicence, setSubmittedLicence] =
     useState<SubmittedLicence | null>(null);
-  const [isProfileConfirmed, setIsProfileConfirmed] = useState(false);
-  const [isLicenceImported, setIsLicenceImported] = useState(false);
-  const [hasHeadshot, setHasHeadshot] = useState(false);
 
-  // Store actual Files for API submission
+  const { checkLicenseVerifyProgress } = useVerificationProgress();
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
-  const [licenceFile, setLicenceFile] = useState<File | null>(null);
 
-  const { stepOneMutation, stepOneError } = useDentist();
-  
+  const { stepOneMutation } = useDentist();
+
+  const progressData = checkLicenseVerifyProgress?.data;
+  const isAlreadySubmitted = progressData?.submitted === true;
+  const hasSyncedInitialProgress = useRef(false);
+
+  const serverSubmittedLicence = useMemo<SubmittedLicence | null>(() => {
+    if (progressData?.submitted !== true || !progressData.data) {
+      return null;
+    }
+
+    const serverData = progressData.data as LicenseProgressData;
+    return {
+      country: serverData.country,
+      city: serverData.city,
+      authority: serverData.registration_authority,
+      regNo: serverData.registration_no,
+    };
+  }, [progressData]);
+
+  useEffect(() => {
+    if (hasSyncedInitialProgress.current) return;
+    hasSyncedInitialProgress.current = true;
+
+    if (isAlreadySubmitted && serverSubmittedLicence) {
+      setVerificationCompletedStep(2);
+      setVerificationStep(2);
+    }
+  }, [isAlreadySubmitted, serverSubmittedLicence, setVerificationCompletedStep, setVerificationStep]);
+
   const handleVerify = (data: SubmittedLicence) => {
     setSubmittedLicence(data);
-    setIsProfileConfirmed(false);
-    setIsLicenceImported(false);
-
-    if (data.regNo === "CA-123456") {
-      setVerificationStatus("match");
-      return;
-    }
-
-    setVerificationStatus("no-match");
   };
 
+  const hasHeadshot = Boolean(
+    headshotFile || (progressData?.data as LicenseProgressData | undefined)?.professional_headshot,
+  );
+
   const isStepReady = useMemo(() => {
-    if (verificationStatus === "match") {
-      return isProfileConfirmed && hasHeadshot;
-    }
+    if (isAlreadySubmitted) return true;
 
-    if (verificationStatus === "no-match") {
-      return isLicenceImported && hasHeadshot;
-    }
-
-    return false;
-  }, [hasHeadshot, isLicenceImported, isProfileConfirmed, verificationStatus]);
+    return Boolean(submittedLicence && hasHeadshot);
+  }, [hasHeadshot, isAlreadySubmitted, submittedLicence]);
 
   useEffect(() => {
     setVerificationStepReady(1, isStepReady);
   }, [isStepReady, setVerificationStepReady]);
 
-  const handleConfirmProfile = () => {
-    setIsProfileConfirmed(true);
-  };
-
-  const handleRejectProfile = () => {
-    setVerificationStatus("no-match");
-    setIsProfileConfirmed(false);
-    setIsLicenceImported(false);
-  };
-
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isAlreadySubmitted) {
+      setVerificationStep(2);
+      setVerificationCompletedStep(1);
+      return;
+    }
+
     if (!isStepReady || !submittedLicence || !headshotFile) {
       toast.error("Please complete all verification steps first.");
       return;
     }
 
-    // Django expects a file. If matched, create a dummy file to satisfy Django validation.
-    const fileToUpload = licenceFile || new File(["verified match"], "licence.pdf", { type: "application/pdf" });
+    const fileToUpload = new File(["verified match"], "licence.pdf", {
+      type: "application/pdf",
+    });
 
     stepOneMutation.mutate(
       {
@@ -100,7 +118,14 @@ export default function Phase1() {
           toast.success("License verification details submitted!");
           setVerificationCompletedStep(1);
         },
-       
+        onError: (error: unknown) => {
+          const backendError =
+            typeof error === "object" && error !== null
+              ? ((error as { response?: { data?: { detail?: { error?: string } } }; message?: string })
+                  .response?.data?.detail?.error ?? (error as { message?: string }).message)
+              : undefined;
+          toast.error(backendError || "Something went wrong. Please try again.");
+        }
       }
     );
   };
@@ -112,22 +137,11 @@ export default function Phase1() {
           <PhaseStep step={1} title="Verify your dental licence" />
 
           <div className="space-y-5">
-            <LicenceForm onVerify={handleVerify} />
-
-            {verificationStatus !== "idle" && (
-              <VerificationResult
-                status={verificationStatus}
-                doctorName="Dr. Alex Hemsworth"
-                specialty="Orthodontist"
-                licenceInfo={submittedLicence}
-                onConfirm={handleConfirmProfile}
-                onReject={handleRejectProfile}
-                onFileSelect={(file) => {
-                  setIsLicenceImported(true);
-                  setLicenceFile(file);
-                }}
-              />
-            )}
+            <LicenceForm
+              onVerify={handleVerify}
+              defaultValues={isAlreadySubmitted ? serverSubmittedLicence ?? submittedLicence : undefined}
+              isAlreadySubmitted={isAlreadySubmitted}
+            />
           </div>
         </div>
 
@@ -140,10 +154,13 @@ export default function Phase1() {
                 Professional headshot
               </p>
               <HeadshotUpload
+                disabled={isAlreadySubmitted}
                 onChange={(file) => {
-                  setHasHeadshot(Boolean(file));
                   setHeadshotFile(file);
                 }}
+                existingImageUrl={
+                  (progressData?.data as LicenseProgressData | undefined)?.professional_headshot
+                }
               />
               <p
                 className={cn(
@@ -151,20 +168,17 @@ export default function Phase1() {
                   isStepReady ? "text-green-600" : "text-muted-foreground",
                 )}
               >
-                {isStepReady
-                  ? "Phase 1 is ready to complete."
-                  : "Complete the verification or upload flow and add your headshot to continue."}
+                {isAlreadySubmitted
+                  ? "This phase has been successfully submitted and is under review."
+                  : isStepReady
+                    ? "Phase 1 is ready to complete."
+                    : "Complete the verification or upload flow and add your headshot to continue."}
               </p>
             </div>
           </div>
         </div>
       </div>
-      {stepOneMutation.isPending && (
-        <div className="flex justify-center py-4">
-          <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
-          <span className="ml-2 text-sm text-muted-foreground">Submitting Phase 1...</span>
-        </div>
-      )}
+
       <form
         id="phase-1-verification-form"
         onSubmit={onSubmit}

@@ -4,11 +4,11 @@ export const API_BASE_URL =
 export const endpoints = {
   auth: {
     register: "/auth/signup/",
-    login: "/auth/login",
+    login: "/auth/login/",
     logout: "/auth/logout/",
     me: "/auth/me",
-    forgotPassword: "/auth/forgot-password",
-    resetPassword: "/auth/reset-password",
+    forgotPassword: "/auth/forgot-password/",
+    resetPassword: "/auth/reset-password/",
     refreshToken: "/auth/token/refresh/",
     verifyToken: "/auth/token/verify/",
     verifyOtp: "/auth/verify-otp/",
@@ -29,7 +29,7 @@ export const endpoints = {
     updateVerificationPhase: "/dentist/update-verification-phase/",  // body: { "verification_phase": "COMPLETE"}
     // verification step 
     stepOne: "/dentist/verification-step/license/",
-    stepOneCheck: "/dentist/verification-step/license/",  
+    stepOneCheck: "/dentist/verification-step/license/",
     stepTwo: "/dentist/verification-step/operations/",
     stepTwoCheck: "/dentist/verification-step/operations/",
     stepThree: "/dentist/verification-step/clinical-depth/",

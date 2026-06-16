@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 // Define the validation schema
 const formSchema = z
@@ -83,11 +84,11 @@ export function CreateAccountForm({
         setStep(2);
       },
       onError: (error: any) => {
-    
-          const errorRes = error?.detail?.message
-          
-         toast.error(`${errorRes}`)
-        
+
+        const errorRes = error?.detail?.message
+
+        toast.error(`${errorRes}`)
+
       },
       onSettled: () => {
         setIsLoading(false);
@@ -146,7 +147,7 @@ export function CreateAccountForm({
             id="email"
             type="email"
             {...register("email")}
-            placeholder="johndoe@gmail.com"
+            placeholder="example@gmail.com"
             className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.email ? "border-red-500" : ""}`}
           />
           {errors.email && (
@@ -162,7 +163,7 @@ export function CreateAccountForm({
             id="phone"
             type="tel"
             {...register("phone")}
-            placeholder="1234567890"
+            placeholder="+1 234 *******"
             className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.phone ? "border-red-500" : ""}`}
           />
           {errors.phone && (
@@ -181,17 +182,17 @@ export function CreateAccountForm({
               <SelectTrigger
                 className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
               >
-                <SelectValue placeholder="MALE" />
+                <SelectValue placeholder="Select Gender" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem className="h-11!" value="MALE">
-                  MALE
+                  Male
                 </SelectItem>
                 <SelectItem className="h-11!" value="FEMALE">
-                  FEMALE
+                  Female
                 </SelectItem>
                 <SelectItem className="h-11!" value="OTHER">
-                  OTHER
+                  Other
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -210,7 +211,7 @@ export function CreateAccountForm({
             <Input
               id="referral_code"
               {...register("referral_code")}
-              placeholder="John"
+              placeholder="JH-12"
               className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referral_code ? "border-red-500" : ""}`}
             />
             {errors.referral_code && (
@@ -288,7 +289,12 @@ export function CreateAccountForm({
             "Create Account"
           )}
         </Button>
+        <div className="text-center text-sm">
+          Already have an account? <Link href="/doctor-login" className="text-[#0E3E65] font-medium! hover:underline cursor-pointer">Sign In</Link>
+
+        </div>
       </form>
+
     </>
   );
 }
