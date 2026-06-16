@@ -4,20 +4,33 @@ import { CheckCircle2, Circle, Clock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
+import type {
+  DentistVerificationProgress,
+  VerificationProgressStep,
+  VerificationPhase,
+} from "./verification-progress.types";
+
+const getStepByPhase = (
+  steps: VerificationProgressStep[],
+  phase: VerificationPhase,
+) => steps.find((step) => step.phase === phase);
 
 export function VerificationBanner() {
   const router = useRouter();
   const { data: progressData } = useDentistProgress();
 
-  const progress = progressData?.data;
+  const progress = progressData?.data as DentistVerificationProgress | undefined;
 
   const steps = progress?.steps || [];
-  const licenseStep = steps.find((s: any) => s.phase === "LICENSE");
-  const operationalStep = steps.find((s: any) => s.phase === "OPERATIONAL");
-  const clinicalStep = steps.find((s: any) => s.phase === "CLINICAL");
+  const licenseStep = getStepByPhase(steps, "LICENSE");
+  const operationalStep = getStepByPhase(steps, "OPERATIONAL");
+  const clinicalStep = getStepByPhase(steps, "CLINICAL");
 
   // Helper to resolve step status
-  const getStepStatus = (step: any, fallbackStatus?: string) => {
+  const getStepStatus = (
+    step: VerificationProgressStep | undefined,
+    fallbackStatus?: string | null,
+  ) => {
     if (fallbackStatus && fallbackStatus !== "PENDING") return fallbackStatus;
     if (!step) return "PENDING";
     if (step.status) return step.status;
