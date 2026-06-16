@@ -5,6 +5,16 @@ import { useStateContext } from "@/providers/StateProvider";
 import { VerificationBanner } from "./verification-banner";
 import MainOverviewPage from "./main-overview-page";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
+import type {
+  DentistVerificationProgress,
+  VerificationProgressStep,
+  VerificationPhase,
+} from "./verification-progress.types";
+
+const getStepByPhase = (
+  steps: VerificationProgressStep[],
+  phase: VerificationPhase,
+) => steps.find((step) => step.phase === phase);
 
 export function OverviewPageSwitcher() {
   const { setVerificationStep } = useStateContext();
@@ -15,13 +25,13 @@ export function OverviewPageSwitcher() {
     refetch,
   } = useDentistProgress();
 
-  const progress = progressData?.data;
+  const progress = progressData?.data as DentistVerificationProgress | undefined;
 
   // Dynamically determine completed steps from backend status
   const steps = progress?.steps || [];
-  const licenseStep = steps.find((s: any) => s.phase === "LICENSE");
-  const operationalStep = steps.find((s: any) => s.phase === "OPERATIONAL");
-  const clinicalStep = steps.find((s: any) => s.phase === "CLINICAL");
+  const licenseStep = getStepByPhase(steps, "LICENSE");
+  const operationalStep = getStepByPhase(steps, "OPERATIONAL");
+  const clinicalStep = getStepByPhase(steps, "CLINICAL");
 
   const step1Done = licenseStep
     ? licenseStep.completed
