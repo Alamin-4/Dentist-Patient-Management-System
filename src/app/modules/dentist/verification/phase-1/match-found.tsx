@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { UploadCloud, FileText, Loader2, X, Trash } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { UploadCloud, FileText, Loader2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MatchProps {
@@ -11,12 +11,13 @@ interface MatchProps {
   licenceInfo?: {
     country: string;
     city: string;
-    authority: string;
+    authority: number;
     regNo: string;
   } | null;
   onConfirm?: () => void;
   onReject?: () => void;
   onFileSelect?: (file: File) => void;
+  existingFileUrl?: string;
 }
 
 export function VerificationResult({
@@ -27,6 +28,7 @@ export function VerificationResult({
   onConfirm,
   onReject,
   onFileSelect,
+  existingFileUrl,
 }: MatchProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -37,7 +39,6 @@ export function VerificationResult({
     if (file) {
       setSelectedFile(file);
       onFileSelect?.(file);
-      // Optional: Simulate a brief upload state
       setIsUploading(true);
       setTimeout(() => setIsUploading(false), 800);
     }
@@ -49,7 +50,10 @@ export function VerificationResult({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // --- MATCH FOUND STATE ---
+  const getFileNameFromUrl = (url: string) => {
+    return url.substring(url.lastIndexOf("/") + 1);
+  };
+
   if (status === "match") {
     return (
       <div className="mt-6 rounded-xl border border-success-100 bg-success-50/70 p-5 sm:p-6">
@@ -96,10 +100,11 @@ export function VerificationResult({
     );
   }
 
-  // --- MATCH NOT FOUND / UPLOAD STATE ---
+  const hasExistingFile = !!existingFileUrl && !selectedFile;
+
   return (
     <>
-      {!selectedFile ? (
+      {!selectedFile && !existingFileUrl ? (
         <div className="mt-6 space-y-4 rounded-xl border border-destructive-100 bg-destructive-50/70 p-5 sm:p-6">
           <h4 className="text-lg font-semibold text-foreground">Match not Found</h4>
           <p className="text-sm text-muted-foreground">
@@ -141,20 +146,25 @@ export function VerificationResult({
             </div>
             <div className="overflow-hidden">
               <p className="max-w-50 truncate text-sm font-semibold text-foreground md:max-w-xs">
-                {selectedFile.name}
+                {selectedFile ? selectedFile.name : getFileNameFromUrl(existingFileUrl || "")}
               </p>
               <p className="text-xs font-medium text-muted-foreground">
-                {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                {selectedFile
+                  ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`
+                  : "Uploaded Document"}
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={removeFile}
-            className="rounded-lg p-2 text-muted-foreground transition-all hover:bg-destructive-50 hover:text-destructive-600"
-          >
-            <Trash size={20} />
-          </button>
+
+          {!hasExistingFile && (
+            <button
+              type="button"
+              onClick={removeFile}
+              className="rounded-lg p-2 text-muted-foreground transition-all hover:bg-destructive-50 hover:text-destructive-600"
+            >
+              <Trash size={20} />
+            </button>
+          )}
         </div>
       )}
     </>

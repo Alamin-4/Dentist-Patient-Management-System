@@ -1,3 +1,5 @@
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
+
 export interface AuthSession {
   accessToken: string;
   refreshToken?: string;
@@ -8,53 +10,53 @@ const ACCESS_TOKEN_KEY = "rateddocs_access_token";
 const REFRESH_TOKEN_KEY = "rateddocs_refresh_token";
 const USER_KEY = "rateddocs_user";
 
-const canUseStorage = () => typeof window !== "undefined";
+// Default options for cookies
+const cookieOptions = {
+  maxAge: 30 * 24 * 60 * 60, // 30 days
+  path: "/",
+  secure: true,
+  sameSite: "lax" as const,
+};
 
-export function getAccessToken() {
-  if (!canUseStorage()) return null;
-
-  return window.localStorage.getItem(ACCESS_TOKEN_KEY);
+export function getAccessToken(options?: any) {
+  return (getCookie(ACCESS_TOKEN_KEY, options) as string) || null;
 }
 
-export function getRefreshToken() {
-  if (!canUseStorage()) return null;
-
-  return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+export function getRefreshToken(options?: any) {
+  return (getCookie(REFRESH_TOKEN_KEY, options) as string) || null;
 }
 
-export function getSessionUser<TUser = unknown>() {
-  if (!canUseStorage()) return null;
-
-  const user = window.localStorage.getItem(USER_KEY);
+export function getSessionUser<TUser = unknown>(options?: any) {
+  const user = getCookie(USER_KEY, options) as string;
   if (!user) return null;
 
   try {
-    return JSON.parse(user) as TUser;
+    return JSON.parse(decodeURIComponent(user)) as TUser;
   } catch {
     return null;
   }
 }
 
-export function setAuthSession(session: AuthSession) {
-  if (!canUseStorage()) return;
+export function setAuthSession(session: AuthSession, options?: any) {
+  const mergedOptions = { ...cookieOptions, ...options };
 
-  window.localStorage.setItem(ACCESS_TOKEN_KEY, session.accessToken);
+  setCookie(ACCESS_TOKEN_KEY, session.accessToken, mergedOptions);
 
   if (session.refreshToken) {
-    window.localStorage.setItem(REFRESH_TOKEN_KEY, session.refreshToken);
+    setCookie(REFRESH_TOKEN_KEY, session.refreshToken, mergedOptions);
   }
 
   if (session.user) {
-    window.localStorage.setItem(USER_KEY, JSON.stringify(session.user));
+    const userString = encodeURIComponent(JSON.stringify(session.user));
+    setCookie(USER_KEY, userString, mergedOptions);
   }
 }
 
-export function clearAuthSession() {
-  if (!canUseStorage()) return;
-
-  window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-  window.localStorage.removeItem(REFRESH_TOKEN_KEY);
-  window.localStorage.removeItem(USER_KEY);
+export function clearAuthSession(options?: any) {
+  const mergedOptions = { ...cookieOptions, ...options };
+  deleteCookie(ACCESS_TOKEN_KEY, mergedOptions);
+  deleteCookie(REFRESH_TOKEN_KEY, mergedOptions);
+  deleteCookie(USER_KEY, mergedOptions);
 }
 
 export const authStorageKeys = {
@@ -62,3 +64,4 @@ export const authStorageKeys = {
   refreshToken: REFRESH_TOKEN_KEY,
   user: USER_KEY,
 } as const;
+

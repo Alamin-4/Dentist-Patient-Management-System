@@ -17,3 +17,4 @@ export const formSchema = z.object({
 });
 
 export type FormValues = z.infer<typeof formSchema>;
+export type FormInputValues = z.input<typeof formSchema>;

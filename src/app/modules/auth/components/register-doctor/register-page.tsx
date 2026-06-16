@@ -42,7 +42,7 @@ export default function RegisterPageComponent() {
       </section>
 
       <section className="flex w-full items-center justify-center bg-white px-6 py-12 lg:w-2/5 xl:px-20">
-        <div className="w-full max-w-11/12 md:max-w-10/12 mx-auto space-y-6 md:space-y-8 lg:space-y-12">
+        <div className="w-full max-w-11/12 md:max-w-10/12 mx-auto space-y-6 md:space-y-8">
           <div hidden={step === 4}>
             <button
               onClick={() => {

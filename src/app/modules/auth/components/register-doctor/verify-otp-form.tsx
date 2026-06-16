@@ -161,8 +161,8 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
             Didn’t receive OTP?{" "}
             <button
               type="button"
-              disabled={resendCountdown > 0 || isResending}
-              className="font-bold text-[#163E5C] hover:underline transition-all focus:outline-none disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+              disabled={isResending}
+              className="font-bold text-[#163E5C] cursor-pointer hover:underline transition-all focus:outline-none disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
               onClick={handleResendOtp}
             >
                Resend OTP

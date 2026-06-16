@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { VerificationNextStepModal } from "./verification-next-step-modal";
 import { useStateContext } from "@/providers/StateProvider";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import useDentist from "@/hooks/dentist/useDentist";
 import { Loader2 } from "lucide-react";
 
@@ -17,29 +16,28 @@ export default function StepButton() {
     setVerificationCompletedStep,
   } = useStateContext();
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { stepOneMutation, stepTwoMutation, stepThreeMutation } = useDentist();
-  const isSubmitting = stepOneMutation.isPending || stepTwoMutation.isPending || stepThreeMutation.isPending;
+  const isSubmitting =
+    stepOneMutation.isPending ||
+    stepTwoMutation.isPending ||
+    stepThreeMutation.isPending;
 
   const isReady = verificationStepReady[verificationStep];
 
-  const buttonLabel = verificationStep === 3 ? "Submit & Complete" : `Continue to Phase ${verificationStep + 1}`;
+  const buttonLabel =
+    verificationStep === 3
+      ? "Submit & Complete"
+      : `Continue to Phase ${verificationStep + 1}`;
 
   const buttonProps = {
     type: "submit" as const,
     form: `phase-${verificationStep}-verification-form`,
   };
 
-  useEffect(() => {
-    if (
-      verificationCompletedStep === 1 ||
-      verificationCompletedStep === 2 ||
-      verificationCompletedStep === 3
-    ) {
-      setIsModalOpen(true);
-    }
-  }, [verificationCompletedStep]);
+  const isModalOpen =
+    verificationCompletedStep !== null &&
+    verificationCompletedStep === verificationStep;
 
   const handleContinue = () => {
     if (verificationCompletedStep === 1) {
@@ -51,7 +49,6 @@ export default function StepButton() {
     }
 
     setVerificationCompletedStep(null);
-    setIsModalOpen(false);
   };
 
   return (
@@ -77,7 +74,11 @@ export default function StepButton() {
       <VerificationNextStepModal
         open={isModalOpen}
         step={verificationCompletedStep ?? verificationStep}
-        onOpenChange={setIsModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setVerificationCompletedStep(null);
+          }
+        }}
         onContinue={handleContinue}
       />
     </>
