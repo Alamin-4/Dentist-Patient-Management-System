@@ -6,14 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SterilizationSection } from "./SterilizationSection";
 import { ProcedurePricingSection } from "./ProcedurePricingSection";
 import { GuaranteeSection } from "./GuaranteeSection";
-import { useStateContext } from "@/providers/StateProvider";
+import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import {
   formSchema,
+  FormInputValues,
   FormValues,
 } from "@/validation/Verification-doctor-phase/phase-form";
 import useDentist from "@/hooks/dentist/useDentist";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 
 const mapProcedureNameToId = (name: string): number => {
   const n = name.toLowerCase();
@@ -24,11 +26,15 @@ const mapProcedureNameToId = (name: string): number => {
 };
 
 export default function MultiStepForm() {
-  const { setVerificationStepReady, setVerificationCompletedStep } = useStateContext();
+  const { setVerificationStepReady, setVerificationCompletedStep } =
+    useVerificationStore();
   const { stepTwoMutation } = useDentist();
+  const { checkPhotoVerifyProgress } = useVerificationProgress();
 
-  const methods = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as any,
+  const isAlreadySubmitted = checkPhotoVerifyProgress?.data?.submitted === true;
+
+  const methods = useForm<FormInputValues, unknown, FormValues>({
+    resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
       sterilizationMethods: [],
@@ -42,7 +48,13 @@ export default function MultiStepForm() {
   });
 
   const onSubmit = (data: FormValues) => {
-    // Construct StepTwoI payload with safe defaults for missing UI inputs
+    if (isAlreadySubmitted) {
+      toast.error(
+        "Operations verification is already submitted and pending review.",
+      );
+      return;
+    }
+
     const sterilization = {
       has_jci_certificate: Boolean(data.jciCertificate),
       jci_certificate: data.jciCertificate || null,
@@ -51,9 +63,10 @@ export default function MultiStepForm() {
       issuing_authority: "N/A",
       issue_date: new Date().toISOString().split("T")[0],
       walkthrough_video: data.videoWalkthrough || null,
-      autoclave_brand: data.sterilizationMethods.includes("Autoclave") ? "Standard" : "N/A",
+      autoclave_brand: data.sterilizationMethods.includes("Autoclave"),
       sealed_pouch_visible: data.sterilizationMethods.includes("Sealed Pouch"),
-      ultrasonic_cleaner_available: data.sterilizationMethods.includes("Ultrasonic"),
+      ultrasonic_cleaner_available:
+        data.sterilizationMethods.includes("Ultrasonic"),
     };
 
     const procedures = data.procedures.map((p) => ({
@@ -68,7 +81,11 @@ export default function MultiStepForm() {
       typed_signature: data.typedSignature,
       accepted_terms: data.agreeToGuarantee,
     };
-
+    console.log({
+      sterilization,
+      procedures,
+      guarantee,
+    });
     stepTwoMutation.mutate(
       {
         sterilization,
@@ -80,17 +97,26 @@ export default function MultiStepForm() {
           toast.success("Operations verification details submitted!");
           setVerificationCompletedStep(2);
         },
-        onError: (error: any) => {
-          const errMsg = error?.response?.data?.message || "Operations verification submission failed. Please try again.";
+        onError: (error: unknown) => {
+          const errMsg =
+            typeof error === "object" && error !== null
+              ? (error as { response?: { data?: { message?: string } } })
+                  .response?.data?.message ||
+                "Operations verification submission failed. Please try again."
+              : "Operations verification submission failed. Please try again.";
           toast.error(errMsg);
         },
-      }
+      },
     );
   };
 
   useEffect(() => {
-    setVerificationStepReady(2, methods.formState.isValid);
-  }, [methods.formState.isValid, setVerificationStepReady]);
+    if (isAlreadySubmitted) {
+      setVerificationStepReady(2, true);
+    } else {
+      setVerificationStepReady(2, methods.formState.isValid);
+    }
+  }, [methods.formState.isValid, isAlreadySubmitted, setVerificationStepReady]);
 
   return (
     <FormProvider {...methods}>
@@ -105,7 +131,9 @@ export default function MultiStepForm() {
         {stepTwoMutation.isPending && (
           <div className="flex justify-center items-center py-6 border-t bg-card">
             <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
-            <span className="ml-2 text-sm text-muted-foreground">Submitting Phase 2...</span>
+            <span className="ml-2 text-sm text-muted-foreground">
+              Submitting Phase 2...
+            </span>
           </div>
         )}
       </form>

@@ -2,6 +2,10 @@ node_modules
 .next
 .git
 .github
+.agents
+.claude
+.codex
+.vscode
 Dockerfile
 README.md
 *.log

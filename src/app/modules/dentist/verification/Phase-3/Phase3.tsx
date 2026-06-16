@@ -7,7 +7,7 @@ import * as z from "zod";
 import { DocumentUpload } from "./DocumentUpload";
 import { useFieldArray } from "react-hook-form";
 import { Plus, Trash, Loader2 } from "lucide-react";
-import { useStateContext } from "@/providers/StateProvider";
+import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import useDentist, { useUpdateVerificationPhase } from "@/hooks/dentist/useDentist";
 import toast from "react-hot-toast";
 
@@ -52,7 +52,7 @@ export default function Phase3() {
     },
   });
 
-  const { setVerificationCompletedStep, setVerificationStep, setVerificationStepReady } = useStateContext();
+  const { setVerificationCompletedStep, setVerificationStep, setVerificationStepReady } = useVerificationStore();
   const { stepThreeMutation } = useDentist();
   const updatePhase = useUpdateVerificationPhase();
 

@@ -1,4 +1,5 @@
 import { LoginPayload, OtpPayload, RegisterPayload } from "@/hooks/authentication/auth.interface";
+import type { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import { api, type ApiResponse, type PaginatedResponse } from "./client";
 import { endpoints } from "./endpoints";
 
@@ -35,6 +36,7 @@ export interface AuthResult {
   accessToken?: string;
   refreshToken?: string;
   token?: string;
+  profile_created?: boolean;
 }
 
 export const authApi = {
@@ -124,8 +126,8 @@ export const dentistApi = {
     ),
 
   // step two
-  stepTwo: (payload: FormData) =>
-    api.upload<ApiResponse<unknown>>(
+  stepTwo: (payload: StepTwoI) =>
+    api.post<ApiResponse<unknown>, StepTwoI>(
       endpoints.dentist.stepTwo,
       payload,
     ),
@@ -145,7 +147,7 @@ export const dentistApi = {
       endpoints.dentist.stepThreeCheck,
     ),
   getVerificationProgress: () =>
-    api.get<ApiResponse<any>>(
+    api.get<ApiResponse<unknown>>(
       endpoints.dentist.verificationProgress,
     ),
   updateVerificationPhase: (payload: { verification_phase: string }) =>
