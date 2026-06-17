@@ -10,11 +10,13 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/patient") ||
     pathname.startsWith("/admin");
 
-  if (isProtectedRoute && !token) {
+  // 👇 Exclude the admin login page from being treated as a protected route
+  const isPublicRoute = pathname === "/admin-login";
+
+  if (isProtectedRoute && !isPublicRoute && !token) {
     if (pathname.startsWith("/admin")) {
       return NextResponse.redirect(new URL("/admin-login", request.url));
     }
-    // For dentists/patients, signin is modal-based on root. Redirect to home.
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -22,15 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - sw.js (service worker)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|sw.js).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|sw.js).*)"],
 };

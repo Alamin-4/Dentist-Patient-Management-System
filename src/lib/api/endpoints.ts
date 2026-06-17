@@ -48,7 +48,7 @@ export const endpoints = {
     payments: "/admin/payments",
     reports: "/admin/reports",
     notifications: "/admin/notifications",
-    verificationQueue: "/admin/verification-queue",
+    verificationQueue: "/admin/dentist-license-verifications/",
   },
 
   // todo

@@ -100,7 +100,9 @@ function StepSync() {
           return;
         }
       }
-      router.replace("?step=1");
+
+      // is it not okay because always show it 
+      router.replace("");
     }
   }, [urlStep, verificationStep, router, setVerificationStep]);
 

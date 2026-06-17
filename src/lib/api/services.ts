@@ -4,7 +4,7 @@ import { api, type ApiResponse, type PaginatedResponse } from "./client";
 import { endpoints } from "./endpoints";
 
 type Id = string | number;
-type ListParams = Record<string, string | number | boolean | undefined>;
+export type ListParams = Record<string, string | number | boolean | undefined>;
 
 export interface AddUserPayload {
   first_name: string;
@@ -182,6 +182,8 @@ export const adminApi = {
     api.get<PaginatedResponse<TPayment>>(endpoints.admin.payments, { params }),
   listReports: <TReport = unknown>(params?: ListParams) =>
     api.get<PaginatedResponse<TReport>>(endpoints.admin.reports, { params }),
+  listLicenseQueue: <TQueue = unknown>(params?: ListParams) =>
+    api.get<PaginatedResponse<TQueue>>(endpoints.admin.verificationQueue, { params }),
 };
 
 export function createResourceApi<

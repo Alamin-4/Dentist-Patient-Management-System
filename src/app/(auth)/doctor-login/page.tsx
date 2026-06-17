@@ -16,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import useAuth from "@/hooks/authentication/useAuth";
 import { ProfessionalDetailsForm } from "@/app/modules/auth/components/register-doctor/professional-details-form";
 
-// Define the validation schema for sign-in
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
@@ -25,7 +24,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function DoctorLoginPage() {
-  const [step, setStep] = useState(1); // 1 = Login Form, 2 = Professional Details Form
+  const [step, setStep] = useState(1); 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

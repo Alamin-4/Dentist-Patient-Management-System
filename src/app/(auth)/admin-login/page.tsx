@@ -8,56 +8,47 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { useAdminLogin } from "@/hooks/admin/user/useAdmin";
+import useAuth from "@/hooks/authentication/useAuth";
+import { loginSchema } from "@/hooks/patient/schema";
 
-export const adminLoginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-  role: z.literal("ADMIN"),
-});
-
-type AdminLoginFormValues = z.infer<typeof adminLoginSchema>;
+type AdminLoginFormValues = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate: adminLogin, isError } = useAdminLogin();
+  const { loginMutation } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<AdminLoginFormValues>({
-    resolver: zodResolver(adminLoginSchema),
-    defaultValues: { email: "", password: "" },
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "", role: "ADMIN" },
   });
 
   const onSubmit = async (data: AdminLoginFormValues) => {
-    adminLogin(data, {
-      onSuccess: () => {
-        toast.success("Welcome back, Admin!", {
-          style: {
-            borderRadius: "10px",
-            background: "#1A1A2E",
-            color: "#fff",
-          },
-        });
-        router.push("/admin/");
-      },
-      onError: (error) => {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred. Please try again.";
-        toast.error(message, {
-          style: {
-            borderRadius: "10px",
-            background: "#1A1A2E",
-            color: "#fff",
-          },
-        });
-      },
-    });
+    try {
+      const { mutateAsync: adminLogin } = loginMutation;
+      await adminLogin(data);
+
+      toast.success("Welcome back, Admin!", {
+        style: { borderRadius: "10px", background: "#1A1A2E", color: "#fff" },
+      });
+      router.push("/admin/");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred. Please try again.";
+
+      toast.error(message, {
+        style: { borderRadius: "10px", background: "#1A1A2E", color: "#fff" },
+      });
+    }
   };
+
+  //{"success":false,"detail":{"non_field_errors":"Invalid credentials"}}
+  // can you show this error on the form properly ??
 
   return (
     <>
