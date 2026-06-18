@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import {
   getBookingData,
@@ -17,22 +17,16 @@ const conditions = [
 ];
 
 export default function DentalHistoryForm() {
-  const [selectedConditions, setSelectedConditions] = useState<string[]>([
-    "Bone loss",
-  ]);
-  const [lastVisit, setLastVisit] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-
-  // Load data from localStorage on mount
-  useEffect(() => {
-    const bookingData = getBookingData();
-    const history = bookingData.dentalHistory;
-    setLastVisit(history.lastVisit);
-    setSelectedConditions(
-      history.conditions.length > 0 ? history.conditions : ["Bone loss"],
-    );
-    setAdditionalInfo(history.additionalInfo);
-  }, []);
+  const initialHistory = getBookingData().dentalHistory;
+  const [selectedConditions, setSelectedConditions] = useState<string[]>(
+    initialHistory.conditions.length > 0
+      ? initialHistory.conditions
+      : ["Bone loss"],
+  );
+  const [lastVisit, setLastVisit] = useState(initialHistory.lastVisit);
+  const [additionalInfo, setAdditionalInfo] = useState(
+    initialHistory.additionalInfo,
+  );
 
   const toggleCondition = (item: string) => {
     let updated: string[];
@@ -85,11 +79,11 @@ export default function DentalHistoryForm() {
               className="w-full h-14 pl-5 pr-12 appearance-none bg-white border border-[#E5E7EB] rounded-xl text-[#9CA3AF] outline-none focus:border-[#113254] transition-all cursor-pointer"
             >
               <option value="">Select time period</option>
-              <option value="Less than 6 months ago">
+              <option value="MONTH_6">
                 Less than 6 months ago
               </option>
-              <option value="6-12 months ago">6-12 months ago</option>
-              <option value="Over a year ago">Over a year ago</option>
+              <option value="MONTH_12">6-12 months ago</option>
+              <option value="YEAR_1_PLUS">Over a year ago</option>
             </select>
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF] pointer-events-none" />
           </div>

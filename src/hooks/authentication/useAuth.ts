@@ -1,6 +1,7 @@
-import axios from "axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authApi, getcurrentSession } from "@/lib/api";
+"use client";
+
+import { useMutation } from "@tanstack/react-query";
+import { authApi } from "@/lib/api";
 import { LoginPayload, OtpPayload, RegisterPayload } from "./auth.interface";
 import { ApiResponse, AuthResult } from "@/lib/api";
 import { clearAuthSession, getRefreshToken, setAuthSession } from "@/lib/auth/session";
@@ -9,16 +10,39 @@ export const getAuthPayload = (response: ApiResponse<AuthResult> | AuthResult) =
   return "data" in response ? response.data : response;
 };
 
+const getSessionUser = (payload: AuthResult, fallbackRole?: LoginPayload["role"]) => {
+  const role =
+    payload.user?.role ??
+    payload.user?.type ??
+    payload.role ??
+    payload.type ??
+    fallbackRole;
 
-export const persistSession = (response: ApiResponse<AuthResult> | AuthResult) => {
+  if (!payload.user?.email && !payload.email && !role) return undefined;
+
+  return {
+    id: payload.user?.id ?? payload.user?.user_id ?? payload.user_id,
+    email: payload.user?.email ?? payload.email,
+    role,
+    type: payload.user?.type ?? payload.type ?? role,
+  };
+};
+
+export const persistSession = (
+  response: ApiResponse<AuthResult> | AuthResult,
+  fallbackRole?: LoginPayload["role"],
+) => {
   const payload = getAuthPayload(response);
-  const accessToken = payload.access ?? payload.accessToken ?? payload.token;
+  const accessToken =
+    payload.access ?? payload.accessToken ?? payload.access_token ?? payload.token;
+  const refreshToken =
+    payload.refresh ?? payload.refreshToken ?? payload.refresh_token;
 
   if (accessToken) {
     setAuthSession({
       accessToken,
-      refreshToken: payload.refresh ?? payload.refreshToken,
-      user: payload.user,
+      refreshToken,
+      user: getSessionUser(payload, fallbackRole),
     });
   }
 
@@ -29,18 +53,18 @@ export default function useAuth() {
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterPayload) => authApi.register(data),
-    onSuccess: persistSession,
+    onSuccess: (response, variables) => persistSession(response, variables.role),
   });
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginPayload) =>
       authApi.login(data),
-    onSuccess: persistSession,
+    onSuccess: (response, variables) => persistSession(response, variables.role),
   });
 
   const otpVerifyMutation = useMutation({
     mutationFn: (data: OtpPayload) => authApi.verifyOtp(data),
-    onSuccess: persistSession,
+    onSuccess: (response) => persistSession(response),
   })
 
   const resendOtpMutation = useMutation({

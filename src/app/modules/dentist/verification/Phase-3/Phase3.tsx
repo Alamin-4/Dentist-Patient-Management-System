@@ -11,21 +11,27 @@ import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import useDentist, { useUpdateVerificationPhase } from "@/hooks/dentist/useDentist";
 import toast from "react-hot-toast";
 
-const mapProcedureNameToId = (name: string): number => {
-  const n = name.toLowerCase();
-  if (n.includes("implant")) return 1;
-  if (n.includes("veneer")) return 2;
-  if (n.includes("crown")) return 3;
-  return 1;
-};
+const PROCEDURE_OPTIONS = [
+  { value: "5", label: "Implants" },
+  { value: "6", label: "Veneers" },
+  { value: "7", label: "Crowns" },
+] as const;
 
-// Define the schema for Phase 3 (repeatable procedures)
+const isFile = (file: unknown): file is File =>
+  typeof File !== "undefined" && file instanceof File;
+const fileSchema = (message: string) =>
+  z.any().refine(isFile, message).transform((file) => file as File);
+const getErrorMessage = (message: unknown) =>
+  typeof message === "string" ? message : undefined;
+
 const procedureSchema = z.object({
-  procedure: z.string().min(1, "Select a procedure"),
-  ceCertificate: z.any().refine((file) => file instanceof File, "CE Certificate is required"),
-  materialBrands: z.any().optional(),
-  invoice: z.any().refine((file) => file instanceof File, "Invoice is required"),
-  protocolPdf: z.any().refine((file) => file instanceof File, "Protocol PDF is required"),
+  ownProcedure: z.string().min(1, "Select a procedure"),
+  brandName: z.string().min(1, "Brand name is required"),
+  ceCertificate: fileSchema("CE Certificate is required"),
+  materialBrands: fileSchema("Material brands file is required"),
+  invoice: fileSchema("Invoice is required"),
+  protocolPdf: fileSchema("Protocol PDF is required"),
+  notes: z.string().optional(),
 });
 
 const phase3Schema = z.object({
@@ -33,20 +39,23 @@ const phase3Schema = z.object({
 });
 
 type Phase3Values = z.infer<typeof phase3Schema>;
+type Phase3InputValues = z.input<typeof phase3Schema>;
 
 export default function Phase3() {
-  const methods = useForm<Phase3Values>({
+  const methods = useForm<Phase3InputValues, unknown, Phase3Values>({
     resolver: zodResolver(phase3Schema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
       procedures: [
         {
-          procedure: "",
+          ownProcedure: "",
+          brandName: "",
           ceCertificate: null,
           materialBrands: null,
           invoice: null,
           protocolPdf: null,
+          notes: "",
         },
       ],
     },
@@ -64,15 +73,14 @@ export default function Phase3() {
   });
 
   const onSubmit = (data: Phase3Values) => {
-    // Map data to StepThreeI signature
     const materials = data.procedures.map((p) => ({
-      own_procedure: mapProcedureNameToId(p.procedure),
-      brand_name: "Standard",
+      own_procedure: Number(p.ownProcedure),
+      brand_name: p.brandName,
       ce_certificate: p.ceCertificate,
-      material_brands: p.materialBrands || null,
+      material_brands: p.materialBrands,
       invoice: p.invoice,
       protocol_pdf: p.protocolPdf,
-      notes: "",
+      notes: p.notes || "",
     }));
 
     stepThreeMutation.mutate(
@@ -89,15 +97,25 @@ export default function Phase3() {
                 setVerificationStep(3);
                 setVerificationStepReady(3, true);
               },
-              onError: (error: any) => {
-                const errMsg = error?.response?.data?.message || "Verification submitted but phase completion update failed.";
+              onError: (error: unknown) => {
+                const errMsg =
+                  typeof error === "object" && error !== null
+                    ? (error as { response?: { data?: { message?: string } } })
+                        .response?.data?.message ||
+                      "Verification submitted but phase completion update failed."
+                    : "Verification submitted but phase completion update failed.";
                 toast.error(errMsg);
               },
             }
           );
         },
-        onError: (error: any) => {
-          const errMsg = error?.response?.data?.message || "Clinical depth submission failed. Please try again.";
+        onError: (error: unknown) => {
+          const errMsg =
+            typeof error === "object" && error !== null
+              ? (error as { response?: { data?: { message?: string } } })
+                  .response?.data?.message ||
+                "Clinical depth submission failed. Please try again."
+              : "Clinical depth submission failed. Please try again.";
           toast.error(errMsg);
         },
       }
@@ -106,9 +124,12 @@ export default function Phase3() {
 
   // Keep the global "ready" flag in sync with the form validity so the footer submit enables
   React.useEffect(() => {
-    setVerificationStepReady(3, methods.formState.isValid);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [methods.formState.isValid]);
+    const timeoutId = window.setTimeout(() => {
+      setVerificationStepReady(3, methods.formState.isValid);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [methods.formState.isValid, setVerificationStepReady]);
 
   const isPending = stepThreeMutation.isPending || updatePhase.isPending;
 
@@ -128,24 +149,55 @@ export default function Phase3() {
                   <div>
                     <label className="text-sm font-medium text-[#0A2533] inline-block">Procedure</label>
                     <select
-                      {...methods.register(`procedures.${index}.procedure` as const)}
+                      {...methods.register(`procedures.${index}.ownProcedure` as const)}
                       className="block w-full mt-2 rounded-md border border-gray-200 p-3"
                     >
                       <option value="">Select procedure</option>
-                      <option value="implants">Implants</option>
-                      <option value="veneers">Veneers</option>
-                      <option value="crowns">Crowns</option>
+                      {PROCEDURE_OPTIONS.map((procedure) => (
+                        <option key={procedure.value} value={procedure.value}>
+                          {procedure.label}
+                        </option>
+                      ))}
                     </select>
-                    {methods.formState.errors?.procedures?.[index]?.procedure && (
-                      <p className="text-xs text-red-500 mt-1">{(methods.formState.errors.procedures as any)[index].procedure.message}</p>
+                    {methods.formState.errors?.procedures?.[index]?.ownProcedure && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {methods.formState.errors.procedures[index]?.ownProcedure?.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-[#0A2533] inline-block">
+                      Brand Name
+                    </label>
+                    <input
+                      {...methods.register(`procedures.${index}.brandName` as const)}
+                      placeholder="Straumann"
+                      className="block w-full mt-2 rounded-md border border-gray-200 p-3"
+                    />
+                    {methods.formState.errors?.procedures?.[index]?.brandName && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {methods.formState.errors.procedures[index]?.brandName?.message}
+                      </p>
                     )}
                   </div>
 
                   <div className="space-y-4">
-                    <DocumentUpload label="Upload CE certificate" name={`procedures.${index}.ceCertificate`} error={(methods.formState.errors as any).procedures?.[index]?.ceCertificate?.message} />
-                    <DocumentUpload label="Upload Material brands" name={`procedures.${index}.materialBrands`} error={(methods.formState.errors as any).procedures?.[index]?.materialBrands?.message} />
-                    <DocumentUpload label="Upload Invoice" name={`procedures.${index}.invoice`} error={(methods.formState.errors as any).procedures?.[index]?.invoice?.message} />
-                    <DocumentUpload label="Upload protocol PDF" name={`procedures.${index}.protocolPdf`} error={(methods.formState.errors as any).procedures?.[index]?.protocolPdf?.message} />
+                    <DocumentUpload label="Upload CE certificate" name={`procedures.${index}.ceCertificate`} error={getErrorMessage(methods.formState.errors.procedures?.[index]?.ceCertificate?.message)} />
+                    <DocumentUpload label="Upload Material brands" name={`procedures.${index}.materialBrands`} error={getErrorMessage(methods.formState.errors.procedures?.[index]?.materialBrands?.message)} />
+                    <DocumentUpload label="Upload Invoice" name={`procedures.${index}.invoice`} error={getErrorMessage(methods.formState.errors.procedures?.[index]?.invoice?.message)} />
+                    <DocumentUpload label="Upload protocol PDF" name={`procedures.${index}.protocolPdf`} error={getErrorMessage(methods.formState.errors.procedures?.[index]?.protocolPdf?.message)} />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-[#0A2533] inline-block">
+                      Notes
+                    </label>
+                    <textarea
+                      {...methods.register(`procedures.${index}.notes` as const)}
+                      placeholder="Premium implant material"
+                      className="block w-full mt-2 min-h-24 rounded-md border border-gray-200 p-3"
+                    />
                   </div>
                 </div>
               </div>
@@ -161,7 +213,7 @@ export default function Phase3() {
           <div className="p-6">
             <button
               type="button"
-              onClick={() => append({ procedure: "", ceCertificate: null, materialBrands: null, invoice: null, protocolPdf: null })}
+              onClick={() => append({ ownProcedure: "", brandName: "", ceCertificate: null, materialBrands: null, invoice: null, protocolPdf: null, notes: "" })}
               className="w-full rounded-xl border-2 border-dashed border-gray-200 p-5 flex items-center justify-center gap-3 text-sm text-gray-600 hover:bg-white"
             >
               <Plus className="w-4 h-4 text-gray-500" /> Add Procedure

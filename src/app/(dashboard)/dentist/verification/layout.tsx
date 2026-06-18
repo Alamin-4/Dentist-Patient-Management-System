@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { VerificationSteps } from "../../../modules/dentist/verification/verification-steps";
 import StepButton from "../../../modules/dentist/verification/StepButton";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
-import { ArrowLeft } from "lucide-react";
+import type { VerificationPhaseStep } from "@/hooks/dentist/useStepProgress";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function VerificationLayout({
   children,
@@ -14,23 +15,40 @@ export default function VerificationLayout({
   children: React.ReactNode;
 }) {
   const { verificationStep, setVerificationStep } = useVerificationStore();
-  const { checkLicenseVerifyProgress, checkPhotoVerifyProgress } = useVerificationProgress();
+  const {
+    submittedByStep,
+    nextIncompleteStep,
+    canAccessStep,
+    isProgressLoading,
+    rdvScore,
+  } = useVerificationProgress();
   const router = useRouter();
 
-  const step1Submitted = checkLicenseVerifyProgress?.data?.submitted === true;
-  const step2Submitted = checkPhotoVerifyProgress?.data?.submitted === true;
+  const resolvedStep = useMemo<VerificationPhaseStep>(() => {
+    const currentStep = verificationStep as VerificationPhaseStep;
+
+    if (!canAccessStep(currentStep)) {
+      if (!submittedByStep[1]) return 1;
+      if (!submittedByStep[2]) return 2;
+      return 3;
+    }
+
+    if (submittedByStep[currentStep] && currentStep !== 3) {
+      return nextIncompleteStep;
+    }
+
+    return currentStep;
+  }, [canAccessStep, nextIncompleteStep, submittedByStep, verificationStep]);
 
   useEffect(() => {
-    if (checkLicenseVerifyProgress.isLoading || checkPhotoVerifyProgress.isLoading) return;
+    if (isProgressLoading || resolvedStep === verificationStep) return;
 
-    if (verificationStep === 2 && !step1Submitted) {
-      setVerificationStep(1);
-    } else if (verificationStep === 3 && !step1Submitted) {
-      setVerificationStep(1);
-    } else if (verificationStep === 3 && !step2Submitted) {
-      setVerificationStep(2);
-    }
-  }, [verificationStep, step1Submitted, step2Submitted, checkLicenseVerifyProgress.isLoading, checkPhotoVerifyProgress.isLoading, setVerificationStep]);
+    const timeoutId = window.setTimeout(() => {
+      setVerificationStep(resolvedStep);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isProgressLoading, resolvedStep, setVerificationStep, verificationStep]);
 
   const handleBack = () => {
     if (verificationStep === 1) {
@@ -57,6 +75,9 @@ export default function VerificationLayout({
             <h1 className="text-xl font-bold text-[#0A2533]">
               Verification Progress
             </h1>
+            <p className="text-xs font-semibold text-[#F2C467]">
+              RDV Score {rdvScore}%
+            </p>
           </div>
 
           {/* Stepper Component */}
@@ -68,7 +89,13 @@ export default function VerificationLayout({
       <main className="flex-1 py-10 pb-32">
         <div className="min-h-full ">
           <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
-            {children}
+            {isProgressLoading ? (
+              <div className="flex min-h-80 items-center justify-center">
+                <Loader2 className="h-7 w-7 animate-spin text-[#0E3E65]" />
+              </div>
+            ) : (
+              children
+            )}
           </div>
         </div>
       </main>

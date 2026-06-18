@@ -4,7 +4,14 @@ type ErrorPayload = {
   message?: string;
   error?: string;
   errors?: Record<string, string[] | string> | string[];
-  detail?: string;
+  detail?:
+    | string
+    | {
+        message?: string;
+        error?: string;
+        non_field_errors?: string[] | string;
+      };
+  non_field_errors?: string[] | string;
 };
 
 export class ApiError extends Error {
@@ -30,7 +37,32 @@ const getPayloadMessage = (payload?: ErrorPayload | string) => {
   if (!payload) return null;
   if (typeof payload === "string") return payload;
 
-  return payload.message ?? payload.error ?? payload.detail ?? null;
+  const detail = payload.detail;
+  const errors = payload.errors;
+  const nonFieldErrors =
+    payload.non_field_errors ??
+    (typeof detail === "object" ? detail.non_field_errors : undefined);
+
+  if (Array.isArray(nonFieldErrors)) return nonFieldErrors.join(" ");
+  if (typeof nonFieldErrors === "string") return nonFieldErrors;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(errors)) return errors.join(" ");
+  if (errors && typeof errors === "object") {
+    const firstError = Object.entries(errors)[0];
+    if (firstError) {
+      const [field, value] = firstError;
+      const message = Array.isArray(value) ? value.join(" ") : value;
+      return `${field}: ${message}`;
+    }
+  }
+
+  return (
+    payload.message ??
+    payload.error ??
+    detail?.message ??
+    detail?.error ??
+    null
+  );
 };
 
 export function normalizeApiError(error: unknown): ApiError {

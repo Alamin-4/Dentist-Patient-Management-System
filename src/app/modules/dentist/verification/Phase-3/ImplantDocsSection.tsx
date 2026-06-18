@@ -5,12 +5,9 @@ import { DocumentUpload } from "./DocumentUpload";
 
 export function ImplantDocsSection() {
   const {
-    setValue,
-    watch,
     formState: { errors },
   } = useFormContext();
 
-  // Watch fields to display error states if needed
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 p-8 lg:p-12">
       <div className="space-y-2">

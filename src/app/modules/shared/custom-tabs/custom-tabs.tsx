@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface TabOption {
   id: string;
@@ -15,6 +16,7 @@ interface CustomTabsProps {
 
   // NEW
   storageKey?: string;
+  queryKey?: string;
 }
 
 export default function CustomTabs({
@@ -23,29 +25,55 @@ export default function CustomTabs({
   activeTab,
   onTabChange,
   storageKey,
+  queryKey = "tab",
 }: CustomTabsProps) {
-  const [internalActiveTab, setInternalActiveTab] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const getDefaultTab = () => defaultTab || tabs[0]?.id || "";
+  const getInitialTab = () => {
+    const urlTab = searchParams.get(queryKey);
+    if (urlTab && tabs.some((tab) => tab.id === urlTab)) return urlTab;
 
-  // Load saved tab from localStorage
+    if (storageKey && typeof window !== "undefined") {
+      const savedTab = localStorage.getItem(storageKey);
+      if (savedTab && tabs.some((tab) => tab.id === savedTab)) {
+        return savedTab;
+      }
+    }
+
+    return getDefaultTab();
+  };
+  const [internalActiveTab, setInternalActiveTab] = useState(getInitialTab);
+  const lastSyncedUrlTab = useRef<string | null>(null);
+
   useEffect(() => {
-    if (!storageKey) {
-      setInternalActiveTab(defaultTab || tabs[0]?.id || "");
-      return;
-    }
+    const urlTab = searchParams.get(queryKey);
+    if (!urlTab || !tabs.some((tab) => tab.id === urlTab)) return;
+    if (lastSyncedUrlTab.current === urlTab) return;
 
-    const savedTab = localStorage.getItem(storageKey);
+    const timeoutId = window.setTimeout(() => {
+      lastSyncedUrlTab.current = urlTab;
+      if (activeTab === undefined) {
+        setInternalActiveTab(urlTab);
+      }
+      onTabChange?.(urlTab);
+      if (storageKey) localStorage.setItem(storageKey, urlTab);
+    }, 0);
 
-    if (savedTab) {
-      setInternalActiveTab(savedTab);
-    } else {
-      setInternalActiveTab(defaultTab || tabs[0]?.id || "");
-    }
-  }, [storageKey, defaultTab, tabs]);
+    return () => window.clearTimeout(timeoutId);
+  }, [activeTab, onTabChange, queryKey, searchParams, storageKey, tabs]);
 
   const currentActiveTab =
     activeTab !== undefined ? activeTab : internalActiveTab;
 
   const handleTabClick = (tabId: string) => {
+    lastSyncedUrlTab.current = tabId;
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set(queryKey, tabId);
+    const query = nextParams.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+
     if (onTabChange) {
       onTabChange(tabId);
     }

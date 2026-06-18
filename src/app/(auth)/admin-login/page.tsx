@@ -10,6 +10,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import useAuth from "@/hooks/authentication/useAuth";
 import { loginSchema } from "@/hooks/patient/schema";
+import { getApiErrorMessage } from "@/lib/api";
+import { getRoleHome } from "@/lib/auth/roles";
 
 type AdminLoginFormValues = z.infer<typeof loginSchema>;
 
@@ -20,6 +22,8 @@ export default function AdminLoginPage() {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<AdminLoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -27,28 +31,26 @@ export default function AdminLoginPage() {
   });
 
   const onSubmit = async (data: AdminLoginFormValues) => {
+    clearErrors("root");
+
     try {
-      const { mutateAsync: adminLogin } = loginMutation;
-      await adminLogin(data);
-
+      const response = await loginMutation.mutateAsync(data);
+      const payload = "data" in response ? response.data : response;
       toast.success("Welcome back, Admin!", {
-        style: { borderRadius: "10px", background: "#1A1A2E", color: "#fff" },
+        style: {
+          borderRadius: "10px",
+          background: "#1A1A2E",
+          color: "#fff",
+        },
       });
-      router.push("/admin/");
+      router.replace(getRoleHome(payload.type ?? payload.role ?? data.role));
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred. Please try again.";
-
-      toast.error(message, {
-        style: { borderRadius: "10px", background: "#1A1A2E", color: "#fff" },
+      setError("root.server", {
+        type: "server",
+        message: getApiErrorMessage(error),
       });
     }
   };
-
-  //{"success":false,"detail":{"non_field_errors":"Invalid credentials"}}
-  // can you show this error on the form properly ??
 
   return (
     <>
@@ -189,10 +191,16 @@ export default function AdminLoginPage() {
                   </a>
                 </div>
 
+                {errors.root?.server?.message && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                    {errors.root.server.message}
+                  </div>
+                )}
+
                 {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loginMutation.isPending}
                   className={cn(
                     "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
                     "bg-[#1A1A2E] hover:bg-[#0D2B3E]",
@@ -200,7 +208,7 @@ export default function AdminLoginPage() {
                     "disabled:opacity-60 disabled:cursor-not-allowed",
                   )}
                 >
-                  {isSubmitting ? (
+                  {isSubmitting || loginMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Signing in...

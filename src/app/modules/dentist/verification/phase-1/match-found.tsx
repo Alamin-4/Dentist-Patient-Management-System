@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { UploadCloud, FileText, Loader2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -79,6 +79,7 @@ export function VerificationResult({
         <div className="mt-5 flex flex-col gap-4 rounded-xl border border-success-100 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/doctor-placeholder.png" alt="Doctor" className="h-full w-full object-cover" />
             </div>
             <div className="space-y-0.5">

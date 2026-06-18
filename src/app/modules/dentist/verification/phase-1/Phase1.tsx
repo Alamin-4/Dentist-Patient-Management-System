@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LicenceForm from "./licence-form";
 import { HeadshotUpload } from "./headshot-upload";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,6 @@ export default function Phase1() {
 
   const progressData = checkLicenseVerifyProgress?.data;
   const isAlreadySubmitted = progressData?.submitted === true;
-  const hasSyncedInitialProgress = useRef(false);
 
   const serverSubmittedLicence = useMemo<SubmittedLicence | null>(() => {
     if (progressData?.submitted !== true || !progressData.data) {
@@ -57,16 +56,6 @@ export default function Phase1() {
       regNo: serverData.registration_no,
     };
   }, [progressData]);
-
-  useEffect(() => {
-    if (hasSyncedInitialProgress.current) return;
-    hasSyncedInitialProgress.current = true;
-
-    if (isAlreadySubmitted && serverSubmittedLicence) {
-      setVerificationCompletedStep(2);
-      setVerificationStep(2);
-    }
-  }, [isAlreadySubmitted, serverSubmittedLicence, setVerificationCompletedStep, setVerificationStep]);
 
   const handleVerify = (data: SubmittedLicence) => {
     setSubmittedLicence(data);

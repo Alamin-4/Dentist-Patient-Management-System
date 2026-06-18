@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle2, Video } from "lucide-react";
@@ -12,6 +12,13 @@ import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllCom
 import DentistScheduleCard, {
   type DentistSelection,
 } from "./DentistScheduleCard";
+import {
+  clearBookingData,
+  getBookingDraft,
+  saveBookingDraft,
+  type BookingDraft,
+} from "@/lib/storage/bookingService";
+import { consultationBookingApi, getApiErrorMessage } from "@/lib/api";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -29,6 +36,49 @@ function makeSelection(dentistId: string): DentistSelection {
   return { dentistId, date: null, timeSlot: "", timezone: "" };
 }
 
+function makeScheduleState(dentistIdsParam: string) {
+  const all = getDentistsFromStorage();
+  const draft = getBookingDraft();
+  const ids = dentistIdsParam
+    ? dentistIdsParam.split(",").map((s) => s.trim())
+    : draft.selectedDentistIds;
+  const found = ids.length
+    ? all.filter((d) => ids.includes(d.id))
+    : all.slice(0, 2);
+  const dentists = found.length ? found : all.slice(0, 2);
+  const selections = dentists.map((dentist) => {
+    const saved = draft.scheduleSelections.find(
+      (selection) => selection.dentistId === dentist.id,
+    );
+    return saved
+      ? {
+          dentistId: dentist.id,
+          date: saved.date ? new Date(saved.date) : null,
+          timeSlot: saved.timeSlot,
+          timezone: saved.timezone,
+        }
+      : makeSelection(dentist.id);
+  });
+
+  return { dentists, selections };
+}
+
+function getDraftBackendDentistId(
+  draft: BookingDraft,
+  dentist: Dentist | undefined,
+  index: number,
+) {
+  if (!dentist) return null;
+
+  const saved = draft.scheduleSelections.find(
+    (selection) => selection.dentistId === dentist.id,
+  )?.backendDentistId;
+  const fallback = draft.selectedBackendDentistIds[index];
+  const id = saved ?? dentist.backendId ?? fallback ?? Number(dentist.id);
+
+  return Number.isFinite(Number(id)) ? Number(id) : null;
+}
+
 // ─── ScheduleContent ──────────────────────────────────────────────────────────
 
 export default function ScheduleContent() {
@@ -37,43 +87,88 @@ export default function ScheduleContent() {
   const { setShowCompareModal } = useStateContext();
 
   const dentistIdsParam = searchParams.get("dentistIds") ?? "";
+  const consultationIdParam = searchParams.get("consultationId");
 
-  const [dentists, setDentists] = useState<Dentist[]>([]);
-  const [selections, setSelections] = useState<DentistSelection[]>([]);
+  const initialScheduleState = useMemo(
+    () => makeScheduleState(dentistIdsParam),
+    [dentistIdsParam],
+  );
+  const dentists = initialScheduleState.dentists;
+  const [selections, setSelections] = useState<DentistSelection[]>(
+    () => initialScheduleState.selections,
+  );
   const [showSuccess, setShowSuccess] = useState(false);
-
-  // Load dentists from storage filtered by URL param
-  useEffect(() => {
-    const all = getDentistsFromStorage();
-    const ids = dentistIdsParam
-      ? dentistIdsParam.split(",").map((s) => s.trim())
-      : [];
-    const found = ids.length
-      ? all.filter((d) => ids.includes(d.id))
-      : all.slice(0, 2);
-    const list = found.length ? found : all.slice(0, 2);
-    setDentists(list);
-    setSelections(list.map((d) => makeSelection(d.id)));
-  }, [dentistIdsParam]);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   const updateSelection = useCallback(
     (dentistId: string, updates: Partial<Omit<DentistSelection, "dentistId">>) => {
       setSelections((prev) =>
-        prev.map((s) =>
-          s.dentistId === dentistId ? { ...s, ...updates } : s,
-        ),
+        {
+          const next = prev.map((s) =>
+            s.dentistId === dentistId ? { ...s, ...updates } : s,
+          );
+          saveBookingDraft({
+            scheduleSelections: next.map((selection) => {
+              const dentist = dentists.find((doc) => doc.id === selection.dentistId);
+              return {
+                dentistId: selection.dentistId,
+                backendDentistId:
+                  getDraftBackendDentistId(
+                    getBookingDraft(),
+                    dentist,
+                    next.findIndex((item) => item.dentistId === selection.dentistId),
+                  ),
+                date: selection.date?.toISOString() ?? "",
+                timeSlot: selection.timeSlot,
+                timezone: selection.timezone,
+              };
+            }),
+          });
+          return next;
+        },
       );
     },
-    [],
+    [dentists],
   );
 
-  const handleConfirm = () => {
+  const getBackendDentistId = (dentist: Dentist, index: number) => {
+    return getDraftBackendDentistId(getBookingDraft(), dentist, index);
+  };
+
+  const formatApiDate = (date: Date) => date.toISOString().split("T")[0];
+
+  const formatApiTime = (slot: string) => {
+    const start = slot.split(" to ")[0] || slot;
+    return `${start}:00`;
+  };
+
+  const handleConfirm = async () => {
     // Validate: each dentist must have a date and time slot
     const missing = selections.filter((s) => !s.date || !s.timeSlot);
     if (missing.length > 0) {
       const idx = selections.indexOf(missing[0]);
       const name = dentists[idx]?.name ?? "a dentist";
       toast.error(`Please select a date and time for ${name}`);
+      return;
+    }
+
+    const consultationId = consultationIdParam ?? getBookingDraft().consultationId;
+    if (!consultationId) {
+      toast.error("Consultation draft not found. Please complete booking details first.");
+      return;
+    }
+
+    const dentistsPayload = selections.map((selection, index) => {
+      const dentist = dentists[index];
+      return {
+        dentist: dentist ? getBackendDentistId(dentist, index) : null,
+        scheduled_date: formatApiDate(selection.date!),
+        scheduled_time: formatApiTime(selection.timeSlot),
+      };
+    });
+
+    if (dentistsPayload.some((item) => !item.dentist)) {
+      toast.error("Could not find backend dentist IDs. Please reselect dentists.");
       return;
     }
 
@@ -86,7 +181,23 @@ export default function ScheduleContent() {
     }));
     sessionStorage.setItem(STORED_KEY, JSON.stringify(storable));
 
-    setShowSuccess(true);
+    try {
+      setIsConfirming(true);
+      await consultationBookingApi.stepSeven({
+        consultation_id: consultationId,
+        dentists: dentistsPayload.map((item) => ({
+          dentist: item.dentist!,
+          scheduled_date: item.scheduled_date,
+          scheduled_time: item.scheduled_time,
+        })),
+      });
+      clearBookingData();
+      setShowSuccess(true);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error));
+    } finally {
+      setIsConfirming(false);
+    }
   };
 
   const handleGoToBookings = () => {
@@ -134,9 +245,10 @@ export default function ScheduleContent() {
           <button
             type="button"
             onClick={handleConfirm}
-            className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-xl active:scale-95 transition-all"
+            disabled={isConfirming}
+            className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-xl active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Confirm Video Consultation
+            {isConfirming ? "Confirming..." : "Confirm Video Consultation"}
           </button>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { LoginPayload, OtpPayload, RegisterPayload } from "@/hooks/authentication/auth.interface";
-import type { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import { api, type ApiResponse, type PaginatedResponse } from "./client";
 import { endpoints } from "./endpoints";
 
@@ -23,20 +22,93 @@ export interface ResendOtpPayload {
 }
 
 export interface AuthResult {
-  user: {
+  user?: {
     id: Id;
+    user_id?: Id;
     first_name?: string | null;
     last_name?: string | null;
     email: string;
-    role: string;
+    role?: string;
+    type?: string;
   };
-  role: string;
+  user_id?: Id;
+  email?: string;
+  role?: string;
+  type?: string;
   access?: string;
   refresh?: string;
   accessToken?: string;
   refreshToken?: string;
+  access_token?: string;
+  refresh_token?: string;
   token?: string;
   profile_created?: boolean;
+}
+
+export interface VerifyTokenResult {
+  user_id: number;
+  email: string;
+  type: "ADMIN" | "DENTIST" | "DOCTOR" | "PATIENT" | string;
+}
+
+export interface ProcedureCatalogItem {
+  id: Id;
+  name?: string;
+  title?: string;
+  label?: string;
+}
+
+export interface PublicDentistCatalogItem {
+  id: Id;
+  user_id?: Id;
+  name?: string;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+  slug?: string;
+}
+
+export interface ConsultationStepOnePayload {
+  first_name: string;
+  last_name: string;
+  country: string;
+  date_of_birth: string;
+}
+
+export interface ConsultationStepTwoPayload {
+  procedures: number[];
+}
+
+export interface ConsultationStepThreePayload {
+  consultation_id: Id;
+  approximate_budget: number;
+  travel_start_date: string;
+  travel_end_date: string;
+}
+
+export interface ConsultationStepFourPayload {
+  consultation_id: Id;
+  last_dentist_visit: string;
+  conditions: string[];
+  notes: string;
+}
+
+export interface ConsultationStepSevenPayload {
+  consultation_id: Id;
+  dentists: Array<{
+    dentist: Id;
+    scheduled_date: string;
+    scheduled_time: string;
+  }>;
+}
+
+export interface ConsultationStepResult {
+  id?: Id;
+  consultation_id?: Id;
+  data?: {
+    id?: Id;
+    consultation_id?: Id;
+  };
 }
 
 export const authApi = {
@@ -54,6 +126,15 @@ export const authApi = {
     api.post<ApiResponse<AuthResult>, OtpPayload>(
       endpoints.auth.verifyOtp,
       payload,
+    ),
+  verifyToken: (token: string) =>
+    api.get<ApiResponse<VerifyTokenResult>>(
+      endpoints.auth.verifyToken,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     ),
   resendOtp: (payload: ResendOtpPayload) =>
     api.post<ApiResponse<unknown>, ResendOtpPayload>(
@@ -79,6 +160,71 @@ export const authApi = {
       payload,
     ),
 
+};
+
+export const procedureApi = {
+  list: () =>
+    api.get<
+      | ApiResponse<ProcedureCatalogItem[]>
+      | PaginatedResponse<ProcedureCatalogItem>
+      | ProcedureCatalogItem[]
+    >(endpoints.procedures.root),
+};
+
+export const consultationBookingApi = {
+  stepOne: (payload: ConsultationStepOnePayload) => {
+    const formData = new FormData();
+    formData.append("first_name", payload.first_name);
+    formData.append("last_name", payload.last_name);
+    formData.append("country", payload.country);
+    formData.append("date_of_birth", payload.date_of_birth);
+
+    return api.upload<ApiResponse<ConsultationStepResult>>(
+      endpoints.bookings.stepOne,
+      formData,
+    );
+  },
+  stepTwo: (payload: ConsultationStepTwoPayload) =>
+    api.post<ApiResponse<ConsultationStepResult>, ConsultationStepTwoPayload>(
+      endpoints.bookings.stepTwo,
+      payload,
+    ),
+  stepThree: (payload: ConsultationStepThreePayload) =>
+    api.post<ApiResponse<ConsultationStepResult>, ConsultationStepThreePayload>(
+      endpoints.bookings.stepThree,
+      payload,
+    ),
+  stepFour: (payload: ConsultationStepFourPayload) =>
+    api.post<ApiResponse<ConsultationStepResult>, ConsultationStepFourPayload>(
+      endpoints.bookings.stepFour,
+      payload,
+    ),
+  stepFive: (payload: { consultation_id: Id; front_smile: File }) => {
+    const formData = new FormData();
+    formData.append("consultation_id", String(payload.consultation_id));
+    formData.append("front_smile", payload.front_smile);
+
+    return api.upload<ApiResponse<ConsultationStepResult>>(
+      endpoints.bookings.stepFive,
+      formData,
+    );
+  },
+  stepSix: (payload: { consultation_id: Id; file: File; notes?: string }) => {
+    const formData = new FormData();
+    formData.append("consultation_id", String(payload.consultation_id));
+    formData.append("file", payload.file);
+    if (payload.notes) formData.append("notes", payload.notes);
+
+    return api.upload<ApiResponse<ConsultationStepResult>>(
+      endpoints.bookings.stepSix,
+      formData,
+    );
+  },
+  stepSeven: (payload: ConsultationStepSevenPayload) =>
+    api.post<ApiResponse<ConsultationStepResult>, ConsultationStepSevenPayload>(
+      endpoints.bookings.stepSeven,
+      payload,
+    ),
 };
 
 export const patientApi = {
@@ -126,8 +272,8 @@ export const dentistApi = {
     ),
 
   // step two
-  stepTwo: (payload: StepTwoI) =>
-    api.post<ApiResponse<unknown>, StepTwoI>(
+  stepTwo: (payload: FormData) =>
+    api.upload<ApiResponse<unknown>>(
       endpoints.dentist.stepTwo,
       payload,
     ),

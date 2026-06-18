@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { getBookingData, updatePersonalInfo } from "@/lib/storage/bookingService";
 
@@ -17,20 +17,7 @@ const COUNTRIES = [
 ];
 
 export default function PersonalInfoForm() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    dateOfBirth: "",
-    country: "",
-  });
-
-  useEffect(() => {
-    const data = getBookingData();
-    if (data.personalInfo) {
-      setFormData(data.personalInfo);
-    }
-  }, []);
+  const [formData, setFormData] = useState(() => getBookingData().personalInfo);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -104,7 +91,7 @@ export default function PersonalInfoForm() {
           </label>
           <div className="relative">
             <input
-              type="text"
+              type="date"
               name="dateOfBirth"
               placeholder="MM/DD/YYYY"
               value={formData.dateOfBirth}

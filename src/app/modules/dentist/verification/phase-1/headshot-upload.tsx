@@ -1,7 +1,7 @@
 "use client";
 
 import { UploadCloud } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 interface HeadshotUploadProps {
   onChange?: (file: File | null) => void;
@@ -10,18 +10,18 @@ interface HeadshotUploadProps {
 }
 
 export function HeadshotUpload({ onChange, existingImageUrl, disabled }: HeadshotUploadProps) {
-  const [preview, setPreview] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (existingImageUrl) {
-      setPreview("http://3.99.158.129:8004" + existingImageUrl);
-    }
+  const [uploadedPreview, setUploadedPreview] = useState<string | null>(null);
+  const existingPreview = useMemo(() => {
+    if (!existingImageUrl) return null;
+    if (existingImageUrl.startsWith("http")) return existingImageUrl;
+    return `http://3.99.158.129:8004${existingImageUrl}`;
   }, [existingImageUrl]);
+  const preview = uploadedPreview || existingPreview;
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled) return;
     if (e.target.files?.[0]) {
-      setPreview(URL.createObjectURL(e.target.files[0]));
+      setUploadedPreview(URL.createObjectURL(e.target.files[0]));
       onChange?.(e.target.files[0]);
     }
   };
@@ -30,6 +30,7 @@ export function HeadshotUpload({ onChange, existingImageUrl, disabled }: Headsho
     return (
       <div className="flex items-center gap-6 py-4">
         <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={preview} alt="Headshot" className="w-full h-full object-cover" />
         </div>
 
@@ -37,7 +38,7 @@ export function HeadshotUpload({ onChange, existingImageUrl, disabled }: Headsho
           <button
             type="button"
             onClick={() => {
-              setPreview(null);
+              setUploadedPreview(null);
               onChange?.(null);
             }}
             className="rounded-lg border border-primary px-6 py-2 font-semibold text-primary transition-all hover:bg-background"

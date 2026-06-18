@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import { Trash2, Upload } from "lucide-react";
 import GuidelinesModal from "./GuidelinesModal";
+import { setFrontSmileFile } from "@/lib/storage/bookingService";
 
 interface PhotoSlot {
   file: File | null;
@@ -89,7 +90,10 @@ export default function PhotoUploadForm() {
               key={i}
               label={label}
               slot={requiredSlots[i]}
-              onFile={(file) => setSlot(setRequiredSlots, i, file)}
+              onFile={(file) => {
+                setSlot(setRequiredSlots, i, file);
+                if (i === 0) setFrontSmileFile(file);
+              }}
             />
           ))}
         </div>
