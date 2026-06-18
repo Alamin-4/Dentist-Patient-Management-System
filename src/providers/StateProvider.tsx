@@ -7,11 +7,12 @@ import {
   useRef,
   Suspense,
 } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@/store/useAppStore";
 import { initializeDentistData } from "@/lib/storage/dentistData";
 import { initializeBookingData } from "@/lib/storage/bookingService";
 import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import type { AppModalType } from "@/store/slices/uiSlice";
 
 // Re-export store hooks for direct access
 export { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
@@ -71,46 +72,138 @@ export const StateContext = createContext<StateContextType | undefined>(
   undefined,
 );
 
+const MODAL_QUERY_KEY = "modal";
+
+const MODAL_TO_QUERY: Record<Exclude<AppModalType, null>, string> = {
+  signin: "signin",
+  signup: "signup",
+  personalize: "personalize",
+  compare: "compare",
+  startBooking: "start-booking",
+  booking: "booking",
+  kol: "kol",
+};
+
+const QUERY_TO_MODAL = Object.fromEntries(
+  Object.entries(MODAL_TO_QUERY).map(([modal, query]) => [query, modal]),
+) as Record<string, Exclude<AppModalType, null>>;
+
+function getModalFromQuery(searchParams: URLSearchParams): AppModalType {
+  return QUERY_TO_MODAL[searchParams.get(MODAL_QUERY_KEY) ?? ""] ?? null;
+}
+
+function getUrlWithModal(
+  pathname: string,
+  searchParams: URLSearchParams,
+  modal: AppModalType,
+) {
+  const nextParams = new URLSearchParams(searchParams.toString());
+
+  if (modal) {
+    nextParams.set(MODAL_QUERY_KEY, MODAL_TO_QUERY[modal]);
+  } else {
+    nextParams.delete(MODAL_QUERY_KEY);
+  }
+
+  const query = nextParams.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
 // Helper sub-component to handle URL step synchronization inside a Suspense boundary
 function StepSync() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const urlStep = Number(searchParams.get("step"));
+  const isVerificationRoute = pathname === "/dentist/verification";
 
   const verificationStep = useAppStore((state) => state.verificationStep);
   const setVerificationStep = useAppStore((state) => state.setVerificationStep);
   const hasInitializedStep = useRef(false);
 
+  useEffect(() => {
+    if (isVerificationRoute) return;
+    hasInitializedStep.current = false;
+
+    if (!searchParams.has("step")) return;
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete("step");
+    const query = nextParams.toString();
+
+    router.replace(query ? `${pathname}?${query}` : pathname);
+  }, [isVerificationRoute, pathname, router, searchParams]);
+
   // Initialize the step once from the URL or persisted value.
   useEffect(() => {
+    if (!isVerificationRoute) return;
     if (hasInitializedStep.current) return;
     hasInitializedStep.current = true;
 
     if (urlStep >= 1 && urlStep <= 3) {
       if (urlStep !== verificationStep) {
-        setVerificationStep(urlStep);
+        const timeoutId = window.setTimeout(() => {
+          setVerificationStep(urlStep);
+        }, 0);
+
+        return () => window.clearTimeout(timeoutId);
       }
     } else {
       const savedStep = typeof window !== "undefined" ? localStorage.getItem("dentist_verification_step") : null;
       if (savedStep) {
         const parsedStep = Number(savedStep);
         if (parsedStep >= 1 && parsedStep <= 3) {
-          setVerificationStep(parsedStep);
+          const timeoutId = window.setTimeout(() => {
+            setVerificationStep(parsedStep);
+          }, 0);
           router.replace(`?step=${parsedStep}`);
-          return;
+          return () => window.clearTimeout(timeoutId);
         }
       }
-      router.replace("?step=1");
+
+      router.replace("");
     }
-  }, [urlStep, verificationStep, router, setVerificationStep]);
+  }, [isVerificationRoute, urlStep, verificationStep, router, setVerificationStep]);
 
   // After initialization, let the store drive the URL.
   useEffect(() => {
+    if (!isVerificationRoute) return;
     if (!hasInitializedStep.current) return;
     if (urlStep !== verificationStep) {
       router.push(`?step=${verificationStep}`);
     }
-  }, [verificationStep, urlStep, router]);
+  }, [isVerificationRoute, verificationStep, urlStep, router]);
+
+  return null;
+}
+
+function ModalSync({
+  pendingModalRef,
+}: {
+  pendingModalRef: React.MutableRefObject<AppModalType | undefined>;
+}) {
+  const store = useAppStore();
+  const searchParams = useSearchParams();
+  const urlModal = getModalFromQuery(searchParams);
+
+  useEffect(() => {
+    if (pendingModalRef.current !== undefined) {
+      if (pendingModalRef.current === urlModal) {
+        pendingModalRef.current = undefined;
+      } else {
+        return;
+      }
+    }
+
+    if (urlModal === store.activeModal) return;
+
+    const timeoutId = window.setTimeout(() => {
+      store.openModal(urlModal);
+      store.setKolModalOpen(urlModal === "kol");
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [store, urlModal, pendingModalRef]);
 
   return null;
 }
@@ -119,23 +212,69 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const store = useAppStore();
+  const pathname = usePathname();
+  const router = useRouter();
+  const pendingModalRef = useRef<AppModalType | undefined>(undefined);
+
+  const setUrlModal = (modal: AppModalType) => {
+    const currentSearchParams =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams();
+    const href = getUrlWithModal(pathname, currentSearchParams, modal);
+    const hasModalInUrl = currentSearchParams.has(MODAL_QUERY_KEY);
+    pendingModalRef.current = modal;
+
+    if (modal) {
+      if (hasModalInUrl) {
+        router.replace(href, { scroll: false });
+      } else {
+        router.push(href, { scroll: false });
+      }
+    } else {
+      router.replace(href, { scroll: false });
+    }
+
+    store.openModal(modal);
+    store.setKolModalOpen(modal === "kol");
+  };
 
   useEffect(() => {
     initializeDentistData();
     initializeBookingData();
 
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log(
-            "Service Worker registered with scope:",
-            registration.scope,
-          );
-        })
-        .catch((error) => {
-          console.error("Service Worker registration failed:", error);
+      if (process.env.NODE_ENV === "production") {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log(
+              "Service Worker registered with scope:",
+              registration.scope,
+            );
+          })
+          .catch((error) => {
+            console.error("Service Worker registration failed:", error);
+          });
+      } else {
+        // In development, unregister any active service workers to prevent stale cached chunks
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const registration of registrations) {
+            registration.unregister().then((success) => {
+              if (success) {
+                console.log("[Dev] Unregistered service worker:", registration.scope);
+                // Clear all caches to ensure fresh assets are fetched
+                caches.keys().then((keys) => {
+                  Promise.all(keys.map((key) => caches.delete(key))).then(() => {
+                    console.log("[Dev] Cleared service worker caches. Reloading...");
+                    window.location.reload();
+                  });
+                });
+              }
+            });
+          }
         });
+      }
     }
   }, []);
 
@@ -153,22 +292,28 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Modals mapping
     showSignupModal: store.activeModal === "signup",
-    setShowSignupModal: (show) => store.openModal(show ? "signup" : null),
+    setShowSignupModal: (show) => setUrlModal(show ? "signup" : null),
     showSigninModal: store.activeModal === "signin",
-    setShowSigninModal: (show) => store.openModal(show ? "signin" : null),
+    setShowSigninModal: (show) => setUrlModal(show ? "signin" : null),
     showPersonalizeModal: store.activeModal === "personalize",
-    setShowPersonalizeModal: (show) => store.openModal(show ? "personalize" : null),
+    setShowPersonalizeModal: (show) =>
+      setUrlModal(show ? "personalize" : null),
     showCompareModal: store.activeModal === "compare",
-    setShowCompareModal: (show) => store.openModal(show ? "compare" : null),
+    setShowCompareModal: (show) => setUrlModal(show ? "compare" : null),
     
-    // Booking modal uses selectedDentistId and activeModal
-    showBookingModal: store.activeModal === "booking" ? store.selectedDentistId : null,
-    setShowBookingModal: (dentistId) => {
-      if (dentistId) {
-        store.setSelectedDentistId(dentistId);
-        store.openModal("booking");
+    showBookingModal:
+      store.activeModal === "startBooking"
+        ? "startBooking"
+        : store.activeModal === "booking"
+          ? "book"
+          : null,
+    setShowBookingModal: (modal) => {
+      if (modal === "startBooking") {
+        setUrlModal("startBooking");
+      } else if (modal === "book") {
+        setUrlModal("booking");
       } else {
-        store.openModal(null);
+        setUrlModal(null);
       }
     },
 
@@ -183,7 +328,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     dentistsToCompare: store.dentistsToCompare,
     setDentistsToCompare: store.setDentistsToCompare,
     kolModalOpen: store.kolModalOpen,
-    setKolModalOpen: store.setKolModalOpen,
+    setKolModalOpen: (open) => setUrlModal(open ? "kol" : null),
     addKolStep: store.addKolStep,
     setAddKolStep: store.setAddKolStep,
     searchQuery: store.searchQuery,
@@ -196,6 +341,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     <StateContext.Provider value={value}>
       <Suspense fallback={null}>
         <StepSync />
+        <ModalSync pendingModalRef={pendingModalRef} />
       </Suspense>
       {children}
     </StateContext.Provider>

@@ -1,5 +1,6 @@
 export type Dentist = {
   id: string;
+  backendId?: number;
   name: string;
   slug: string;
   specialty: string;

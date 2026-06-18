@@ -1,12 +1,23 @@
-import { persistSession } from "@/hooks/authentication/useAuth";
 import { adminApi } from "@/lib/api";
-import { LoginPayload } from "@/hooks/authentication/auth.interface";
-import { useMutation } from "@tanstack/react-query";
+import type { ListParams } from "@/lib/api/services";
+import type { License } from "@/types/license";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-export function useAdminLogin() {
-  return useMutation({
-    mutationFn: (data: LoginPayload) =>
-      adminApi.login({ ...data, role: "ADMIN" }),
-    onSuccess: persistSession,
+interface UseAdminOptions {
+  licenseQueueParams?: ListParams;
+}
+
+export default function useAdmin(options: UseAdminOptions = {}) {
+  const getLicenseQueue = useQuery({
+    queryKey: ["admin", "licenseQueue", options.licenseQueueParams],
+    queryFn: () => adminApi.listLicenseQueue<License>(options.licenseQueueParams),
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
   });
+
+  return {
+    getLicenseQueue,
+    isLicenseQueueLoading: getLicenseQueue.isLoading,
+    isLicenseQueueError: getLicenseQueue.isError,
+  };
 }

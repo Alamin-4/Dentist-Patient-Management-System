@@ -2,7 +2,16 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import { submitBooking, getBookingData } from "@/lib/storage/bookingService";
+import {
+  getBookingData,
+  getBookingDraft,
+  getFrontSmileFile,
+  getXrayFile,
+  markBookingStepComplete,
+  setBookingCurrentStep,
+  setConsultationId,
+  updateBookingData,
+} from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import PersonalInfoForm from "./BookingIntakeForm/PersonalInfoForm";
 import ProcedureSelectionForm from "./BookingIntakeForm/ProcedureSelectionForm";
@@ -10,43 +19,50 @@ import TreatmentDetailsForm from "./BookingIntakeForm/TreatmentDetailsForm";
 import DentalHistoryForm from "./BookingIntakeForm/DentalHistoryForm";
 import PhotoUploadForm from "./BookingIntakeForm/PhotoUploadForm";
 import XRayUploadForm from "./BookingIntakeForm/XRayUploadForm";
+import { consultationBookingApi, getApiErrorMessage } from "@/lib/api";
+import { Loader2 } from "lucide-react";
 
 const TOTAL_STEPS = 6;
 
 export default function IntakeModal() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(() => getBookingDraft().currentStep);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     showBookingModal,
     setShowBookingModal,
     setShowCompareModal,
     setCompareModalPurpose,
-    selectedDentistId,
     setSchedule,
   } = useStateContext();
 
   const progress = (step / TOTAL_STEPS) * 100;
+
+  const syncStep = (nextStep: number) => {
+    setStep(nextStep);
+    setBookingCurrentStep(nextStep);
+  };
 
   const validateStep = (): boolean => {
     const data = getBookingData();
 
     switch (step) {
       case 1: {
-        const { firstName, lastName, email, dateOfBirth, country } =
+        const { firstName, lastName, dateOfBirth, country } =
           data.personalInfo;
-        if (!firstName || !lastName || !email || !dateOfBirth || !country) {
+        if (!firstName || !lastName || !dateOfBirth || !country) {
           toast.error("Please fill in all required personal information fields");
           return false;
         }
         return true;
       }
       case 2:
-        if (!data.procedure) {
-          toast.error("Please select a procedure");
+        if (data.procedureIds.length === 0) {
+          toast.error("Please select at least one procedure");
           return false;
         }
         return true;
       case 3:
-        if (!data.budget || !data.travelFrom) {
+        if (!data.budget || !data.travelFrom || !data.travelTo) {
           toast.error("Please fill in your budget and travel dates");
           return false;
         }
@@ -57,44 +73,159 @@ export default function IntakeModal() {
           return false;
         }
         return true;
+      case 5:
+        if (!getFrontSmileFile()) {
+          toast.error("Please upload your front smile photo");
+          return false;
+        }
+        return true;
+      case 6:
+        if (!getXrayFile()) {
+          toast.error("Please upload your X-ray file");
+          return false;
+        }
+        return true;
       default:
         return true;
     }
   };
 
-  const handleNext = () => {
-    if (!validateStep()) return;
+  const getRequiredConsultationId = () => {
+    const consultationId = getBookingDraft().consultationId;
+    if (!consultationId) {
+      throw new Error("Please complete the previous booking step first.");
+    }
+    return consultationId;
+  };
 
-    if (step < TOTAL_STEPS) {
-      setStep((s) => s + 1);
+  const getResultConsultationId = (response: unknown) => {
+    const payload = response as {
+      data?: {
+        id?: string | number;
+        consultation_id?: string | number;
+        data?: {
+          id?: string | number;
+          consultation_id?: string | number;
+        };
+      };
+      id?: string | number;
+      consultation_id?: string | number;
+    };
+
+    return (
+      payload.data?.consultation_id ??
+      payload.data?.id ??
+      payload.data?.data?.consultation_id ??
+      payload.data?.data?.id ??
+      payload.consultation_id ??
+      payload.id ??
+      null
+    );
+  };
+
+  const submitCurrentStep = async () => {
+    const data = getBookingData();
+
+    if (step === 1) {
+      const response = await consultationBookingApi.stepOne({
+        first_name: data.personalInfo.firstName,
+        last_name: data.personalInfo.lastName,
+        country: data.personalInfo.country,
+        date_of_birth: data.personalInfo.dateOfBirth,
+      });
+      const consultationId = getResultConsultationId(response);
+      if (consultationId) setConsultationId(consultationId);
       return;
     }
 
-    // Step 6 — submit
-    if (!selectedDentistId) {
-      toast.error("No dentist selected. Please select a dentist first.");
+    if (step === 2) {
+      await consultationBookingApi.stepTwo({
+        procedures: data.procedureIds,
+      });
+      return;
+    }
+
+    if (step === 3) {
+      await consultationBookingApi.stepThree({
+        consultation_id: getRequiredConsultationId(),
+        approximate_budget: Number(String(data.budget).replace(/[^0-9.]/g, "")),
+        travel_start_date: data.travelFrom,
+        travel_end_date: data.travelTo,
+      });
+      return;
+    }
+
+    if (step === 4) {
+      await consultationBookingApi.stepFour({
+        consultation_id: getRequiredConsultationId(),
+        last_dentist_visit: data.dentalHistory.lastVisit,
+        conditions: data.dentalHistory.conditions.filter(
+          (condition) => condition !== "None of them",
+        ),
+        notes: data.dentalHistory.additionalInfo,
+      });
+      return;
+    }
+
+    if (step === 5) {
+      const frontSmile = getFrontSmileFile();
+      if (!frontSmile) throw new Error("Please upload your front smile photo");
+      await consultationBookingApi.stepFive({
+        consultation_id: getRequiredConsultationId(),
+        front_smile: frontSmile,
+      });
+      return;
+    }
+
+    if (step === 6) {
+      const file = getXrayFile();
+      if (!file) throw new Error("Please upload your X-ray file");
+      await consultationBookingApi.stepSix({
+        consultation_id: getRequiredConsultationId(),
+        file,
+        notes: data.xrayNotes,
+      });
+    }
+  };
+
+  const handleNext = async () => {
+    if (!validateStep()) return;
+
+    const draft = getBookingDraft();
+    if (step > 1 && !draft.consultationId) {
+      toast.error("Please complete the first step before continuing.");
       return;
     }
 
     try {
-      submitBooking(selectedDentistId);
-      toast.success("Your booking has been submitted successfully!");
+      setIsSubmitting(true);
+      await submitCurrentStep();
+      markBookingStepComplete(step);
+
+      if (step < TOTAL_STEPS) {
+        syncStep(step + 1);
+        return;
+      }
+
+      updateBookingData({ currentStep: TOTAL_STEPS });
+      toast.success("Your consultation details are saved.");
       setShowBookingModal(null);
       setCompareModalPurpose("postBooking");
       setSchedule(true);
       setShowCompareModal(true);
-    } catch {
-      toast.error("Failed to submit booking. Please try again.");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleBack = () => {
-    if (step > 1) setStep((s) => s - 1);
+    if (step > 1) syncStep(step - 1);
   };
 
   const handleClose = () => {
     setShowBookingModal(null);
-    setStep(1);
   };
 
   return (
@@ -147,8 +278,10 @@ export default function IntakeModal() {
             <button
               type="button"
               onClick={handleNext}
-              className="px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-xl active:scale-95 transition-all"
+              disabled={isSubmitting}
+              className="inline-flex items-center justify-center gap-2 px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-xl active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
             >
+              {isSubmitting && <Loader2 className="size-5 animate-spin" />}
               {step === TOTAL_STEPS ? "Submit and Get Estimates" : "Continue"}
             </button>
           </div>

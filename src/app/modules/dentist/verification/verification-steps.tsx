@@ -8,14 +8,9 @@ import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 export function VerificationSteps() {
   const { verificationStep } = useVerificationStore();
   const {
-    checkLicenseVerifyProgress,
-    checkPhotoVerifyProgress,
-    checkIdVerifyProgress,
+    submittedByStep,
+    canAccessStep,
   } = useVerificationProgress();
-
-  const step1Submitted = checkLicenseVerifyProgress?.data?.submitted === true;
-  const step2Submitted = checkPhotoVerifyProgress?.data?.submitted === true;
-  const step3Submitted = checkIdVerifyProgress?.data?.submitted === true;
 
   const steps = [
     {
@@ -23,21 +18,21 @@ export function VerificationSteps() {
       label: "Licence + identity",
       icon: User,
       unlocked: true,
-      submitted: step1Submitted,
+      submitted: submittedByStep[1],
     },
     {
       step: 2,
       label: "Facility & Transparency",
       icon: Building,
-      unlocked: step1Submitted,
-      submitted: step2Submitted,
+      unlocked: canAccessStep(2),
+      submitted: submittedByStep[2],
     },
     {
       step: 3,
       label: "Clinical Excellence",
       icon: Award,
-      unlocked: step1Submitted && step2Submitted,
-      submitted: step3Submitted,
+      unlocked: canAccessStep(3),
+      submitted: submittedByStep[3],
     },
   ];
 

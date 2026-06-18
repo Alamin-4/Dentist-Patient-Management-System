@@ -8,6 +8,10 @@ export const procedureSchema = z.object({
 
 export const formSchema = z.object({
   jciCertificate: z.any().optional(),
+  certificateNumber: z.string().optional(),
+  certificateExpiryDate: z.string().optional(),
+  certificateIssueDate: z.string().optional(),
+  issuingAuthority: z.string().optional(),
   videoWalkthrough: z.any().optional(),
   sterilizationMethods: z.array(z.string()).min(1, "Select at least one"),
   procedures: z.array(procedureSchema).min(1),

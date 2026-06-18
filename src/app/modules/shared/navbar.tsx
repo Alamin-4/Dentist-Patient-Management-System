@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -7,8 +9,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { HamburgerButton } from "./hamburger-button";
+import useAuth from "@/hooks/authentication/useAuth";
+import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 export function Navbar() {
+  const { logoutMutation } = useAuth();
+  const { mutate: logout } = logoutMutation;
+  const router = useRouter();
+  const logutHandler = () => {
+    logout();
+    router.push("/");
+  };
   return (
     <header className="border-b border-border/80 bg-white w-full">
       <nav className="px-4 lg:px-8 flex h-20 items-center justify-between">
@@ -45,10 +57,17 @@ export function Navbar() {
                 </p>
               </div>
               <div className="border-b border-slate-200 my-2"></div>
-              <DropdownMenuItem>My Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">
-                Logout
+              <DropdownMenuItem className="cursor-pointer">
+                My Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-red-600 cursor-pointer flex items-center gap-2"
+                onClick={() => logutHandler()}
+              >
+                <LogOut /> Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

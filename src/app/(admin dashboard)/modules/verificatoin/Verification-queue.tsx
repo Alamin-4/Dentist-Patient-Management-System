@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { BarChart2, Clock, CheckCircle2, XCircle } from "lucide-react";
-import verificationData from "@/lib/verification-data";
+import { useCallback, useMemo, useState } from "react";
+import { BarChart2, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
 import { VerificationCard } from "./components/verification-card";
 import { CustomDrawer } from "./components/custom-drawer";
-
-type QueueStatus = "pending" | "approved" | "rejected";
-type Dentist = (typeof verificationData.dentists)[number];
+import useAdmin from "@/hooks/admin/user/useAdmin";
+import type { QueueStatus, VerificationDentist } from "./types";
+import {
+  API_STATUS_BY_QUEUE_STATUS,
+  normalizeLicenseQueue,
+  PAGE_SIZE,
+} from "./verification-utils";
 
 const STAT_CARDS = [
   {
@@ -48,14 +51,36 @@ const FOOTER_MESSAGES: Record<QueueStatus, (count: number) => string> = {
 };
 
 export default function VerificationQueue() {
-  const meta = verificationData.meta;
   const [activeTab, setActiveTab] = useState<QueueStatus>("pending");
-  const [selectedDentist, setSelectedDentist] = useState<Dentist | null>(null);
+  const [page, setPage] = useState(1);
+  const [selectedDentist, setSelectedDentist] =
+    useState<VerificationDentist | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const filtered = verificationData.dentists.filter(
-    (d) => d.queue_status === activeTab
-  ) as Dentist[];
+  const licenseQueueParams = useMemo(
+    () => ({
+      page,
+      limit: PAGE_SIZE,
+      status: API_STATUS_BY_QUEUE_STATUS[activeTab],
+    }),
+    [activeTab, page],
+  );
+
+  const { getLicenseQueue, isLicenseQueueLoading, isLicenseQueueError } =
+    useAdmin({ licenseQueueParams });
+
+  const { meta, mappedLicenses, pagination } = useMemo(
+    () => normalizeLicenseQueue(getLicenseQueue.data),
+    [getLicenseQueue.data],
+  );
+
+  const filtered = useMemo(
+    () =>
+      mappedLicenses.filter(
+        (dentist) => dentist.queue_status === activeTab,
+      ),
+    [mappedLicenses, activeTab],
+  );
 
   const tabs = [
     { key: "pending", label: "Pending", count: meta.pending_review },
@@ -63,10 +88,38 @@ export default function VerificationQueue() {
     { key: "rejected", label: "Rejected", count: meta.rejected },
   ];
 
-  const handleViewSubmission = (dentist: Dentist) => {
+  const activeTotal =
+    activeTab === "pending"
+      ? meta.pending_review
+      : activeTab === "approved"
+        ? meta.fully_approved
+        : meta.rejected;
+
+  const handleTabChange = useCallback((key: string) => {
+    setActiveTab(key as QueueStatus);
+    setPage(1);
+  }, []);
+
+  const handleViewSubmission = useCallback((dentist: VerificationDentist) => {
     setSelectedDentist(dentist);
     setDrawerOpen(true);
-  };
+  }, []);
+
+  if (isLicenseQueueLoading) {
+    return (
+      <div className="flex min-h-100 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#163E5C]" />
+      </div>
+    );
+  }
+
+  if (isLicenseQueueError) {
+    return (
+      <div className="flex min-h-100 items-center justify-center text-red-500">
+        Failed to load verification queue. Please try again.
+      </div>
+    );
+  }
 
   return (
     <>
@@ -88,7 +141,9 @@ export default function VerificationQueue() {
               key={card.key}
               className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
             >
-              <div className={`flex h-11 w-11 items-center justify-center rounded-full ${card.iconBg}`}>
+              <div
+                className={`flex h-11 w-11 items-center justify-center rounded-full ${card.iconBg}`}
+              >
                 {card.icon}
               </div>
               <div>
@@ -108,7 +163,7 @@ export default function VerificationQueue() {
             <CustomTab
               tabs={tabs}
               active={activeTab}
-              onChange={(k) => setActiveTab(k as QueueStatus)}
+              onChange={handleTabChange}
             />
           </div>
 
@@ -127,11 +182,40 @@ export default function VerificationQueue() {
             ))}
           </div>
 
-          {filtered.length > 0 && (
-            <div className="border-t border-gray-100 px-4 py-3">
+          {(filtered.length > 0 || pagination.totalPages > 1) && (
+            <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-gray-400">
-                {FOOTER_MESSAGES[activeTab](filtered.length)}
+                {FOOTER_MESSAGES[activeTab](activeTotal || filtered.length)}
               </p>
+              {pagination.totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={page <= 1 || getLicenseQueue.isFetching}
+                    onClick={() => setPage((value) => Math.max(1, value - 1))}
+                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-xs text-gray-400">
+                    Page {pagination.page} of {pagination.totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={
+                      page >= pagination.totalPages || getLicenseQueue.isFetching
+                    }
+                    onClick={() =>
+                      setPage((value) =>
+                        Math.min(pagination.totalPages, value + 1),
+                      )
+                    }
+                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

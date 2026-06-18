@@ -26,8 +26,8 @@ export const endpoints = {
     profile: "/auth/profile",
     professionalDetails: "/dentist/enter-professional-details/",
     verificationProgress: "/dentist/verification-progress/",
-    updateVerificationPhase: "/dentist/update-verification-phase/",  // body: { "verification_phase": "COMPLETE"}
-    // verification step 
+    updateVerificationPhase: "/dentist/update-verification-phase/", // body: { "verification_phase": "COMPLETE"}
+    // verification step
     stepOne: "/dentist/verification-step/license/",
     stepOneCheck: "/dentist/verification-step/license/",
     stepTwo: "/dentist/verification-step/operations/",
@@ -48,13 +48,31 @@ export const endpoints = {
     payments: "/admin/payments",
     reports: "/admin/reports",
     notifications: "/admin/notifications",
-    verificationQueue: "/admin/verification-queue",
+    verificationQueue: "/admin/dentist-license-verifications/",
   },
 
   // todo
   bookings: {
+    stepOne: "/consultations/step-1/",
+    getStepOne: "/consultations/step-1/",
+    stepTwo: "/consultations/step-2/",
+    getStepTwo: "/consultations/step-2/", //!! not available yet
+    stepThree: "/consultations/step-3/",
+    getStepThree: "/consultations/step-3/",  //!! not available yet
+    stepFour: "/consultations/step-4/",
+    getStepFour: "/consultations/step-4/", //!! not available yet
+    stepFive: "/consultations/step-5/",
+    getStepFive: "/consultations/step-5/", //!! not available yet
+    stepSix: "/consultations/step-6/",
+    getStepSix: "/consultations/step-6/", //!! not available yet
+    stepSeven: "/consultations/step-7/",
+    getStepSeven: "/consultations/step-7/", //!! not available yet
     root: "/bookings",
     byId: (id: string | number) => `/bookings/${id}`,
+  },
+  procedures: {
+    root: "/procedures/",
+    byId: (id: string | number) => `/procedures/${id}`,
   },
   consultations: {
     root: "/consultations",

@@ -5,6 +5,10 @@ import { normalizeApiError } from "./error-handler";
 import { API_BASE_URL, endpoints } from "./endpoints";
 
 const UNAUTHORIZED_EVENT = "rateddocs:unauthorized";
+type QueuedRequest = {
+  resolve: (value: string | null) => void;
+  reject: (reason: unknown) => void;
+};
 
 export function dispatchUnauthorizedEvent() {
   if (typeof window === "undefined") return;
@@ -21,12 +25,9 @@ export function onUnauthorizedSession(callback: () => void) {
 }
 
 let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value: any) => void;
-  reject: (reason: any) => void;
-}> = [];
+let failedQueue: QueuedRequest[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -91,8 +92,20 @@ export function attachInterceptors(client: AxiosInstance) {
           });
 
           // DRF SimpleJWT can return access (or token)
-          const access = response.data?.access || response.data?.accessToken || response.data?.data?.access;
-          const refresh = response.data?.refresh || response.data?.refreshToken || response.data?.data?.refresh;
+          const access =
+            response.data?.access ||
+            response.data?.accessToken ||
+            response.data?.access_token ||
+            response.data?.data?.access ||
+            response.data?.data?.accessToken ||
+            response.data?.data?.access_token;
+          const refresh =
+            response.data?.refresh ||
+            response.data?.refreshToken ||
+            response.data?.refresh_token ||
+            response.data?.data?.refresh ||
+            response.data?.data?.refreshToken ||
+            response.data?.data?.refresh_token;
 
           if (access) {
             setAuthSession({
@@ -123,4 +136,3 @@ export function attachInterceptors(client: AxiosInstance) {
 
   return client;
 }
-

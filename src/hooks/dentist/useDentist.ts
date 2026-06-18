@@ -61,16 +61,19 @@ export default function useDentist() {
   });
 
   const stepOneMutation = useMutation({
+    mutationKey: ["dentist", "verification", "stepOne"],
     mutationFn: (data: StepOneI) => dentistApi.stepOne(objectToFormData(data)),
     onSuccess: invalidateVerification,
   });
 
   const stepTwoMutation = useMutation({
-    mutationFn: (data: StepTwoI) => dentistApi.stepTwo(data),
+    mutationKey: ["dentist", "verification", "stepTwo"],
+    mutationFn: (data: StepTwoI) => dentistApi.stepTwo(objectToFormData(data)),
     onSuccess: invalidateVerification,
   });
 
   const stepThreeMutation = useMutation({
+    mutationKey: ["dentist", "verification", "stepThree"],
     mutationFn: (data: StepThreeI) => dentistApi.stepThree(objectToFormData(data)),
     onSuccess: invalidateVerification,
   });

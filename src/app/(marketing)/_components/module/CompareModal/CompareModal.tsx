@@ -8,6 +8,10 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
 import { getDentistsFromStorage } from "@/lib/storage/dentistData";
 import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import {
+  getBookingDraft,
+  setSelectedDentistsForBooking,
+} from "@/lib/storage/bookingService";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -51,6 +55,7 @@ export default function CompareModal() {
   useEffect(() => {
     if (!showCompareModal) return;
 
+    const timeoutId = window.setTimeout(() => {
     if (dentistsToCompare.length > 0) {
       setDentists(dentistsToCompare);
       setSelectedIds(dentistsToCompare.map((d) => d.id));
@@ -69,7 +74,10 @@ export default function CompareModal() {
       setDentists(stored.slice(0, 3));
       setSelectedIds([]);
     }
-  }, [showCompareModal, dentistsToCompare]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [showCompareModal, dentistsToCompare, isPostBooking, selectedDentistId]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -78,22 +86,44 @@ export default function CompareModal() {
       return [...prev, id];
     });
   };
-
+// please here add some console to debug this function
   const handleBook = () => {
     if (selectedIds.length === 0) return;
     setSelectedDentistId(selectedIds[0]);
+    const selectedDentists = dentists.filter((dentist) =>
+      selectedIds.includes(dentist.id),
+    );
+    const backendIds = selectedDentists
+      .map((dentist) => dentist.backendId ?? Number(dentist.id))
+      .filter((id) => Number.isFinite(id));
+
+    setSelectedDentistsForBooking(selectedIds, backendIds);
+
     if (schedule) {
-      router.push("/schedule");
+      const draft = getBookingDraft();
+      const q = selectedIds.join(",");
+      const params = new URLSearchParams();
+      if (q) params.set("dentistIds", q);
+      if (draft.consultationId) {
+        params.set("consultationId", String(draft.consultationId));
+      }
+      router.push(`/schedule?${params.toString()}`);
       return;
     }
     if (isPostBooking) {
       const q = selectedIds.join(",");
+      const draft = getBookingDraft();
+      const params = new URLSearchParams();
+      params.set("dentistIds", q);
+      if (draft.consultationId) {
+        params.set("consultationId", String(draft.consultationId));
+      }
       setShowCompareModal(false);
       setCompareModalPurpose("compare");
-      router.push(`/schedule?dentistIds=${encodeURIComponent(q)}`);
+      router.push(`/schedule?${params.toString()}`);
     } else {
-      setShowBookingModal("startBooking");
       setShowCompareModal(false);
+      setShowBookingModal("startBooking");
     }
   };
 
@@ -205,7 +235,10 @@ export default function CompareModal() {
               label="PATIENT RATING"
               colCount={colCount}
               values={dentists.map((d) => (
-                <span className="inline-flex items-center justify-center gap-1.5">
+                <span
+                  key={d.id}
+                  className="inline-flex items-center justify-center gap-1.5"
+                >
                   <Star className="size-4 shrink-0 fill-yellow-400 text-yellow-400" />
                   <span className="font-semibold text-foreground">
                     {d.rating}
@@ -232,12 +265,12 @@ export default function CompareModal() {
               isLast={!isPostBooking}
               values={dentists.map((d) =>
                 isPostBooking ? (
-                  <span className="text-lg font-bold text-primary">
+                  <span key={d.id} className="text-lg font-bold text-primary">
                     ${estimateLow(d.price).toLocaleString()} – $
                     {estimateHigh(d.price).toLocaleString()}
                   </span>
                 ) : (
-                  <span className="text-lg font-bold text-primary">
+                  <span key={d.id} className="text-lg font-bold text-primary">
                     ${d.price.toLocaleString()}
                   </span>
                 ),

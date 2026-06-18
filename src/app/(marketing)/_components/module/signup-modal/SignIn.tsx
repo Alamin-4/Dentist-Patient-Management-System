@@ -38,6 +38,8 @@ export default function SigninModal() {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
     reset,
   } = useForm<LoginFormData>({
@@ -50,6 +52,8 @@ export default function SigninModal() {
   });
 
   const onSubmit = (data: LoginFormData) => {
+    clearErrors("root");
+
     loginMutation.mutate(data, {
       onSuccess: () => {
         toast.success("Welcome back!", { style: TOAST_STYLE });
@@ -57,8 +61,11 @@ export default function SigninModal() {
         setShowSigninModal(false);
         setShowPersonalizeModal(true);
       },
-      onError: (error: any) => {
-        toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
+      onError: (error: unknown) => {
+        setError("root.server", {
+          type: "server",
+          message: getApiErrorMessage(error),
+        });
       },
     });
   };
@@ -88,7 +95,6 @@ export default function SigninModal() {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Social Logins */}
         <div className="mb-4 space-y-3">
           <button
             type="button"
@@ -186,6 +192,12 @@ export default function SigninModal() {
             )}
           </div>
 
+          {errors.root?.server?.message && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              {errors.root.server.message}
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={isLoginLoading}
@@ -204,7 +216,7 @@ export default function SigninModal() {
 
         {/* Footer Toggle Link */}
         <p className="mt-6 text-center text-sm text-[#6B7280]">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <button
             type="button"
             onClick={switchToSignup}

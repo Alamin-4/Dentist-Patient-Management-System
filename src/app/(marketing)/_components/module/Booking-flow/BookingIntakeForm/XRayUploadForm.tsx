@@ -1,15 +1,22 @@
 "use client";
 import { useState, useRef } from "react";
 import { Upload, FileText, X } from "lucide-react";
+import {
+  getBookingData,
+  setXrayFile,
+  updateXrayNotes,
+} from "@/lib/storage/bookingService";
 
 export default function XRayUploadForm() {
   const [file, setFile] = useState<File | null>(null);
+  const [notes, setNotes] = useState(() => getBookingData().xrayNotes);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (selectedFile: File | null) => {
     if (selectedFile) {
       setFile(selectedFile);
+      setXrayFile(selectedFile);
     }
   };
 
@@ -67,6 +74,7 @@ export default function XRayUploadForm() {
                 onClick={(e) => {
                   e.stopPropagation();
                   setFile(null);
+                  setXrayFile(null);
                 }}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
               >
@@ -87,6 +95,21 @@ export default function XRayUploadForm() {
             </p>
           </div>
         )}
+      </div>
+
+      <div className="mt-6">
+        <label className="mb-2 block text-[15px] font-medium text-[#4B5563]">
+          Notes for your dentist
+        </label>
+        <textarea
+          value={notes}
+          onChange={(event) => {
+            setNotes(event.target.value);
+            updateXrayNotes(event.target.value);
+          }}
+          placeholder="Add any context about this file"
+          className="w-full min-h-28 rounded-xl border border-[#E5E7EB] p-4 text-[#1A1A2E] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#113254]"
+        />
       </div>
 
       {/* Warning Banner from image_e09336.png */}
