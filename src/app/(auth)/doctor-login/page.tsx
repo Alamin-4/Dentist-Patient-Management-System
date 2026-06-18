@@ -15,17 +15,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useAuth from "@/hooks/authentication/useAuth";
 import { ProfessionalDetailsForm } from "@/app/modules/auth/components/register-doctor/professional-details-form";
+import { getApiErrorMessage } from "@/lib/api";
+import { getRoleHome } from "@/lib/auth/roles";
 
-// Define the validation schema for sign-in
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+  role: z.literal("DENTIST"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function DoctorLoginPage() {
-  const [step, setStep] = useState(1); // 1 = Login Form, 2 = Professional Details Form
+  const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,64 +37,54 @@ export default function DoctorLoginPage() {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
+      role: "DENTIST",
     },
   });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+    clearErrors("root");
 
-    loginMutation.mutate(
-      {
-        email: data.email,
-        password: data.password,
-        role: "DENTIST",
-      },
-      {
-        onSuccess: (response: any) => {
-          toast.success("Login successful!");
+    try {
+      const response = await loginMutation.mutateAsync(data);
+      toast.success("Welcome back, Doctor!");
 
-          const payload = response?.data || response;
-          const profileCreated = payload?.profile_created;
+      const payload = response?.data || response;
+      const profileCreated = payload?.profile_created;
 
-          if (profileCreated === false) {
-            setStep(2);
-          } else {
-            router.push("/dentist");
-          }
-        },
-        onError: (error: any) => {
-          const errorMessage =
-            error?.response?.data?.detail?.message ||
-            error?.detail?.message ||
-            error?.message ||
-            "Invalid credentials. Please try again.";
-          toast.error(errorMessage);
-        },
-        onSettled: () => {
-          setIsLoading(false);
-        },
+      if (profileCreated === false) {
+        setStep(2);
+      } else {
+        router.replace(getRoleHome(payload.type ?? payload.role ?? data.role));
       }
-    );
+    } catch (error: unknown) {
+      setError("root.server", {
+        type: "server",
+        message: getApiErrorMessage(error),
+      });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   const handleProfessionalDetailsStep = (nextStep: number) => {
     if (nextStep === 4) {
       toast.success("Profile details saved! Redirecting to dashboard...");
-      router.push("/dentist");
+      router.replace("/dentist");
     }
   };
 
   return (
     <main className="flex min-h-screen w-full flex-col lg:flex-row">
       <Toaster position="top-right" />
-
-      {/* Left panel */}
       <section className="relative hidden w-full flex-col bg-[#163E5C] p-10 text-white lg:flex lg:w-3/5 lg:p-20">
         <div className="flex items-center gap-2">
           <Image
@@ -149,7 +141,9 @@ export default function DoctorLoginPage() {
                     className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.email ? "border-red-500" : ""}`}
                   />
                   {errors.email && (
-                    <p className="text-xs text-red-500">{errors.email.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
 
@@ -186,6 +180,12 @@ export default function DoctorLoginPage() {
                     </p>
                   )}
                 </div>
+
+                {errors.root?.server?.message && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                    {errors.root.server.message}
+                  </div>
+                )}
 
                 <Button
                   type="submit"
@@ -227,7 +227,8 @@ export default function DoctorLoginPage() {
                   Complete your Profile
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">
-                  Please provide your professional details to set up your account.
+                  Please provide your professional details to set up your
+                  account.
                 </p>
               </div>
 

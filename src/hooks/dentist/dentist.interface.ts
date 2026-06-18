@@ -11,10 +11,10 @@ export interface StepTwoI {
   sterilization: {
     has_jci_certificate: boolean;
     jci_certificate?: File | null;
-    certificate_number: string;
-    expiry_date: string;
-    issuing_authority: string;
-    issue_date: string;
+    certificate_number?: string;
+    expiry_date?: string;
+    issuing_authority?: string;
+    issue_date?: string;
     walkthrough_video?: File | null;
     autoclave_brand: boolean;
     sealed_pouch_visible: boolean;

@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { VerificationNextStepModal } from "./verification-next-step-modal";
 import { useStateContext } from "@/providers/StateProvider";
 import { useRouter } from "next/navigation";
-import useDentist from "@/hooks/dentist/useDentist";
 import { Loader2 } from "lucide-react";
+import { useIsMutating } from "@tanstack/react-query";
 
 export default function StepButton() {
   const {
@@ -17,11 +17,10 @@ export default function StepButton() {
   } = useStateContext();
   const router = useRouter();
 
-  const { stepOneMutation, stepTwoMutation, stepThreeMutation } = useDentist();
-  const isSubmitting =
-    stepOneMutation.isPending ||
-    stepTwoMutation.isPending ||
-    stepThreeMutation.isPending;
+  const activeMutationCount = useIsMutating({
+    mutationKey: ["dentist", "verification"],
+  });
+  const isSubmitting = activeMutationCount > 0;
 
   const isReady = verificationStepReady[verificationStep];
 

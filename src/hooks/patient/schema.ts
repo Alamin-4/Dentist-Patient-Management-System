@@ -14,5 +14,5 @@ export const signupSchema = z
 export const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
-  role: z.literal("PATIENT"),
+  role: z.enum(["PATIENT", "DENTIST", "ADMIN"]),
 });

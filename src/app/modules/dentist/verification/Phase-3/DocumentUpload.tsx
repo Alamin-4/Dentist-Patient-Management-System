@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { useFormContext } from "react-hook-form";
-import { UploadCloud, FileText, Trash2, AlertCircle, Trash } from "lucide-react";
+import { UploadCloud, FileText, AlertCircle, Trash } from "lucide-react";
 
 interface Props {
   label: string;

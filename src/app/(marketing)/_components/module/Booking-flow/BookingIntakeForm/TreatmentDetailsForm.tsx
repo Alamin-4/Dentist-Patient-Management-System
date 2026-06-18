@@ -1,19 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { getBookingData, updateTreatmentDetails } from "@/lib/storage/bookingService";
 
 export default function TreatmentDetailsForm() {
-  const [budget, setBudget] = useState("");
-  const [travelFrom, setTravelFrom] = useState("");
-  const [travelTo, setTravelTo] = useState("");
-
-  useEffect(() => {
-    const data = getBookingData();
-    setBudget(data.budget);
-    setTravelFrom(data.travelFrom);
-    setTravelTo(data.travelTo);
-  }, []);
+  const initialData = getBookingData();
+  const [budget, setBudget] = useState(initialData.budget);
+  const [travelFrom, setTravelFrom] = useState(initialData.travelFrom);
+  const [travelTo, setTravelTo] = useState(initialData.travelTo);
 
   const handleBudget = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBudget(e.target.value);
@@ -91,7 +85,7 @@ function DateInput({
   return (
     <div className="relative flex items-center h-14 border border-[#E5E7EB] rounded-xl focus-within:border-[#113254] transition-colors">
       <input
-        type="text"
+        type="date"
         placeholder={placeholder}
         value={value}
         onChange={onChange}

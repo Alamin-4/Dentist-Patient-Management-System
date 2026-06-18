@@ -37,6 +37,10 @@ export default function MultiStepForm() {
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
+      certificateNumber: "",
+      certificateExpiryDate: "",
+      certificateIssueDate: "",
+      issuingAuthority: "JCI",
       sterilizationMethods: [],
       procedures: [
         { name: "Implant consultation", pricing: 250, notes: "Plan review" },
@@ -55,14 +59,15 @@ export default function MultiStepForm() {
       return;
     }
 
+    const hasJciCertificate = Boolean(data.jciCertificate);
     const sterilization = {
-      has_jci_certificate: Boolean(data.jciCertificate),
-      jci_certificate: data.jciCertificate || null,
-      certificate_number: "N/A",
-      expiry_date: new Date().toISOString().split("T")[0],
-      issuing_authority: "N/A",
-      issue_date: new Date().toISOString().split("T")[0],
-      walkthrough_video: data.videoWalkthrough || null,
+      has_jci_certificate: hasJciCertificate,
+      jci_certificate: data.jciCertificate || undefined,
+      certificate_number: hasJciCertificate ? data.certificateNumber || undefined : undefined,
+      expiry_date: hasJciCertificate ? data.certificateExpiryDate || undefined : undefined,
+      issuing_authority: hasJciCertificate ? data.issuingAuthority || undefined : undefined,
+      issue_date: hasJciCertificate ? data.certificateIssueDate || undefined : undefined,
+      walkthrough_video: data.videoWalkthrough || undefined,
       autoclave_brand: data.sterilizationMethods.includes("Autoclave"),
       sealed_pouch_visible: data.sterilizationMethods.includes("Sealed Pouch"),
       ultrasonic_cleaner_available:
@@ -81,11 +86,6 @@ export default function MultiStepForm() {
       typed_signature: data.typedSignature,
       accepted_terms: data.agreeToGuarantee,
     };
-    console.log({
-      sterilization,
-      procedures,
-      guarantee,
-    });
     stepTwoMutation.mutate(
       {
         sterilization,

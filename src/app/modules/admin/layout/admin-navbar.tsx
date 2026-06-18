@@ -11,12 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/sidebar-context";
 import { useRouter } from "next/navigation";
+import useAuth from "@/hooks/authentication/useAuth";
 
 export function AdminNavbar() {
   const { toggle } = useSidebar();
   const router = useRouter();
-
+  const { logoutMutation } = useAuth()
+  const {mutate: logout} = logoutMutation;
   function handleLogout() {
+    logout();
     router.push("/admin-login");
   }
 

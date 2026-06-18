@@ -1,5 +1,9 @@
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
 
+type GetCookieOptions = Parameters<typeof getCookie>[1];
+type SetCookieOptions = Parameters<typeof setCookie>[2];
+type DeleteCookieOptions = Parameters<typeof deleteCookie>[1];
+
 export interface AuthSession {
   accessToken: string;
   refreshToken?: string;
@@ -10,23 +14,30 @@ const ACCESS_TOKEN_KEY = "rateddocs_access_token";
 const REFRESH_TOKEN_KEY = "rateddocs_refresh_token";
 const USER_KEY = "rateddocs_user";
 
-// Default options for cookies
-const cookieOptions = {
-  maxAge: 30 * 24 * 60 * 60, // 30 days
-  path: "/",
-  secure: true,
-  sameSite: "lax" as const,
+const isSecureCookieContext = () => {
+  if (typeof window === "undefined") {
+    return process.env.NODE_ENV === "production";
+  }
+
+  return window.location.protocol === "https:";
 };
 
-export function getAccessToken(options?: any) {
+const getCookieOptions = () => ({
+  maxAge: 30 * 24 * 60 * 60,
+  path: "/",
+  secure: isSecureCookieContext(),
+  sameSite: "lax" as const,
+});
+
+export function getAccessToken(options?: GetCookieOptions) {
   return (getCookie(ACCESS_TOKEN_KEY, options) as string) || null;
 }
 
-export function getRefreshToken(options?: any) {
+export function getRefreshToken(options?: GetCookieOptions) {
   return (getCookie(REFRESH_TOKEN_KEY, options) as string) || null;
 }
 
-export function getSessionUser<TUser = unknown>(options?: any) {
+export function getSessionUser<TUser = unknown>(options?: GetCookieOptions) {
   const user = getCookie(USER_KEY, options) as string;
   if (!user) return null;
 
@@ -37,8 +48,8 @@ export function getSessionUser<TUser = unknown>(options?: any) {
   }
 }
 
-export function setAuthSession(session: AuthSession, options?: any) {
-  const mergedOptions = { ...cookieOptions, ...options };
+export function setAuthSession(session: AuthSession, options?: SetCookieOptions) {
+  const mergedOptions = { ...getCookieOptions(), ...options };
 
   setCookie(ACCESS_TOKEN_KEY, session.accessToken, mergedOptions);
 
@@ -52,10 +63,10 @@ export function setAuthSession(session: AuthSession, options?: any) {
   }
 }
 
-export function clearAuthSession(options?: any) {
-  const mergedOptions = { ...cookieOptions, ...options };
+export function clearAuthSession(options?: DeleteCookieOptions) {
+  const mergedOptions = { ...getCookieOptions(), ...options };
   deleteCookie(ACCESS_TOKEN_KEY, mergedOptions);
-  deleteCookie(REFRESH_TOKEN_KEY, mergedOptions);
+  // deleteCookie(REFRESH_TOKEN_KEY, mergedOptions);
   deleteCookie(USER_KEY, mergedOptions);
 }
 
@@ -64,4 +75,3 @@ export const authStorageKeys = {
   refreshToken: REFRESH_TOKEN_KEY,
   user: USER_KEY,
 } as const;
-

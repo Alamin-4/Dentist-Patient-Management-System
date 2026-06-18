@@ -1,6 +1,14 @@
 import { StateCreator } from "zustand";
 
-export type AppModalType = "signin" | "signup" | "personalize" | "compare" | "booking" | null;
+export type AppModalType =
+    | "signin"
+    | "signup"
+    | "personalize"
+    | "compare"
+    | "startBooking"
+    | "booking"
+    | "kol"
+    | null;
 export type kolSteps = "Basic Info" | "Bio & Languages" | "Contact" | "Media & Notes";
 
 export interface UISlice {

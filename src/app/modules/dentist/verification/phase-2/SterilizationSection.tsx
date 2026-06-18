@@ -52,6 +52,51 @@ export const SterilizationSection = () => {
           </div>
         </div>
 
+        {jciFile && (
+          <div className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-card p-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
+                Certificate Number
+              </label>
+              <input
+                {...register("certificateNumber")}
+                placeholder="JCI-12345"
+                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
+                Issuing Authority
+              </label>
+              <input
+                {...register("issuingAuthority")}
+                placeholder="JCI"
+                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
+                Issue Date
+              </label>
+              <input
+                type="date"
+                {...register("certificateIssueDate")}
+                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="inline-block text-xs font-medium text-muted-foreground">
+                Expiry Date
+              </label>
+              <input
+                type="date"
+                {...register("certificateExpiryDate")}
+                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
           <div className="h-px flex-1 bg-border" />
           <span>Or</span>

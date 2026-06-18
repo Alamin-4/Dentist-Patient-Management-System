@@ -20,6 +20,7 @@ import { useStateContext } from "@/providers/StateProvider";
 import { signupSchema } from "@/hooks/patient/schema";
 import OtpVerifyModal from "./Otp-Verify-Modal";
 import useAuth from "@/hooks/authentication/useAuth";
+import { getApiErrorMessage } from "@/lib/api";
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
@@ -79,8 +80,8 @@ export default function SignupModal() {
         setShowSignupModal(false);
         setShowOtpModal(true);
       } 
-    }catch(error: any){
-      toast.error(error.message, { style: TOAST_STYLE });
+    }catch(error: unknown){
+      toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
     }
   };
 
