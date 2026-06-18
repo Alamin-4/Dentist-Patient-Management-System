@@ -177,15 +177,14 @@ function StepSync() {
   return null;
 }
 
-export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+function ModalSync({
+  pendingModalRef,
+}: {
+  pendingModalRef: React.MutableRefObject<AppModalType | undefined>;
+}) {
   const store = useAppStore();
-  const pathname = usePathname();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const urlModal = getModalFromQuery(searchParams);
-  const pendingModalRef = useRef<AppModalType | undefined>(undefined);
 
   useEffect(() => {
     if (pendingModalRef.current !== undefined) {
@@ -204,11 +203,26 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [store, urlModal]);
+  }, [store, urlModal, pendingModalRef]);
+
+  return null;
+}
+
+export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const store = useAppStore();
+  const pathname = usePathname();
+  const router = useRouter();
+  const pendingModalRef = useRef<AppModalType | undefined>(undefined);
 
   const setUrlModal = (modal: AppModalType) => {
-    const href = getUrlWithModal(pathname, searchParams, modal);
-    const hasModalInUrl = searchParams.has(MODAL_QUERY_KEY);
+    const currentSearchParams =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams();
+    const href = getUrlWithModal(pathname, currentSearchParams, modal);
+    const hasModalInUrl = currentSearchParams.has(MODAL_QUERY_KEY);
     pendingModalRef.current = modal;
 
     if (modal) {
@@ -327,6 +341,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     <StateContext.Provider value={value}>
       <Suspense fallback={null}>
         <StepSync />
+        <ModalSync pendingModalRef={pendingModalRef} />
       </Suspense>
       {children}
     </StateContext.Provider>
