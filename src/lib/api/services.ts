@@ -277,6 +277,18 @@ export const dentistApi = {
       endpoints.dentist.stepTwo,
       payload,
     ),
+  // Send step two data as JSON (no files)
+  stepTwoJson: <TPayload = unknown>(payload: TPayload) =>
+    api.post<ApiResponse<unknown>, TPayload>(
+      endpoints.dentist.stepTwo,
+      payload,
+    ),
+  // Send step two as multipart with files + JSON data field
+  stepTwoWithFiles: (formData: FormData) =>
+    api.upload<ApiResponse<unknown>>(
+      endpoints.dentist.stepTwo,
+      formData,
+    ),
   stepTwoCheck: () =>
     api.get<ApiResponse<unknown>>(
       endpoints.dentist.stepTwoCheck,
