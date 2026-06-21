@@ -94,7 +94,7 @@ function getFallbackRole(request: NextRequest, token: string) {
 }
 
 async function verifyToken(token: string): Promise<VerifyResult> {
-  console.log("token verify call");
+  
   try {
     const response = await fetch(
       `${API_BASE_URL}${endpoints.auth.verifyToken}`,
@@ -109,7 +109,6 @@ async function verifyToken(token: string): Promise<VerifyResult> {
       },
     );
 
-    console.log("verify token response:", response);
     if (!response.ok) return { status: "invalid" };
 
     const payload = (await response.json()) as VerifyTokenResponse;
