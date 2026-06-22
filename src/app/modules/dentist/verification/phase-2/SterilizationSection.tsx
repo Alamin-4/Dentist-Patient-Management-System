@@ -1,12 +1,10 @@
-"use client";
-
 import { useFormContext } from "react-hook-form";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, Check } from "lucide-react";
 import PhaseStep from "../PhaseStep";
 import { useRef } from "react";
 
 export const SterilizationSection = () => {
-  const { register, setValue, watch } = useFormContext();
+  const { setValue, watch } = useFormContext();
   const jciFile = watch("jciCertificate");
   const videoFile = watch("videoWalkthrough");
 
@@ -30,7 +28,8 @@ export const SterilizationSection = () => {
             ref={jciInputRef}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) setValue("jciCertificate", file, { shouldValidate: true });
+              if (file)
+                setValue("jciCertificate", file, { shouldValidate: true });
             }}
             accept=".pdf,.jpg,.jpeg,.png"
           />
@@ -52,51 +51,6 @@ export const SterilizationSection = () => {
           </div>
         </div>
 
-        {jciFile && (
-          <div className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-card p-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="inline-block text-xs font-medium text-muted-foreground">
-                Certificate Number
-              </label>
-              <input
-                {...register("certificateNumber")}
-                placeholder="JCI-12345"
-                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="inline-block text-xs font-medium text-muted-foreground">
-                Issuing Authority
-              </label>
-              <input
-                {...register("issuingAuthority")}
-                placeholder="JCI"
-                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="inline-block text-xs font-medium text-muted-foreground">
-                Issue Date
-              </label>
-              <input
-                type="date"
-                {...register("certificateIssueDate")}
-                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="inline-block text-xs font-medium text-muted-foreground">
-                Expiry Date
-              </label>
-              <input
-                type="date"
-                {...register("certificateExpiryDate")}
-                className="h-11 w-full rounded-lg border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
-              />
-            </div>
-          </div>
-        )}
-
         <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
           <div className="h-px flex-1 bg-border" />
           <span>Or</span>
@@ -113,7 +67,8 @@ export const SterilizationSection = () => {
             ref={videoInputRef}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) setValue("videoWalkthrough", file, { shouldValidate: true });
+              if (file)
+                setValue("videoWalkthrough", file, { shouldValidate: true });
             }}
             accept="video/*"
           />
@@ -136,26 +91,31 @@ export const SterilizationSection = () => {
         </div>
 
         <div className="space-y-3 text-sm text-foreground">
+          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            Video Walkthrough Requirements
+          </div>
           {methods.map((method) => (
-            <label
+            <div
               key={method}
-              className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-background"
+              className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors"
             >
-              <input
-                type="checkbox"
-                value={method}
-                {...register("sterilizationMethods")}
-                className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary/40"
-              />
+              <div className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Check className="size-3" />
+              </div>
               <span className="min-w-0">
-                <span className="block font-medium text-foreground">{method}</span>
+                <span className="block font-medium text-foreground">
+                  {method}
+                </span>
                 <span className="mt-0.5 block text-xs text-muted-foreground">
-                  {method === "Autoclave" && "Film the brand name clearly for at least 3 seconds."}
-                  {method === "Sealed Pouch" && "Show a sealed pouch with the chemical indicator clearly visible."}
-                  {method === "Ultrasonic" && "Show the ultrasonic cleaner and your instrument trays."}
+                  {method === "Autoclave" &&
+                    "Film the brand name clearly for at least 3 seconds."}
+                  {method === "Sealed Pouch" &&
+                    "Show a sealed pouch with the chemical indicator clearly visible."}
+                  {method === "Ultrasonic" &&
+                    "Show the ultrasonic cleaner and your instrument trays."}
                 </span>
               </span>
-            </label>
+            </div>
           ))}
         </div>
       </div>

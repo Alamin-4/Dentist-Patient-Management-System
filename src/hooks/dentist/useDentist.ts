@@ -5,40 +5,45 @@ import { ProfessionalDetailsI, StepOneI, StepThreeI, StepTwoI } from "./dentist.
 export function objectToFormData<T extends object>(obj: T): FormData {
   const formData = new FormData();
 
-  function append(keyPath: string, value: unknown) {
-    if (value instanceof File) {
-      formData.append(keyPath, value);
-    } else if (value instanceof Date) {
-      formData.append(keyPath, value.toISOString());
-    } else if (Array.isArray(value)) {
-      value.forEach((item, index) => {
-        append(`${keyPath}[${index}]`, item);
+  function parse(val: unknown, pathParts: (string | number)[]) {
+    if (val instanceof File) {
+      const keys = getKeys(pathParts);
+      keys.forEach((k) => formData.append(k, val));
+    } else if (val instanceof Date) {
+      const keys = getKeys(pathParts);
+      keys.forEach((k) => formData.append(k, val.toISOString()));
+    } else if (Array.isArray(val)) {
+      val.forEach((item, index) => {
+        parse(item, [...pathParts, index]);
       });
-    } else if (typeof value === "object" && value !== null) {
-      Object.entries(value as Record<string, unknown>).forEach(([subKey, subValue]) => {
-        append(`${keyPath}.${subKey}`, subValue);
+    } else if (typeof val === "object" && val !== null) {
+      Object.entries(val as Record<string, unknown>).forEach(([subKey, subValue]) => {
+        parse(subValue, [...pathParts, subKey]);
       });
-    } else if (value !== undefined && value !== null) {
-      formData.append(keyPath, String(value));
+    } else if (val !== undefined && val !== null) {
+      const keys = getKeys(pathParts);
+      keys.forEach((k) => formData.append(k, String(val)));
     }
   }
 
-  Object.entries(obj as Record<string, unknown>).forEach(([key, value]) => {
-    if (value instanceof File) {
-      formData.append(key, value);
-    } else if (value instanceof Date) {
-      formData.append(key, value.toISOString());
-    } else if (Array.isArray(value)) {
-      value.forEach((item, index) => {
-        append(`${key}[${index}]`, item);
-      });
-    } else if (typeof value === "object" && value !== null) {
-      Object.entries(value as Record<string, unknown>).forEach(([subKey, subValue]) => {
-        append(`${key}.${subKey}`, subValue);
-      });
-    } else if (value !== undefined && value !== null) {
-      formData.append(key, String(value));
+  function getKeys(parts: (string | number)[]): string[] {
+    if (parts.length === 0) return [];
+
+    let mixed = String(parts[0]);
+    for (let i = 1; i < parts.length; i++) {
+      const part = parts[i];
+      if (typeof part === "number") {
+        mixed += `[${part}]`;
+      } else {
+        mixed += `.${part}`;
+      }
     }
+
+    return [mixed];
+  }
+
+  Object.entries(obj).forEach(([key, value]) => {
+    parse(value, [key]);
   });
 
   return formData;
@@ -69,6 +74,7 @@ export default function useDentist() {
   const invalidateVerification = () => {
     queryClient.invalidateQueries({ queryKey: ["dentistVerificationProgress"] });
   };
+  
 
   const professionalDetailsMutation = useMutation({
     mutationFn: (data: ProfessionalDetailsI) => dentistApi.professionalDetails(data),
@@ -112,7 +118,12 @@ export default function useDentist() {
     enabled: false,
   });
 
-  // Step 3 Check
+  const globalProcedureListQuery = useQuery({
+    queryKey: ["global_procedure_list"],
+    queryFn: () => dentistApi.global_procedure_list(),
+    enabled: true,
+  });
+
   const stepThreeCheckQuery = useQuery({
     queryKey: ["stepThreeCheck"],
     queryFn: () => dentistApi.stepThreeCheck(),
@@ -143,7 +154,13 @@ export default function useDentist() {
     professionalDetailsError: professionalDetailsMutation.error,
     professionalDetailsSuccess: professionalDetailsMutation.isSuccess,
 
-    // --- রিফ্যাক্টরড কোয়েরি ফাংশন এবং স্টেটসমূহ ---
+    // global procedure list 
+    globalProcedureListQuery,
+    checkGlobalProcedureList: globalProcedureListQuery.refetch,
+    isGlobalProcedureListLoading: globalProcedureListQuery.isFetching,
+    isGlobalProcedureListError: globalProcedureListQuery.isError,
+    globalProcedureListError: globalProcedureListQuery.error,
+    globalProcedureListData: globalProcedureListQuery.data,
 
     // ম্যানুয়াল চ্যাকিং এর জন্য Trigger ফাংশন (আগে যা mutation.mutate ছিল, এখন তা refetch)
     checkStepOne: stepOneCheckQuery.refetch,

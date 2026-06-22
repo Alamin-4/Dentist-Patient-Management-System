@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { DentistsPageSkeleton } from "./DentistsPageSkeleton";
 import {
   Search,
   Upload,
@@ -15,14 +16,44 @@ import {
   ShieldOff,
   Trash2,
   UserPlus,
+  Loader2,
 } from "lucide-react";
 import dentistsData from "@/lib/dentists-data";
 import { CustomStats } from "@/app/(admin dashboard)/modules/shared/custom-stats";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
 import { cn } from "@/lib/utils";
+import {
+  useAdminDentists,
+  type AdminDentist,
+} from "@/hooks/admin/dentist/useDentist";
 
-type Dentist = (typeof dentistsData.dentists)[number];
-type StatusFilter = "all" | "active" | "pending" | "suspended" | "rejected";
+export type Dentist = Omit<
+  (typeof dentistsData.dentists)[number],
+  "profile"
+> & {
+  profile: Omit<
+    (typeof dentistsData.dentists)[number]["profile"],
+    "verification"
+  > & {
+    verification: {
+      phase1: (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase1"] & {
+        id?: number;
+      };
+      phase2: (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase2"] & {
+        id?: number;
+      };
+      phase3: (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase3"] & {
+        id?: number;
+      };
+    };
+  };
+};
+export type StatusFilter =
+  | "all"
+  | "active"
+  | "pending"
+  | "suspended"
+  | "rejected";
 
 const PAGE_SIZE = 8;
 
@@ -167,9 +198,158 @@ function ActionMenu({
   );
 }
 
+export const mapSpecialty = (s?: string): string => {
+  if (!s) return "General";
+  const upper = s.toUpperCase();
+  if (upper.includes("ORTHO")) return "Orthodontics";
+  if (upper.includes("ENDO")) return "Endodontics";
+  if (upper.includes("PEDIATRIC") || upper.includes("PEDO")) return "Pediatric";
+  if (upper.includes("COSMETIC")) return "Cosmetic";
+  if (upper.includes("PERIODON")) return "Periodontics";
+  if (upper.includes("SURGERY") || upper.includes("SURGEON"))
+    return "Oral Surgery";
+  if (upper.includes("PROSTHO")) return "Prosthodontics";
+  return "General";
+};
+
+export const mapVerificationStatus = (status?: string): string => {
+  if (!status) return "not_started";
+  const upper = status.toUpperCase();
+  if (upper === "APPROVED" || upper === "VERIFIED") return "complete";
+  if (upper === "REJECTED") return "rejected";
+  if (upper === "SUBMITTED") return "SUBMITTED";
+  if (upper === "PENDING") return "pending";
+  return "not_started";
+};
+
+export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
+  const address = d.dentist_address?.[0];
+  const location = address ? `${address.city}, ${address.country}` : "—";
+
+  let status: StatusFilter = "pending";
+  if (d.is_verified) {
+    status = "active";
+  } else if (
+    d.dentist_verification?.license_verification === "REJECTED" ||
+    d.dentist_verification?.operations_verification === "REJECTED" ||
+    d.dentist_verification?.clinical_verification === "REJECTED"
+  ) {
+    status = "rejected";
+  } else if (
+    d.dentist_verification?.license_verification === "PENDING" ||
+    d.dentist_verification?.operations_verification === "PENDING" ||
+    d.dentist_verification?.clinical_verification === "PENDING"
+  ) {
+    status = "pending";
+  }
+
+  const initials = d.full_name
+    ? d.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "D";
+
+  const colors = [
+    "#1A3A5C",
+    "#1E40AF",
+    "#0F172A",
+    "#7C3AED",
+    "#0891B2",
+    "#0D9488",
+    "#4F46E5",
+  ];
+  let hash = 0;
+  for (let i = 0; i < (d.full_name || "").length; i++) {
+    hash = (d.full_name || "").charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const avatarColor = colors[Math.abs(hash) % colors.length];
+
+  return {
+    id: `DEN-${String(d.id).padStart(3, "0")}`,
+    name: d.full_name || "Unknown Dentist",
+    initials,
+    avatar_color: avatarColor,
+    email: d.user?.email || "—",
+    phone: d.phone || d.user?.phone || "—",
+    location,
+    specialty: mapSpecialty(d.specialty),
+    experience_years: d.experience_years || 0,
+    languages: [],
+    status,
+    rating: d.rating_avg || 0,
+    review_count: d.total_reviews || 0,
+    bookings: 0,
+    joined: d.created_at
+      ? new Date(d.created_at).toISOString().split("T")[0]
+      : "—",
+    rdv_score: d.rdv_score || 0,
+    rdv_verified: d.is_verified,
+    profile: {
+      stats: {
+        total_bookings: { count: 0, growth_this_month: 0 },
+        revenue_lifetime: { amount: 0, avg_per_visit: 0 },
+        cancellation_rate: { pct: "0%", benchmark: "5.7%" },
+        estimate_accuracy: { pct: "0%", note: "No data" },
+        avg_response_time: { value: "—", note: "No data" },
+      },
+      performance: {
+        show_up_rate: 0,
+        five_star_reviews: 0,
+        repeat_patients: 0,
+        estimate_accuracy: 0,
+      },
+      verification: {
+        phase1: {
+          id: d.dentist_verification?.dentist_license_verification?.id,
+          label: "Phase 1 — Identity",
+          status: mapVerificationStatus(
+            d.dentist_verification?.license_verification,
+          ),
+          country:
+            d.dentist_verification?.dentist_license_verification?.country ||
+            "—",
+          city:
+            d.dentist_verification?.dentist_license_verification?.city || "—",
+          registration_authority:
+            d.dentist_verification?.dentist_license_verification
+              ?.registration_authority_name || "—",
+          registration_no:
+            d.dentist_verification?.dentist_license_verification
+              ?.registration_no || "—",
+          files: [],
+        },
+        phase2: {
+          id: d.dentist_verification?.operation_verification?.id,
+          label: "Phase 2 — Operations",
+          status: mapVerificationStatus(
+            d.dentist_verification?.operations_verification,
+          ),
+          rejection_reason: null,
+          services: [],
+          files: [],
+        },
+        phase3: {
+          id: d.dentist_verification?.clinical_path_verification?.id,
+          label: "Phase 3 — Clinical",
+          status: mapVerificationStatus(
+            d.dentist_verification?.clinical_verification,
+          ),
+          clinic_location: "—",
+          categories: [],
+        },
+      },
+      bookings: [],
+      consultations: [],
+      reviews: [],
+    },
+  };
+}
+
 export default function DentistsPage() {
   const router = useRouter();
-  const meta = dentistsData.meta;
 
   const [activeTab, setActiveTab] = useState<StatusFilter>("all");
   const [tableSearch, setTableSearch] = useState("");
@@ -177,11 +357,55 @@ export default function DentistsPage() {
   const [city, setCity] = useState("All cities");
   const [page, setPage] = useState(1);
 
+  const {
+    dentists: apiDentists,
+    isLoading,
+    isError,
+  } = useAdminDentists({
+    params: {
+      limit: 1000,
+    },
+  });
+
+  const mappedDentists = useMemo(() => {
+    return (apiDentists || []).map(mapApiDentistToUIDentist);
+  }, [apiDentists]);
+
+  const meta = useMemo(() => {
+    const total = mappedDentists.length;
+    const active = mappedDentists.filter((d) => d.status === "active").length;
+    const pending = mappedDentists.filter((d) => d.status === "pending").length;
+    const suspended = mappedDentists.filter(
+      (d) => d.status === "suspended",
+    ).length;
+    const rejected = mappedDentists.filter(
+      (d) => d.status === "rejected",
+    ).length;
+
+    return {
+      total_dentists: total,
+      weekly_growth: 0,
+      active,
+      active_pct: total > 0 ? `${Math.round((active / total) * 100)}%` : "0%",
+      pending_verification: pending,
+      suspended,
+      suspended_pct:
+        total > 0 ? `${Math.round((suspended / total) * 100)}%` : "0%",
+      tab_counts: {
+        all: total,
+        active,
+        pending,
+        suspended,
+        rejected,
+      },
+    };
+  }, [mappedDentists]);
+
   const stats = [
     {
       label: "Total Dentists",
       value: meta.total_dentists.toLocaleString(),
-      sub: `+${meta.weekly_growth} this week`,
+      sub: "Registered on platform",
     },
     {
       label: "Active",
@@ -210,34 +434,53 @@ export default function DentistsPage() {
   ];
 
   const filtered = useMemo(() => {
-    let list = dentistsData.dentists as Dentist[];
+    let list = mappedDentists;
     if (activeTab !== "all") list = list.filter((d) => d.status === activeTab);
     if (specialty !== "All specialties")
       list = list.filter((d) => d.specialty === specialty);
-    if (city !== "All cities") list = list.filter((d) => d.location === city);
+    if (city !== "All cities") {
+      const q = city.toLowerCase();
+      list = list.filter(
+        (d) =>
+          d.location.toLowerCase().includes(q) ||
+          q.includes(d.location.toLowerCase()),
+      );
+    }
     if (tableSearch) {
       const q = tableSearch.toLowerCase();
       list = list.filter(
         (d) =>
           d.name.toLowerCase().includes(q) ||
           d.email.toLowerCase().includes(q) ||
-          d.id.toLowerCase().includes(q)
+          d.id.toLowerCase().includes(q),
       );
     }
     return list;
-  }, [activeTab, specialty, city, tableSearch]);
+  }, [mappedDentists, activeTab, specialty, city, tableSearch]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageData = filtered.slice(
     (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
+    currentPage * PAGE_SIZE,
   );
 
   const handleTabChange = (key: string) => {
     setActiveTab(key as StatusFilter);
     setPage(1);
   };
+
+  if (isLoading) {
+    return <DentistsPageSkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center text-red-500 font-semibold">
+        Failed to load dentists. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -248,7 +491,8 @@ export default function DentistsPage() {
             Dentists
           </h1>
           <p className="mt-0.5 text-sm text-gray-500">
-            Manage all practitioners on the platform — verification, status, performance.
+            Manage all practitioners on the platform — verification, status,
+            performance.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -274,7 +518,11 @@ export default function DentistsPage() {
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
         {/* Tabs */}
         <div className="border-b border-gray-100 px-4 pt-1">
-          <CustomTab tabs={tabs} active={activeTab} onChange={handleTabChange} />
+          <CustomTab
+            tabs={tabs}
+            active={activeTab}
+            onChange={handleTabChange}
+          />
         </div>
 
         {/* Filters */}
@@ -335,16 +583,23 @@ export default function DentistsPage() {
                 <th className="w-8 px-4 py-3">
                   <input type="checkbox" className="rounded border-gray-300" />
                 </th>
-                {["Dentist", "Specialty", "Location", "Status", "Rating", "Bookings", "Joined", ""].map(
-                  (h, i) => (
-                    <th
-                      key={i}
-                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400"
-                    >
-                      {h}
-                    </th>
-                  )
-                )}
+                {[
+                  "Dentist",
+                  "Specialty",
+                  "Location",
+                  "Status",
+                  "Rating",
+                  "Bookings",
+                  "Joined",
+                  "",
+                ].map((h, i) => (
+                  <th
+                    key={i}
+                    className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400"
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -365,13 +620,22 @@ export default function DentistsPage() {
                     className="cursor-pointer transition-colors hover:bg-gray-50/80"
                   >
                     {/* Checkbox */}
-                    <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
-                      <input type="checkbox" className="rounded border-gray-300" />
+                    <td
+                      className="px-4 py-3.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300"
+                      />
                     </td>
                     {/* Dentist */}
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <Avatar initials={dentist.initials} color={dentist.avatar_color} />
+                        <Avatar
+                          initials={dentist.initials}
+                          color={dentist.avatar_color}
+                        />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold text-[#1A1A2E]">
                             {dentist.name}
@@ -397,13 +661,14 @@ export default function DentistsPage() {
                       <span
                         className={cn(
                           "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
-                          STATUS_BADGE[dentist.status] ?? "bg-gray-100 text-gray-500"
+                          STATUS_BADGE[dentist.status] ??
+                            "bg-gray-100 text-gray-500",
                         )}
                       >
                         <span
                           className={cn(
                             "h-1.5 w-1.5 rounded-full",
-                            STATUS_DOT[dentist.status] ?? "bg-gray-400"
+                            STATUS_DOT[dentist.status] ?? "bg-gray-400",
                           )}
                         />
                         {STATUS_LABEL[dentist.status] ?? dentist.status}
@@ -411,15 +676,21 @@ export default function DentistsPage() {
                     </td>
                     {/* Rating */}
                     <td className="px-4 py-3.5">
-                      {dentist.rating != null && dentist.review_count != null ? (
-                        <StarRating rating={dentist.rating} count={dentist.review_count} />
+                      {dentist.rating != null &&
+                      dentist.review_count != null ? (
+                        <StarRating
+                          rating={dentist.rating}
+                          count={dentist.review_count}
+                        />
                       ) : (
                         <span className="text-sm text-gray-300">—</span>
                       )}
                     </td>
                     {/* Bookings */}
                     <td className="px-4 py-3.5 text-sm text-gray-600">
-                      {dentist.bookings != null ? dentist.bookings.toLocaleString() : (
+                      {dentist.bookings != null ? (
+                        dentist.bookings.toLocaleString()
+                      ) : (
                         <span className="text-gray-300">—</span>
                       )}
                     </td>
@@ -434,7 +705,9 @@ export default function DentistsPage() {
                     >
                       <ActionMenu
                         dentist={dentist}
-                        onViewProfile={() => router.push(`/admin/dentists/${dentist.id}`)}
+                        onViewProfile={() =>
+                          router.push(`/admin/dentists/${dentist.id}`)
+                        }
                         onSuspend={() => {}}
                         onDelete={() => {}}
                       />
@@ -450,10 +723,8 @@ export default function DentistsPage() {
         <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
           <p className="text-sm text-gray-400">
             Showing{" "}
-            {filtered.length === 0
-              ? 0
-              : (currentPage - 1) * PAGE_SIZE + 1}
-            –{Math.min(currentPage * PAGE_SIZE, filtered.length)} of{" "}
+            {filtered.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}–
+            {Math.min(currentPage * PAGE_SIZE, filtered.length)} of{" "}
             {filtered.length} results
           </p>
           <div className="flex items-center gap-1">
@@ -472,7 +743,7 @@ export default function DentistsPage() {
                   "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
                   p === currentPage
                     ? "bg-[#1A1A2E] text-white"
-                    : "border border-gray-200 text-gray-500 hover:bg-gray-50"
+                    : "border border-gray-200 text-gray-500 hover:bg-gray-50",
                 )}
               >
                 {p}

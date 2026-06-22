@@ -8,20 +8,11 @@ export interface StepOneI {
 }
 
 export interface StepTwoI {
-  sterilization: {
-    has_jci_certificate: boolean;
-    jci_certificate?: File | null;
-    certificate_number?: string;
-    expiry_date?: string;
-    issuing_authority?: string;
-    issue_date?: string;
-    walkthrough_video?: File | null;
-    autoclave_brand: boolean;
-    sealed_pouch_visible: boolean;
-    ultrasonic_cleaner_available: boolean;
-  };
+  jci_certificate?: File | null;
+  walkthrough_video?: File | null;
   procedures: {
-    procedure: number;
+    procedure_id?: number;
+    procedure_name?: string;
     price: number;
     currency: string;
     option_notes: string;

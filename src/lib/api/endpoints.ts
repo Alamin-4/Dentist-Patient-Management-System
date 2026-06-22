@@ -1,6 +1,7 @@
-export const API_BASE_URL =
+export const API_BASE_URL = 
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://52.60.153.12:8004/api/v1";
-
+// process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://csd33v80-8004.inc1.devtunnels.ms/api/v1";
+  
 export const endpoints = {
   auth: {
     register: "/auth/signup/",
@@ -32,6 +33,7 @@ export const endpoints = {
     stepOneCheck: "/dentist/verification-step/license/",
     stepTwo: "/dentist/verification-step/operations/",
     stepTwoCheck: "/dentist/verification-step/operations/",
+    global_procedure_list: "/procedure/procedures/",
     stepThree: "/dentist/verification-step/clinical-depth/",
     stepThreeCheck: "/dentist/verification-step/clinical-depth/",
   },
@@ -41,7 +43,11 @@ export const endpoints = {
     addUser: "/auth/add-user/",
     login: "/admin/login",
     profile: "/admin/profile",
-    dentists: "/admin/dentists",
+    dentists: "/admin/dentists/",
+    get_dentist_profile: (id: string) => `/admin/dentists/${id}/`,
+    phase_one_approve: (id: string) => `/admin/dentist-license-verifications/${id}/approve/`,
+    phase_two_approve: (id: string) => `/admin/dentist-clinic-operation-verifications/${id}/approve/`,
+    phase_three_approve: (id: string) => `/admin/dentist-clinic-depth-verifications/${id}/approve/`,
     patients: "/admin/patients",
     bookings: "/admin/bookings",
     reviews: "/admin/reviews",

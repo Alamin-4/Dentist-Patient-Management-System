@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { CheckCircle2, X } from "lucide-react";
+import { CheckCircle2, X, Loader2 } from "lucide-react";
 
 interface ApprovePhaseModalProps {
   open: boolean;
   phaseLabel: string;
   onClose: () => void;
   onConfirm: () => void;
+  isPending?: boolean;
 }
 
 export function ApprovePhaseModal({
@@ -15,6 +16,7 @@ export function ApprovePhaseModal({
   phaseLabel,
   onClose,
   onConfirm,
+  isPending,
 }: ApprovePhaseModalProps) {
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -29,7 +31,7 @@ export function ApprovePhaseModal({
     <>
       <div
         className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
-        onClick={onClose}
+        onClick={isPending ? undefined : onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
@@ -49,8 +51,9 @@ export function ApprovePhaseModal({
               </div>
             </div>
             <button
+              disabled={isPending}
               onClick={onClose}
-              className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100"
+              className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 disabled:opacity-50"
             >
               <X className="h-4 w-4" />
             </button>
@@ -67,17 +70,23 @@ export function ApprovePhaseModal({
           {/* Actions */}
           <div className="mt-5 flex gap-3">
             <button
+              disabled={isPending}
               onClick={onClose}
-              className="flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+              className="flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
+              disabled={isPending}
               onClick={onConfirm}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
             >
-              <CheckCircle2 className="h-4 w-4" />
-              Confirm Approval
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4" />
+              )}
+              {isPending ? "Approving..." : "Confirm Approval"}
             </button>
           </div>
         </div>

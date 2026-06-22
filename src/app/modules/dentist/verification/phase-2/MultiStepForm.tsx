@@ -12,18 +12,10 @@ import {
   FormInputValues,
   FormValues,
 } from "@/validation/Verification-doctor-phase/phase-form";
-import useDentist from "@/hooks/dentist/useDentist";
+import useDentist, { objectToFormData } from "@/hooks/dentist/useDentist";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
-
-const mapProcedureNameToId = (name: string): number => {
-  const n = name.toLowerCase();
-  if (n.includes("implant")) return 1;
-  if (n.includes("veneer")) return 2;
-  if (n.includes("crown")) return 3;
-  return 1;
-};
 
 export default function MultiStepForm() {
   const { setVerificationStepReady, setVerificationCompletedStep } =
@@ -37,14 +29,9 @@ export default function MultiStepForm() {
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      certificateNumber: "",
-      certificateExpiryDate: "",
-      certificateIssueDate: "",
-      issuingAuthority: "JCI",
-      sterilizationMethods: [],
-      procedures: [
-        { name: "Implant consultation", pricing: 250, notes: "Plan review" },
-      ],
+      jciCertificate: null,
+      videoWalkthrough: null,
+      procedures: [{ name: "Implant consultation", price: 250, notes: "" }],
       signerFullName: "",
       typedSignature: "",
       agreeToGuarantee: false,
@@ -59,24 +46,10 @@ export default function MultiStepForm() {
       return;
     }
 
-    const hasJciCertificate = Boolean(data.jciCertificate);
-    const sterilization = {
-      has_jci_certificate: hasJciCertificate,
-      jci_certificate: data.jciCertificate || undefined,
-      certificate_number: hasJciCertificate ? data.certificateNumber || undefined : undefined,
-      expiry_date: hasJciCertificate ? data.certificateExpiryDate || undefined : undefined,
-      issuing_authority: hasJciCertificate ? data.issuingAuthority || undefined : undefined,
-      issue_date: hasJciCertificate ? data.certificateIssueDate || undefined : undefined,
-      walkthrough_video: data.videoWalkthrough || undefined,
-      autoclave_brand: data.sterilizationMethods.includes("Autoclave"),
-      sealed_pouch_visible: data.sterilizationMethods.includes("Sealed Pouch"),
-      ultrasonic_cleaner_available:
-        data.sterilizationMethods.includes("Ultrasonic"),
-    };
-
     const procedures = data.procedures.map((p) => ({
-      procedure: mapProcedureNameToId(p.name),
-      price: Number(p.pricing),
+      procedure_id: p.id,
+      procedure_name: p.name,
+      price: p.price,
       currency: "USD",
       option_notes: p.notes || "",
     }));
@@ -86,9 +59,42 @@ export default function MultiStepForm() {
       typed_signature: data.typedSignature,
       accepted_terms: data.agreeToGuarantee,
     };
+
+    const payload = {
+      jci_certificate: data.jciCertificate || null,
+      walkthrough_video: data.videoWalkthrough || null,
+      procedures,
+      guarantee,
+    };
+
+    const logPayload = {
+      ...payload,
+      jci_certificate: payload.jci_certificate
+        ? {
+            name: payload.jci_certificate.name,
+            size: payload.jci_certificate.size,
+          }
+        : null,
+      walkthrough_video: payload.walkthrough_video
+        ? {
+            name: payload.walkthrough_video.name,
+            size: payload.walkthrough_video.size,
+          }
+        : null,
+    };
+    console.log("=== SUBMITTED PAYLOAD (JSON FORMAT) ===");
+    console.log(JSON.stringify(logPayload, null, 2));
+
+    const formData = objectToFormData(payload);
+    console.log("=== SUBMITTED FORM DATA (KEYS & VALUES) ===");
+    for (const [key, value] of (formData as any).entries()) {
+      console.log(`${key}:`, value);
+    }
+
     stepTwoMutation.mutate(
       {
-        sterilization,
+        jci_certificate: data.jciCertificate || null,
+        walkthrough_video: data.videoWalkthrough || null,
         procedures,
         guarantee,
       },

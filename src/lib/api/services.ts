@@ -238,6 +238,10 @@ export const patientApi = {
 };
 
 export const dentistApi = {
+  global_procedure_list: () =>
+    api.get<ApiResponse<unknown>>(
+      endpoints.dentist.global_procedure_list,
+    ),
   profile: <TProfile = unknown>() =>
     api.get<ApiResponse<TProfile>>(endpoints.dentist.profile),
   updateProfile: <TProfile = unknown, TPayload = unknown>(payload: TPayload) =>
@@ -330,6 +334,15 @@ export const adminApi = {
     api.get<ApiResponse<TProfile>>(endpoints.admin.profile),
   listDentists: <TDentist = unknown>(params?: ListParams) =>
     api.get<PaginatedResponse<TDentist>>(endpoints.admin.dentists, { params }),
+  getDentistProfile: <TDentist = unknown>(id: string) =>
+    api.get<ApiResponse<TDentist>>(endpoints.admin.get_dentist_profile(id)),
+  phaseOneApprove: (id: string) =>
+    api.post<ApiResponse<unknown>, void>(endpoints.admin.phase_one_approve(id)),
+  phaseTwoApprove: (id: string) =>
+    api.post<ApiResponse<unknown>, void>(endpoints.admin.phase_two_approve(id),),
+  phaseThreeApprove: (id: string) =>
+    api.post<ApiResponse<unknown>, void>(endpoints.admin.phase_three_approve(id),
+    ),
   listPatients: <TPatient = unknown>(params?: ListParams) =>
     api.get<PaginatedResponse<TPatient>>(endpoints.admin.patients, { params }),
   listBookings: <TBooking = unknown>(params?: ListParams) =>
