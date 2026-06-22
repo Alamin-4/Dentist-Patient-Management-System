@@ -29,8 +29,11 @@ type LicenseProgressData = {
 };
 
 export default function Phase1() {
-  const { setVerificationStepReady, setVerificationCompletedStep, setVerificationStep } =
-    useVerificationStore();
+  const {
+    setVerificationStepReady,
+    setVerificationCompletedStep,
+    setVerificationStep,
+  } = useVerificationStore();
 
   const [submittedLicence, setSubmittedLicence] =
     useState<SubmittedLicence | null>(null);
@@ -62,7 +65,9 @@ export default function Phase1() {
   };
 
   const hasHeadshot = Boolean(
-    headshotFile || (progressData?.data as LicenseProgressData | undefined)?.professional_headshot,
+    headshotFile ||
+    (progressData?.data as LicenseProgressData | undefined)
+      ?.professional_headshot,
   );
 
   const isStepReady = useMemo(() => {
@@ -110,12 +115,19 @@ export default function Phase1() {
         onError: (error: unknown) => {
           const backendError =
             typeof error === "object" && error !== null
-              ? ((error as { response?: { data?: { detail?: { error?: string } } }; message?: string })
-                  .response?.data?.detail?.error ?? (error as { message?: string }).message)
+              ? ((
+                  error as {
+                    response?: { data?: { detail?: { error?: string } } };
+                    message?: string;
+                  }
+                ).response?.data?.detail?.error ??
+                (error as { message?: string }).message)
               : undefined;
-          toast.error(backendError || "Something went wrong. Please try again.");
-        }
-      }
+          toast.error(
+            backendError || "Something went wrong. Please try again.",
+          );
+        },
+      },
     );
   };
 
@@ -128,7 +140,11 @@ export default function Phase1() {
           <div className="space-y-5">
             <LicenceForm
               onVerify={handleVerify}
-              defaultValues={isAlreadySubmitted ? serverSubmittedLicence ?? submittedLicence : undefined}
+              defaultValues={
+                isAlreadySubmitted
+                  ? (serverSubmittedLicence ?? submittedLicence)
+                  : undefined
+              }
               isAlreadySubmitted={isAlreadySubmitted}
             />
           </div>
@@ -148,7 +164,8 @@ export default function Phase1() {
                   setHeadshotFile(file);
                 }}
                 existingImageUrl={
-                  (progressData?.data as LicenseProgressData | undefined)?.professional_headshot
+                  (progressData?.data as LicenseProgressData | undefined)
+                    ?.professional_headshot
                 }
               />
               <p

@@ -8,7 +8,7 @@ import { ArrowLeft, Upload, XCircle } from "lucide-react";
 
 const procedureSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  pricing: z.string().min(1, "Price is required"),
+  price: z.string().min(1, "Price is required"),
   notes: z.string(),
 });
 
@@ -60,12 +60,12 @@ export default function AddPricing() {
       procedures: [
         {
           name: "Implant consultation",
-          pricing: "250",
+          price: "250",
           notes: "Includes treatment plan review",
         },
         {
           name: "Implant consultation",
-          pricing: "250",
+          price: "250",
           notes: "Includes treatment plan review",
         },
       ],
@@ -232,13 +232,13 @@ export default function AddPricing() {
                         type="number"
                         placeholder="0"
                         min="0"
-                        {...register(`procedures.${index}.pricing` as const)}
+                        {...register(`procedures.${index}.price` as const)}
                         className="h-10 w-full rounded-lg border border-border bg-card pl-7 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-slate-400 focus:outline-none"
                       />
                     </div>
-                    {errors.procedures?.[index]?.pricing && (
+                    {errors.procedures?.[index]?.price && (
                       <p className="mt-1 text-xs text-destructive">
-                        {errors.procedures[index]?.pricing?.message}
+                        {errors.procedures[index]?.price?.message}
                       </p>
                     )}
                   </div>
@@ -266,11 +266,10 @@ export default function AddPricing() {
               </div>
             ))}
 
-            {/* Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => append({ name: "", pricing: "", notes: "" })}
+                onClick={() => append({ name: "", price: "", notes: "" })}
                 className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
               >
                 Add Procedure

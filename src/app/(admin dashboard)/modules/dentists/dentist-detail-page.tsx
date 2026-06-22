@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { DentistDetailPageSkeleton } from "./DentistDetailPageSkeleton";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -13,6 +14,7 @@ import {
   Pencil,
   ShieldOff,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
@@ -20,9 +22,15 @@ import { DentistOverviewTab } from "./components/dentist-overview-tab";
 import { DentistBookingsTab } from "./components/dentist-bookings-tab";
 import { DentistConsultationsTab } from "./components/dentist-consultations-tab";
 import { DentistReviewsTab } from "./components/dentist-reviews-tab";
-import dentistsData from "@/lib/dentists-data";
+import { mapApiDentistToUIDentist, type Dentist } from "./dentists-page";
+import { useAdminDentist } from "@/hooks/admin/dentist/useDentist";
 
-type MainTab = "overview" | "bookings" | "consultations" | "reviews" | "patient_results";
+type MainTab =
+  | "overview"
+  | "bookings"
+  | "consultations"
+  | "reviews"
+  | "patient_results";
 
 interface DentistDetailPageProps {
   dentistId: string;
@@ -54,14 +62,19 @@ function PerformanceBar({ label, value }: { label: string; value: number }) {
     value >= 90
       ? "bg-[#1A1A2E]"
       : value >= 70
-      ? "bg-amber-400"
-      : "bg-orange-400";
+        ? "bg-amber-400"
+        : "bg-orange-400";
 
   return (
     <div>
       <div className="flex items-center justify-between">
         <p className="text-xs text-gray-500">{label}</p>
-        <p className={cn("text-xs font-bold", value >= 90 ? "text-[#1A1A2E]" : "text-amber-500")}>
+        <p
+          className={cn(
+            "text-xs font-bold",
+            value >= 90 ? "text-[#1A1A2E]" : "text-amber-500",
+          )}
+        >
           {value >= 90 ? `${value}%` : `${value}%`}
         </p>
       </div>
@@ -75,7 +88,15 @@ function PerformanceBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-function VerificationStatus({ label, status, short }: { label: string; status: string; short: string }) {
+function VerificationStatus({
+  label,
+  status,
+  short,
+}: {
+  label: string;
+  status: string;
+  short: string;
+}) {
   const isDone = status === "complete" || status === "completed";
   return (
     <div className="flex items-center justify-between py-1.5">
@@ -85,22 +106,50 @@ function VerificationStatus({ label, status, short }: { label: string; status: s
         </span>
         <span className="text-sm text-gray-600">{label}</span>
       </div>
-      <span className={cn("text-xs font-semibold", isDone ? "text-emerald-600" : "text-amber-500")}>
-        {isDone ? "Complete" : status === "pending" || status === "in_review" ? "Pending" : status === "rejected" ? "Rejected" : "Not started"}
+      <span
+        className={cn(
+          "text-xs font-semibold",
+          isDone ? "text-emerald-600" : "text-amber-500",
+        )}
+      >
+        {isDone
+          ? "Complete"
+          : status === "pending" || status === "in_review"
+            ? "Pending"
+            : status === "rejected"
+              ? "Rejected"
+              : "Not started"}
       </span>
     </div>
   );
 }
 
-export default function DentistDetailPage({ dentistId }: DentistDetailPageProps) {
+export default function DentistDetailPage({
+  dentistId,
+}: DentistDetailPageProps) {
   const [activeTab, setActiveTab] = useState<MainTab>("overview");
 
-  const dentist = dentistsData.dentists.find((d) => d.id === dentistId);
+  const apiId = dentistId.startsWith("DEN-")
+    ? String(parseInt(dentistId.replace("DEN-", ""), 10))
+    : dentistId;
 
-  if (!dentist) {
+  const { dentist: apiDentist, isLoading, isError } = useAdminDentist(apiId);
+
+  const dentist = useMemo(() => {
+    if (!apiDentist) return null;
+    return mapApiDentistToUIDentist(apiDentist);
+  }, [apiDentist]);
+
+  if (isLoading) {
+    return <DentistDetailPageSkeleton />;
+  }
+
+  if (isError || !dentist) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <p className="text-lg font-semibold text-gray-500">Dentist not found</p>
+        <p className="text-lg font-semibold text-red-500">
+          Dentist not found or failed to load
+        </p>
         <Link
           href="/admin/dentists"
           className="mt-4 text-sm text-blue-600 underline underline-offset-2"
@@ -117,7 +166,11 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
   const tabs = [
     { key: "overview", label: "Overview" },
     { key: "bookings", label: "Bookings", count: profile.bookings.length },
-    { key: "consultations", label: "Consultations", count: profile.consultations.length },
+    {
+      key: "consultations",
+      label: "Consultations",
+      count: profile.consultations.length,
+    },
     { key: "reviews", label: "Reviews", count: profile.reviews.length },
     { key: "patient_results", label: "Patient Results", count: 0 },
   ];
@@ -197,13 +250,13 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                 <span
                   className={cn(
                     "flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                    STATUS_BADGE[dentist.status] ?? "bg-gray-100 text-gray-500"
+                    STATUS_BADGE[dentist.status] ?? "bg-gray-100 text-gray-500",
                   )}
                 >
                   <span
                     className={cn(
                       "h-1.5 w-1.5 rounded-full",
-                      STATUS_DOT[dentist.status] ?? "bg-gray-400"
+                      STATUS_DOT[dentist.status] ?? "bg-gray-400",
                     )}
                   />
                   {STATUS_LABEL[dentist.status] ?? dentist.status}
@@ -250,11 +303,15 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                   <Star
                     key={i}
                     className={`h-4 w-4 ${
-                      i < Math.round(dentist.rating!) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"
+                      i < Math.round(dentist.rating!)
+                        ? "fill-amber-400 text-amber-400"
+                        : "fill-gray-200 text-gray-200"
                     }`}
                   />
                 ))}
-                <span className="ml-1 text-xl font-bold text-[#1A1A2E]">{dentist.rating}</span>
+                <span className="ml-1 text-xl font-bold text-[#1A1A2E]">
+                  {dentist.rating}
+                </span>
               </div>
               <p className="mt-0.5 text-xs text-gray-400">
                 {dentist.review_count.toLocaleString()} verified reviews
@@ -264,10 +321,13 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
         </div>
       </div>
 
-      {/* ── Stat cards ────────────────────────────────────────────── */}
+      {/* Stats */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {statCards.map((s, i) => (
-          <div key={i} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div
+            key={i}
+            className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+          >
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}
             </p>
@@ -292,13 +352,28 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
           </div>
           <div className="mt-4">
             {activeTab === "overview" && (
-              <DentistOverviewTab verification={verification} />
+              <DentistOverviewTab
+                dentistId={apiId}
+                verification={verification}
+              />
             )}
             {activeTab === "bookings" && (
-              <DentistBookingsTab bookings={profile.bookings as Parameters<typeof DentistBookingsTab>[0]["bookings"]} />
+              <DentistBookingsTab
+                bookings={
+                  profile.bookings as Parameters<
+                    typeof DentistBookingsTab
+                  >[0]["bookings"]
+                }
+              />
             )}
             {activeTab === "consultations" && (
-              <DentistConsultationsTab consultations={profile.consultations as Parameters<typeof DentistConsultationsTab>[0]["consultations"]} />
+              <DentistConsultationsTab
+                consultations={
+                  profile.consultations as Parameters<
+                    typeof DentistConsultationsTab
+                  >[0]["consultations"]
+                }
+              />
             )}
             {activeTab === "reviews" && (
               <DentistReviewsTab
@@ -321,17 +396,31 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
             <p className="mb-1 text-sm font-bold text-[#1A1A2E]">Performance</p>
             <p className="mb-3 text-xs text-gray-400">Based on last 90 days</p>
             <div className="flex flex-col gap-3">
-              <PerformanceBar label="Show-up rate" value={performance.show_up_rate} />
-              <PerformanceBar label="5-star reviews" value={performance.five_star_reviews} />
-              <PerformanceBar label="Repeat patients" value={performance.repeat_patients} />
-              <PerformanceBar label="Estimate accuracy" value={performance.estimate_accuracy} />
+              <PerformanceBar
+                label="Show-up rate"
+                value={performance.show_up_rate}
+              />
+              <PerformanceBar
+                label="5-star reviews"
+                value={performance.five_star_reviews}
+              />
+              <PerformanceBar
+                label="Repeat patients"
+                value={performance.repeat_patients}
+              />
+              <PerformanceBar
+                label="Estimate accuracy"
+                value={performance.estimate_accuracy}
+              />
             </div>
           </div>
 
           {/* Verification (consultations tab only) */}
           {showVerificationSidebar ? (
             <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-3 text-sm font-bold text-[#1A1A2E]">Verification</p>
+              <p className="mb-3 text-sm font-bold text-[#1A1A2E]">
+                Verification
+              </p>
               <div className="divide-y divide-gray-50">
                 <VerificationStatus
                   label="Phase 1 — Identity"
@@ -352,7 +441,9 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
             </div>
           ) : (
             <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-3 text-sm font-bold text-[#1A1A2E]">Admin actions</p>
+              <p className="mb-3 text-sm font-bold text-[#1A1A2E]">
+                Admin actions
+              </p>
               <div className="flex flex-col gap-2">
                 <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
                   <Pencil className="h-4 w-4 text-gray-400" />

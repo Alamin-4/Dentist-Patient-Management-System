@@ -24,7 +24,9 @@ export default function useVerificationProgress() {
     const checkLicenseVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["licenseVerifyProgress"],
         queryFn: () =>
-            dentistApi.stepOneCheck().then((res) => res?.data as StepCheckResponse),
+            dentistApi.stepOneCheck()
+                .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
+                .catch(() => ({ submitted: false, status: null })),
         staleTime: 60_000,
         retry: false,
     });
@@ -32,7 +34,9 @@ export default function useVerificationProgress() {
     const checkPhotoVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["photoVerifyProgress"],
         queryFn: () =>
-            dentistApi.stepTwoCheck().then((res) => res?.data as StepCheckResponse),
+            dentistApi.stepTwoCheck()
+                .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
+                .catch(() => ({ submitted: false, status: null })),
         staleTime: 60_000,
         retry: false,
     });
@@ -40,7 +44,9 @@ export default function useVerificationProgress() {
     const checkIdVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["idVerifyProgress"],
         queryFn: () =>
-            dentistApi.stepThreeCheck().then((res) => res?.data as StepCheckResponse),
+            dentistApi.stepThreeCheck()
+                .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
+                .catch(() => ({ submitted: false, status: null })),
         staleTime: 60_000,
         retry: false,
     });

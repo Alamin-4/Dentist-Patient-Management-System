@@ -28,7 +28,6 @@ const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 export default function FindDentist() {
   const filters = useDentistFilters();
 
-  // Localized view & comparison settings
   const [activeDentistId, setActiveDentistId] = useState<string | null>(null);
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [compareList, setCompareList] = useState<Dentist[]>([]);
@@ -36,11 +35,8 @@ export default function FindDentist() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // App global state context
-  const {
-    setShowSignupModal,
-    setDentistsToCompare,
-    setShowPersonalizeModal,
-  } = useStateContext();
+  const { setShowSignupModal, setDentistsToCompare, setShowPersonalizeModal } =
+    useStateContext();
 
   const handleCompareToggle = (dentist: Dentist) => {
     const exists = compareList.some((item) => item.id === dentist.id);
