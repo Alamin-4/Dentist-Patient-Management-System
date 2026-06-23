@@ -66,6 +66,41 @@ function buildStepTwoFormData(data: StepTwoI): FormData {
   return formData;
 }
 
+function buildStepThreeFormData(data: StepThreeI): FormData {
+  const formData = new FormData();
+
+  if (data.clinic_address) {
+    formData.append("clinic_address", JSON.stringify(data.clinic_address));
+  }
+  data.materials.forEach((m, index) => {
+    formData.append(`materials[${index}].own_procedure`, String(m.own_procedure));
+
+    if (m.ce_certificate) {
+      formData.append(`materials[${index}].ce_certificate`, m.ce_certificate);
+    }
+    if (m.material_brands) {
+      formData.append(`materials[${index}].material_brands`, m.material_brands);
+    }
+    if (m.invoice) {
+      formData.append(`materials[${index}].invoice`, m.invoice);
+    }
+    if (m.protocol_pdf) {
+      formData.append(`materials[${index}].protocol_pdf`, m.protocol_pdf);
+    }
+  });
+
+  console.log("=== Phase 3 FormData Payload ===");
+  formData.forEach((value, key) => {
+    if (value instanceof File) {
+      console.log(`${key}: File [name: ${value.name}, size: ${value.size} bytes]`);
+    } else {
+      console.log(`${key}:`, value);
+    }
+  });
+
+  return formData;
+}
+
 export function useDentistProgress() {
   return useQuery({
     queryKey: ["dentistVerificationProgress"],
@@ -112,7 +147,7 @@ export default function useDentist() {
 
   const stepThreeMutation = useMutation({
     mutationKey: ["dentist", "verification", "stepThree"],
-    mutationFn: (data: StepThreeI) => dentistApi.stepThree(objectToFormData(data)),
+    mutationFn: (data: StepThreeI) => dentistApi.stepThree(buildStepThreeFormData(data)),
     onSuccess: invalidateVerification,
   });
 
@@ -140,6 +175,12 @@ export default function useDentist() {
     queryFn: () => dentistApi.stepThreeCheck(),
     enabled: false,
   });
+
+  const dentistProcedureList = useQuery({
+    queryKey: ["dentist_procedures"],
+    queryFn: () => dentistApi.dentistProcedureList(),
+    enabled: true,
+  })
 
   return {
     // Mutations
@@ -195,5 +236,11 @@ export default function useDentist() {
     stepOneCheckError: stepOneCheckQuery.error,
     stepTwoCheckError: stepTwoCheckQuery.error,
     stepThreeCheckError: stepThreeCheckQuery.error,
+
+    dentistProcedureList,
+    dentistProcedureListData: dentistProcedureList.data,
+    dentistProcedureListLoading: dentistProcedureList.isFetching,
+    dentistProcedureListError: dentistProcedureList.error,
+    dentistProcedureListRefetch: dentistProcedureList.refetch,
   };
 }

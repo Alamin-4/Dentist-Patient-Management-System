@@ -6,33 +6,53 @@ import { useStateContext } from "@/providers/StateProvider";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useIsMutating } from "@tanstack/react-query";
+import useVerificationProgress, { type VerificationPhaseStep } from "@/hooks/dentist/useStepProgress";
 
 export default function StepButton() {
   const {
-    setVerificationStep,
     verificationStep,
     verificationStepReady,
     verificationCompletedStep,
     setVerificationCompletedStep,
   } = useStateContext();
   const router = useRouter();
+  const { submittedByStep } = useVerificationProgress();
+
+  const isAlreadySubmitted = submittedByStep[verificationStep as VerificationPhaseStep];
 
   const activeMutationCount = useIsMutating({
     mutationKey: ["dentist", "verification"],
   });
   const isSubmitting = activeMutationCount > 0;
 
-  const isReady = verificationStepReady[verificationStep];
+  const isReady = isAlreadySubmitted || verificationStepReady[verificationStep];
 
   const buttonLabel =
     verificationStep === 3
-      ? "Submit & Complete"
+      ? isAlreadySubmitted
+        ? "Return to Dashboard"
+        : "Submit & Complete"
       : `Continue to Phase ${verificationStep + 1}`;
 
-  const buttonProps = {
-    type: "submit" as const,
-    form: `phase-${verificationStep}-verification-form`,
+  const handleNextPhaseDirectly = () => {
+    if (verificationStep === 1) {
+      router.push("/dentist/verification?phase=operations-verify");
+    } else if (verificationStep === 2) {
+      router.push("/dentist/verification?phase=clinic-depth-verify");
+    } else {
+      router.push("/dentist");
+    }
   };
+
+  const buttonProps = isAlreadySubmitted
+    ? {
+        type: "button" as const,
+        onClick: handleNextPhaseDirectly,
+      }
+    : {
+        type: "submit" as const,
+        form: `phase-${verificationStep}-verification-form`,
+      };
 
   const isModalOpen =
     verificationCompletedStep !== null &&
@@ -40,9 +60,9 @@ export default function StepButton() {
 
   const handleContinue = () => {
     if (verificationCompletedStep === 1) {
-      setVerificationStep(2);
+      router.push("/dentist/verification?phase=operations-verify");
     } else if (verificationCompletedStep === 2) {
-      setVerificationStep(3);
+      router.push("/dentist/verification?phase=clinic-depth-verify");
     } else {
       router.push("/dentist");
     }

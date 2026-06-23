@@ -76,9 +76,7 @@ export default function VerificationQueue() {
 
   const filtered = useMemo(
     () =>
-      mappedLicenses.filter(
-        (dentist) => dentist.queue_status === activeTab,
-      ),
+      mappedLicenses.filter((dentist) => dentist.queue_status === activeTab),
     [mappedLicenses, activeTab],
   );
 
@@ -203,7 +201,8 @@ export default function VerificationQueue() {
                   <button
                     type="button"
                     disabled={
-                      page >= pagination.totalPages || getLicenseQueue.isFetching
+                      page >= pagination.totalPages ||
+                      getLicenseQueue.isFetching
                     }
                     onClick={() =>
                       setPage((value) =>

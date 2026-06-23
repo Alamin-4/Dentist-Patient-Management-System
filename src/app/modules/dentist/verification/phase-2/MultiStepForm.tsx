@@ -23,7 +23,8 @@ export default function MultiStepForm() {
   const { stepTwoMutation } = useDentist();
   const { checkPhotoVerifyProgress } = useVerificationProgress();
 
-  const isAlreadySubmitted = checkPhotoVerifyProgress?.data?.submitted === true;
+  const progressData = checkPhotoVerifyProgress?.data;
+  const isAlreadySubmitted = progressData?.submitted === true;
 
   const methods = useForm<FormInputValues, unknown, FormValues>({
     resolver: zodResolver(formSchema),
@@ -37,6 +38,44 @@ export default function MultiStepForm() {
       agreeToGuarantee: false,
     },
   });
+
+  useEffect(() => {
+    if (isAlreadySubmitted && progressData?.data) {
+      const serverData = progressData.data as any;
+      
+      let procedures = [];
+      try {
+        procedures = typeof serverData.procedures === "string" 
+          ? JSON.parse(serverData.procedures) 
+          : serverData.procedures || [];
+      } catch (e) {
+        procedures = serverData.procedures || [];
+      }
+
+      let guarantee = {} as any;
+      try {
+        guarantee = typeof serverData.guarantee === "string"
+          ? JSON.parse(serverData.guarantee)
+          : serverData.guarantee || {};
+      } catch (e) {
+        guarantee = serverData.guarantee || {};
+      }
+
+      methods.reset({
+        jciCertificate: serverData.jci_certificate ? new File([], "JCI Certificate") : null,
+        videoWalkthrough: serverData.walkthrough_video ? new File([], "Video Walkthrough") : null,
+        procedures: procedures.map((p: any) => ({
+          id: p.procedure_id,
+          name: p.procedure_name || p.name,
+          price: p.price,
+          notes: p.option_notes || p.notes || "",
+        })),
+        signerFullName: guarantee.signer_name || "",
+        typedSignature: guarantee.typed_signature || "",
+        agreeToGuarantee: guarantee.accepted_terms || false,
+      });
+    }
+  }, [isAlreadySubmitted, progressData, methods]);
 
   const onSubmit = (data: FormValues) => {
     if (isAlreadySubmitted) {
@@ -60,32 +99,27 @@ export default function MultiStepForm() {
       accepted_terms: data.agreeToGuarantee,
     };
 
-
-const payload =  {
-        jci_certificate: data.jciCertificate || null,
-        walkthrough_video: data.videoWalkthrough || null,
-        procedures,
-        guarantee,
-      }
-      console.log(payload)
-    stepTwoMutation.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          toast.success("Operations verification details submitted!");
-          setVerificationCompletedStep(2);
-        },
-        onError: (error: unknown) => {
-          const errMsg =
-            typeof error === "object" && error !== null
-              ? (error as { response?: { data?: { message?: string } } })
-                  .response?.data?.message ||
-                "Operations verification submission failed. Please try again."
-              : "Operations verification submission failed. Please try again.";
-          toast.error(errMsg);
-        },
+    const payload = {
+      jci_certificate: data.jciCertificate || null,
+      walkthrough_video: data.videoWalkthrough || null,
+      procedures,
+      guarantee,
+    };
+    console.log(payload);
+    stepTwoMutation.mutate(payload, {
+      onSuccess: () => {
+        setVerificationCompletedStep(2);
       },
-    );
+      onError: (error: unknown) => {
+        const errMsg =
+          typeof error === "object" && error !== null
+            ? (error as { response?: { data?: { message?: string } } }).response
+                ?.data?.message ||
+              "Operations verification submission failed. Please try again."
+            : "Operations verification submission failed. Please try again.";
+        toast.error(errMsg);
+      },
+    });
   };
 
   useEffect(() => {
@@ -101,11 +135,11 @@ const payload =  {
       <form
         id="phase-2-verification-form"
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="space-y-0 overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+        className="space-y-0"
       >
-        <SterilizationSection />
-        <ProcedurePricingSection />
-        <GuaranteeSection />
+        <SterilizationSection disabled={isAlreadySubmitted} />
+        <ProcedurePricingSection disabled={isAlreadySubmitted} />
+        <GuaranteeSection disabled={isAlreadySubmitted} />
         {stepTwoMutation.isPending && (
           <div className="flex justify-center items-center py-6 border-t bg-card">
             <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />

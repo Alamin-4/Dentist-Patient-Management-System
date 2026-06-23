@@ -1,16 +1,20 @@
 "use client";
 
-import { User, Lock, Award, Building, CheckCircle2 } from "lucide-react";
+import {
+  User,
+  Lock,
+  Award,
+  Building,
+  CheckCircle2,
+  CircleCheck,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 
 export function VerificationSteps() {
   const { verificationStep } = useVerificationStore();
-  const {
-    submittedByStep,
-    canAccessStep,
-  } = useVerificationProgress();
+  const { submittedByStep, canAccessStep } = useVerificationProgress();
 
   const steps = [
     {
@@ -42,7 +46,7 @@ export function VerificationSteps() {
         const IconComponent = !step.unlocked
           ? Lock
           : step.submitted
-            ? CheckCircle2
+            ? CircleCheck
             : step.icon;
 
         const isActive = step.step === verificationStep;
@@ -54,12 +58,12 @@ export function VerificationSteps() {
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
                   isActive
-                    ? "border-primary bg-primary text-primary-foreground font-semibold"
+                    ? "border-primary text-primary font-semibold"
                     : step.unlocked
                       ? step.submitted
-                        ? "border-green-500 bg-green-50 text-green-600"
-                        : "border-primary/40 bg-card text-primary"
-                      : "border-border bg-gray-50 text-muted-foreground"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-primary/40 text-primary"
+                      : "border-border bg-gray-50 text-muted-foreground",
                 )}
               >
                 <IconComponent className="h-5 w-5" />
@@ -71,7 +75,7 @@ export function VerificationSteps() {
                     ? "font-medium text-foreground"
                     : step.unlocked
                       ? "text-muted-foreground"
-                      : "text-muted-foreground/50"
+                      : "text-muted-foreground/50",
                 )}
               >
                 {step.label}

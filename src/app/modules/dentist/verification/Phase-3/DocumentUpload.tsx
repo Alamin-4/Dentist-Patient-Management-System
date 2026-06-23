@@ -8,9 +8,10 @@ interface Props {
   label: string;
   name: string;
   error?: string;
+  disabled?: boolean;
 }
 
-export function DocumentUpload({ label, name, error }: Props) {
+export function DocumentUpload({ label, name, error, disabled }: Props) {
   const { setValue, watch } = useFormContext();
   const file = watch(name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,26 +34,29 @@ export function DocumentUpload({ label, name, error }: Props) {
 
       {!file ? (
         <div
-          onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 flex transition-all cursor-pointer group ${
-            error
-              ? "border-red-200 bg-red-50/30"
-              : "border-gray-200 bg-gray-50/50 hover:bg-white"
+          onClick={() => !disabled && inputRef.current?.click()}
+          className={`border-2 border-dashed rounded-xl p-6 flex transition-all ${
+            disabled
+              ? "border-gray-200 bg-gray-50/30 cursor-not-allowed opacity-60"
+              : error
+                ? "border-red-200 bg-red-50/30 cursor-pointer group"
+                : "border-gray-200 bg-gray-50/50 hover:bg-white cursor-pointer group"
           }`}
         >
           <div className="flex gap-3">
             <UploadCloud
-              className={`h-5 w-5 ${error ? "text-red-400" : "text-gray-400 group-hover:text-[#163E5C]"}`}
+              className={`h-5 w-5 ${disabled ? "text-gray-300" : error ? "text-red-400" : "text-gray-400 group-hover:text-[#163E5C]"}`}
             />
             <span
-              className={`text-sm font-semibold ${error ? "text-red-500" : "text-gray-600"}`}
+              className={`text-sm font-semibold ${disabled ? "text-gray-400" : error ? "text-red-500" : "text-gray-600"}`}
             >
-              Click to upload or drag and drop
+              {disabled ? "No document uploaded" : "Click to upload or drag and drop"}
             </span>
           </div>
           <input
             type="file"
             ref={inputRef}
+            disabled={disabled}
             className="hidden"
             onChange={handleFileChange}
             accept=".pdf,.doc,.docx"
@@ -73,13 +77,15 @@ export function DocumentUpload({ label, name, error }: Props) {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={removeFile}
-            className="text-gray-400 hover:text-red-500 p-2 transition-colors hover:bg-red-50 rounded-lg"
-          >
-            <Trash size={18} />
-          </button>
+          {!disabled && (
+            <button
+              type="button"
+              onClick={removeFile}
+              className="text-gray-400 hover:text-red-500 p-2 transition-colors hover:bg-red-50 rounded-lg"
+            >
+              <Trash size={18} />
+            </button>
+          )}
         </div>
       )}
 

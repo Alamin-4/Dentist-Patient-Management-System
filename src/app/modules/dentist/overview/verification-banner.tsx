@@ -64,25 +64,21 @@ export function VerificationBanner() {
 
   const renderStepStatus = (status: string) => {
     switch (status) {
-      case "VERIFIED":
-      case "COMPLETE":
-      case "COMPLETED":
+      case "APPROVED":
         return {
           icon: <CheckCircle2 className="h-6 w-6 text-green-500" />,
           label: "Verified",
           labelClass:
             "text-green-600 bg-green-50 border-green-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
         };
-      case "IN_REVIEW":
-      case "UNDER_REVIEW":
+      case "SUBMIT":
         return {
           icon: <Clock className="h-6 w-6 text-yellow-500 animate-pulse" />,
           label: "In Review",
           labelClass:
             "text-yellow-600 bg-yellow-50 border-yellow-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
         };
-      case "REJECTED":
-      case "FAILED":
+      case "REJECT":
         return {
           icon: <AlertCircle className="h-6 w-6 text-red-500" />,
           label: "Rejected",
@@ -121,7 +117,6 @@ export function VerificationBanner() {
     <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-xl border border-gray-200 shadow-sm">
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-8 h-44 w-44 sm:h-52 sm:w-52">
-          {/* based on my progress its update complete color #F2C467 now */}
           <svg
             className="w-full h-full transform -rotate-90"
             viewBox="0 0 100 100"
@@ -201,7 +196,11 @@ export function VerificationBanner() {
               className="w-full h-14 rounded-xl bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm"
               onClick={() => router.push("/dentist/verification")}
             >
-              {score > 0 ? "Continue Verification" : "Start Verification"}
+              {step2Status === "SUBMIT" || step2Status === "APPROVED"
+                ? "Continue Phase 3"
+                : step1Status === "SUBMIT" || step1Status === "APPROVED"
+                  ? "Continue Phase 2"
+                  : "Start Verification"}
             </Button>
           </div>
         </div>
