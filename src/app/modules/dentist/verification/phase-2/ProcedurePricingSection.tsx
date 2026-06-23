@@ -9,7 +9,11 @@ interface GlobalProcedure {
   name: string;
 }
 
-export const ProcedurePricingSection = () => {
+interface ProcedurePricingSectionProps {
+  disabled?: boolean;
+}
+
+export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionProps) => {
   const { control, register, setValue, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -55,20 +59,21 @@ export const ProcedurePricingSection = () => {
                       setValue(`procedures.${index}.id`, undefined);
                     },
                   })}
+                  disabled={disabled}
                   placeholder="Implant consultation"
-                  onFocus={() => setOpenIndex(index)}
+                  onFocus={() => !disabled && setOpenIndex(index)}
                   onBlur={() => {
                     setTimeout(() => setOpenIndex(null), 200);
                   }}
-                  className="h-11 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+                  className="h-11 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
                   autoComplete="off"
                 />
 
-                {openIndex === index && suggestions.length > 0 && (
+                {!disabled && openIndex === index && suggestions.length > 0 && (
                   <ul className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-lg">
                     {suggestions.map((suggestion) => (
                       <li
-                        key={suggestion.id}
+                         key={suggestion.id}
                         onMouseDown={() => {
                           setValue(`procedures.${index}.name`, suggestion.name);
                           setValue(`procedures.${index}.id`, suggestion.id);
@@ -92,8 +97,9 @@ export const ProcedurePricingSection = () => {
                   </span>
                   <input
                     type="number"
+                    disabled={disabled}
                     {...register(`procedures.${index}.price`)}
-                    className="h-11 w-full rounded-lg border border-border bg-card pl-8 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+                    className="h-11 w-full rounded-lg border border-border bg-card pl-8 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -102,16 +108,18 @@ export const ProcedurePricingSection = () => {
                   Option Notes
                 </label>
                 <input
+                  disabled={disabled}
                   {...register(`procedures.${index}.notes`)}
                   placeholder="Includes treatment plan review"
-                  className="h-11 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+                  className="h-11 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
               <button
                 type="button"
                 aria-label="Remove procedure"
+                disabled={disabled}
                 onClick={() => remove(index)}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-destructive-100 text-destructive-600 transition hover:bg-destructive-50"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-destructive-100 text-destructive-600 transition hover:bg-destructive-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 ×
               </button>
@@ -119,22 +127,24 @@ export const ProcedurePricingSection = () => {
           );
         })}
 
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button
-            type="button"
-            onClick={() => append({ name: "", price: 0, notes: "" })}
-            className="h-11 rounded-lg px-4 text-sm font-semibold"
-          >
-            Add Procedure
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 rounded-lg px-4 text-sm font-semibold"
-          >
-            Upload CSV price list
-          </Button>
-        </div>
+        {!disabled && (
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button
+              type="button"
+              onClick={() => append({ name: "", price: 0, notes: "" })}
+              className="h-11 rounded-lg px-4 text-sm font-semibold"
+            >
+              Add Procedure
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 rounded-lg px-4 text-sm font-semibold"
+            >
+              Upload CSV price list
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

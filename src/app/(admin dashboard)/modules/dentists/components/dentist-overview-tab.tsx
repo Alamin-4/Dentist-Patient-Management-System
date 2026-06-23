@@ -108,6 +108,10 @@ function PhaseBadge({ status }: { status: string }) {
       label: "Pending Review",
       className: "bg-amber-50 text-amber-600 border border-amber-200",
     },
+    SUBMITTED: {
+      label: "Pending Review",
+      className: "bg-amber-50 text-amber-600 border border-amber-200",
+    },
     rejected: {
       label: "Rejected",
       className: "bg-red-50 text-red-500 border border-red-200",

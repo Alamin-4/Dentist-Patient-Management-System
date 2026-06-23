@@ -25,6 +25,11 @@ export interface StepTwoI {
 }
 
 export interface StepThreeI {
+  clinic_address: {
+    address: string;
+    lat: string;
+    lng: string;
+  };
   materials: {
     own_procedure: number;
     ce_certificate: File;

@@ -45,6 +45,33 @@ export interface ClinicOperationVerification {
   reviewer_notes: string;
   dentist: number;
   verification: number;
+  sterilization_verification?: {
+    id: number;
+    has_jci_certificate: boolean;
+    jci_certificate: string | null;
+    walkthrough_video: string | null;
+    certificate_number: string | null;
+    expiry_date: string | null;
+    issuing_authority: string | null;
+    issue_date: string | null;
+  } | null;
+  no_surprise_guarantee?: {
+    id: number;
+    allowed_variation_percent: string;
+    signer_name: string;
+    typed_signature: string;
+    accepted_terms: boolean;
+    signed_at: string;
+  } | null;
+  procedures_feature?: {
+    id: number;
+    procedure_name: string;
+    price: string;
+    currency: string;
+    option_notes: string;
+    is_active: boolean;
+    procedure: number;
+  }[];
 }
 
 export interface ClinicDepthVerification {
@@ -55,6 +82,12 @@ export interface ClinicDepthVerification {
   reviewer_notes: string;
   dentist: number;
   verification: number;
+  clinic_address?: {
+    address: string;
+    lat: string;
+    lng: string;
+  } | string | null;
+  materials?: any;
 }
 
 export interface DentistVerification {

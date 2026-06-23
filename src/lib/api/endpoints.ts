@@ -1,6 +1,6 @@
 export const API_BASE_URL = 
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://52.60.153.12:8004/api/v1";
-// process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://10.10.20.11:8004/api/v1";
+// process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://csd33v80-8004.inc1.devtunnels.ms/api/v1";
   
 export const endpoints = {
   auth: {
@@ -34,6 +34,7 @@ export const endpoints = {
     stepTwo: "/dentist/verification-step/operations/",
     stepTwoCheck: "/dentist/verification-step/operations/",
     global_procedure_list: "/procedure/procedures/",
+    dentist_procedure_list: "/dentist/verification-step/dentist-procedure-list/",
     stepThree: "/dentist/verification-step/clinical-depth/",
     stepThreeCheck: "/dentist/verification-step/clinical-depth/",
   },
@@ -45,16 +46,16 @@ export const endpoints = {
     profile: "/admin/profile",
     dentists: "/admin/dentists/",
     get_dentist_profile: (id: string) => `/admin/dentists/${id}/`,
-    phase_one_approve: (id: string) => `/admin/dentist-license-verifications/${id}/approve/`,
-    phase_two_approve: (id: string) => `/admin/dentist-clinic-operation-verifications/${id}/approve/`,
-    phase_three_approve: (id: string) => `/admin/dentist-clinic-depth-verifications/${id}/approve/`,
+    phase_one_approve: (id: string) => `/admin/dentist-verification/${id}/approve-license/`,
+    phase_two_approve: (id: string) => `/admin/dentist-verification/${id}/approve-operation/`,
+    phase_three_approve: (id: string) => `/admin/dentist-verification/${id}/approve-depth/`,
     patients: "/admin/patients",
     bookings: "/admin/bookings",
     reviews: "/admin/reviews",
     payments: "/admin/payments",
     reports: "/admin/reports",
     notifications: "/admin/notifications",
-    verificationQueue: "/admin/dentist-license-verifications/",
+    verificationQueue: "/admin/dentist-verification/",
   },
 
   // todo

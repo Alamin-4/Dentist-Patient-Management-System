@@ -1,6 +1,10 @@
 import { useFormContext } from "react-hook-form";
 
-export const GuaranteeSection = () => {
+interface GuaranteeSectionProps {
+  disabled?: boolean;
+}
+
+export const GuaranteeSection = ({ disabled }: GuaranteeSectionProps) => {
   const { register } = useFormContext();
 
   return (
@@ -29,8 +33,9 @@ export const GuaranteeSection = () => {
               Signer Full Name
             </label>
             <input
+              disabled={disabled}
               {...register("signerFullName")}
-              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
           <div className="space-y-2">
@@ -38,17 +43,19 @@ export const GuaranteeSection = () => {
               Typed Signature
             </label>
             <input
+              disabled={disabled}
               {...register("typedSignature")}
-              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm italic text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30"
+              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm italic text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-background">
+        <label className={`flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-background"}`}>
           <input
             type="checkbox"
+            disabled={disabled}
             {...register("agreeToGuarantee")}
-            className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary/40"
+            className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary/40 disabled:cursor-not-allowed"
           />
           <span className="text-sm leading-6 text-muted-foreground">
             I agree to keep final prices within 15% unless approved by the patient.

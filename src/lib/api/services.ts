@@ -317,6 +317,10 @@ export const dentistApi = {
       endpoints.dentist.updateVerificationPhase,
       payload,
     ),
+    dentistProcedureList: () =>
+    api.get<ApiResponse<unknown>>(
+      endpoints.dentist.dentist_procedure_list,
+    ),
 };
 
 export const adminApi = {

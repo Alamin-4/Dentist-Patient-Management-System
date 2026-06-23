@@ -38,7 +38,6 @@ export function ProfileHeader() {
               RDV Score
             </span>
           </div>
-          {/* SVG Progress Circle would go here */}
         </div>
       </div>
     </div>
