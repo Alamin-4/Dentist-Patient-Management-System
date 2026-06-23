@@ -19,7 +19,9 @@ export function VerificationBanner() {
   const router = useRouter();
   const { data: progressData } = useDentistProgress();
 
-  const progress = progressData?.data as DentistVerificationProgress | undefined;
+  const progress = progressData?.data as
+    | DentistVerificationProgress
+    | undefined;
 
   const steps = progress?.steps || [];
   const licenseStep = getStepByPhase(steps, "LICENSE");
