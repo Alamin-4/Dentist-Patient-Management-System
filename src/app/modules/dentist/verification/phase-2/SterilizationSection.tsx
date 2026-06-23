@@ -35,7 +35,7 @@ export const SterilizationSection = () => {
           />
           <div
             onClick={() => jciInputRef.current?.click()}
-            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background px-4 py-4 transition-all hover:border-primary hover:bg-card sm:px-5"
+            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed px-4 py-4 transition-all border-primary hover:bg-card sm:px-5"
           >
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
@@ -74,7 +74,7 @@ export const SterilizationSection = () => {
           />
           <div
             onClick={() => videoInputRef.current?.click()}
-            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background px-4 py-4 transition-all hover:border-primary hover:bg-card sm:px-5"
+            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed px-4 py-4 border-primary sm:px-5"
           >
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
@@ -91,22 +91,13 @@ export const SterilizationSection = () => {
         </div>
 
         <div className="space-y-3 text-sm text-foreground">
-          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            Video Walkthrough Requirements
-          </div>
           {methods.map((method) => (
-            <div
-              key={method}
-              className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors"
-            >
-              <div className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Check className="size-3" />
-              </div>
+            <div key={method} className="flex items-start gap-3">
               <span className="min-w-0">
                 <span className="block font-medium text-foreground">
                   {method}
                 </span>
-                <span className="mt-0.5 block text-xs text-muted-foreground">
+                <span className="mt-0.5 block text-xs text-[#1A1A2E80]">
                   {method === "Autoclave" &&
                     "Film the brand name clearly for at least 3 seconds."}
                   {method === "Sealed Pouch" &&

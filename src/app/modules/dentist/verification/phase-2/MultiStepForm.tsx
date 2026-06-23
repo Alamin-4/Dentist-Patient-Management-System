@@ -60,32 +60,27 @@ export default function MultiStepForm() {
       accepted_terms: data.agreeToGuarantee,
     };
 
-
-const payload =  {
-        jci_certificate: data.jciCertificate || null,
-        walkthrough_video: data.videoWalkthrough || null,
-        procedures,
-        guarantee,
-      }
-      console.log(payload)
-    stepTwoMutation.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          toast.success("Operations verification details submitted!");
-          setVerificationCompletedStep(2);
-        },
-        onError: (error: unknown) => {
-          const errMsg =
-            typeof error === "object" && error !== null
-              ? (error as { response?: { data?: { message?: string } } })
-                  .response?.data?.message ||
-                "Operations verification submission failed. Please try again."
-              : "Operations verification submission failed. Please try again.";
-          toast.error(errMsg);
-        },
+    const payload = {
+      jci_certificate: data.jciCertificate || null,
+      walkthrough_video: data.videoWalkthrough || null,
+      procedures,
+      guarantee,
+    };
+    console.log(payload);
+    stepTwoMutation.mutate(payload, {
+      onSuccess: () => {
+        setVerificationCompletedStep(2);
       },
-    );
+      onError: (error: unknown) => {
+        const errMsg =
+          typeof error === "object" && error !== null
+            ? (error as { response?: { data?: { message?: string } } }).response
+                ?.data?.message ||
+              "Operations verification submission failed. Please try again."
+            : "Operations verification submission failed. Please try again.";
+        toast.error(errMsg);
+      },
+    });
   };
 
   useEffect(() => {
@@ -101,7 +96,7 @@ const payload =  {
       <form
         id="phase-2-verification-form"
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="space-y-0 overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+        className="space-y-0"
       >
         <SterilizationSection />
         <ProcedurePricingSection />

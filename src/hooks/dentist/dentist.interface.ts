@@ -27,12 +27,10 @@ export interface StepTwoI {
 export interface StepThreeI {
   materials: {
     own_procedure: number;
-    brand_name: string;
     ce_certificate: File;
     material_brands: File;
     invoice: File;
     protocol_pdf: File;
-    notes: string;
   }[];
 }
 
