@@ -1,5 +1,5 @@
 import type { License } from "@/types/license";
-import type { QueueStatus, VerificationDentist, VerificationStats } from "./types";
+import type { QueueStatus, VerificationDentist, VerificationStats, PhaseStatus } from "./types";
 
 interface QueueResponseObject {
   results?: License[];
@@ -54,6 +54,24 @@ function isQueueResponseObject(response: unknown): response is QueueResponseObje
   return Boolean(response && typeof response === "object");
 }
 
+function getFileNameFromUrl(url: string | null | undefined, fallback: string): string {
+  if (!url) return fallback;
+  try {
+    const parts = url.split("/");
+    return parts[parts.length - 1] || fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+const mapPhaseStatus = (status: string | null | undefined): PhaseStatus => {
+  const s = status?.toUpperCase();
+  if (s === "APPROVED" || s === "VERIFIED") return "approved";
+  if (s === "REJECTED") return "rejected";
+  if (s === "SUBMIT" || s === "SUBMITTED" || s === "PENDING") return "pending";
+  return "locked";
+};
+
 export function normalizeLicenseQueue(response: unknown) {
   const licenses = Array.isArray(response)
     ? response
@@ -61,10 +79,171 @@ export function normalizeLicenseQueue(response: unknown) {
       ? response.data ?? response.results ?? []
       : [];
 
-  const mappedLicenses = licenses.map<VerificationDentist>((license) => ({
-    ...license,
-    queue_status: mapApiStatus(license.status),
-  }));
+  const mappedLicenses = licenses.map<VerificationDentist>((item: any) => {
+    let qStatus: QueueStatus = "pending";
+    const lVer = item.license_verification?.toUpperCase();
+    const oVer = item.operations_verification?.toUpperCase();
+    const cVer = item.clinical_verification?.toUpperCase();
+
+    if (lVer === "APPROVED" && oVer === "APPROVED" && cVer === "APPROVED") {
+      qStatus = "approved";
+    } else if (lVer === "REJECTED" || oVer === "REJECTED" || cVer === "REJECTED") {
+      qStatus = "rejected";
+    }
+
+    // Parse clinical materials
+    let ph3Specialties = undefined;
+    if (item.clinical_step) {
+      let materials = [];
+      try {
+        materials = typeof item.clinical_step.materials === "string"
+          ? JSON.parse(item.clinical_step.materials)
+          : item.clinical_step.materials || [];
+      } catch (e) {
+        materials = item.clinical_step.materials || [];
+      }
+
+      ph3Specialties = (materials || []).map((mat: any) => {
+        let procName = `Procedure #${mat.own_procedure}`;
+        if (item.operation_step?.procedures_feature) {
+          const match = item.operation_step.procedures_feature.find(
+            (p: any) => p.id === mat.own_procedure || p.procedure === mat.own_procedure
+          );
+          if (match) {
+            procName = match.procedure_name;
+          }
+        }
+
+        const docs = [];
+        if (mat.ce_certificate) {
+          docs.push({
+            label: "CE Certificate",
+            file_name: getFileNameFromUrl(mat.ce_certificate, "ce_certificate.pdf"),
+            missing: false,
+            href: mat.ce_certificate,
+          });
+        }
+        if (mat.material_brands) {
+          docs.push({
+            label: "Material Brands",
+            file_name: getFileNameFromUrl(mat.material_brands, "material_brands.pdf"),
+            missing: false,
+            href: mat.material_brands,
+          });
+        }
+        if (mat.invoice) {
+          docs.push({
+            label: "Invoice",
+            file_name: getFileNameFromUrl(mat.invoice, "invoice.pdf"),
+            missing: false,
+            href: mat.invoice,
+          });
+        }
+        if (mat.protocol_pdf) {
+          docs.push({
+            label: "Protocol PDF",
+            file_name: getFileNameFromUrl(mat.protocol_pdf, "protocol_pdf.pdf"),
+            missing: false,
+            href: mat.protocol_pdf,
+          });
+        }
+
+        return {
+          name: procName,
+          doc_count: docs.length,
+          status: docs.length > 0 ? ("complete" as const) : ("missing" as const),
+          documents: docs,
+        };
+      });
+    }
+
+    return {
+      id: item.id,
+      created_at: item.license_step?.created_at || item.dentist?.created_at || "",
+      updated_at: item.license_step?.updated_at || item.dentist?.updated_at || "",
+      professional_headshot: item.license_step?.professional_headshot || "",
+      city: item.license_step?.city || "",
+      country: item.license_step?.country || "",
+      registration_no: item.license_step?.registration_no || "",
+      doc_type: item.license_step?.doc_type || "LICENSE",
+      file: item.license_step?.file || "",
+      status: item.license_step?.status || "SUBMITTED",
+      is_verified: item.license_step?.is_verified || false,
+      verified_at: item.license_step?.verified_at || null,
+      reviewer_notes: item.license_step?.reviewer_notes || "",
+      dentist: item.dentist?.id || item.dentist || 0,
+      verification: item.id,
+      registration_authority: item.license_step?.registration_authority || 0,
+      
+      // Adapted UI Properties
+      queue_status: qStatus,
+      dentist_name: item.dentist?.full_name || "Unknown Dentist",
+      specialty: item.dentist?.specialty || "DENTIST",
+      location: [item.license_step?.city, item.license_step?.country].filter(Boolean).join(", "),
+      submitted_ago: getRelativeTime(item.license_step?.created_at || item.dentist?.created_at) || undefined,
+      rdv_score: item.dentist?.rdv_score || 0,
+
+      phases: {
+        ph1: { status: mapPhaseStatus(item.license_verification) },
+        ph2: { status: mapPhaseStatus(item.operations_verification) },
+        ph3: { status: mapPhaseStatus(item.clinical_verification) },
+      },
+
+      ph1_data: item.license_step ? {
+        auto_approved: item.license_verification === "APPROVED",
+        auto_approved_message: item.license_step.reviewer_notes || "Verified by Administrator",
+        license: {
+          number: item.license_step.registration_no,
+          issuing_state: item.license_step.city || item.license_step.country || "",
+        },
+        government_id: {
+          file_name: getFileNameFromUrl(item.license_step.file, "License document"),
+          file_size: "",
+          verified_note: item.license_step.reviewer_notes || "Document is valid",
+        },
+        selfie: {
+          file_name: getFileNameFromUrl(item.license_step.professional_headshot, "Headshot photo"),
+          ai_match_score: item.face_match_score || 0,
+          confidence: item.face_match_score ? `${item.face_match_score}%` : "N/A",
+        }
+      } : undefined,
+
+      ph2_data: item.operation_step ? {
+        rejection_reason: item.operation_step.reviewer_notes || "",
+        sterilization_evidence: {
+          video_walkthrough: item.operation_step.sterilization_verification?.walkthrough_video ? {
+            file_name: getFileNameFromUrl(item.operation_step.sterilization_verification.walkthrough_video, "walkthrough_video.mp4"),
+            file_size: "",
+            href: item.operation_step.sterilization_verification.walkthrough_video
+          } : undefined,
+          jci_certificate: item.operation_step.sterilization_verification?.jci_certificate ? {
+            file_name: getFileNameFromUrl(item.operation_step.sterilization_verification.jci_certificate, "jci_certificate.pdf"),
+            file_size: "",
+            href: item.operation_step.sterilization_verification.jci_certificate
+          } : undefined,
+        },
+        procedure_pricing: (item.operation_step.procedures_feature || []).map((proc: any) => ({
+          procedure: proc.procedure_name,
+          price: parseFloat(proc.price) || 0,
+          notes: proc.option_notes || "",
+        })),
+        no_surprise_guarantee: item.operation_step.no_surprise_guarantee ? {
+          description: `Allowed variation: ${item.operation_step.no_surprise_guarantee.allowed_variation_percent}%`,
+          signer_name: item.operation_step.no_surprise_guarantee.signer_name,
+          typed_signature: item.operation_step.no_surprise_guarantee.typed_signature,
+          agreed_at: item.operation_step.no_surprise_guarantee.signed_at,
+        } : undefined
+      } : undefined,
+
+      ph3_data: item.clinical_step ? {
+        rejection_reason: item.clinical_step.reviewer_notes || "",
+        clinic_location: typeof item.clinical_step.clinic_address === "string"
+          ? item.clinical_step.clinic_address
+          : item.clinical_step.clinic_address?.address || "",
+        specialties: ph3Specialties,
+      } : undefined,
+    };
+  });
 
   const pageCounts = mappedLicenses.reduce(
     (acc, license) => {

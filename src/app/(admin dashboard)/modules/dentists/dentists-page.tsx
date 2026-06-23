@@ -39,8 +39,12 @@ export type Dentist = Omit<
       phase1: (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase1"] & {
         id?: number;
       };
-      phase2: (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase2"] & {
+      phase2: Omit<
+        (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase2"],
+        "rejection_reason"
+      > & {
         id?: number;
+        rejection_reason?: string | null;
       };
       phase3: (typeof dentistsData.dentists)[number]["profile"]["verification"]["phase3"] & {
         id?: number;
@@ -212,13 +216,22 @@ export const mapSpecialty = (s?: string): string => {
   return "General";
 };
 
+function getFileNameFromUrl(url: string | null | undefined, fallback: string): string {
+  if (!url) return fallback;
+  try {
+    const parts = url.split("/");
+    return parts[parts.length - 1] || fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
 export const mapVerificationStatus = (status?: string): string => {
   if (!status) return "not_started";
   const upper = status.toUpperCase();
   if (upper === "APPROVED" || upper === "VERIFIED") return "complete";
   if (upper === "REJECTED") return "rejected";
-  if (upper === "SUBMITTED") return "SUBMITTED";
-  if (upper === "PENDING") return "pending";
+  if (upper === "SUBMITTED" || upper === "SUBMIT" || upper === "PENDING") return "SUBMITTED";
   return "not_started";
 };
 
@@ -236,9 +249,9 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   ) {
     status = "rejected";
   } else if (
-    d.dentist_verification?.license_verification === "PENDING" ||
-    d.dentist_verification?.operations_verification === "PENDING" ||
-    d.dentist_verification?.clinical_verification === "PENDING"
+    ["PENDING", "SUBMIT", "SUBMITTED"].includes(d.dentist_verification?.license_verification || "") ||
+    ["PENDING", "SUBMIT", "SUBMITTED"].includes(d.dentist_verification?.operations_verification || "") ||
+    ["PENDING", "SUBMIT", "SUBMITTED"].includes(d.dentist_verification?.clinical_verification || "")
   ) {
     status = "pending";
   }
@@ -266,6 +279,82 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
     hash = (d.full_name || "").charCodeAt(i) + ((hash << 5) - hash);
   }
   const avatarColor = colors[Math.abs(hash) % colors.length];
+
+  // Extract Phase 2 Files
+  const phase2Files = [];
+  const steril = d.dentist_verification?.operation_verification?.sterilization_verification;
+  if (steril?.jci_certificate) {
+    phase2Files.push({
+      name: getFileNameFromUrl(steril.jci_certificate, "JCI Certificate"),
+      size: "",
+      type: "pdf"
+    });
+  }
+  if (steril?.walkthrough_video) {
+    phase2Files.push({
+      name: getFileNameFromUrl(steril.walkthrough_video, "Sterilization Walkthrough"),
+      size: "",
+      type: "video"
+    });
+  }
+
+  // Extract Phase 3 specialties / categories
+  let materials = [];
+  try {
+    const rawMaterials = d.dentist_verification?.clinical_path_verification?.materials;
+    materials = typeof rawMaterials === "string"
+      ? JSON.parse(rawMaterials)
+      : rawMaterials || [];
+  } catch (e) {
+    materials = d.dentist_verification?.clinical_path_verification?.materials || [];
+  }
+
+  const phase3Categories = (materials || []).map((mat: any) => {
+    let procName = `Procedure #${mat.own_procedure}`;
+    if (d.dentist_verification?.operation_verification?.procedures_feature) {
+      const match = d.dentist_verification.operation_verification.procedures_feature.find(
+        (p: any) => p.id === mat.own_procedure || p.procedure === mat.own_procedure
+      );
+      if (match) {
+        procName = match.procedure_name;
+      }
+    }
+
+    const catFiles = [];
+    if (mat.ce_certificate) {
+      catFiles.push({
+        name: getFileNameFromUrl(mat.ce_certificate, "CE Certificate"),
+        size: "",
+        type: "pdf"
+      });
+    }
+    if (mat.material_brands) {
+      catFiles.push({
+        name: getFileNameFromUrl(mat.material_brands, "Material Brands"),
+        size: "",
+        type: "pdf"
+      });
+    }
+    if (mat.invoice) {
+      catFiles.push({
+        name: getFileNameFromUrl(mat.invoice, "Invoice"),
+        size: "",
+        type: "pdf"
+      });
+    }
+    if (mat.protocol_pdf) {
+      catFiles.push({
+        name: getFileNameFromUrl(mat.protocol_pdf, "Protocol PDF"),
+        size: "",
+        type: "pdf"
+      });
+    }
+
+    return {
+      name: procName,
+      files: catFiles
+    };
+  });
 
   return {
     id: `DEN-${String(d.id).padStart(3, "0")}`,
@@ -327,9 +416,13 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           status: mapVerificationStatus(
             d.dentist_verification?.operations_verification,
           ),
-          rejection_reason: null,
-          services: [],
-          files: [],
+          rejection_reason: d.dentist_verification?.operation_verification?.reviewer_notes || null,
+          services: (d.dentist_verification?.operation_verification?.procedures_feature || []).map((p) => ({
+            name: p.procedure_name,
+            description: p.option_notes || "",
+            price: parseFloat(p.price) || 0,
+          })),
+          files: phase2Files,
         },
         phase3: {
           id: d.dentist_verification?.clinical_path_verification?.id,
@@ -337,8 +430,12 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           status: mapVerificationStatus(
             d.dentist_verification?.clinical_verification,
           ),
-          clinic_location: "—",
-          categories: [],
+          clinic_location: d.dentist_verification?.clinical_path_verification?.clinic_address
+            ? (typeof d.dentist_verification.clinical_path_verification.clinic_address === "string"
+                ? d.dentist_verification.clinical_path_verification.clinic_address
+                : d.dentist_verification.clinical_path_verification.clinic_address.address || "—")
+            : "—",
+          categories: phase3Categories,
         },
       },
       bookings: [],

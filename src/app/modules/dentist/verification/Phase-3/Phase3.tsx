@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { DocumentUpload } from "./DocumentUpload";
 import { useFieldArray } from "react-hook-form";
-import { Plus, Trash, Loader2 } from "lucide-react";
+import { Plus, Trash, Loader2, MapPin } from "lucide-react";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import useDentist, {
   useUpdateVerificationPhase,
@@ -14,12 +14,11 @@ import useDentist, {
 import { StepThreeI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
+import dynamic from "next/dynamic";
 
-const PROCEDURE_OPTIONS = [
-  { value: "5", label: "Implants" },
-  { value: "6", label: "Veneers" },
-  { value: "7", label: "Crowns" },
-] as const;
+const MapPickerModal = dynamic(() => import("./MapPickerModal"), {
+  ssr: false,
+});
 
 const isFile = (file: unknown): file is File =>
   typeof File !== "undefined" && file instanceof File;
@@ -39,8 +38,14 @@ const materialsSchema = z.object({
   protocolPdf: fileSchema("Protocol PDF is required"),
 });
 
+const clinicAddressSchema = z.object({
+  address: z.string().min(1, "Clinic address is required"),
+  lat: z.string().min(1, "Latitude is required"),
+  lng: z.string().min(1, "Longitude is required"),
+});
+
 const phase3Schema = z.object({
-  clinic_address: z.string().min(1, "Clinic address is required"),
+  clinic_address: clinicAddressSchema,
   materials: z.array(materialsSchema).min(1, "Add at least one procedure"),
 });
 
@@ -53,9 +58,13 @@ export default function Phase3() {
     setVerificationStep,
     setVerificationStepReady,
   } = useVerificationStore();
-  const { stepThreeMutation } = useDentist();
+  const { stepThreeMutation, dentistProcedureList } = useDentist();
+  const dentistProcedures =
+    (dentistProcedureList?.data as any)?.procedure_list || [];
   const updatePhase = useUpdateVerificationPhase();
   const { checkIdVerifyProgress } = useVerificationProgress();
+
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   const progressData = checkIdVerifyProgress?.data;
   const isAlreadySubmitted = progressData?.submitted === true;
@@ -65,7 +74,11 @@ export default function Phase3() {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      clinic_address: "",
+      clinic_address: {
+        address: "",
+        lat: "",
+        lng: "",
+      },
       materials: [
         {
           ownProcedure: "",
@@ -81,22 +94,47 @@ export default function Phase3() {
   useEffect(() => {
     if (isAlreadySubmitted && progressData?.data) {
       const serverData = progressData.data as any;
-      
+
       let materials = [];
       try {
-        materials = typeof serverData.materials === "string"
-          ? JSON.parse(serverData.materials)
-          : serverData.materials || [];
+        materials =
+          typeof serverData.materials === "string"
+            ? JSON.parse(serverData.materials)
+            : serverData.materials || [];
       } catch (e) {
         materials = serverData.materials || [];
       }
 
+      let clinicAddress = { address: "", lat: "0", lng: "0" };
+      if (serverData.clinic_address) {
+        try {
+          clinicAddress =
+            typeof serverData.clinic_address === "string"
+              ? JSON.parse(serverData.clinic_address)
+              : serverData.clinic_address;
+        } catch (e) {
+          clinicAddress = {
+            address: serverData.clinic_address || "",
+            lat: "0",
+            lng: "0",
+          };
+        }
+      }
+
       methods.reset({
-        clinic_address: serverData.clinic_address || "",
+        clinic_address: {
+          address: clinicAddress.address || "",
+          lat: clinicAddress.lat || "0",
+          lng: clinicAddress.lng || "0",
+        },
         materials: materials.map((m: any) => ({
           ownProcedure: String(m.own_procedure),
-          ceCertificate: m.ce_certificate ? new File([], "CE Certificate") : null,
-          materialBrands: m.material_brands ? new File([], "Material Brands") : null,
+          ceCertificate: m.ce_certificate
+            ? new File([], "CE Certificate")
+            : null,
+          materialBrands: m.material_brands
+            ? new File([], "Material Brands")
+            : null,
           invoice: m.invoice ? new File([], "Invoice") : null,
           protocolPdf: m.protocol_pdf ? new File([], "Protocol PDF") : null,
         })),
@@ -127,7 +165,7 @@ export default function Phase3() {
         protocol_pdf: m.protocolPdf,
       })),
     };
-
+    console.log("phase 3 payload: ", formattedPayload);
     stepThreeMutation.mutate(formattedPayload, {
       onSuccess: () => {
         updatePhase.mutate(
@@ -176,6 +214,11 @@ export default function Phase3() {
   }, [methods.formState.isValid, isAlreadySubmitted, setVerificationStepReady]);
 
   const isPending = stepThreeMutation.isPending || updatePhase.isPending;
+  const selectedAddress = methods.watch("clinic_address") || {
+    address: "",
+    lat: "",
+    lng: "",
+  };
 
   return (
     <FormProvider {...methods}>
@@ -194,18 +237,38 @@ export default function Phase3() {
                 <label className="text-sm font-medium text-[#0A2533] inline-block mb-2">
                   Clinic Address
                 </label>
-                <input
-                  type="text"
-                  disabled={isAlreadySubmitted}
-                  {...methods.register("clinic_address")}
-                  className="border border-gray-200 rounded-md p-3 w-full disabled:opacity-60 disabled:cursor-not-allowed"
-                  placeholder="Enter your clinic address"
-                />
-                {methods.formState.errors?.clinic_address && (
+                <div className="relative flex gap-2">
+                  <input
+                    type="text"
+                    disabled={isAlreadySubmitted}
+                    {...methods.register("clinic_address.address")}
+                    className="border border-gray-200 rounded-md p-3 w-full pr-12 disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+                    placeholder="Enter your clinic address"
+                  />
+                  <button
+                    type="button"
+                    disabled={isAlreadySubmitted}
+                    onClick={() => setIsMapOpen(true)}
+                    className="p-3 border border-gray-200 rounded-md hover:bg-slate-50 transition-colors text-slate-500 hover:text-[#0E3E65] disabled:opacity-60 shrink-0"
+                    title="Select on Map"
+                  >
+                    <MapPin className="h-5 w-5" />
+                  </button>
+                </div>
+                {methods.formState.errors?.clinic_address?.address && (
                   <p className="text-xs text-red-500 mt-1">
-                    {methods.formState.errors.clinic_address.message}
+                    {methods.formState.errors.clinic_address.address.message}
                   </p>
                 )}
+
+                <input
+                  type="hidden"
+                  {...methods.register("clinic_address.lat")}
+                />
+                <input
+                  type="hidden"
+                  {...methods.register("clinic_address.lng")}
+                />
               </div>
             </div>
           </div>
@@ -226,18 +289,30 @@ export default function Phase3() {
                       Procedure
                     </label>
                     <select
-                      disabled={isAlreadySubmitted}
+                      disabled={
+                        isAlreadySubmitted || dentistProcedureList.isFetching
+                      }
                       {...methods.register(
                         `materials.${index}.ownProcedure` as const,
                       )}
-                      className="block w-full mt-2 rounded-md border border-gray-200 p-3 disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="block w-full mt-2 rounded-md border border-gray-200 p-3 disabled:opacity-60 disabled:cursor-not-allowed text-sm"
                     >
-                      <option value="">Select procedure</option>
-                      {PROCEDURE_OPTIONS.map((procedure) => (
-                        <option key={procedure.value} value={procedure.value}>
-                          {procedure.label}
-                        </option>
-                      ))}
+                      {dentistProcedureList.isFetching ? (
+                        <option disabled>Loading procedures...</option>
+                      ) : (
+                        <>
+                          <option value="">Select procedure</option>
+                          {dentistProcedures.map((proc: any) => (
+                            <option
+                              className=""
+                              key={proc.id}
+                              value={String(proc.id)}
+                            >
+                              {proc.procedure_name}
+                            </option>
+                          ))}
+                        </>
+                      )}
                     </select>
                     {methods.formState.errors?.materials?.[index]
                       ?.ownProcedure && (
@@ -333,6 +408,25 @@ export default function Phase3() {
             </span>
           </div>
         )}
+        <MapPickerModal
+          isOpen={isMapOpen}
+          onClose={() => setIsMapOpen(false)}
+          initialLocation={selectedAddress}
+          onConfirm={(location) => {
+            methods.setValue("clinic_address.address", location.address, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
+            methods.setValue("clinic_address.lat", location.lat, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
+            methods.setValue("clinic_address.lng", location.lng, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
+          }}
+        />
       </form>
     </FormProvider>
   );

@@ -114,7 +114,7 @@ function VerificationStatus({
       >
         {isDone
           ? "Complete"
-          : status === "pending" || status === "in_review"
+          : status === "pending" || status === "in_review" || status === "SUBMITTED"
             ? "Pending"
             : status === "rejected"
               ? "Rejected"
@@ -134,7 +134,7 @@ export default function DentistDetailPage({
     : dentistId;
 
   const { dentist: apiDentist, isLoading, isError } = useAdminDentist(apiId);
-
+  console.log("dentisat profile:", apiDentist);
   const dentist = useMemo(() => {
     if (!apiDentist) return null;
     return mapApiDentistToUIDentist(apiDentist);

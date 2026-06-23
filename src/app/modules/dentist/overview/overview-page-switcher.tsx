@@ -25,7 +25,9 @@ export function OverviewPageSwitcher() {
     refetch,
   } = useDentistProgress();
 
-  const progress = progressData?.data as DentistVerificationProgress | undefined;
+  const progress = progressData?.data as
+    | DentistVerificationProgress
+    | undefined;
 
   // Dynamically determine completed steps from backend status
   const steps = progress?.steps || [];
@@ -74,11 +76,9 @@ export function OverviewPageSwitcher() {
               </div>
             </div>
 
-            {/* Title & subtitle skeletons */}
             <div className="h-6 w-48 bg-gray-200 rounded mb-3" />
             <div className="h-4 w-72 bg-gray-100 rounded mb-8" />
 
-            {/* Step row skeletons */}
             <div className="mt-8 w-full max-w-md mx-auto space-y-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-center gap-4">
@@ -92,7 +92,6 @@ export function OverviewPageSwitcher() {
               ))}
             </div>
 
-            {/* Button skeleton */}
             <div className="mt-8 w-full">
               <div className="h-14 w-full rounded-xl bg-gray-200" />
             </div>
