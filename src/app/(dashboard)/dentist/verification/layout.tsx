@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { VerificationSteps } from "../../../modules/dentist/verification/verification-steps";
 import StepButton from "../../../modules/dentist/verification/StepButton";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
@@ -23,40 +23,63 @@ export default function VerificationLayout({
     rdvScore,
   } = useVerificationProgress();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const phaseParam = searchParams.get("phase");
 
   const resolvedStep = useMemo<VerificationPhaseStep>(() => {
-    const currentStep = verificationStep as VerificationPhaseStep;
+    if (!phaseParam) {
+      return nextIncompleteStep;
+    }
 
-    if (!canAccessStep(currentStep)) {
+    let requestedStep: VerificationPhaseStep = 1;
+    if (phaseParam === "operations-verify") {
+      requestedStep = 2;
+    } else if (phaseParam === "clinic-depth-verify") {
+      requestedStep = 3;
+    }
+
+    if (!canAccessStep(requestedStep)) {
       if (!submittedByStep[1]) return 1;
       if (!submittedByStep[2]) return 2;
       return 3;
     }
 
-    if (submittedByStep[currentStep] && currentStep !== 3) {
-      return nextIncompleteStep;
-    }
-
-    return currentStep;
-  }, [canAccessStep, nextIncompleteStep, submittedByStep, verificationStep]);
+    return requestedStep;
+  }, [phaseParam, nextIncompleteStep, canAccessStep, submittedByStep]);
 
   useEffect(() => {
-    if (isProgressLoading || resolvedStep === verificationStep) return;
+    if (isProgressLoading) return;
 
-    const timeoutId = window.setTimeout(() => {
+    const expectedParam =
+      resolvedStep === 1
+        ? "license-verify"
+        : resolvedStep === 2
+          ? "operations-verify"
+          : "clinic-depth-verify";
+
+    if (phaseParam !== expectedParam) {
+      router.replace(`/dentist/verification?phase=${expectedParam}`);
+    }
+
+    if (verificationStep !== resolvedStep) {
       setVerificationStep(resolvedStep);
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [isProgressLoading, resolvedStep, setVerificationStep, verificationStep]);
+    }
+  }, [
+    isProgressLoading,
+    resolvedStep,
+    phaseParam,
+    verificationStep,
+    setVerificationStep,
+    router,
+  ]);
 
   const handleBack = () => {
     if (verificationStep === 1) {
       router.push("/dentist");
     } else if (verificationStep === 2) {
-      setVerificationStep(1);
+      router.push("/dentist/verification?phase=license-verify");
     } else if (verificationStep === 3) {
-      setVerificationStep(2);
+      router.push("/dentist/verification?phase=operations-verify");
     }
   };
 

@@ -23,7 +23,8 @@ export default function MultiStepForm() {
   const { stepTwoMutation } = useDentist();
   const { checkPhotoVerifyProgress } = useVerificationProgress();
 
-  const isAlreadySubmitted = checkPhotoVerifyProgress?.data?.submitted === true;
+  const progressData = checkPhotoVerifyProgress?.data;
+  const isAlreadySubmitted = progressData?.submitted === true;
 
   const methods = useForm<FormInputValues, unknown, FormValues>({
     resolver: zodResolver(formSchema),
@@ -37,6 +38,44 @@ export default function MultiStepForm() {
       agreeToGuarantee: false,
     },
   });
+
+  useEffect(() => {
+    if (isAlreadySubmitted && progressData?.data) {
+      const serverData = progressData.data as any;
+      
+      let procedures = [];
+      try {
+        procedures = typeof serverData.procedures === "string" 
+          ? JSON.parse(serverData.procedures) 
+          : serverData.procedures || [];
+      } catch (e) {
+        procedures = serverData.procedures || [];
+      }
+
+      let guarantee = {} as any;
+      try {
+        guarantee = typeof serverData.guarantee === "string"
+          ? JSON.parse(serverData.guarantee)
+          : serverData.guarantee || {};
+      } catch (e) {
+        guarantee = serverData.guarantee || {};
+      }
+
+      methods.reset({
+        jciCertificate: serverData.jci_certificate ? new File([], "JCI Certificate") : null,
+        videoWalkthrough: serverData.walkthrough_video ? new File([], "Video Walkthrough") : null,
+        procedures: procedures.map((p: any) => ({
+          id: p.procedure_id,
+          name: p.procedure_name || p.name,
+          price: p.price,
+          notes: p.option_notes || p.notes || "",
+        })),
+        signerFullName: guarantee.signer_name || "",
+        typedSignature: guarantee.typed_signature || "",
+        agreeToGuarantee: guarantee.accepted_terms || false,
+      });
+    }
+  }, [isAlreadySubmitted, progressData, methods]);
 
   const onSubmit = (data: FormValues) => {
     if (isAlreadySubmitted) {
@@ -98,9 +137,9 @@ export default function MultiStepForm() {
         onSubmit={methods.handleSubmit(onSubmit)}
         className="space-y-0"
       >
-        <SterilizationSection />
-        <ProcedurePricingSection />
-        <GuaranteeSection />
+        <SterilizationSection disabled={isAlreadySubmitted} />
+        <ProcedurePricingSection disabled={isAlreadySubmitted} />
+        <GuaranteeSection disabled={isAlreadySubmitted} />
         {stepTwoMutation.isPending && (
           <div className="flex justify-center items-center py-6 border-t bg-card">
             <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />

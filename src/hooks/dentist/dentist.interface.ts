@@ -25,6 +25,7 @@ export interface StepTwoI {
 }
 
 export interface StepThreeI {
+  clinic_address: string;
   materials: {
     own_procedure: number;
     ce_certificate: File;

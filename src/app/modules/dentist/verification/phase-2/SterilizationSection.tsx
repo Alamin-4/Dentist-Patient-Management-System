@@ -2,8 +2,13 @@ import { useFormContext } from "react-hook-form";
 import { UploadCloud, Check } from "lucide-react";
 import PhaseStep from "../PhaseStep";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
-export const SterilizationSection = () => {
+interface SterilizationSectionProps {
+  disabled?: boolean;
+}
+
+export const SterilizationSection = ({ disabled }: SterilizationSectionProps) => {
   const { setValue, watch } = useFormContext();
   const jciFile = watch("jciCertificate");
   const videoFile = watch("videoWalkthrough");
@@ -26,6 +31,7 @@ export const SterilizationSection = () => {
             type="file"
             className="hidden"
             ref={jciInputRef}
+            disabled={disabled}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file)
@@ -34,8 +40,11 @@ export const SterilizationSection = () => {
             accept=".pdf,.jpg,.jpeg,.png"
           />
           <div
-            onClick={() => jciInputRef.current?.click()}
-            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed px-4 py-4 transition-all border-primary hover:bg-card sm:px-5"
+            onClick={() => !disabled && jciInputRef.current?.click()}
+            className={cn(
+              "group flex items-center justify-between rounded-xl border border-dashed px-4 py-4 transition-all border-primary sm:px-5",
+              disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-card"
+            )}
           >
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
@@ -65,6 +74,7 @@ export const SterilizationSection = () => {
             type="file"
             className="hidden"
             ref={videoInputRef}
+            disabled={disabled}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file)
@@ -73,8 +83,11 @@ export const SterilizationSection = () => {
             accept="video/*"
           />
           <div
-            onClick={() => videoInputRef.current?.click()}
-            className="group flex cursor-pointer items-center justify-between rounded-xl border border-dashed px-4 py-4 border-primary sm:px-5"
+            onClick={() => !disabled && videoInputRef.current?.click()}
+            className={cn(
+              "group flex items-center justify-between rounded-xl border border-dashed px-4 py-4 border-primary sm:px-5",
+              disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-card"
+            )}
           >
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
