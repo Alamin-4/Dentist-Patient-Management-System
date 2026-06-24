@@ -222,9 +222,8 @@ export function DentistOverviewTab({
   const approvePhase2 = useDentistPhaseTwoApprove(phase2Id);
   const approvePhase3 = useDentistPhaseThreeApprove(phase3Id);
 
-  const isPendingReview = (status: string) =>
-    status === "pending" || status === "in_review";
   const isSubmitted = (status: string) => status === "SUBMITTED";
+
   const handleApprove = () => {
     if (!approveModal.phase) return;
     const phase = approveModal.phase;
@@ -258,7 +257,6 @@ export function DentistOverviewTab({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ── Phase 1: Identity ──────────────────────────────────────── */}
       <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -330,7 +328,6 @@ export function DentistOverviewTab({
         )}
       </div>
 
-      {/* ── Phase 2: Operations ────────────────────────────────────── */}
       <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -450,7 +447,8 @@ export function DentistOverviewTab({
           )}
         </div>
 
-        {!isSubmitted(phaseStatuses.phase3) && phaseStatuses.phase3 !== "complete" ? (
+        {!isSubmitted(phaseStatuses.phase3) &&
+        phaseStatuses.phase3 !== "complete" ? (
           <div className="py-8 text-center">
             <p className="text-sm font-semibold text-gray-500">
               Phase 3 not yet started
