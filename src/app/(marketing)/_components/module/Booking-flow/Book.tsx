@@ -19,7 +19,6 @@ import TreatmentDetailsForm from "./BookingIntakeForm/TreatmentDetailsForm";
 import DentalHistoryForm from "./BookingIntakeForm/DentalHistoryForm";
 import PhotoUploadForm from "./BookingIntakeForm/PhotoUploadForm";
 import XRayUploadForm from "./BookingIntakeForm/XRayUploadForm";
-import { consultationBookingApi, getApiErrorMessage } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
 const TOTAL_STEPS = 6;
@@ -124,68 +123,68 @@ export default function IntakeModal() {
   };
 
   const submitCurrentStep = async () => {
-    const data = getBookingData();
+    // const data = getBookingData();
 
-    if (step === 1) {
-      const response = await consultationBookingApi.stepOne({
-        first_name: data.personalInfo.firstName,
-        last_name: data.personalInfo.lastName,
-        country: data.personalInfo.country,
-        date_of_birth: data.personalInfo.dateOfBirth,
-      });
-      const consultationId = getResultConsultationId(response);
-      if (consultationId) setConsultationId(consultationId);
-      return;
-    }
+    // if (step === 1) {
+    //   const response = await consultationBookingApi.stepOne({
+    //     first_name: data.personalInfo.firstName,
+    //     last_name: data.personalInfo.lastName,
+    //     country: data.personalInfo.country,
+    //     date_of_birth: data.personalInfo.dateOfBirth,
+    //   });
+    //   const consultationId = getResultConsultationId(response);
+    //   if (consultationId) setConsultationId(consultationId);
+    //   return;
+    // }
 
-    if (step === 2) {
-      await consultationBookingApi.stepTwo({
-        procedures: data.procedureIds,
-      });
-      return;
-    }
+    // if (step === 2) {
+    //   await consultationBookingApi.stepTwo({
+    //     procedures: data.procedureIds,
+    //   });
+    //   return;
+    // }
 
-    if (step === 3) {
-      await consultationBookingApi.stepThree({
-        consultation_id: getRequiredConsultationId(),
-        approximate_budget: Number(String(data.budget).replace(/[^0-9.]/g, "")),
-        travel_start_date: data.travelFrom,
-        travel_end_date: data.travelTo,
-      });
-      return;
-    }
+    // if (step === 3) {
+    //   await consultationBookingApi.stepThree({
+    //     consultation_id: getRequiredConsultationId(),
+    //     approximate_budget: Number(String(data.budget).replace(/[^0-9.]/g, "")),
+    //     travel_start_date: data.travelFrom,
+    //     travel_end_date: data.travelTo,
+    //   });
+    //   return;
+    // }
 
-    if (step === 4) {
-      await consultationBookingApi.stepFour({
-        consultation_id: getRequiredConsultationId(),
-        last_dentist_visit: data.dentalHistory.lastVisit,
-        conditions: data.dentalHistory.conditions.filter(
-          (condition) => condition !== "None of them",
-        ),
-        notes: data.dentalHistory.additionalInfo,
-      });
-      return;
-    }
+    // if (step === 4) {
+    //   await consultationBookingApi.stepFour({
+    //     consultation_id: getRequiredConsultationId(),
+    //     last_dentist_visit: data.dentalHistory.lastVisit,
+    //     conditions: data.dentalHistory.conditions.filter(
+    //       (condition) => condition !== "None of them",
+    //     ),
+    //     notes: data.dentalHistory.additionalInfo,
+    //   });
+    //   return;
+    // }
 
-    if (step === 5) {
-      const frontSmile = getFrontSmileFile();
-      if (!frontSmile) throw new Error("Please upload your front smile photo");
-      await consultationBookingApi.stepFive({
-        consultation_id: getRequiredConsultationId(),
-        front_smile: frontSmile,
-      });
-      return;
-    }
+    // if (step === 5) {
+    //   const frontSmile = getFrontSmileFile();
+    //   if (!frontSmile) throw new Error("Please upload your front smile photo");
+    //   await consultationBookingApi.stepFive({
+    //     consultation_id: getRequiredConsultationId(),
+    //     front_smile: frontSmile,
+    //   });
+    //   return;
+    // }
 
-    if (step === 6) {
-      const file = getXrayFile();
-      if (!file) throw new Error("Please upload your X-ray file");
-      await consultationBookingApi.stepSix({
-        consultation_id: getRequiredConsultationId(),
-        file,
-        notes: data.xrayNotes,
-      });
-    }
+    // if (step === 6) {
+    //   const file = getXrayFile();
+    //   if (!file) throw new Error("Please upload your X-ray file");
+    //   await consultationBookingApi.stepSix({
+    //     consultation_id: getRequiredConsultationId(),
+    //     file,
+    //     notes: data.xrayNotes,
+    //   });
+    // }
   };
 
   const handleNext = async () => {
@@ -214,7 +213,7 @@ export default function IntakeModal() {
       setSchedule(true);
       setShowCompareModal(true);
     } catch (error) {
-      toast.error(getApiErrorMessage(error));
+      // toast.error(getApiErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }

@@ -33,7 +33,7 @@ export default function DentistCard({ dentist, isCompareMode, isSelected, onSele
       <div className="flex flex-row items-start gap-4 w-full sm:contents">
 
         {/* Avatar + Verified Badge */}
-        <div className="relative flex flex-col items-center gap-2 flex-shrink-0">
+        <div className="relative flex flex-col items-center gap-2 shrink-0">
           <img
             src={dentist.image}
             className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-gray-50"
@@ -65,7 +65,7 @@ export default function DentistCard({ dentist, isCompareMode, isSelected, onSele
           </div>
 
           {/* Price */}
-          <div className="text-right flex-shrink-0 sm:flex sm:flex-col sm:justify-between sm:h-full">
+          <div className="text-right shrink-0 sm:flex sm:flex-col sm:justify-between sm:h-full">
             <div>
               <p className="text-[#6B7280] text-xs">Starting at</p>
               <p className="text-[#0E3E65] font-bold text-sm sm:text-base">${dentist.price}</p>

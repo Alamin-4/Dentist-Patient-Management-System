@@ -13,12 +13,10 @@ export default function AdminDashboardLayout({
     <SidebarProvider>
       <div className="flex h-screen flex-col overflow-hidden bg-[#F5F7FA]">
         <div className="flex flex-1 overflow-hidden">
-          {/* Desktop sidebar — always visible on lg+ */}
           <aside className="hidden h-full shrink-0 lg:block">
             <AdminSidebar />
           </aside>
 
-          {/* Mobile drawer + backdrop — only below lg */}
           <AdminMobileSidebarDrawer />
 
           <section className="flex-1 h-screen overflow-y-auto">
@@ -28,8 +26,6 @@ export default function AdminDashboardLayout({
             </main>
           </section>
         </div>
-
-        <Toaster position="top-center" />
       </div>
     </SidebarProvider>
   );

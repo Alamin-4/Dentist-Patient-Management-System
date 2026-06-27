@@ -6,19 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import useAuth from "@/hooks/authentication/useAuth";
-import { loginSchema } from "@/hooks/patient/schema";
-import { getApiErrorMessage } from "@/lib/api";
-import { getRoleHome } from "@/lib/auth/roles";
+import { adminLoginSchema } from "@/hooks/dentist/dentist.interface";
+import { useAdminLogin } from "@/hooks/auth/useAuth";
 
-type AdminLoginFormValues = z.infer<typeof loginSchema>;
+
+type AdminLoginFormValues = z.infer<typeof adminLoginSchema>;
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { loginMutation } = useAuth();
+  const { mutateAsync: loginMutation, isPending, } = useAdminLogin();
   const {
     register,
     handleSubmit,
@@ -26,35 +24,28 @@ export default function AdminLoginPage() {
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<AdminLoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", role: "ADMIN" },
+    resolver: zodResolver(adminLoginSchema),
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: AdminLoginFormValues) => {
     clearErrors("root");
-
+    console.log("login admin")
     try {
-      const response = await loginMutation.mutateAsync(data);
-      const payload = "data" in response ? response.data : response;
-      toast.success("Welcome back, Admin!", {
-        style: {
-          borderRadius: "10px",
-          background: "#1A1A2E",
-          color: "#fff",
-        },
-      });
-      router.replace(getRoleHome(payload.type ?? payload.role ?? data.role));
-    } catch (error) {
+      const response = await loginMutation(data);
+      if (response) {
+        router.push("/admin");
+      }
+    } catch (error: any) {
       setError("root.server", {
         type: "server",
-        message: getApiErrorMessage(error),
+        message: error?.message || "Invalid credentials",
       });
     }
   };
 
   return (
     <>
-      <Toaster position="top-center" />
       <div className="flex min-h-screen">
         {/* Left panel — form */}
         <div className="flex w-full flex-col lg:w-1/2">
@@ -200,7 +191,7 @@ export default function AdminLoginPage() {
                 {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting || loginMutation.isPending}
+                  disabled={isSubmitting || isPending}
                   className={cn(
                     "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
                     "bg-[#1A1A2E] hover:bg-[#0D2B3E]",
@@ -208,7 +199,7 @@ export default function AdminLoginPage() {
                     "disabled:opacity-60 disabled:cursor-not-allowed",
                   )}
                 >
-                  {isSubmitting || loginMutation.isPending ? (
+                  {isSubmitting || isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Signing in...

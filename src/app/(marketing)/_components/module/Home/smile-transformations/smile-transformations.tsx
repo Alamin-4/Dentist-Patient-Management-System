@@ -2,25 +2,20 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
-// Static Data reflecting the design exactly
 const CASE_STUDIES = [
   {
     id: 1,
-    title: "Porcelain Venners", // Kept typo from design "Venners" intentionally to match 100%
+    title: "Porcelain Venners",
     doctor: "Dr. Luiz Hernanded",
     location: "Istanbul, Turkey",
     patientType: "Verified RatedDocs Patient",
-    // Replace with your real image paths
     image: "/images/smile-1.png",
   },
   {
@@ -74,15 +69,7 @@ export default function SmileTransformations() {
             </p>
           </div>
 
-          <Button
-            size={"lg"}
-            className="self-start md:self-auto bg-primary text-white text-sm font-medium px-4 rounded-lg flex items-center gap-2 transition-colors duration-200"
-          >
-            See All Case Studies
-            <span className="bg-[#FDB022] text-black rounded p-0.5 flex items-center justify-center size-4">
-              <ArrowUpRight className="size-3 stroke-3" />
-            </span>
-          </Button>
+
         </div>
 
         {/* Desktop Grid / Mobile Responsive Slider Container */}

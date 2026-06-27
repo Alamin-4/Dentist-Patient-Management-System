@@ -4,17 +4,10 @@ import { useEffect } from "react";
 import { useStateContext } from "@/providers/StateProvider";
 import { VerificationBanner } from "./verification-banner";
 import MainOverviewPage from "./main-overview-page";
-import { useDentistProgress } from "@/hooks/dentist/useDentist";
 import type {
   DentistVerificationProgress,
-  VerificationProgressStep,
-  VerificationPhase,
 } from "./verification-progress.types";
-
-const getStepByPhase = (
-  steps: VerificationProgressStep[],
-  phase: VerificationPhase,
-) => steps.find((step) => step.phase === phase);
+import { useDentistProgress } from "@/hooks/dentist/useDentist";
 
 export function OverviewPageSwitcher() {
   const { setVerificationStep } = useStateContext();
@@ -24,30 +17,14 @@ export function OverviewPageSwitcher() {
     isError,
     refetch,
   } = useDentistProgress();
-
+  console.log("progressData:", progressData)
   const progress = progressData?.data as
     | DentistVerificationProgress
     | undefined;
 
-  // Dynamically determine completed steps from backend status
-  const steps = progress?.steps || [];
-  const licenseStep = getStepByPhase(steps, "LICENSE");
-  const operationalStep = getStepByPhase(steps, "OPERATIONAL");
-  const clinicalStep = getStepByPhase(steps, "CLINICAL");
-
-  const step1Done = licenseStep
-    ? licenseStep.completed
-    : progress?.is_step_one_completed ||
-      (progress?.step_one_status && progress?.step_one_status !== "PENDING");
-  const step2Done = operationalStep
-    ? operationalStep.completed
-    : progress?.is_step_two_completed ||
-      (progress?.step_two_status && progress?.step_two_status !== "PENDING");
-  const step3Done = clinicalStep
-    ? clinicalStep.completed
-    : progress?.is_step_three_completed ||
-      (progress?.step_three_status &&
-        progress?.step_three_status !== "PENDING");
+  const step1Done = progress?.step_one_status !== "PENDING";
+  const step2Done = progress?.step_two_status !== "PENDING";
+  const step3Done = progress?.step_three_status !== "PENDING";
 
   useEffect(() => {
     if (progress) {

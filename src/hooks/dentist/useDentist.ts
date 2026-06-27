@@ -1,6 +1,7 @@
-import { dentistApi } from "@/lib/api";
+import { apiClient } from "@/api/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProfessionalDetailsI, StepOneI, StepThreeI, StepTwoI } from "./dentist.interface";
+
 
 export function objectToFormData<T extends object>(obj: T): FormData {
   const formData = new FormData();
@@ -52,59 +53,44 @@ export function objectToFormData<T extends object>(obj: T): FormData {
 function buildStepTwoFormData(data: StepTwoI): FormData {
   const formData = new FormData();
 
-  if (data.jci_certificate) {
-    formData.append("jci_certificate", data.jci_certificate);
+  if (data.jciCertificate) {
+    formData.append("jciCertificate", data.jciCertificate);
   }
 
-  if (data.walkthrough_video) {
-    formData.append("walkthrough_video", data.walkthrough_video);
+  if (data.walkthroughVideo) {
+    formData.append("walkthroughVideo", data.walkthroughVideo);
   }
 
-  formData.append("procedures", JSON.stringify(data.procedures));
-  formData.append("guarantee", JSON.stringify(data.guarantee));
+  formData.append("signerName", data.signerName);
+  formData.append("signature", data.signature);
+  formData.append("agreedToGuarantee", String(data.agreedToGuarantee));
+
+  if (data.procedures) {
+    formData.append("procedures", JSON.stringify(data.procedures));
+  }
 
   return formData;
 }
 
-function buildStepThreeFormData(data: StepThreeI): FormData {
-  const formData = new FormData();
 
-  if (data.clinic_address) {
-    formData.append("clinic_address", JSON.stringify(data.clinic_address));
-  }
-  data.materials.forEach((m, index) => {
-    formData.append(`materials[${index}].own_procedure`, String(m.own_procedure));
 
-    if (m.ce_certificate) {
-      formData.append(`materials[${index}].ce_certificate`, m.ce_certificate);
-    }
-    if (m.material_brands) {
-      formData.append(`materials[${index}].material_brands`, m.material_brands);
-    }
-    if (m.invoice) {
-      formData.append(`materials[${index}].invoice`, m.invoice);
-    }
-    if (m.protocol_pdf) {
-      formData.append(`materials[${index}].protocol_pdf`, m.protocol_pdf);
-    }
-  });
-
-  console.log("=== Phase 3 FormData Payload ===");
-  formData.forEach((value, key) => {
-    if (value instanceof File) {
-      console.log(`${key}: File [name: ${value.name}, size: ${value.size} bytes]`);
-    } else {
-      console.log(`${key}:`, value);
-    }
-  });
-
-  return formData;
-}
 
 export function useDentistProgress() {
   return useQuery({
     queryKey: ["dentistVerificationProgress"],
-    queryFn: () => dentistApi.getVerificationProgress(),
+    queryFn: () => apiClient.dentists.getProgress(),
+    // enabled: typeof window !== "undefined" && hasSessionCookie(),
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5,
+  });
+}
+
+export function useDentistOverview() {
+  return useQuery({
+    queryKey: ["dentistOverviewData"],
+    queryFn: () => apiClient.dentists.getOverviewData(),
+    staleTime: 1000 * 60 * 2,
     retry: false,
   });
 }
@@ -113,7 +99,7 @@ export function useUpdateVerificationPhase() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { verification_phase: string }) =>
-      dentistApi.updateVerificationPhase(data),
+      apiClient.dentists.updateVerificationPhase(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["dentistVerificationProgress"] });
     },
@@ -125,62 +111,123 @@ export default function useDentist() {
 
   const invalidateVerification = () => {
     queryClient.invalidateQueries({ queryKey: ["dentistVerificationProgress"] });
+    queryClient.invalidateQueries({ queryKey: ["licenseVerifyProgress"] });
+    queryClient.invalidateQueries({ queryKey: ["photoVerifyProgress"] });
+    queryClient.invalidateQueries({ queryKey: ["idVerifyProgress"] });
+    queryClient.invalidateQueries({ queryKey: ["stepOneCheck"] });
+    queryClient.invalidateQueries({ queryKey: ["stepTwoCheck"] });
+    queryClient.invalidateQueries({ queryKey: ["stepThreeCheck"] });
   };
-  
 
   const professionalDetailsMutation = useMutation({
-    mutationFn: (data: ProfessionalDetailsI) => dentistApi.professionalDetails(data),
+    mutationFn: (data: ProfessionalDetailsI) => apiClient.dentists.professionalDetails(data),
   });
 
   const stepOneMutation = useMutation({
     mutationKey: ["dentist", "verification", "stepOne"],
-    mutationFn: (data: StepOneI) => dentistApi.stepOne(objectToFormData(data)),
+    mutationFn: (data: StepOneI & { profilePicture: File; licenseDocument?: File }) =>
+      apiClient.dentists.stepOne(objectToFormData(data)),
     onSuccess: invalidateVerification,
   });
 
   const stepTwoMutation = useMutation({
     mutationKey: ["dentist", "verification", "stepTwo"],
     mutationFn: (data: StepTwoI) =>
-      dentistApi.stepTwoWithFiles(buildStepTwoFormData(data)),
+      apiClient.dentists.stepTwoWithFiles(buildStepTwoFormData(data)),
     onSuccess: invalidateVerification,
   });
 
   const stepThreeMutation = useMutation({
     mutationKey: ["dentist", "verification", "stepThree"],
-    mutationFn: (data: StepThreeI) => dentistApi.stepThree(buildStepThreeFormData(data)),
+    mutationFn: async (data: StepThreeI) => {
+      // 1. Upload files first and collect their secure URLs
+      const procedureDocs = await Promise.all(
+        data.materials.map(async (m) => {
+          let ceCertificateUrl = "";
+          let materialBrandsUrl = "";
+          let invoiceUrl = "";
+          let protocolPdfUrl = "";
+
+          if (m.ce_certificate instanceof File) {
+            const res = await apiClient.files.upload(m.ce_certificate);
+            ceCertificateUrl = res.data?.secure_url || "";
+          } else if (typeof m.ce_certificate === "string") {
+            ceCertificateUrl = m.ce_certificate;
+          }
+
+          if (m.material_brands instanceof File) {
+            const res = await apiClient.files.upload(m.material_brands);
+            materialBrandsUrl = res.data?.secure_url || "";
+          } else if (typeof m.material_brands === "string") {
+            materialBrandsUrl = m.material_brands;
+          }
+
+          if (m.invoice instanceof File) {
+            const res = await apiClient.files.upload(m.invoice);
+            invoiceUrl = res.data?.secure_url || "";
+          } else if (typeof m.invoice === "string") {
+            invoiceUrl = m.invoice;
+          }
+
+          if (m.protocol_pdf instanceof File) {
+            const res = await apiClient.files.upload(m.protocol_pdf);
+            protocolPdfUrl = res.data?.secure_url || "";
+          } else if (typeof m.protocol_pdf === "string") {
+            protocolPdfUrl = m.protocol_pdf;
+          }
+
+          return {
+            dentistProcedureId: String(m.own_procedure),
+            ceCertificate: ceCertificateUrl,
+            materialBrands: materialBrandsUrl || "",
+            invoice: invoiceUrl,
+            protocolPdf: protocolPdfUrl,
+          };
+        })
+      );
+
+      // 2. Build final JSON payload matching backend submitClinicDepthSchema
+      const payload = {
+        clinicAddress: data.clinic_address?.address || "",
+        procedureDocs,
+      };
+
+      // 3. Post JSON payload
+      return apiClient.dentists.stepThree(payload);
+    },
     onSuccess: invalidateVerification,
   });
 
   const stepOneCheckQuery = useQuery({
     queryKey: ["stepOneCheck"],
-    queryFn: () => dentistApi.stepOneCheck(),
+    queryFn: () => apiClient.dentists.stepOneCheck(),
     enabled: false,
   });
 
   // Step 2 Check
   const stepTwoCheckQuery = useQuery({
     queryKey: ["stepTwoCheck"],
-    queryFn: () => dentistApi.stepTwoCheck(),
+    queryFn: () => apiClient.dentists.stepTwoCheck(),
     enabled: false,
   });
 
   const globalProcedureListQuery = useQuery({
     queryKey: ["global_procedure_list"],
-    queryFn: () => dentistApi.global_procedure_list(),
-    enabled: true,
+    queryFn: () => apiClient.dentists.global_procedure_list(),
+    // enabled: true,
   });
 
   const stepThreeCheckQuery = useQuery({
     queryKey: ["stepThreeCheck"],
-    queryFn: () => dentistApi.stepThreeCheck(),
+    queryFn: () => apiClient.dentists.stepThreeCheck(),
     enabled: false,
   });
 
   const dentistProcedureList = useQuery({
     queryKey: ["dentist_procedures"],
-    queryFn: () => dentistApi.dentistProcedureList(),
-    enabled: true,
-  })
+    queryFn: () => apiClient.dentists.dentistProcedureList(),
+    // enabled: typeof window !== "undefined" && hasSessionCookie(),
+  });
 
   return {
     // Mutations

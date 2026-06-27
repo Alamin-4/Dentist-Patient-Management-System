@@ -109,7 +109,7 @@ function DateInputField({
       <Input
         type="text"
         placeholder={placeholder}
-        className={cn("!h-12 rounded-xl pr-10", hasError && "border-destructive", className)}
+        className={cn("h-12! rounded-xl pr-10", hasError && "border-destructive", className)}
         {...props}
       />
       <CalendarDaysIcon className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-muted-foreground pointer-events-none" />
@@ -156,22 +156,21 @@ export default function PersonalizeComparisonModal() {
 
         <form onSubmit={handleSubmit(openCompare)} noValidate>
           <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-            {/* First Name */}
+
             <div className="flex flex-col gap-1.5">
               <FieldLabel required>First Name</FieldLabel>
               <Input
                 placeholder="Enter Name"
-                className={cn("!h-12 rounded-xl", errors.firstName && "border-destructive")}
+                className={cn("h-12! rounded-xl", errors.firstName && "border-destructive")}
                 {...register("firstName")}
               />
             </div>
 
-            {/* Last Name */}
             <div className="flex flex-col gap-1.5">
               <FieldLabel required>Last Name</FieldLabel>
               <Input
                 placeholder="Enter Name"
-                className={cn("!h-12 rounded-xl", errors.lastName && "border-destructive")}
+                className={cn("h-12! rounded-xl", errors.lastName && "border-destructive")}
                 {...register("lastName")}
               />
             </div>
@@ -182,7 +181,7 @@ export default function PersonalizeComparisonModal() {
               <Input
                 type="tel"
                 placeholder="Enter Phone Number"
-                className={cn("!h-12 rounded-xl", errors.phoneNumber && "border-destructive")}
+                className={cn("h-12! rounded-xl", errors.phoneNumber && "border-destructive")}
                 {...register("phoneNumber")}
               />
             </div>
@@ -197,7 +196,7 @@ export default function PersonalizeComparisonModal() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       className={cn(
-                        "w-full !h-12 rounded-xl",
+                        "w-full h-12! rounded-xl",
                         errors.country && "border-destructive",
                       )}
                     >
@@ -223,7 +222,7 @@ export default function PersonalizeComparisonModal() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       className={cn(
-                        "w-full !h-12 rounded-xl",
+                        "w-full h-12! rounded-xl",
                         errors.gender && "border-destructive",
                       )}
                     >
@@ -258,7 +257,7 @@ export default function PersonalizeComparisonModal() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       className={cn(
-                        "w-full !h-12 rounded-xl",
+                        "w-full h-12! rounded-xl",
                         errors.treatment && "border-destructive",
                       )}
                     >

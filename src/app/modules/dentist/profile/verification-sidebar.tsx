@@ -128,12 +128,12 @@ export function VerificationSidebar() {
   const allDone = step1Done && step2Done && step3Done;
 
   const renderIcon = (status: string, done: boolean, isCurrent: boolean) => {
-    if (status === "APPROVED" || status === "SUBMIT") {
+    if (status === "APPROVED" || status === "SUBMITTED") {
       return (
         <CheckCircle2 className="h-5 w-5 bg-green-500 text-white border-2 border-green-500 rounded-full" />
       );
     }
-    if (status === "REJECTED") {
+    if (status === "REJECTED" ) {
       return <AlertCircle className="h-5 w-5 text-red-500" />;
     }
 
@@ -159,11 +159,11 @@ export function VerificationSidebar() {
                   </p>
                   <p className="text-xs text-gray-400  flex items-center gap-2">
                     {step.sub}
-                    {step.status === "SUBMIT" && (
-                      <p className="text-xs text-yellow-400">Review</p>
+                    {(step.status === "SUBMITTED") && (
+                      <span className="text-xs text-yellow-400">Review</span>
                     )}
-                    {step.status === "REJECT" && (
-                      <p className="text-xs text-red-400">Rejected</p>
+                    {(step.status === "REJECTED") && (
+                      <span className="text-xs text-red-400">Rejected</span>
                     )}
                   </p>
                 </div>

@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import type { BadgeColor } from "./overview-data";
-import { overviewData } from "./overview-data";
 
 const BADGE_STYLES: Record<BadgeColor, string> = {
   success: "bg-success-50 text-success-700",
@@ -9,9 +8,21 @@ const BADGE_STYLES: Record<BadgeColor, string> = {
   destructive: "bg-destructive-50 text-destructive-700",
 };
 
-export function OverviewPerformanceCard() {
-  const { chart } = overviewData;
+interface Props {
+  chart: {
+    score: number;
+    completed: number;
+    total: number;
+    labels: Array<{
+      label: string;
+      value: string;
+      badge: string;
+      badgeColor: BadgeColor;
+    }>;
+  };
+}
 
+export function OverviewPerformanceCard({ chart }: Props) {
   // Clamp to valid conic-gradient percentage
   const pct = Math.min(Math.max(chart.score, 0), 100);
 

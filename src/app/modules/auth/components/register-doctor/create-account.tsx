@@ -1,300 +1,285 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useAuth from "@/hooks/authentication/useAuth";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
 
-// Define the validation schema
-const formSchema = z
-  .object({
-    first_name: z.string().min(2, "First name is required"),
-    last_name: z.string().min(2, "Last name is required"),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().min(10, "Phone number must be at least 10 digits"),
-    gender: z.string().min(1, "Gender is required"),
-    referral_code: z.string().optional(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirm_password: z.string(),
-    role: z.literal("DENTIST"),
-  })
-  .refine((data) => data.password === data.confirm_password, {
-    message: "Passwords do not match",
-    path: ["confirm_password"],
-  });
+import useAuth, { useMe } from "@/hooks/auth/useAuth";
+import { IRegisterDentist, registerDentistSchema } from "@/hooks/auth/auth.validation";
 
-type FormData = z.infer<typeof formSchema>;
+interface CreateAccountFormProps {
+  setStep: (step: "verify-email" | "professional-info" | "success") => void;
+}
 
-export function CreateAccountForm({
-  setStep,
-}: {
-  setStep: (step: number) => void;
-}) {
+export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { registerMutation } = useAuth();
+  const [needVerifyEmail, setNeedVerifyEmail] = useState<string | null>(null);
+  const { user } = useMe()
+
+  const router = useRouter();
+  const pathName = usePathname();
+
+  const {
+    registerDentistMutation,
+    resendOtpMutation,
+    isRegisterDentistLoading,
+    isOtpResendLoading
+  } = useAuth();
+
+  useEffect(() => {
+    if (user && user?.emailVerified && setStep) {
+      setStep("professional-info")
+      router.push(`${pathName}?dentist=professional-info`);
+    }
+  }, [user])
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     setValue,
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  } = useForm<IRegisterDentist>({
+    resolver: zodResolver(registerDentistSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
+      firstName: "",
+      lastName: "",
       email: "",
-      phone: "",
-      gender: "",
-      referral_code: "",
+      phoneNumber: "",
+      gender: undefined,
+      referralCode: "",
       password: "",
-      confirm_password: "",
-      role: "DENTIST",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = async (data: FormData) => {
-    setIsLoading(true);
+  const handleSendVerificationOtp = () => {
+    if (!needVerifyEmail) return;
+
+    resendOtpMutation.mutate(
+      { email: needVerifyEmail },
+      {
+        onSuccess: () => {
+          localStorage.setItem("registerEmail", needVerifyEmail);
+          setNeedVerifyEmail(null);
+          setStep("verify-email");
+          router.push(`${pathName}?dentist=verify-email`);
+        },
+        onError: (error: any) => {
+          const errorMessage = error?.response?.data?.message || "Failed to send verification OTP. Try again.";
+          toast.error(errorMessage);
+        },
+      }
+    );
+  };
+
+  const onSubmit = (data: IRegisterDentist) => {
+
     localStorage.setItem("registerEmail", data.email);
 
-    registerMutation.mutate(data, {
-      onSuccess: () => {
-        toast.success(
-          "Account created successfully! Please verify your email.",
-        );
-        localStorage.setItem("registerEmail", data.email);
-        setStep(2);
+    registerDentistMutation.mutate(data, {
+      onSuccess: (res: any) => {
+        if (res?.data?.needEmailVerify) {
+          toast.success("This email is already registered. Please verify your email.");
+          setNeedVerifyEmail(data.email);
+          return;
+        }
+
+        toast.success("Account created successfully! Please verify your email.");
+        setStep("verify-email");
+        router.push(`${pathName}?dentist=verify-email`);
       },
       onError: (error: any) => {
-
-        const errorRes = error?.detail?.message
-
-        toast.error(`${errorRes}`)
-
-      },
-      onSettled: () => {
-        setIsLoading(false);
+        const errorRes = error?.response?.data?.message || error?.message || "Failed to create account.";
+        toast.error(errorRes);
       },
     });
   };
 
-  return (
-    <>
-      <Toaster position="top-right" />
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label
-              htmlFor="firstName"
-              className="text-sm font-medium text-gray-700"
-            >
-              First Name
-            </Label>
-            <Input
-              id="firstName"
-              {...register("first_name")}
-              placeholder="John"
-              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.first_name ? "border-red-500" : ""}`}
-            />
-            {errors.first_name && (
-              <p className="text-xs text-red-500">
-                {errors.first_name.message}
-              </p>
-            )}
-          </div>
-          <div className="grid gap-2">
-            <Label
-              htmlFor="last_name"
-              className="text-sm font-medium text-gray-700"
-            >
-              Last Name
-            </Label>
-            <Input
-              id="last_name"
-              {...register("last_name")}
-              placeholder="Doe"
-              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.last_name ? "border-red-500" : ""}`}
-            />
-            {errors.last_name && (
-              <p className="text-xs text-red-500">{errors.last_name.message}</p>
-            )}
-          </div>
+  // Early return for the "Verify Email" state
+  if (needVerifyEmail) {
+    return (
+      <div className="flex flex-col items-center justify-center py-6 text-center space-y-6">
+        <div className="text-[#1A1A1A] font-semibold text-lg">
+          Your email ({needVerifyEmail}) is registered but not verified.
         </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-            Email
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            {...register("email")}
-            placeholder="example@gmail.com"
-            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.email ? "border-red-500" : ""}`}
-          />
-          {errors.email && (
-            <p className="text-xs text-red-500">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
-            Phone No
-          </Label>
-          <Input
-            id="phone"
-            type="tel"
-            {...register("phone")}
-            placeholder="+1 234 *******"
-            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.phone ? "border-red-500" : ""}`}
-          />
-          {errors.phone && (
-            <p className="text-xs text-red-500">{errors.phone.message}</p>
-          )}
-        </div>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label
-              htmlFor="gender"
-              className="text-sm font-medium text-gray-700"
-            >
-              Gender
-            </Label>
-            <Select onValueChange={(val) => setValue("gender", val)}>
-              <SelectTrigger
-                className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
-              >
-                <SelectValue placeholder="Select Gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem className="h-11!" value="MALE">
-                  Male
-                </SelectItem>
-                <SelectItem className="h-11!" value="FEMALE">
-                  Female
-                </SelectItem>
-                <SelectItem className="h-11!" value="OTHER">
-                  Other
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.gender && (
-              <p className="text-xs text-red-500">{errors.gender.message}</p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
-            <Label
-              htmlFor="referral_code"
-              className="text-sm font-medium text-gray-700"
-            >
-              Referral Code
-            </Label>
-            <Input
-              id="referral_code"
-              {...register("referral_code")}
-              placeholder="JH-12"
-              className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referral_code ? "border-red-500" : ""}`}
-            />
-            {errors.referral_code && (
-              <p className="text-xs text-red-500">
-                {errors.referral_code.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid gap-2">
-          <Label
-            htmlFor="password"
-            className="text-sm font-medium text-gray-700"
-          >
-            Password
-          </Label>
-          <Input
-            id="password"
-            type="password"
-            {...register("password")}
-            placeholder="••••••••"
-            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.password ? "border-red-500" : ""}`}
-          />
-          {errors.password && (
-            <p className="text-xs text-red-500">{errors.password.message}</p>
-          )}
-        </div>
-
-        <div className="grid gap-2">
-          <Label
-            htmlFor="confirm_password"
-            className="text-sm font-medium text-gray-700"
-          >
-            Confirm Password
-          </Label>
-          <div className="relative">
-            <Input
-              id="confirm_password"
-              type={showPassword ? "text" : "password"}
-              {...register("confirm_password")}
-              placeholder="••••••••"
-              className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirm_password ? "border-red-500" : ""}`}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-            >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-          {errors.confirm_password && (
-            <p className="text-xs text-red-500">
-              {errors.confirm_password.message}
-            </p>
-          )}
-        </div>
-
+        <p className="text-sm text-gray-500">
+          Click the button below to receive a verification OTP on your email.
+        </p>
         <Button
-          type="submit"
-          disabled={isLoading}
-          className="h-11 bg-[#163E5C] hover:bg-[#0E3E65] focus:ring-0 focus:ring-offset-0"
+          type="button"
+          onClick={handleSendVerificationOtp}
+          disabled={isOtpResendLoading}
+          className="h-11 w-full bg-[#163E5C] hover:bg-[#0E3E65] focus:ring-0 focus:ring-offset-0 cursor-pointer"
         >
-          {isLoading ? (
+          {isOtpResendLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating Account...
+              Sending OTP...
             </>
           ) : (
-            "Create Account"
+            "Verify Email"
           )}
         </Button>
-        <div className="text-center text-sm">
-          Already have an account? <Link href="/doctor-login" className="text-[#0E3E65] font-medium! hover:underline cursor-pointer">Sign In</Link>
+        <button
+          type="button"
+          onClick={() => setNeedVerifyEmail(null)}
+          className="text-sm font-semibold text-[#163E5C] hover:underline cursor-pointer"
+        >
+          Go back to Sign up
+        </button>
+      </div>
+    );
+  }
 
+  // Main Registration Form
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+      {/* First & Last Name */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
+          <Input
+            id="firstName"
+            {...register("firstName")}
+            placeholder="John"
+            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.firstName ? "border-red-500" : ""}`}
+          />
+          {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
         </div>
-      </form>
+        <div className="grid gap-2">
+          <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
+          <Input
+            id="lastName"
+            {...register("lastName")}
+            placeholder="Doe"
+            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.lastName ? "border-red-500" : ""}`}
+          />
+          {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
+        </div>
+      </div>
 
-    </>
+      {/* Email */}
+      <div className="grid gap-2">
+        <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          {...register("email")}
+          placeholder="example@gmail.com"
+          className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.email ? "border-red-500" : ""}`}
+        />
+        {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+      </div>
+
+      {/* Phone Number */}
+      <div className="grid gap-2">
+        <Label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700">Phone No</Label>
+        <Input
+          id="phoneNumber"
+          type="tel"
+          {...register("phoneNumber")}
+          placeholder="+1 234 *******"
+          className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.phoneNumber ? "border-red-500" : ""}`}
+        />
+        {errors.phoneNumber && <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>}
+      </div>
+
+      {/* Gender & Referral Code */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="gender" className="text-sm font-medium text-gray-700">Gender</Label>
+          <Select onValueChange={(val) => setValue("gender", val as "MALE" | "FEMALE" | "OTHER")}>
+            <SelectTrigger
+              id="gender"
+              className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
+            >
+              <SelectValue placeholder="Select Gender" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="MALE" className="h-11!">Male</SelectItem>
+              <SelectItem value="FEMALE" className="h-11!">Female</SelectItem>
+              <SelectItem value="OTHER" className="h-11!">Other</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.gender && <p className="text-xs text-red-500">{errors.gender.message}</p>}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="referralCode" className="text-sm font-medium text-gray-700">Referral Code</Label>
+          <Input
+            id="referralCode"
+            {...register("referralCode")}
+            placeholder="JH-12 (Optional)"
+            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referralCode ? "border-red-500" : ""}`}
+          />
+          {errors.referralCode && <p className="text-xs text-red-500">{errors.referralCode.message}</p>}
+        </div>
+      </div>
+
+      {/* Password */}
+      <div className="grid gap-2">
+        <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          {...register("password")}
+          placeholder="••••••••"
+          className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.password ? "border-red-500" : ""}`}
+        />
+        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+      </div>
+
+      {/* Confirm Password */}
+      <div className="grid gap-2">
+        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+        <div className="relative">
+          <Input
+            id="confirmPassword"
+            type={showPassword ? "text" : "password"}
+            {...register("confirmPassword")}
+            placeholder="••••••••"
+            className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirmPassword ? "border-red-500" : ""}`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        </div>
+        {errors.confirmPassword && <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>}
+      </div>
+
+      {/* Submit Button */}
+      <Button
+        type="submit"
+        disabled={isRegisterDentistLoading}
+        className="h-11 bg-[#163E5C] hover:bg-[#0E3E65] focus:ring-0 focus:ring-offset-0 cursor-pointer w-full"
+      >
+        {isRegisterDentistLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Creating Account...
+          </>
+        ) : (
+          "Create Account"
+        )}
+      </Button>
+    </form>
   );
 }

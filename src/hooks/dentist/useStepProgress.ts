@@ -1,5 +1,15 @@
-import { dentistApi } from "@/lib/api";
+import { apiClient } from "@/api/client";
 import { useQuery } from "@tanstack/react-query";
+
+const hasSessionCookie = (): boolean => {
+  if (typeof document === "undefined") return false;
+  return document.cookie
+    .split("; ")
+    .some((item) =>
+      item.startsWith("better-auth.session_token=") ||
+      item.startsWith("accessToken=")
+    );
+};
 
 // Shape of each step-check API response body
 export interface StepCheckResponse {
@@ -24,9 +34,10 @@ export default function useVerificationProgress() {
     const checkLicenseVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["licenseVerifyProgress"],
         queryFn: () =>
-            dentistApi.stepOneCheck()
+            apiClient.dentists.stepOneCheck()
                 .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
                 .catch(() => ({ submitted: false, status: null })),
+        enabled: typeof window !== "undefined",
         staleTime: 60_000,
         retry: false,
     });
@@ -34,9 +45,10 @@ export default function useVerificationProgress() {
     const checkPhotoVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["photoVerifyProgress"],
         queryFn: () =>
-            dentistApi.stepTwoCheck()
+            apiClient.dentists.stepTwoCheck()
                 .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
                 .catch(() => ({ submitted: false, status: null })),
+        enabled: typeof window !== "undefined",
         staleTime: 60_000,
         retry: false,
     });
@@ -44,9 +56,10 @@ export default function useVerificationProgress() {
     const checkIdVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["idVerifyProgress"],
         queryFn: () =>
-            dentistApi.stepThreeCheck()
+            apiClient.dentists.stepThreeCheck()
                 .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
                 .catch(() => ({ submitted: false, status: null })),
+        enabled: typeof window !== "undefined",
         staleTime: 60_000,
         retry: false,
     });

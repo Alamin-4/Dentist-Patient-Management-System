@@ -22,10 +22,10 @@ import dentistsData from "@/lib/dentists-data";
 import { CustomStats } from "@/app/(admin dashboard)/modules/shared/custom-stats";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
 import { cn } from "@/lib/utils";
-import {
-  useAdminDentists,
-  type AdminDentist,
-} from "@/hooks/admin/dentist/useDentist";
+// import {
+//   useAdminDentists,
+//   type AdminDentist,
+// } from "@/hooks/admin/dentist/useDentist";
 
 export type Dentist = Omit<
   (typeof dentistsData.dentists)[number],
@@ -258,11 +258,11 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
 
   const initials = d.full_name
     ? d.full_name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
     : "D";
 
   const colors = [
@@ -432,8 +432,8 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           ),
           clinic_location: d.dentist_verification?.clinical_path_verification?.clinic_address
             ? (typeof d.dentist_verification.clinical_path_verification.clinic_address === "string"
-                ? d.dentist_verification.clinical_path_verification.clinic_address
-                : d.dentist_verification.clinical_path_verification.clinic_address.address || "—")
+              ? d.dentist_verification.clinical_path_verification.clinic_address
+              : d.dentist_verification.clinical_path_verification.clinic_address.address || "—")
             : "—",
           categories: phase3Categories,
         },
@@ -759,7 +759,7 @@ export default function DentistsPage() {
                         className={cn(
                           "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
                           STATUS_BADGE[dentist.status] ??
-                            "bg-gray-100 text-gray-500",
+                          "bg-gray-100 text-gray-500",
                         )}
                       >
                         <span
@@ -774,7 +774,7 @@ export default function DentistsPage() {
                     {/* Rating */}
                     <td className="px-4 py-3.5">
                       {dentist.rating != null &&
-                      dentist.review_count != null ? (
+                        dentist.review_count != null ? (
                         <StarRating
                           rating={dentist.rating}
                           count={dentist.review_count}
@@ -805,8 +805,8 @@ export default function DentistsPage() {
                         onViewProfile={() =>
                           router.push(`/admin/dentists/${dentist.id}`)
                         }
-                        onSuspend={() => {}}
-                        onDelete={() => {}}
+                        onSuspend={() => { }}
+                        onDelete={() => { }}
                       />
                     </td>
                   </tr>

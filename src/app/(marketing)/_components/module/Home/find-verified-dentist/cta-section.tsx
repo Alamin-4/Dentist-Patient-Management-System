@@ -17,7 +17,7 @@ export default function CtaSearchSection() {
             <span className="text-[10px] text-white italic">✓</span>
           </div>
           <span className="text-white text-sm font-medium">
-            Over <span className="text-[#E3A32A] font-bold">2400+</span>{" "}
+            Over <span className="text-[#E3A32A] font-bold">0</span>{" "}
             Verified Dentists Worldwide
           </span>
         </div>

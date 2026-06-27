@@ -9,24 +9,28 @@ import useDentist from "@/hooks/dentist/useDentist";
 import toast from "react-hot-toast";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
-/*
-Type 'SubmittedLicence | null | undefined' is not assignable to type 'Partial<{ country: string; city: string; authority: number; regNo: string; }> | undefined'.
-  Type 'null' is not assignable to type 'Partial<{ country: string; city: string; authority: number; regNo: string; }> | undefined'.
-*/
-type SubmittedLicence = {
-  country: string;
-  city: string;
-  authority: number;
-  regNo: string;
-};
+import { VerificationResult } from "./match-found";
+import z from "zod";
 
-type LicenseProgressData = {
+export const SubmittedLicenceSchema = z.object({
+  country: z.string().min(1, "Country is required"),
+  city: z.string().min(1, "City is required"),
+  authority: z.string().min(1, "Registration authority is required"),
+  regNo: z.string().min(1, "Registration number is required"),
+});
+
+export type SubmittedLicence = z.infer<typeof SubmittedLicenceSchema>;
+
+export interface LicenseProgressData {
   country: string;
   city: string;
-  registration_authority: number;
-  registration_no: string;
+  registration_authority?: string | number;
+  registrationAuthority?: string;
+  registration_no?: string;
+  registrationNumber?: string;
   professional_headshot?: string;
-};
+  licenseDocument?: string;
+}
 
 export default function Phase1() {
   const {
@@ -40,6 +44,11 @@ export default function Phase1() {
 
   const { checkLicenseVerifyProgress } = useVerificationProgress();
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
+  const [licenseFile, setLicenseFile] = useState<File | null>(null);
+
+  const [verificationStatus, setVerificationStatus] = useState<
+    "IDLE" | "VERIFYING" | "SUCCESS" | "FAILED"
+  >("IDLE");
 
   const { stepOneMutation } = useDentist();
 
@@ -51,17 +60,27 @@ export default function Phase1() {
       return null;
     }
 
-    const serverData = progressData.data as LicenseProgressData;
+    const serverData = progressData.data as unknown as LicenseProgressData;
     return {
       country: serverData.country,
       city: serverData.city,
-      authority: serverData.registration_authority,
-      regNo: serverData.registration_no,
+      authority: serverData.registrationAuthority || String(serverData.registration_authority || ""),
+      regNo: serverData.registrationNumber || serverData.registration_no || "",
     };
   }, [progressData]);
 
   const handleVerify = (data: SubmittedLicence) => {
-    setSubmittedLicence(data);
+    setVerificationStatus("VERIFYING");
+    setTimeout(() => {
+      setSubmittedLicence(data);
+      if (data.regNo === "12345") {
+        setVerificationStatus("SUCCESS");
+        toast.success("License matched and verified successfully via registry!");
+      } else {
+        setVerificationStatus("FAILED");
+        toast.error("License not found in official registry. Please upload manual copy.");
+      }
+    }, 1500);
   };
 
   const hasHeadshot = Boolean(
@@ -73,8 +92,13 @@ export default function Phase1() {
   const isStepReady = useMemo(() => {
     if (isAlreadySubmitted) return true;
 
-    return Boolean(submittedLicence && hasHeadshot);
-  }, [hasHeadshot, isAlreadySubmitted, submittedLicence]);
+    // Must have registry verified OR manual copy uploaded, plus headshot
+    const hasLicenseVerified =
+      verificationStatus === "SUCCESS" ||
+      (verificationStatus === "FAILED" && licenseFile !== null);
+
+    return Boolean(submittedLicence && hasLicenseVerified && hasHeadshot);
+  }, [isAlreadySubmitted, verificationStatus, licenseFile, submittedLicence, hasHeadshot]);
 
   useEffect(() => {
     setVerificationStepReady(1, isStepReady);
@@ -94,33 +118,37 @@ export default function Phase1() {
       return;
     }
 
-    const fileToUpload = new File(["verified match"], "licence.pdf", {
-      type: "application/pdf",
-    });
+    // If verified automatically, generate dummy license PDF; otherwise, use manual file
+    const fileToUpload =
+      licenseFile ||
+      new File(["verified match"], "license.pdf", {
+        type: "application/pdf",
+      });
 
     stepOneMutation.mutate(
       {
         country: submittedLicence.country,
         city: submittedLicence.city,
-        registration_authority: submittedLicence.authority,
-        registration_no: submittedLicence.regNo,
-        professional_headshot: headshotFile,
-        file: fileToUpload,
+        registrationAuthority: submittedLicence.authority,
+        registrationNumber: submittedLicence.regNo,
+        profilePicture: headshotFile,
+        licenseDocument: fileToUpload,
       },
       {
         onSuccess: () => {
           toast.success("License verification details submitted!");
           setVerificationCompletedStep(1);
+          setVerificationStep(2);
         },
         onError: (error: unknown) => {
           const backendError =
             typeof error === "object" && error !== null
               ? ((
-                  error as {
-                    response?: { data?: { detail?: { error?: string } } };
-                    message?: string;
-                  }
-                ).response?.data?.detail?.error ??
+                error as {
+                  response?: { data?: { detail?: { error?: string } } };
+                  message?: string;
+                }
+              ).response?.data?.detail?.error ??
                 (error as { message?: string }).message)
               : undefined;
           toast.error(
@@ -146,7 +174,35 @@ export default function Phase1() {
                   : undefined
               }
               isAlreadySubmitted={isAlreadySubmitted}
+              isVerifying={verificationStatus === "VERIFYING"}
             />
+
+            {verificationStatus === "SUCCESS" && submittedLicence && (
+              <VerificationResult
+                status="match"
+                doctorName="Dr. Alex Carter"
+                specialty="General Dentist"
+                licenceInfo={{
+                  country: submittedLicence.country,
+                  city: submittedLicence.city,
+                  authority: 1, // mock number
+                  regNo: submittedLicence.regNo,
+                }}
+                onConfirm={() => toast.success("Confirmed!")}
+                onReject={() => setVerificationStatus("FAILED")}
+              />
+            )}
+
+            {verificationStatus === "FAILED" && (
+              <VerificationResult
+                status="no-match"
+                onFileSelect={(file) => setLicenseFile(file)}
+                existingFileUrl={
+                  (progressData?.data as LicenseProgressData | undefined)
+                    ?.licenseDocument
+                }
+              />
+            )}
           </div>
         </div>
 

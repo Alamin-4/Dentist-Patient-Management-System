@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { HamburgerButton } from "./hamburger-button";
-import useAuth from "@/hooks/authentication/useAuth";
+import useAuth, { useMe } from "../../../hooks/auth/useAuth";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
@@ -17,10 +17,15 @@ export function Navbar() {
   const { logoutMutation } = useAuth();
   const { mutate: logout } = logoutMutation;
   const router = useRouter();
+  const { data: meData } = useMe();
+  const user = meData?.data?.user || meData?.user || null;
+
   const logutHandler = () => {
     logout();
     router.push("/");
   };
+
+  const displayName = user?.name || (user?.email ? user.email.split("@")[0].slice(0, 10) : "User");
 
   return (
     <header className="border-b border-border/80 bg-white w-full">
@@ -41,9 +46,11 @@ export function Navbar() {
             <DropdownMenuTrigger className="flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-[#F2F5F6] hover:bg-[#E2E8F0]">
               <Avatar className="h-10 w-10 border-2 border-gray-100">
                 <AvatarImage src="/avatar.jpg" />
-                <AvatarFallback>JW</AvatarFallback>
+                <AvatarFallback className="bg-[#10436B] text-white font-semibold text-xs">
+                  {user?.email ? user.email.slice(0, 2).toUpperCase() : "U"}
+                </AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm md:block">James William</span>
+              <span className="hidden text-sm md:block">{displayName}</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
@@ -51,10 +58,10 @@ export function Navbar() {
             >
               <div>
                 <p className="text-sm font-semibold text-[#1A1A2E]">
-                  James William
+                  {displayName}
                 </p>
                 <p className="text-xs text-[#6B7280]">
-                  james.william@example.com
+                  {user?.email || ""}
                 </p>
               </div>
               <div className="border-b border-slate-200 my-2"></div>

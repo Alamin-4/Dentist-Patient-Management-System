@@ -5,7 +5,6 @@ import {
   getBookingData,
   updateTreatmentDetails,
 } from "@/lib/storage/bookingService";
-import { getApiErrorMessage, procedureApi } from "@/lib/api";
 import toast from "react-hot-toast";
 
 const procedures = [
@@ -58,8 +57,8 @@ function unwrapProcedureOptions(response: unknown): ProcedureOption[] {
       : Array.isArray(payload.data)
         ? payload.data
         : typeof payload.data === "object" &&
-            payload.data !== null &&
-            Array.isArray((payload.data as { results?: unknown }).results)
+          payload.data !== null &&
+          Array.isArray((payload.data as { results?: unknown }).results)
           ? (payload.data as { results: unknown[] }).results
           : Array.isArray(payload.results)
             ? payload.results
@@ -96,30 +95,6 @@ export default function ProcedureSelectionForm() {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadProcedures() {
-      try {
-        setIsLoading(true);
-        const response = await procedureApi.list();
-        const options = unwrapProcedureOptions(response);
-        if (mounted && options.length > 0) {
-          setProcedureOptions(options);
-        }
-      } catch (error) {
-        toast.error(getApiErrorMessage(error));
-      } finally {
-        if (mounted) setIsLoading(false);
-      }
-    }
-
-    loadProcedures();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleSelectProcedure = (id: number) => {
     const nextIds = selectedIds.includes(id)
@@ -160,10 +135,9 @@ export default function ProcedureSelectionForm() {
               className={`
                 group cursor-pointer relative flex items-center justify-between 
                 p-5 rounded-xl border-2 transition-all duration-200
-                ${
-                  isSelected
-                    ? "border-[#113254] bg-[#F8FAFC]"
-                    : "border-[#F3F4F6] hover:border-[#E5E7EB] bg-white"
+                ${isSelected
+                  ? "border-[#113254] bg-[#F8FAFC]"
+                  : "border-[#F3F4F6] hover:border-[#E5E7EB] bg-white"
                 }
               `}
             >
@@ -178,9 +152,9 @@ export default function ProcedureSelectionForm() {
                 </span>
               </div>
 
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {isSelected ? (
-                  <CheckCircle2 className="w-6 h-6 text-[#113254] fill-[#113254] text-white" />
+                  <CheckCircle2 className="w-6 h-6 text-[#113254] fill-[#113254]" />
                 ) : (
                   <Circle className="w-6 h-6 text-[#D1D5DB]" />
                 )}

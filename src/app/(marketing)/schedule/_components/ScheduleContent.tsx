@@ -18,9 +18,6 @@ import {
   saveBookingDraft,
   type BookingDraft,
 } from "@/lib/storage/bookingService";
-import { consultationBookingApi, getApiErrorMessage } from "@/lib/api";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const STORED_KEY = "schedule_selections";
 
@@ -52,11 +49,11 @@ function makeScheduleState(dentistIdsParam: string) {
     );
     return saved
       ? {
-          dentistId: dentist.id,
-          date: saved.date ? new Date(saved.date) : null,
-          timeSlot: saved.timeSlot,
-          timezone: saved.timezone,
-        }
+        dentistId: dentist.id,
+        date: saved.date ? new Date(saved.date) : null,
+        timeSlot: saved.timeSlot,
+        timezone: saved.timezone,
+      }
       : makeSelection(dentist.id);
   });
 
@@ -102,30 +99,29 @@ export default function ScheduleContent() {
 
   const updateSelection = useCallback(
     (dentistId: string, updates: Partial<Omit<DentistSelection, "dentistId">>) => {
-      setSelections((prev) =>
-        {
-          const next = prev.map((s) =>
-            s.dentistId === dentistId ? { ...s, ...updates } : s,
-          );
-          saveBookingDraft({
-            scheduleSelections: next.map((selection) => {
-              const dentist = dentists.find((doc) => doc.id === selection.dentistId);
-              return {
-                dentistId: selection.dentistId,
-                backendDentistId:
-                  getDraftBackendDentistId(
-                    getBookingDraft(),
-                    dentist,
-                    next.findIndex((item) => item.dentistId === selection.dentistId),
-                  ),
-                date: selection.date?.toISOString() ?? "",
-                timeSlot: selection.timeSlot,
-                timezone: selection.timezone,
-              };
-            }),
-          });
-          return next;
-        },
+      setSelections((prev) => {
+        const next = prev.map((s) =>
+          s.dentistId === dentistId ? { ...s, ...updates } : s,
+        );
+        saveBookingDraft({
+          scheduleSelections: next.map((selection) => {
+            const dentist = dentists.find((doc) => doc.id === selection.dentistId);
+            return {
+              dentistId: selection.dentistId,
+              backendDentistId:
+                getDraftBackendDentistId(
+                  getBookingDraft(),
+                  dentist,
+                  next.findIndex((item) => item.dentistId === selection.dentistId),
+                ),
+              date: selection.date?.toISOString() ?? "",
+              timeSlot: selection.timeSlot,
+              timezone: selection.timezone,
+            };
+          }),
+        });
+        return next;
+      },
       );
     },
     [dentists],
@@ -143,61 +139,61 @@ export default function ScheduleContent() {
   };
 
   const handleConfirm = async () => {
-    // Validate: each dentist must have a date and time slot
-    const missing = selections.filter((s) => !s.date || !s.timeSlot);
-    if (missing.length > 0) {
-      const idx = selections.indexOf(missing[0]);
-      const name = dentists[idx]?.name ?? "a dentist";
-      toast.error(`Please select a date and time for ${name}`);
-      return;
-    }
+    // // Validate: each dentist must have a date and time slot
+    // const missing = selections.filter((s) => !s.date || !s.timeSlot);
+    // if (missing.length > 0) {
+    //   const idx = selections.indexOf(missing[0]);
+    //   const name = dentists[idx]?.name ?? "a dentist";
+    //   toast.error(`Please select a date and time for ${name}`);
+    //   return;
+    // }
 
-    const consultationId = consultationIdParam ?? getBookingDraft().consultationId;
-    if (!consultationId) {
-      toast.error("Consultation draft not found. Please complete booking details first.");
-      return;
-    }
+    // const consultationId = consultationIdParam ?? getBookingDraft().consultationId;
+    // if (!consultationId) {
+    //   toast.error("Consultation draft not found. Please complete booking details first.");
+    //   return;
+    // }
 
-    const dentistsPayload = selections.map((selection, index) => {
-      const dentist = dentists[index];
-      return {
-        dentist: dentist ? getBackendDentistId(dentist, index) : null,
-        scheduled_date: formatApiDate(selection.date!),
-        scheduled_time: formatApiTime(selection.timeSlot),
-      };
-    });
+    // const dentistsPayload = selections.map((selection, index) => {
+    //   const dentist = dentists[index];
+    //   return {
+    //     dentist: dentist ? getBackendDentistId(dentist, index) : null,
+    //     scheduled_date: formatApiDate(selection.date!),
+    //     scheduled_time: formatApiTime(selection.timeSlot),
+    //   };
+    // });
 
-    if (dentistsPayload.some((item) => !item.dentist)) {
-      toast.error("Could not find backend dentist IDs. Please reselect dentists.");
-      return;
-    }
+    // if (dentistsPayload.some((item) => !item.dentist)) {
+    //   toast.error("Could not find backend dentist IDs. Please reselect dentists.");
+    //   return;
+    // }
 
-    // Persist to sessionStorage so success page can read it
-    const storable = selections.map((s) => ({
-      dentistId: s.dentistId,
-      date: s.date!.toISOString(),
-      timeSlot: s.timeSlot,
-      timezone: s.timezone,
-    }));
-    sessionStorage.setItem(STORED_KEY, JSON.stringify(storable));
+    // // Persist to sessionStorage so success page can read it
+    // const storable = selections.map((s) => ({
+    //   dentistId: s.dentistId,
+    //   date: s.date!.toISOString(),
+    //   timeSlot: s.timeSlot,
+    //   timezone: s.timezone,
+    // }));
+    // sessionStorage.setItem(STORED_KEY, JSON.stringify(storable));
 
-    try {
-      setIsConfirming(true);
-      await consultationBookingApi.stepSeven({
-        consultation_id: consultationId,
-        dentists: dentistsPayload.map((item) => ({
-          dentist: item.dentist!,
-          scheduled_date: item.scheduled_date,
-          scheduled_time: item.scheduled_time,
-        })),
-      });
-      clearBookingData();
-      setShowSuccess(true);
-    } catch (error) {
-      toast.error(getApiErrorMessage(error));
-    } finally {
-      setIsConfirming(false);
-    }
+    // try {
+    //   setIsConfirming(true);
+    //   await consultationBookingApi.stepSeven({
+    //     consultation_id: consultationId,
+    //     dentists: dentistsPayload.map((item) => ({
+    //       dentist: item.dentist!,
+    //       scheduled_date: item.scheduled_date,
+    //       scheduled_time: item.scheduled_time,
+    //     })),
+    //   });
+    //   clearBookingData();
+    //   setShowSuccess(true);
+    // } catch (error) {
+    //   toast.error(getApiErrorMessage(error));
+    // } finally {
+    //   setIsConfirming(false);
+    // }
   };
 
   const handleGoToBookings = () => {

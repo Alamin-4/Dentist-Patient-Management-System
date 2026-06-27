@@ -3,23 +3,23 @@
 import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { SterilizationSection } from "./SterilizationSection";
 import { ProcedurePricingSection } from "./ProcedurePricingSection";
 import { GuaranteeSection } from "./GuaranteeSection";
-import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import {
   formSchema,
   FormInputValues,
   FormValues,
 } from "@/validation/Verification-doctor-phase/phase-form";
 import useDentist from "@/hooks/dentist/useDentist";
+import { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 
 export default function MultiStepForm() {
-  const { setVerificationStepReady, setVerificationCompletedStep } =
-    useVerificationStore();
+  const router = useRouter();
   const { stepTwoMutation } = useDentist();
   const { checkPhotoVerifyProgress } = useVerificationProgress();
 
@@ -39,14 +39,15 @@ export default function MultiStepForm() {
     },
   });
 
+  // Load existing data if already submitted
   useEffect(() => {
     if (isAlreadySubmitted && progressData?.data) {
       const serverData = progressData.data as any;
-      
+
       let procedures = [];
       try {
-        procedures = typeof serverData.procedures === "string" 
-          ? JSON.parse(serverData.procedures) 
+        procedures = typeof serverData.procedures === "string"
+          ? JSON.parse(serverData.procedures)
           : serverData.procedures || [];
       } catch (e) {
         procedures = serverData.procedures || [];
@@ -86,49 +87,40 @@ export default function MultiStepForm() {
     }
 
     const procedures = data.procedures.map((p) => ({
-      procedure_id: p.id,
-      procedure_name: p.name,
-      price: p.price,
-      currency: "USD",
-      option_notes: p.notes || "",
+      procedureName: p.name,
+      price: Number(p.price),
+      notes: p.notes || "",
     }));
 
-    const guarantee = {
-      signer_name: data.signerFullName,
-      typed_signature: data.typedSignature,
-      accepted_terms: data.agreeToGuarantee,
+    const payload: StepTwoI = {
+      jciCertificate: data.jciCertificate || null,
+      walkthroughVideo: data.videoWalkthrough || null,
+      signerName: data.signerFullName,
+      signature: data.typedSignature,
+      agreedToGuarantee: data.agreeToGuarantee,
+      procedures,
     };
 
-    const payload = {
-      jci_certificate: data.jciCertificate || null,
-      walkthrough_video: data.videoWalkthrough || null,
-      procedures,
-      guarantee,
-    };
-    console.log(payload);
     stepTwoMutation.mutate(payload, {
       onSuccess: () => {
-        setVerificationCompletedStep(2);
+        toast.success("Phase 2 submitted successfully! Moving to Phase 3...");
+
+        // ✅ সরাসরি redirect করুন (modal বাদ দিয়ে)
+        setTimeout(() => {
+          router.push("/dentist/verification?phase=clinic-depth-verify");
+        }, 1500); // 1.5 second delay for toast to show
       },
       onError: (error: unknown) => {
         const errMsg =
           typeof error === "object" && error !== null
             ? (error as { response?: { data?: { message?: string } } }).response
-                ?.data?.message ||
-              "Operations verification submission failed. Please try again."
+              ?.data?.message ||
+            "Operations verification submission failed. Please try again."
             : "Operations verification submission failed. Please try again.";
         toast.error(errMsg);
       },
     });
   };
-
-  useEffect(() => {
-    if (isAlreadySubmitted) {
-      setVerificationStepReady(2, true);
-    } else {
-      setVerificationStepReady(2, methods.formState.isValid);
-    }
-  }, [methods.formState.isValid, isAlreadySubmitted, setVerificationStepReady]);
 
   return (
     <FormProvider {...methods}>

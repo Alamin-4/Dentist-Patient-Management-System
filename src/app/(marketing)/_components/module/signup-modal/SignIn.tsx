@@ -3,11 +3,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebook } from "react-icons/fa";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   Dialog,
@@ -17,12 +16,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import useAuth from "@/hooks/authentication/useAuth";
-import { loginSchema } from "@/hooks/patient/schema";
-import { getApiErrorMessage } from "@/lib/api";
-import { TOAST_STYLE } from "./Signup-Modal";
+import { useGoogleLogin, useLogin, useMe } from "@/hooks/auth/useAuth";
+import z from "zod";
+import { LoginFormData, loginSchema } from "@/hooks/dentist/dentist.interface";
 
-type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function SigninModal() {
   const {
@@ -30,10 +27,16 @@ export default function SigninModal() {
     setShowSigninModal,
     setShowSignupModal,
     setShowPersonalizeModal,
+    setShowCompareModal,
+    dentistsToCompare,
   } = useStateContext();
 
+  const { user } = useMe()
+
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { loginMutation, isLoginLoading } = useAuth();
+  const { mutate: login, isPending, isError, error, } = useLogin()
+  const { mutate: googleLogin, isPending: isGooglePending, isError: isGoogleError, error: googleError } = useGoogleLogin()
 
   const {
     register,
@@ -54,26 +57,47 @@ export default function SigninModal() {
   const onSubmit = (data: LoginFormData) => {
     clearErrors("root");
 
-    loginMutation.mutate(data, {
+    login(data, {
       onSuccess: () => {
-        toast.success("Welcome back!", { style: TOAST_STYLE });
         reset();
         setShowSigninModal(false);
-        setShowPersonalizeModal(true);
+
+        if (dentistsToCompare && dentistsToCompare.length > 0) {
+
+          const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
+          if (hasProfileDetails) {
+            setShowCompareModal(true);
+          } else {
+            setShowPersonalizeModal(true);
+          }
+        }
       },
-      onError: (error: unknown) => {
+      onError: (error) => {
+        const serverError = error as any;
         setError("root.server", {
           type: "server",
-          message: getApiErrorMessage(error),
+          message: serverError?.response?.message || "Invalid email or password",
         });
       },
     });
   };
 
   const handleSocialLogin = (provider: string) => {
-    toast.success(`Signed in with ${provider}!`, { style: TOAST_STYLE });
+    if (provider === "Google") {
+      googleLogin();
+      return;
+    }
     setShowSigninModal(false);
-    setShowPersonalizeModal(true);
+
+    if (dentistsToCompare && dentistsToCompare.length > 0) {
+
+      const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
+      if (hasProfileDetails) {
+        setShowCompareModal(true);
+      } else {
+        setShowPersonalizeModal(true);
+      }
+    }
   };
 
   const switchToSignup = () => {
@@ -200,10 +224,10 @@ export default function SigninModal() {
 
           <button
             type="submit"
-            disabled={isLoginLoading}
+            disabled={isPending}
             className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isLoginLoading ? (
+            {isPending ? (
               <>
                 <Loader2 className="size-5 animate-spin" />
                 Signing in...
@@ -214,7 +238,6 @@ export default function SigninModal() {
           </button>
         </form>
 
-        {/* Footer Toggle Link */}
         <p className="mt-6 text-center text-sm text-[#6B7280]">
           Don&apos;t have an account?{" "}
           <button
@@ -223,6 +246,20 @@ export default function SigninModal() {
             className="font-semibold text-[#113254] hover:underline"
           >
             Sign up
+          </button>
+        </p>
+
+        <p className="mt-2 text-center text-sm text-[#6B7280]">
+          Are you a dentist?{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setShowSigninModal(false);
+              router.push("/register-doctor");
+            }}
+            className="font-semibold text-[#113254] hover:underline"
+          >
+            Join as a dentist
           </button>
         </p>
       </DialogContent>

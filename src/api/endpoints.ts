@@ -1,0 +1,44 @@
+export const endpoints = {
+  auth: {
+    registerPatient: "/auth/register/patient",
+    verifyEmail: "/auth/verify-email",
+    login: "/auth/login",
+    verify2fa: "/auth/verify-2fa",
+    resendOtp: "/auth/resend-otp",
+    loginAdmin: "/auth/login/admin",
+    googleLogin: "/auth/login/google",
+    getSession: "/auth/current-user-session",
+    logout: "/auth/logout",
+  },
+  patients: {
+    register: "/auth/register/patient",
+    personalizeData: "/patients/personalize-data",
+  },
+  dentists: {
+    register: "/dentists/register",
+    professionalData: "/dentists/professional-data",
+    verifyLicenseCheck: "/dentists/verify-license/check",
+    verifyLicenseSubmit: "/dentists/verify-license/submit",
+    verifyOperationsSubmit: "/dentists/verify-operations/submit",
+    verifyClinicDepthSubmit: "/dentists/verify-clinic-depth/submit",
+    progress: "/dentists/progress",
+    overview: "/dentists/overview",
+  },
+  procedures: {
+    global: "/procedures/global",
+    dentist: "/procedures/dentist",
+    dentistCsv: "/procedures/dentist/csv",
+    deleteDentistProcedure: (id: string | number) => `/procedures/dentist/${id}`,
+  },
+  admin: {
+    verifications: "/admin/verifications",
+    verifyLicense: (id: string | number) => `/admin/verify-license/${id}`,
+    verifyOperations: (id: string | number) => `/admin/verify-operations/${id}`,
+    verifyClinicDepth: (id: string | number) => `/admin/verify-clinic-depth/${id}`,
+    verificationWeights: "/admin/verification-weights",
+  },
+  specialties: {
+    list: "/specialties",
+    byId: (id: string | number) => `/specialties/${id}`,
+  },
+} as const;

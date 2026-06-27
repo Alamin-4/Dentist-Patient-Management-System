@@ -1,4 +1,3 @@
-import { Toaster } from "react-hot-toast";
 import IntakeModal from "./_components/module/Booking-flow/Book";
 import StartBookingModal from "./_components/module/Booking-flow/StartBooking";
 import CompareModal from "./_components/module/CompareModal/CompareModal";
@@ -24,7 +23,7 @@ export default function PublicLayout({
       <StartBookingModal />
       <IntakeModal />
       <Footer />
-      <Toaster position="top-center" />
+
     </div>
   );
 }

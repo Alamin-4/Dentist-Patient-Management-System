@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useDentist from "@/hooks/dentist/useDentist";
+import { useSpecialties } from "@/hooks/dentist/useSpecialty";
 import { ProfessionalDetailsI } from "@/hooks/dentist/dentist.interface";
 
 const profSchema = z.object({
@@ -31,10 +32,11 @@ type ProfFormData = z.infer<typeof profSchema>;
 export function ProfessionalDetailsForm({
   setStep,
 }: {
-  setStep: (step: number) => void;
+  setStep: (step: "success") => void;
 }) {
   const { professionalDetailsMutation, isProfessionalDetailsLoading } =
     useDentist();
+  const { data: specialties, isLoading: isSpecialtiesLoading } = useSpecialties();
   const {
     register,
     handleSubmit,
@@ -45,9 +47,16 @@ export function ProfessionalDetailsForm({
   });
 
   const onSubmit = async (data: ProfFormData) => {
-    professionalDetailsMutation.mutate(data as ProfessionalDetailsI, {
+    const payload: ProfessionalDetailsI = {
+      primarySpecialty: data.specialty,
+      yearsOfExperience: data.experience_years.toString(),
+      legalName: data.full_name,
+      country: data.country || '',
+      city: data.city || ''
+    }
+    professionalDetailsMutation.mutate(payload, {
       onSuccess: () => {
-        setStep(4);
+        setStep("success");
       },
       onError: (error: any) => {
         toast.error(error?.message || "Failed to save details.");
@@ -57,7 +66,6 @@ export function ProfessionalDetailsForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 w-full">
-      <Toaster position="top-right" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="grid gap-2 text-left">
@@ -86,18 +94,24 @@ export function ProfessionalDetailsForm({
             <SelectTrigger
               className={`h-11! w-full border-gray-300 bg-white ${errors.specialty ? "border-red-500" : ""}`}
             >
-              <SelectValue placeholder="PERIODONTIST" />
+              <SelectValue placeholder={isSpecialtiesLoading ? "Loading..." : "Select a specialty"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem className="h-11!" value="PERIODONTIST">
-                PERIODONTIST
-              </SelectItem>
-              <SelectItem className="h-11!" value="DENTIST">
-                DENTIST
-              </SelectItem>
-              <SelectItem className="h-11!" value="SURGEON">
-                SURGEON
-              </SelectItem>
+              {isSpecialtiesLoading ? (
+                <SelectItem className="h-11!" value="__loading" disabled>
+                  Loading specialties...
+                </SelectItem>
+              ) : specialties && specialties.length > 0 ? (
+                specialties.map((s) => (
+                  <SelectItem className="h-11!" key={s.id} value={s.name}>
+                    {s.name}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem className="h-11!" value="__empty" disabled>
+                  No specialties available
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
           {errors.specialty && (
@@ -182,7 +196,7 @@ export function ProfessionalDetailsForm({
       <Button
         type="submit"
         disabled={isProfessionalDetailsLoading}
-        className="mt-4  h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] rounded-xl text-lg font-semibold shadow-lg flex items-center justify-center gap-2"
+        className="mt-4  h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] rounded-xl text-lg font-semibold shadow-lg flex items-center justify-center gap-2 cursor-pointer"
       >
         {isProfessionalDetailsLoading && (
           <Loader2 className="h-5 w-5 animate-spin" />

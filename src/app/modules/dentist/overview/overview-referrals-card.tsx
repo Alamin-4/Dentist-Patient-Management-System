@@ -3,13 +3,15 @@
 import { Copy } from "lucide-react";
 import { useState } from "react";
 
-const REFERRAL_CODE = "RD-DR-4729";
+interface Props {
+  referralCode: string;
+}
 
-export function OverviewReferralsCard() {
+export function OverviewReferralsCard({ referralCode }: Props) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(REFERRAL_CODE);
+    await navigator.clipboard.writeText(referralCode);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   };
@@ -22,7 +24,7 @@ export function OverviewReferralsCard() {
 
       <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-3xl font-bold tracking-[0.14em] text-foreground sm:text-4xl">
-          {REFERRAL_CODE}
+          {referralCode}
         </p>
 
         <button

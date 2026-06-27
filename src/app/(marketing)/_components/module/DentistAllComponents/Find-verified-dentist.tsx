@@ -20,8 +20,8 @@ import {
   countryOptions,
   procedureOptions,
 } from "./types";
-import { useDentistFilters } from "@/hooks/dentist/useDentistFilters";
-import { getAccessToken } from "@/lib/auth/session";
+import { useMe } from "@/hooks/auth/useAuth";
+import { useDentistFilters } from "@/hooks/dentist/useDentistFileter";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
@@ -34,8 +34,10 @@ export default function FindDentist() {
   const [showMapFilters, setShowMapFilters] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  // session user 
+  const { user } = useMe();
   // App global state context
-  const { setShowSignupModal, setDentistsToCompare, setShowPersonalizeModal } =
+  const { setShowSignupModal, setDentistsToCompare, setShowPersonalizeModal, setShowCompareModal } =
     useStateContext();
 
   const handleCompareToggle = (dentist: Dentist) => {
@@ -55,9 +57,13 @@ export default function FindDentist() {
 
   const handleCompareSubmit = () => {
     setDentistsToCompare(compareList);
-    const token = getAccessToken();
-    if (token) {
-      setShowPersonalizeModal(true);
+    if (user) {
+      const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
+      if (hasProfileDetails) {
+        setShowCompareModal(true);
+      } else {
+        setShowPersonalizeModal(true);
+      }
     } else {
       setShowSignupModal(true);
     }
@@ -116,38 +122,38 @@ export default function FindDentist() {
           <AnimatePresence initial={false}>
             {(filters.viewMode === "list" ||
               (filters.viewMode === "map" && showMapFilters)) && (
-              <motion.aside
-                initial={{ opacity: 0, x: -24 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -24 }}
-                className="hidden lg:block max-w-80 w-full"
-              >
-                <FilterSidebar
-                  procedure={filters.procedure}
-                  onProcedureChange={filters.setProcedure}
-                  country={filters.country}
-                  onCountryChange={filters.setCountry}
-                  city={filters.city}
-                  onCityChange={filters.setCity}
-                  priceRange={filters.priceRange}
-                  onPriceRangeChange={filters.setPriceRange}
-                  selectedRatings={filters.selectedRatings}
-                  onRatingToggle={filters.toggleRating}
-                  selectedScoreRanges={filters.selectedScoreRanges}
-                  onScoreToggle={filters.toggleScore}
-                  selectedLanguages={filters.selectedLanguages}
-                  onLanguageToggle={filters.toggleLanguage}
-                  selectedAvailabilityDate={filters.selectedAvailabilityDate}
-                  onAvailabilityDateChange={filters.setSelectedAvailabilityDate}
-                  showVerifiedOnly={filters.showVerifiedOnly}
-                  onShowVerifiedOnlyChange={filters.setShowVerifiedOnly}
-                  onClear={handleClearAllFilters}
-                  availableProcedures={procedureOptions}
-                  availableCountries={countryOptions}
-                  availableCities={cityOptions}
-                />
-              </motion.aside>
-            )}
+                <motion.aside
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  className="hidden lg:block max-w-80 w-full"
+                >
+                  <FilterSidebar
+                    procedure={filters.procedure}
+                    onProcedureChange={filters.setProcedure}
+                    country={filters.country}
+                    onCountryChange={filters.setCountry}
+                    city={filters.city}
+                    onCityChange={filters.setCity}
+                    priceRange={filters.priceRange}
+                    onPriceRangeChange={filters.setPriceRange}
+                    selectedRatings={filters.selectedRatings}
+                    onRatingToggle={filters.toggleRating}
+                    selectedScoreRanges={filters.selectedScoreRanges}
+                    onScoreToggle={filters.toggleScore}
+                    selectedLanguages={filters.selectedLanguages}
+                    onLanguageToggle={filters.toggleLanguage}
+                    selectedAvailabilityDate={filters.selectedAvailabilityDate}
+                    onAvailabilityDateChange={filters.setSelectedAvailabilityDate}
+                    showVerifiedOnly={filters.showVerifiedOnly}
+                    onShowVerifiedOnlyChange={filters.setShowVerifiedOnly}
+                    onClear={handleClearAllFilters}
+                    availableProcedures={procedureOptions}
+                    availableCountries={countryOptions}
+                    availableCities={cityOptions}
+                  />
+                </motion.aside>
+              )}
           </AnimatePresence>
 
           <section className="max-w-full w-full">

@@ -98,9 +98,6 @@ export default function VerificationLayout({
             <h1 className="text-xl font-bold text-[#0A2533]">
               Verification Progress
             </h1>
-            <p className="text-xs font-semibold text-[#F2C467]">
-              RDV Score {rdvScore}%
-            </p>
           </div>
 
           {/* Stepper Component */}

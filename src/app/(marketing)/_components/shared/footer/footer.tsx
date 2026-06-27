@@ -65,18 +65,6 @@ export default function Footer() {
                 </Link>
               ))}
             </div>
-            <button
-              onClick={() => setKolModalOpen(true)}
-              className="inline-flex items-center overflow-hidden rounded-xl transition-opacity hover:opacity-90 active:scale-[0.98] bg-transparent text-white border-white border cursor-pointer px-4 space-x-2"
-            >
-              <span className="flex h-11.5 items-center text-sm font-semibold text-primary-foreground">
-                Become a KOL Member
-              </span>
-              <ArrowUpRight
-                className="size-6 p-1 rounded-md bg-[#E3A32A] text-primary"
-                strokeWidth={2.5}
-              />
-            </button>
           </div>
 
           {/* Quick Links */}

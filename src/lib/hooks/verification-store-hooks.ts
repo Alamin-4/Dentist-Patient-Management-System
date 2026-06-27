@@ -68,7 +68,6 @@ export const useUiStoreForVerification = () => {
   const kolModalOpen = useAppStore((state) => state.kolModalOpen);
   const setKolModalOpen = useAppStore((state) => state.setKolModalOpen);
 
-  // Computed values for modal states (for backwards compatibility with StateProvider)
   const showSignupModal = activeModal === "signup";
   const showSigninModal = activeModal === "signin";
   const showPersonalizeModal = activeModal === "personalize";

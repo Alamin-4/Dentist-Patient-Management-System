@@ -11,7 +11,7 @@ import { ProfessionalDetailsForm } from "./professional-details-form";
 import { ProfileSuccessState } from "./ProfileSuccessRate";
 
 export default function RegisterPageComponent() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">("create-account");
   const router = useRouter();
   const registerEmail =
     typeof window !== "undefined"
@@ -43,16 +43,10 @@ export default function RegisterPageComponent() {
 
       <section className="flex w-full items-center justify-center bg-white px-6 py-12 lg:w-2/5 xl:px-20">
         <div className="w-full max-w-11/12 md:max-w-10/12 mx-auto space-y-6 md:space-y-8">
-          <div hidden={step === 4}>
+          <div hidden={step === "success"}>
             <button
               onClick={() => {
-                if (step === 1) {
-                  router.back();
-                } else if (step === 2) {
-                  setStep(1);
-                } else if (step === 4) {
-                  setStep(2);
-                }
+                router.back();
               }}
               className="mb-8 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
             >
@@ -60,16 +54,16 @@ export default function RegisterPageComponent() {
               Back
             </button>
             <h2 className="text-[28px] font-semibold text-[#1A1A1A]">
-              {step === 4
+              {step === "professional-info"
                 ? "Enter your Professional Details"
-                : step === 3
+                : step === "verify-email"
                   ? "Complete your Registration"
                   : "Create an Account"}
             </h2>
           </div>
 
           <div className="mb-8">
-            {step === 2 && (
+            {step === "verify-email" && (
               <div className="mt-">
                 <p className="text-lg md:text-xl lg:text-2xl leading-[150%] font-semibold text-[#073031]">
                   Check your inbox!
@@ -82,10 +76,10 @@ export default function RegisterPageComponent() {
               </div>
             )}
           </div>
-          {step === 1 && <CreateAccountForm setStep={setStep} />}
-          {step === 2 && <VerifyOtpForm setStep={setStep} />}
-          {step === 3 && <ProfessionalDetailsForm setStep={setStep} />}
-          {step === 4 && <ProfileSuccessState />}
+          {step === "create-account" && <CreateAccountForm setStep={setStep} />}
+          {step === "verify-email" && <VerifyOtpForm setStep={setStep} />}
+          {step === "professional-info" && <ProfessionalDetailsForm setStep={setStep} />}
+          {step === "success" && <ProfileSuccessState />}
         </div>
       </section>
     </main>

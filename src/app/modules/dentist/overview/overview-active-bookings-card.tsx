@@ -1,15 +1,20 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { overviewData, formatPatientMoney } from "./overview-data";
+import { formatPatientMoney } from "./overview-data";
+
+interface Props {
+  activeBookings: any[];
+}
 
 /** Travel date — prefer the second timeline event (first is usually "inquiry"). */
-const getTravelDate = (patient: (typeof overviewData.activeBookings)[number]) =>
-  patient.patient_timeline[1]?.date ?? patient.patient_timeline[0]?.date ?? "TBD";
+const getTravelDate = (patient: any) =>
+  patient.patient_timeline?.[1]?.date ?? patient.patient_timeline?.[0]?.date ?? "TBD";
 
 /** Two-letter initials from a full name. */
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
+  if (parts.length === 0 || !parts[0]) return "PT";
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
@@ -30,7 +35,7 @@ function actionText(status: string) {
   return "Prepare for consultation";
 }
 
-export function OverviewActiveBookingsCard() {
+export function OverviewActiveBookingsCard({ activeBookings }: Props) {
   return (
     <section className="rounded-xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
       {/* Header */}
@@ -49,7 +54,7 @@ export function OverviewActiveBookingsCard() {
       {/* Desktop table */}
       <div className="mt-5 hidden overflow-hidden md:block">
         <div className="divide-y divide-border">
-          {overviewData.activeBookings.map((booking, index) => {
+          {activeBookings.map((booking, index) => {
             const initials = getInitials(booking.patient_info.name);
             const avatarBg = AVATAR_BG[index % AVATAR_BG.length];
 
@@ -123,7 +128,7 @@ export function OverviewActiveBookingsCard() {
 
       {/* Mobile cards */}
       <div className="mt-5 space-y-3 md:hidden">
-        {overviewData.activeBookings.map((booking, index) => {
+        {activeBookings.map((booking, index) => {
           const initials = getInitials(booking.patient_info.name);
           const avatarBg = AVATAR_BG[index % AVATAR_BG.length];
 

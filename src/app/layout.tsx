@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StateProvider } from "@/providers/StateProvider";
 import TanstackProvider from "@/providers/query-provider";
+import { Toaster } from "react-hot-toast";
 
 
 const inter = Inter({
@@ -44,7 +45,11 @@ export default function RootLayout({
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
         <StateProvider>
-          <TanstackProvider>{children}</TanstackProvider>
+          <TanstackProvider>{children}
+
+
+            <Toaster position="top-right" />
+          </TanstackProvider>
         </StateProvider>
       </body>
     </html>

@@ -9,7 +9,7 @@ import { X } from "lucide-react";
 import { useStateContext } from "@/providers/StateProvider";
 import { getDentistsFromStorage } from "@/lib/storage/dentistData";
 import Link from "next/link";
-import { getAccessToken } from "@/lib/auth/session";
+import { useMe } from "@/hooks/auth/useAuth";
 
 export default function VerifiedDentists() {
   const [procedure, setProcedure] = useState("Orthodontist");
@@ -17,6 +17,7 @@ export default function VerifiedDentists() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [dentists, setDentists] = useState<any[]>([]);
   const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare, setShowCompareModal } = useStateContext();
+  const { user } = useMe()
 
   useEffect(() => {
     const allDentists = getDentistsFromStorage();
@@ -114,12 +115,14 @@ export default function VerifiedDentists() {
                 <Button
                   onClick={() => {
                     setDentistsToCompare(selectedDentists);
-                    const token = getAccessToken();
-                    if (token) {
-                      setShowPersonalizeModal(true);
+
+                    const hasProfileDetails = !!(user?.firstName || user?.name);
+                    if (hasProfileDetails) {
+                      setShowCompareModal(true);
                     } else {
-                      setShowSignupModal(true);
+                      setShowPersonalizeModal(true);
                     }
+
                   }}
                   className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg cursor-pointer"
                 >

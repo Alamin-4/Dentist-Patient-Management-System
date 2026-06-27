@@ -60,7 +60,7 @@ export default function Phase3() {
   } = useVerificationStore();
   const { stepThreeMutation, dentistProcedureList } = useDentist();
   const dentistProcedures =
-    (dentistProcedureList?.data as any)?.procedure_list || [];
+    (dentistProcedureList?.data as any)?.data || [];
   const updatePhase = useUpdateVerificationPhase();
   const { checkIdVerifyProgress } = useVerificationProgress();
 
@@ -158,7 +158,7 @@ export default function Phase3() {
     const formattedPayload: StepThreeI = {
       clinic_address: payload.clinic_address,
       materials: payload.materials.map((m) => ({
-        own_procedure: Number(m.ownProcedure),
+        own_procedure: String(m.ownProcedure),
         ce_certificate: m.ceCertificate,
         material_brands: m.materialBrands,
         invoice: m.invoice,
@@ -302,13 +302,13 @@ export default function Phase3() {
                       ) : (
                         <>
                           <option value="">Select procedure</option>
-                          {dentistProcedures.map((proc: any) => (
+                           {dentistProcedures.map((proc: any) => (
                             <option
                               className=""
                               key={proc.id}
                               value={String(proc.id)}
                             >
-                              {proc.procedure_name}
+                              {proc.globalProcedure?.name || proc.procedure_name || proc.name}
                             </option>
                           ))}
                         </>

@@ -1,7 +1,6 @@
 "use client";
 
 import { HelpCircle, Bell, Menu, LogOut, User, Settings } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,18 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/sidebar-context";
-import { useRouter } from "next/navigation";
-import useAuth from "@/hooks/authentication/useAuth";
+import { useLogout, useMe } from "@/hooks/auth/useAuth";
 
 export function AdminNavbar() {
   const { toggle } = useSidebar();
-  const router = useRouter();
-  const { logoutMutation } = useAuth()
-  const {mutate: logout} = logoutMutation;
-  function handleLogout() {
-    logout();
-    router.push("/admin-login");
-  }
+  const { mutate: logout } = useLogout()
+  const { user } = useMe()
+  console.log(user)
 
   return (
     <header className="shrink-0 border-b border-gray-200 bg-white w-full z-30 sticky top-0 left-0">
@@ -76,23 +70,22 @@ export function AdminNavbar() {
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-1 ring-white" />
           </button>
 
-          {/* User avatar dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 aria-label="User menu"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0D2B3E] text-white text-xs font-bold hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[#0D2B3E]/30 focus:ring-offset-1 ml-1"
               >
-                JS
+                {user?.name?.charAt(0).toUpperCase() + user?.email?.split("@")[0].charAt(0).toUpperCase()}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 p-2 mt-1">
               <div className="px-2 py-1.5 mb-1">
                 <p className="text-sm font-semibold text-[#1A1A2E]">
-                  Jordan Smith
+                  {user?.name} {user?.email?.split("@")[0]}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  admin@rateddocs.com
+                  {user?.email}
                 </p>
               </div>
               <DropdownMenuSeparator />
@@ -107,7 +100,7 @@ export function AdminNavbar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="gap-2 text-[13px] text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
-                onClick={handleLogout}
+                onClick={() => logout()}
               >
                 <LogOut className="h-3.5 w-3.5" />
                 Logout

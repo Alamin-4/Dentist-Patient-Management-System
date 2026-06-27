@@ -10,6 +10,13 @@ import type {
   VerificationPhase,
 } from "./verification-progress.types";
 
+export enum VerificationStatus {
+  PENDING = "PENDING",
+  SUBMITTED = "SUBMITTED",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
+
 const getStepByPhase = (
   steps: VerificationProgressStep[],
   phase: VerificationPhase,
@@ -45,13 +52,13 @@ export function VerificationBanner() {
 
   const step1Done = licenseStep
     ? licenseStep.completed
-    : progress?.is_step_one_completed || step1Status === "VERIFIED";
+    : progress?.is_step_one_completed || step1Status === VerificationStatus.APPROVED;
   const step2Done = operationalStep
     ? operationalStep.completed
-    : progress?.is_step_two_completed || step2Status === "VERIFIED";
+    : progress?.is_step_two_completed || step2Status === VerificationStatus.APPROVED;
   const step3Done = clinicalStep
     ? clinicalStep.completed
-    : progress?.is_step_three_completed || step3Status === "VERIFIED";
+    : progress?.is_step_three_completed || step3Status === VerificationStatus.APPROVED;
 
   // Calculate completion percentage
   let computedScore = 0;
@@ -64,21 +71,21 @@ export function VerificationBanner() {
 
   const renderStepStatus = (status: string) => {
     switch (status) {
-      case "APPROVED":
+      case VerificationStatus.APPROVED:
         return {
           icon: <CheckCircle2 className="h-6 w-6 text-green-500" />,
           label: "Verified",
           labelClass:
             "text-green-600 bg-green-50 border-green-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
         };
-      case "SUBMIT":
+      case VerificationStatus.SUBMITTED:
         return {
           icon: <Clock className="h-6 w-6 text-yellow-500 animate-pulse" />,
           label: "In Review",
           labelClass:
             "text-yellow-600 bg-yellow-50 border-yellow-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
         };
-      case "REJECT":
+      case VerificationStatus.REJECTED:
         return {
           icon: <AlertCircle className="h-6 w-6 text-red-500" />,
           label: "Rejected",
@@ -193,12 +200,20 @@ export function VerificationBanner() {
           <div className="mt-8">
             <Button
               size="lg"
-              className="w-full h-14 rounded-xl bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm"
-              onClick={() => router.push("/dentist/verification")}
+              className="w-full h-14 rounded-xl bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer"
+              onClick={() => {
+                if (step2Status === VerificationStatus.SUBMITTED || step2Status === VerificationStatus.APPROVED) {
+                  router.push("/dentist/verification?phase=clinic-depth-verify");
+                } else if (step1Status === VerificationStatus.SUBMITTED || step1Status === VerificationStatus.APPROVED) {
+                  router.push("/dentist/verification?phase=operations-verify");
+                } else {
+                  router.push("/dentist/verification?phase=license-verify");
+                }
+              }}
             >
-              {step2Status === "SUBMIT" || step2Status === "APPROVED"
+              {step2Status === VerificationStatus.SUBMITTED || step2Status === VerificationStatus.APPROVED
                 ? "Continue Phase 3"
-                : step1Status === "SUBMIT" || step1Status === "APPROVED"
+                : step1Status === VerificationStatus.SUBMITTED || step1Status === VerificationStatus.APPROVED
                   ? "Continue Phase 2"
                   : "Start Verification"}
             </Button>
