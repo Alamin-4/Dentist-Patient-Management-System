@@ -15,6 +15,7 @@ export const endpoints = {
     personalizeData: "/patients/personalize-data",
   },
   dentists: {
+    profile: "/dentists/profile",
     register: "/dentists/register",
     professionalData: "/dentists/professional-data",
     verifyLicenseCheck: "/dentists/verify-license/check",
@@ -35,7 +36,11 @@ export const endpoints = {
     verifyLicense: (id: string | number) => `/admin/verify-license/${id}`,
     verifyOperations: (id: string | number) => `/admin/verify-operations/${id}`,
     verifyClinicDepth: (id: string | number) => `/admin/verify-clinic-depth/${id}`,
+    verifyPhase: (id: string | number) => `/admin/verify-phase/${id}`,
     verificationWeights: "/admin/verification-weights",
+    dentists: "/admin/dentists",
+    dentistProfile: (id: string | number) => `/admin/dentists/${id}`,
+    dentistVerificationPhases: (id: string | number) => `/admin/dentist-verification/${id}`,
   },
   specialties: {
     list: "/specialties",

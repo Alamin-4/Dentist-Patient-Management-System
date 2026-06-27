@@ -11,6 +11,7 @@ import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import { VerificationResult } from "./match-found";
 import z from "zod";
+import { useRouter } from "next/navigation";
 
 export const SubmittedLicenceSchema = z.object({
   country: z.string().min(1, "Country is required"),
@@ -38,6 +39,7 @@ export default function Phase1() {
     setVerificationCompletedStep,
     setVerificationStep,
   } = useVerificationStore();
+  const router = useRouter()
 
   const [submittedLicence, setSubmittedLicence] =
     useState<SubmittedLicence | null>(null);
@@ -99,6 +101,7 @@ export default function Phase1() {
 
     return Boolean(submittedLicence && hasLicenseVerified && hasHeadshot);
   }, [isAlreadySubmitted, verificationStatus, licenseFile, submittedLicence, hasHeadshot]);
+  
 
   useEffect(() => {
     setVerificationStepReady(1, isStepReady);
@@ -136,9 +139,9 @@ export default function Phase1() {
       },
       {
         onSuccess: () => {
-          toast.success("License verification details submitted!");
-          setVerificationCompletedStep(1);
-          setVerificationStep(2);
+          router.push("/dentist/verification?phase=operations-verify");
+          // setVerificationCompletedStep(1);
+          // setVerificationStep(2);
         },
         onError: (error: unknown) => {
           const backendError =

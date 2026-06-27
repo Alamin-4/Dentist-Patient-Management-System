@@ -15,6 +15,7 @@ import { StepThreeI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 const MapPickerModal = dynamic(() => import("./MapPickerModal"), {
   ssr: false,
@@ -58,6 +59,7 @@ export default function Phase3() {
     setVerificationStep,
     setVerificationStepReady,
   } = useVerificationStore();
+  const router = useRouter()
   const { stepThreeMutation, dentistProcedureList } = useDentist();
   const dentistProcedures =
     (dentistProcedureList?.data as any)?.data || [];
@@ -142,6 +144,10 @@ export default function Phase3() {
     }
   }, [isAlreadySubmitted, progressData, methods]);
 
+  useEffect(() => {
+    dentistProcedureList.refetch();
+  }, [dentistProcedureList.refetch]);
+
   const { control } = methods;
 
   const { fields, append, remove } = useFieldArray({
@@ -165,16 +171,13 @@ export default function Phase3() {
         protocol_pdf: m.protocolPdf,
       })),
     };
-    console.log("phase 3 payload: ", formattedPayload);
     stepThreeMutation.mutate(formattedPayload, {
       onSuccess: () => {
         updatePhase.mutate(
           { verification_phase: "COMPLETE" },
           {
             onSuccess: () => {
-              setVerificationCompletedStep(3);
-              setVerificationStep(3);
-              setVerificationStepReady(3, true);
+              router.push("/dentist");
             },
             onError: (error: unknown) => {
               const errMsg =

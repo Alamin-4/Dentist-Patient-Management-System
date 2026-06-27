@@ -38,19 +38,19 @@ function VerificationCardComponent({
   const isRejected = dentist.queue_status === "rejected";
 
   // 🗺️ Map API fields to UI variables
-  const displayName = dentist.registration_no
+  const displayName = dentist.dentist_name || (dentist.registration_no
     ? `Reg: ${dentist.registration_no}`
-    : `Dentist #${dentist.dentist}`;
+    : `Dentist #${dentist.dentist}`);
 
-  const location = [dentist.city, dentist.country].filter(Boolean).join(", ");
-  const submittedAgo = getRelativeTime(dentist.created_at);
+  const location = dentist.location || [dentist.city, dentist.country].filter(Boolean).join(", ");
+  const submittedAgo = dentist.submitted_ago || getRelativeTime(dentist.created_at);
   const approvedAgo = getRelativeTime(dentist.verified_at);
   const rejectionReason =
     dentist.reviewer_notes || "No specific reason provided.";
 
   // Fallback initials if no headshot is available
-  const initials = dentist.registration_no
-    ? dentist.registration_no.substring(0, 2).toUpperCase()
+  const initials = displayName
+    ? displayName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
     : "D";
 
   return (
@@ -81,14 +81,13 @@ function VerificationCardComponent({
               <p className="text-sm font-semibold text-[#1A1A2E]">
                 {displayName}
               </p>
-              {/* Using doc_type as the badge since specialty isn't in the API */}
               <span
                 className={cn(
                   "rounded-full px-2.5 py-0.5 text-xs font-medium",
                   SPECIALTY_COLORS["blue"],
                 )}
               >
-                {dentist.doc_type || "LICENSE"}
+                {dentist.specialty || dentist.doc_type || "LICENSE"}
               </span>
             </div>
 

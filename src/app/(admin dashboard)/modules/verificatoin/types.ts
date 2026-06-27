@@ -10,7 +10,11 @@ export interface PhaseMeta {
   status: PhaseStatus;
 }
 
-export interface VerificationDentist extends License {
+export interface VerificationDentist extends Omit<License, "id" | "dentist" | "verification" | "registration_authority"> {
+  id: string;
+  dentist: string;
+  verification: string;
+  registration_authority: string | number;
   queue_status: QueueStatus;
   dentist_name?: string;
   specialty?: string;
@@ -33,8 +37,8 @@ export interface VerificationDentist extends License {
   ph2_data?: {
     rejection_reason?: string;
     sterilization_evidence?: {
-      video_walkthrough?: { file_name: string; file_size: string };
-      jci_certificate?: { file_name: string; file_size: string };
+      video_walkthrough?: { file_name: string; file_size: string; href?: string };
+      jci_certificate?: { file_name: string; file_size: string; href?: string };
     };
     procedure_pricing?: { procedure: string; price: number; notes: string }[];
     no_surprise_guarantee?: {
@@ -65,7 +69,7 @@ export interface VerificationDentist extends License {
 }
 
 export interface VerificationStats {
-  total_dentists: number;
+  total_verifications: number;
   pending_review: number;
   fully_approved: number;
   rejected: number;

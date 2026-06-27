@@ -1,13 +1,35 @@
 import { Mail, Phone, MapPin, Briefcase, PencilLine } from "lucide-react";
 
-const details = [
-  { icon: Mail, label: "Email", value: "Alexhemsworth@gmail.com" },
-  { icon: Phone, label: "Phone Number", value: "+034-234234" },
-  { icon: MapPin, label: "Location", value: "Newyork, USA" },
-  { icon: Briefcase, label: "Experience", value: "8 Years" },
-];
+interface BasicDetailsCardProps {
+  dentist: any;
+}
 
-export function BasicDetailsCard() {
+export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
+  const user = dentist?.user;
+  const email = user?.email || "N/A";
+  const phone = dentist?.phoneNumber || "N/A";
+  
+  const city = dentist?.dentistProfessionalData?.city;
+  const countryCode = dentist?.country;
+  let location = "N/A";
+  if (city || countryCode) {
+    const formattedCity = city 
+      ? city.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+      : "";
+    const formattedCountry = countryCode ? countryCode.toUpperCase() : "";
+    location = [formattedCity, formattedCountry].filter(Boolean).join(", ");
+  }
+
+  const experienceYears = dentist?.dentistProfessionalData?.yearsOfExperience;
+  const experience = experienceYears ? `${experienceYears} Years` : "N/A";
+
+  const details = [
+    { icon: Mail, label: "Email", value: email },
+    { icon: Phone, label: "Phone Number", value: phone },
+    { icon: MapPin, label: "Location", value: location },
+    { icon: Briefcase, label: "Experience", value: experience },
+  ];
+
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">

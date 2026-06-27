@@ -79,7 +79,6 @@ export default function AddPricing() {
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log("Pricing Protocol:", data);
     router.push("/dentist/pricing-protocols");
   };
 

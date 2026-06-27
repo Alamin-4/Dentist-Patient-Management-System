@@ -72,9 +72,6 @@ function buildStepTwoFormData(data: StepTwoI): FormData {
   return formData;
 }
 
-
-
-
 export function useDentistProgress() {
   return useQuery({
     queryKey: ["dentistVerificationProgress"],
@@ -117,6 +114,7 @@ export default function useDentist() {
     queryClient.invalidateQueries({ queryKey: ["stepOneCheck"] });
     queryClient.invalidateQueries({ queryKey: ["stepTwoCheck"] });
     queryClient.invalidateQueries({ queryKey: ["stepThreeCheck"] });
+    queryClient.invalidateQueries({ queryKey: ["dentist_procedures"] });
   };
 
   const professionalDetailsMutation = useMutation({
@@ -204,7 +202,6 @@ export default function useDentist() {
     enabled: false,
   });
 
-  // Step 2 Check
   const stepTwoCheckQuery = useQuery({
     queryKey: ["stepTwoCheck"],
     queryFn: () => apiClient.dentists.stepTwoCheck(),
@@ -228,6 +225,11 @@ export default function useDentist() {
     queryFn: () => apiClient.dentists.dentistProcedureList(),
     // enabled: typeof window !== "undefined" && hasSessionCookie(),
   });
+
+  const dentistProfile = useQuery({
+    queryKey: ["dentist_profile"],
+    queryFn: () => apiClient.dentists.dentistProfile(),
+  })
 
   return {
     // Mutations
@@ -261,17 +263,21 @@ export default function useDentist() {
     globalProcedureListError: globalProcedureListQuery.error,
     globalProcedureListData: globalProcedureListQuery.data,
 
-    // ম্যানুয়াল চ্যাকিং এর জন্য Trigger ফাংশন (আগে যা mutation.mutate ছিল, এখন তা refetch)
+    // profile
+    dentistProfile,
+    isDentistProfileLoading: dentistProfile.isFetching,
+    isDentistProfileError: dentistProfile.isError,
+    dentistProfileError: dentistProfile.error,
+    dentistProfileData: dentistProfile.data,
+
     checkStepOne: stepOneCheckQuery.refetch,
     checkStepTwo: stepTwoCheckQuery.refetch,
     checkStepThree: stepThreeCheckQuery.refetch,
 
-    // Check Data (API Response পেতে চাইলে)
     stepOneCheckData: stepOneCheckQuery.data,
     stepTwoCheckData: stepTwoCheckQuery.data,
     stepThreeCheckData: stepThreeCheckQuery.data,
 
-    // Check Loading States (useQuery তে isFetching বা isLoading ব্যবহার করা হয়)
     isStepOneCheckLoading: stepOneCheckQuery.isFetching,
     isStepTwoCheckLoading: stepTwoCheckQuery.isFetching,
     isStepThreeCheckLoading: stepThreeCheckQuery.isFetching,

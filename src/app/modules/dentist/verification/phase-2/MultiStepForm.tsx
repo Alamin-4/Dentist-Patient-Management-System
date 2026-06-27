@@ -103,12 +103,9 @@ export default function MultiStepForm() {
 
     stepTwoMutation.mutate(payload, {
       onSuccess: () => {
-        toast.success("Phase 2 submitted successfully! Moving to Phase 3...");
-
-        // ✅ সরাসরি redirect করুন (modal বাদ দিয়ে)
         setTimeout(() => {
           router.push("/dentist/verification?phase=clinic-depth-verify");
-        }, 1500); // 1.5 second delay for toast to show
+        }, 1500); 
       },
       onError: (error: unknown) => {
         const errMsg =

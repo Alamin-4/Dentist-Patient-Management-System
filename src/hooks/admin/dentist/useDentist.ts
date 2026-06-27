@@ -1,5 +1,6 @@
-import { adminApi } from "@/lib/api";
-import type { ListParams } from "@/lib/api/services";
+import { apiClient } from "@/api/client";
+const adminApi = apiClient.admin;
+type ListParams = Record<string, string | number | boolean | undefined>;
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface DentistAddress {

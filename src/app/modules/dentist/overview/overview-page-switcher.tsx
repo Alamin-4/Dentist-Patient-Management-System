@@ -17,7 +17,6 @@ export function OverviewPageSwitcher() {
     isError,
     refetch,
   } = useDentistProgress();
-  console.log("progressData:", progressData)
   const progress = progressData?.data as
     | DentistVerificationProgress
     | undefined;

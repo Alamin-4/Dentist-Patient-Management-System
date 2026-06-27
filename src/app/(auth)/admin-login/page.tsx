@@ -30,7 +30,6 @@ export default function AdminLoginPage() {
 
   const onSubmit = async (data: AdminLoginFormValues) => {
     clearErrors("root");
-    console.log("login admin")
     try {
       const response = await loginMutation(data);
       if (response) {

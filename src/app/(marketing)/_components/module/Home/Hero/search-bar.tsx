@@ -29,7 +29,6 @@ export default function SearchBar() {
   }, []);
 
   const handleSearch = () => {
-    console.log("Searching for:", { selectedProcedure, budget });
   };
 
   return (

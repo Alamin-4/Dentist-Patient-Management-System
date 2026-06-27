@@ -15,7 +15,11 @@ export function AdminNavbar() {
   const { toggle } = useSidebar();
   const { mutate: logout } = useLogout()
   const { user } = useMe()
-  console.log(user)
+
+  const userInitials = (
+    (user?.name?.charAt(0) || "") + 
+    (user?.email?.split("@")[0]?.charAt(0) || "")
+  ).toUpperCase() || "A";
 
   return (
     <header className="shrink-0 border-b border-gray-200 bg-white w-full z-30 sticky top-0 left-0">
@@ -76,7 +80,7 @@ export function AdminNavbar() {
                 aria-label="User menu"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0D2B3E] text-white text-xs font-bold hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[#0D2B3E]/30 focus:ring-offset-1 ml-1"
               >
-                {user?.name?.charAt(0).toUpperCase() + user?.email?.split("@")[0].charAt(0).toUpperCase()}
+                {userInitials}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 p-2 mt-1">

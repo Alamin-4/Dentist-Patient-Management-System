@@ -52,6 +52,8 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
     handleSubmit,
     formState: { errors },
     setValue,
+    setError,      // <--- Added: To set manual errors from API
+    clearErrors,   // <--- Added: To clear previous errors
   } = useForm<IRegisterDentist>({
     resolver: zodResolver(registerDentistSchema),
     defaultValues: {
@@ -87,7 +89,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   };
 
   const onSubmit = (data: IRegisterDentist) => {
-
+    clearErrors(); // <--- Clear any previous manual errors before new submission
     localStorage.setItem("registerEmail", data.email);
 
     registerDentistMutation.mutate(data, {
@@ -102,8 +104,24 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
         setStep("verify-email");
         router.push(`${pathName}?dentist=verify-email`);
       },
+      
       onError: (error: any) => {
-        const errorRes = error?.response?.data?.message || error?.message || "Failed to create account.";
+        const apiErrors = error?.errors || error?.response?.data?.errors;
+        
+        // Check if backend sent field-specific errors
+        if (apiErrors && Array.isArray(apiErrors)) {
+          apiErrors.forEach((fieldError: any) => {
+            // Set error on the specific field
+            setError(fieldError.field as keyof IRegisterDentist, {
+              type: "manual",
+              message: fieldError.message,
+            });
+          });
+          return; // Prevent toast from showing
+        }
+        
+        // Fallback to toast for general errors
+        const errorRes = error?.message || error?.response?.data?.message || "Failed to create account.";
         toast.error(errorRes);
       },
     });
@@ -145,16 +163,15 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
     );
   }
 
-  // Main Registration Form
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-      {/* First & Last Name */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">
           <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
           <Input
             id="firstName"
-            {...register("firstName")}
+            {...register("firstName", { onChange: () => clearErrors("firstName") })}
             placeholder="John"
             className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.firstName ? "border-red-500" : ""}`}
           />
@@ -164,7 +181,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
           <Input
             id="lastName"
-            {...register("lastName")}
+            {...register("lastName", { onChange: () => clearErrors("lastName") })}
             placeholder="Doe"
             className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.lastName ? "border-red-500" : ""}`}
           />
@@ -172,37 +189,39 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
         </div>
       </div>
 
-      {/* Email */}
       <div className="grid gap-2">
         <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
         <Input
           id="email"
           type="email"
-          {...register("email")}
+          {...register("email", { onChange: () => clearErrors("email") })}
           placeholder="example@gmail.com"
           className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.email ? "border-red-500" : ""}`}
         />
         {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
       </div>
 
-      {/* Phone Number */}
       <div className="grid gap-2">
         <Label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700">Phone No</Label>
         <Input
           id="phoneNumber"
           type="tel"
-          {...register("phoneNumber")}
+          {...register("phoneNumber", { onChange: () => clearErrors("phoneNumber") })}
           placeholder="+1 234 *******"
           className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.phoneNumber ? "border-red-500" : ""}`}
         />
         {errors.phoneNumber && <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>}
       </div>
 
-      {/* Gender & Referral Code */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">
           <Label htmlFor="gender" className="text-sm font-medium text-gray-700">Gender</Label>
-          <Select onValueChange={(val) => setValue("gender", val as "MALE" | "FEMALE" | "OTHER")}>
+          <Select 
+            onValueChange={(val) => {
+              setValue("gender", val as "MALE" | "FEMALE" | "OTHER");
+              clearErrors("gender"); 
+            }}
+          >
             <SelectTrigger
               id="gender"
               className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
@@ -221,7 +240,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           <Label htmlFor="referralCode" className="text-sm font-medium text-gray-700">Referral Code</Label>
           <Input
             id="referralCode"
-            {...register("referralCode")}
+            {...register("referralCode", { onChange: () => clearErrors("referralCode") })}
             placeholder="JH-12 (Optional)"
             className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referralCode ? "border-red-500" : ""}`}
           />
@@ -229,27 +248,25 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
         </div>
       </div>
 
-      {/* Password */}
       <div className="grid gap-2">
         <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
         <Input
           id="password"
           type="password"
-          {...register("password")}
+          {...register("password", { onChange: () => clearErrors("password") })}
           placeholder="••••••••"
           className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.password ? "border-red-500" : ""}`}
         />
         {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
       </div>
 
-      {/* Confirm Password */}
       <div className="grid gap-2">
         <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm Password</Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showPassword ? "text" : "password"}
-            {...register("confirmPassword")}
+            {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
             placeholder="••••••••"
             className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirmPassword ? "border-red-500" : ""}`}
           />
@@ -265,7 +282,6 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
         {errors.confirmPassword && <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>}
       </div>
 
-      {/* Submit Button */}
       <Button
         type="submit"
         disabled={isRegisterDentistLoading}

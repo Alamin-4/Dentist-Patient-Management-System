@@ -22,10 +22,10 @@ import dentistsData from "@/lib/dentists-data";
 import { CustomStats } from "@/app/(admin dashboard)/modules/shared/custom-stats";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
 import { cn } from "@/lib/utils";
-// import {
-//   useAdminDentists,
-//   type AdminDentist,
-// } from "@/hooks/admin/dentist/useDentist";
+import {
+  useAdminDentists,
+  type AdminDentist,
+} from "@/hooks/admin/dentist/useDentist";
 
 export type Dentist = Omit<
   (typeof dentistsData.dentists)[number],
@@ -259,7 +259,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   const initials = d.full_name
     ? d.full_name
       .split(" ")
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2)
@@ -417,7 +417,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
             d.dentist_verification?.operations_verification,
           ),
           rejection_reason: d.dentist_verification?.operation_verification?.reviewer_notes || null,
-          services: (d.dentist_verification?.operation_verification?.procedures_feature || []).map((p) => ({
+          services: (d.dentist_verification?.operation_verification?.procedures_feature || []).map((p: any) => ({
             name: p.procedure_name,
             description: p.option_notes || "",
             price: parseFloat(p.price) || 0,
@@ -463,6 +463,8 @@ export default function DentistsPage() {
       limit: 1000,
     },
   });
+
+
 
   const mappedDentists = useMemo(() => {
     return (apiDentists || []).map(mapApiDentistToUIDentist);

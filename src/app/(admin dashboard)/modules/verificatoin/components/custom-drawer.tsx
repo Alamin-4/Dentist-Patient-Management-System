@@ -12,8 +12,8 @@ interface CustomDrawerProps {
   dentist: VerificationDentist | null;
   open: boolean;
   onClose: () => void;
-  onApprove?: (id: number, phase: PhaseKey) => void;
-  onReject?: (id: number, phase: PhaseKey) => void;
+  onApprove?: (id: string, phase: PhaseKey) => void;
+  onReject?: (id: string, phase: PhaseKey) => void;
 }
 
 function getPhaseData(dentist: VerificationDentist, phase: PhaseKey) {
@@ -30,7 +30,7 @@ export function CustomDrawer({
   onReject,
 }: CustomDrawerProps) {
   const [selectedPhase, setSelectedPhase] = useState<{
-    dentistId: number;
+    dentistId: string;
     phase: PhaseKey;
   } | null>(null);
 
@@ -85,8 +85,9 @@ export function CustomDrawer({
 
   if (!dentist || !drawerDetails) return null;
 
-  const isPendingPhase = drawerDetails.activePhaseStatus === "pending";
-  const isRejectedPhase = drawerDetails.activePhaseStatus === "rejected";
+  const activePhaseStatus = drawerDetails.activePhaseStatus;
+  const isRejectedPhase = activePhaseStatus === "rejected";
+  const showFooter = activePhaseStatus === "pending" || activePhaseStatus === "approved" || activePhaseStatus === "rejected";
 
   return (
     <>
@@ -206,19 +207,35 @@ export function CustomDrawer({
           )}
         </div>
 
-        {isPendingPhase && (
+        {showFooter && (
           <div className="flex shrink-0 flex-col gap-3 border-t border-gray-100 bg-white px-5 py-4 sm:flex-row">
             <button
+              disabled={activePhaseStatus !== "pending"}
               onClick={() => onReject?.(dentist.id, activePhase)}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors",
+                activePhaseStatus === "rejected"
+                  ? "border-red-200 bg-red-50 text-red-600 cursor-not-allowed"
+                  : activePhaseStatus === "pending"
+                    ? "border-red-200 bg-white text-red-600 hover:bg-red-50"
+                    : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+              )}
             >
-              <XCircle className="h-4 w-4" /> Reject & Request Changes
+              <XCircle className="h-4 w-4" /> {activePhaseStatus === "rejected" ? "Rejected" : "Reject & Request Changes"}
             </button>
             <button
+              disabled={activePhaseStatus !== "pending"}
               onClick={() => onApprove?.(dentist.id, activePhase)}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#1A1A2E]/90"
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors",
+                activePhaseStatus === "approved"
+                  ? "bg-emerald-600 text-white cursor-not-allowed"
+                  : activePhaseStatus === "pending"
+                    ? "bg-[#1A1A2E] text-white hover:bg-[#1A1A2E]/90"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+              )}
             >
-              <CheckCircle2 className="h-4 w-4" /> Approve Phase
+              <CheckCircle2 className="h-4 w-4" /> {activePhaseStatus === "approved" ? "Approved" : "Approve Phase"}
             </button>
           </div>
         )}

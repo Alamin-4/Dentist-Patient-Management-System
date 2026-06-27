@@ -25,42 +25,7 @@ export function VerificationSidebar() {
   const router = useRouter();
   const { data: progressData } = useDentistProgress();
   const { nextIncompleteStep } = useVerificationProgress();
-  console.log(progressData);
-  /*
-  {
-    "success": true,
-    "data": {
-        "current_phase": {
-            "phase": "OPERATIONAL",
-            "label": "Operations Verification",
-            "status": "SUBMIT"
-        },
-        "next_phase": {
-            "phase": "CLINICAL",
-            "label": "Clinical Verification"
-        },
-        "progress_percentage": 33,
-        "is_verified": false,
-        "steps": [
-            {
-                "phase": "LICENSE",
-                "label": "License Verification",
-                "status": "APPROVED"
-            },
-            {
-                "phase": "OPERATIONAL",
-                "label": "Operations Verification",
-                "status": "SUBMIT"
-            },
-            {
-                "phase": "CLINICAL",
-                "label": "Clinical Verification",
-                "status": "PENDING"
-            }
-        ]
-    }
-}
-  */
+  
   const progress = progressData?.data as
     | DentistVerificationProgress
     | undefined;
@@ -83,7 +48,6 @@ export function VerificationSidebar() {
   const step1Status = getStepStatus(licenseStep, progress?.step_one_status);
   const step2Status = getStepStatus(operationalStep, progress?.step_two_status);
   const step3Status = getStepStatus(clinicalStep, progress?.step_three_status);
-  console.log(step1Status, step2Status, step3Status);
   const step1Done = licenseStep
     ? licenseStep.completed
     : progress?.is_step_one_completed || step1Status === "APPROVED";
@@ -173,7 +137,7 @@ export function VerificationSidebar() {
         </div>
         <Button
           onClick={handleStart}
-          disabled={allDone}
+          disabled={nextIncompleteStep === 3}
           className="mt-8 h-12 w-full bg-[#163E5C] hover:bg-[#113149]"
         >
           {allDone ? "APPROVED" : `Start Phase ${nextIncompleteStep}`}{" "}

@@ -5,6 +5,14 @@ import { ClinicDepthSubmitPayload, CreateProcedurePayload, LicenseCheckPayload, 
 
 export type { CreateProcedurePayload };
 
+export interface ApiResponse<T = any> {
+  statusCode?: number;
+  success?: boolean;
+  message?: string;
+  data: T;
+  meta?: any;
+}
+
 
 
 export const apiClient = {
@@ -131,10 +139,10 @@ export const apiClient = {
             procedures: data?.procedures || [],
             guarantee: data?.dentistOperations
               ? {
-                  signer_name: data.dentistOperations.signerName,
-                  typed_signature: data.dentistOperations.signature,
-                  accepted_terms: data.dentistOperations.agreedToGuarantee,
-                }
+                signer_name: data.dentistOperations.signerName,
+                typed_signature: data.dentistOperations.signature,
+                accepted_terms: data.dentistOperations.agreedToGuarantee,
+              }
               : {},
           }
         }
@@ -210,6 +218,10 @@ export const apiClient = {
       const response = await api.get(endpoints.dentists.overview);
       return response.data;
     },
+    dentistProfile: async () => {
+      const response = await api.get(endpoints.dentists.profile);
+      return response.data;
+    },
   },
   procedures: {
     getGlobal: async (search?: string) => {
@@ -240,8 +252,36 @@ export const apiClient = {
     },
   },
   admin: {
-    getVerifications: async (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
+    getDentistVerificationList: async (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
       const response = await api.get(endpoints.admin.verifications, { params });
+      return response.data;
+    },
+    listLicenseQueue: async <T = any>(params?: any): Promise<ApiResponse<T[]>> => {
+      const response = await api.get(endpoints.admin.verifications, { params });
+      return response.data;
+    },
+    listDentists: async <T = any>(params?: any): Promise<ApiResponse<T[]>> => {
+      const response = await api.get(endpoints.admin.dentists, { params });
+      return response.data;
+    },
+    getDentistVerificationPhases: async (id: string | number) => {
+      const response = await api.get(endpoints.admin.dentistVerificationPhases(id));
+      return response.data;
+    },
+    getDentistProfile: async <T = any>(id: string | number): Promise<ApiResponse<T>> => {
+      const response = await api.get(endpoints.admin.dentistProfile(id));
+      return response.data;
+    },
+    phaseOneApprove: async (id: string | number) => {
+      const response = await api.patch(endpoints.admin.verifyLicense(id), { isApproved: true, note: "Approved by Admin" });
+      return response.data;
+    },
+    phaseTwoApprove: async (id: string | number) => {
+      const response = await api.patch(endpoints.admin.verifyOperations(id), { isApproved: true, note: "Approved by Admin" });
+      return response.data;
+    },
+    phaseThreeApprove: async (id: string | number) => {
+      const response = await api.patch(endpoints.admin.verifyClinicDepth(id), { isApproved: true, note: "Approved by Admin" });
       return response.data;
     },
     verifyLicense: async (id: string | number, payload: VerifyActionPayload) => {
@@ -256,12 +296,27 @@ export const apiClient = {
       const response = await api.patch(endpoints.admin.verifyClinicDepth(id), payload);
       return response.data;
     },
+    verifyPhase: async (
+      id: string | number,
+      payload: {
+        phase: "ph1" | "ph2" | "ph3";
+        isApproved: boolean;
+        note?: string;
+      }
+    ) => {
+      const response = await api.patch(endpoints.admin.verifyPhase(id), payload);
+      return response.data;
+    },
     getWeights: async () => {
       const response = await api.get(endpoints.admin.verificationWeights);
       return response.data;
     },
     updateWeights: async (payload: UpdateWeightsPayload) => {
       const response = await api.post(endpoints.admin.verificationWeights, payload);
+      return response.data;
+    },
+    addUser: async (payload: any) => {
+      const response = await api.post("/admin/users", payload);
       return response.data;
     },
   },
