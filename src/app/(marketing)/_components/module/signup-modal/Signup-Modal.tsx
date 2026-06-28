@@ -95,9 +95,7 @@ export default function SignupModal() {
           setNeedVerifyEmail(data.email);
           return;
         }
-        toast.success("Account created successfully. Please verify your email.", {
-          style: TOAST_STYLE,
-        });
+
         setPendingEmail(data.email);
         reset();
         setShowSignupModal(false);

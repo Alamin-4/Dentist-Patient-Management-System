@@ -95,19 +95,16 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
     registerDentistMutation.mutate(data, {
       onSuccess: (res: any) => {
         if (res?.data?.needEmailVerify) {
-          toast.success("This email is already registered. Please verify your email.");
           setNeedVerifyEmail(data.email);
           return;
         }
-
-        toast.success("Account created successfully! Please verify your email.");
         setStep("verify-email");
         router.push(`${pathName}?dentist=verify-email`);
       },
-      
+
       onError: (error: any) => {
         const apiErrors = error?.errors || error?.response?.data?.errors;
-        
+
         // Check if backend sent field-specific errors
         if (apiErrors && Array.isArray(apiErrors)) {
           apiErrors.forEach((fieldError: any) => {
@@ -119,7 +116,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           });
           return; // Prevent toast from showing
         }
-        
+
         // Fallback to toast for general errors
         const errorRes = error?.message || error?.response?.data?.message || "Failed to create account.";
         toast.error(errorRes);
@@ -165,7 +162,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">
           <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
@@ -216,10 +213,10 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">
           <Label htmlFor="gender" className="text-sm font-medium text-gray-700">Gender</Label>
-          <Select 
+          <Select
             onValueChange={(val) => {
               setValue("gender", val as "MALE" | "FEMALE" | "OTHER");
-              clearErrors("gender"); 
+              clearErrors("gender");
             }}
           >
             <SelectTrigger

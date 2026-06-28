@@ -23,6 +23,8 @@ export type Dentist = {
     lat: number;
     lng: number;
   };
+  isClaimable?: boolean;
+  status?: string;
 };
 
 // Import centralized demo data

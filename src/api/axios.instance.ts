@@ -15,21 +15,45 @@ export const api = axios.create({
   },
 });
 
+// Request Interceptor: Attach JWT Access Token to headers if available in cookies
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("accessToken="))
+        ?.split("=")[1];
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response Interceptor: Handle Authentication/Authorization Failures (401)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const apiError = normalizeApiError(error);
+
     if (apiError.statusCode === 401 && !error.config?.url?.includes("/auth/")) {
       if (typeof window !== "undefined") {
+        const pathname = window.location.pathname;
 
-        // in my project root there is no login page ok, so why are you redirect it login page ?? 
-        // i handle my login for patient or dentist in my /home/al-amin-islam/Projects/Dentist-Patient-Management-System/src/app/(marketing)/_components/module/signup-modal/SignIn.tsx sign in modal ok, so if you redirect user login page there is no page here so show a 404 not found page so can you please check it, and fix this issue. i am waiting for your response.
-        window.location.href = "/?session_token_required=true";
+        // Route admins to /admin-login, and patients/dentists to the home page sign-in modal
+        if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+          // window.location.href = "/admin-login";
+          window.location.href = "/?session_token_required=true";
+
+        }
       }
     }
 
     return Promise.reject(apiError);
   }
 );
-
-

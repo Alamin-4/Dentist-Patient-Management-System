@@ -26,6 +26,7 @@ export async function middleware(request: NextRequest) {
 
   // Retrieve access tokens from cookies
   const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
   const sessionToken = request.cookies.get("better-auth.session_token")?.value;
 
   let user: any = null;
@@ -68,48 +69,49 @@ export async function middleware(request: NextRequest) {
 
   const userRole = user?.role;
 
+  // 1. Admin Portal Protection
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    if (!user) {
-      const url = new URL("/admin-login", request.url);
-      return NextResponse.redirect(url);
-    }
+    // if (!user) {
+    //   // Direct unauthenticated users to the admin login page
+    //   const url = new URL("/admin-login", request.url);
+    //   return NextResponse.redirect(url);
+    // }
     if (userRole !== "ADMIN" && userRole !== "SUPER_ADMIN") {
-      const url = new URL("/", request.url);
-      return NextResponse.redirect(url);
+      // Rewrite unauthorized users to the error page, keeping URL in the address bar
+      const url = new URL("/unauthorized", request.url);
+      return NextResponse.rewrite(url);
     }
   }
 
   // 2. Dentist Portal Protection
   if (pathname === "/dentist" || pathname.startsWith("/dentist/")) {
-    if (!user) {
-      const url = new URL("/", request.url);
-      url.searchParams.set("session_token_required", "true");
-      return NextResponse.redirect(url);
-    }
-    if (userRole !== "DENTIST") {
-      const url = new URL("/", request.url);
-      return NextResponse.redirect(url);
+    if (!user || userRole !== "DENTIST") {
+      const url = new URL("/unauthorized", request.url);
+      return NextResponse.rewrite(url);
     }
   }
 
   // 3. Patient Portal Protection
   if (pathname === "/patient" || pathname.startsWith("/patient/")) {
-    if (!user) {
-      const url = new URL("/", request.url);
-      url.searchParams.set("session_token_required", "true");
-      return NextResponse.redirect(url);
-    }
-    if (userRole !== "PATIENT") {
-      const url = new URL("/", request.url);
-      return NextResponse.redirect(url);
+    if (!user || userRole !== "PATIENT") {
+      const url = new URL("/unauthorized", request.url);
+      return NextResponse.rewrite(url);
     }
   }
 
   // 4. Redirect Authenticated Users Away From Guest / Auth Pages
   if (user && userRole) {
-    if (pathname === "/admin-login" && (userRole === "ADMIN" || userRole === "SUPER_ADMIN")) {
-      const url = new URL("/admin/verification-queue", request.url);
-      return NextResponse.redirect(url);
+    if (pathname === "/admin-login") {
+      if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+        const url = new URL("/admin", request.url);
+        return NextResponse.redirect(url);
+      } else if (userRole === "DENTIST") {
+        const url = new URL("/dentist", request.url);
+        return NextResponse.redirect(url);
+      } else if (userRole === "PATIENT") {
+        const url = new URL("/patient", request.url);
+        return NextResponse.redirect(url);
+      }
     }
     if (pathname === "/register-doctor" && userRole === "DENTIST") {
       const url = new URL("/dentist/profile", request.url);

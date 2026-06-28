@@ -107,6 +107,7 @@ export interface DentistVerification {
 
 export interface AdminDentist {
   id: number;
+  slug?: string | null;
   user: {
     id: number;
     first_name: string;
@@ -211,6 +212,17 @@ export function useDentistPhaseThreeApprove(id: string) {
     mutationFn: () => adminApi.phaseThreeApprove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "dentist", id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
+    },
+  });
+}
+
+export function useUploadDentistDirectory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => adminApi.uploadDentistDirectory(file),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
     },
   });

@@ -2,6 +2,7 @@ import { IRegisterDentist, IRegisterPatient } from "../hooks/auth/auth.validatio
 import { api } from "./axios.instance";
 import { endpoints } from "./endpoints";
 import { ClinicDepthSubmitPayload, CreateProcedurePayload, LicenseCheckPayload, LoginPayload, PatientRegisterPayload, PersonalizeDataPayload, ProfessionalDataPayload, UpdateWeightsPayload, VerifyActionPayload, VerifyOtpPayload } from "@/types/api";
+import { getBookingDraft } from "@/lib/storage/bookingService";
 
 export type { CreateProcedurePayload };
 
@@ -64,6 +65,10 @@ export const apiClient = {
     },
     personalizeData: async (payload: PersonalizeDataPayload) => {
       const response = await api.post(endpoints.patients.personalizeData, payload);
+      return response.data;
+    },
+    getBySlug: async (slug: string) => {
+      const response = await api.get(`/patients/${slug}`);
       return response.data;
     },
   },
@@ -222,12 +227,36 @@ export const apiClient = {
       const response = await api.get(endpoints.dentists.profile);
       return response.data;
     },
+    getDirectoryList: async (params?: Record<string, any>) => {
+      const response = await api.get(endpoints.dentists.directoryList, { params });
+      return response.data;
+    },
+    getDirectoryDetail: async (slug: string) => {
+      const response = await api.get(endpoints.dentists.directoryDetail(slug));
+      return response.data;
+    },
+    claimDirectoryProfile: async (slug: string, payload: any) => {
+      const response = await api.post(endpoints.dentists.directoryClaim(slug), payload);
+      return response.data;
+    },
+    requestDirectoryConsultation: async (slug: string, payload: any) => {
+      const response = await api.post(endpoints.dentists.directoryConsultation(slug), payload);
+      return response.data;
+    },
+    simulateStripeWebhook: async (payload: any) => {
+      const response = await api.post("/stripe/webhook", payload);
+      return response.data;
+    },
   },
   procedures: {
     getGlobal: async (search?: string) => {
       const response = await api.get(endpoints.procedures.global, {
         params: search ? { search } : undefined,
       });
+      return response.data;
+    },
+    getGlobalBySlug: async (slug: string) => {
+      const response = await api.get(`${endpoints.procedures.global}/${slug}`);
       return response.data;
     },
     getDentist: async () => {
@@ -319,12 +348,26 @@ export const apiClient = {
       const response = await api.post("/admin/users", payload);
       return response.data;
     },
+    uploadDentistDirectory: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await api.post(endpoints.admin.uploadDentistDirectory, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
   },
   specialties: {
     list: async (search?: string) => {
       const response = await api.get(endpoints.specialties.list, {
         params: search ? { search } : undefined,
       });
+      return response.data;
+    },
+    getBySlug: async (slug: string) => {
+      const response = await api.get(`${endpoints.specialties.list}/${slug}`);
       return response.data;
     },
     create: async (payload: { name: string; description?: string }) => {
@@ -351,5 +394,163 @@ export const apiClient = {
       });
       return response.data;
     },
+  },
+  users: {
+    getMe: async () => {
+      const response = await api.get(endpoints.users.me);
+      return response.data;
+    },
+    updatePatientProfile: async (payload: any) => {
+      const response = await api.patch(endpoints.users.updatePatientProfile, payload);
+      return response.data;
+    },
+    updateDentistProfile: async (payload: any) => {
+      const response = await api.patch(endpoints.users.updateDentistProfile, payload);
+      return response.data;
+    },
+    updateAdminProfile: async (payload: any) => {
+      const response = await api.patch(endpoints.users.updateAdminProfile, payload);
+      return response.data;
+    },
+    changePassword: async (payload: any) => {
+      const response = await api.post(endpoints.users.changePassword, payload);
+      return response.data;
+    },
+  },
+};
+
+export const consultationBookingApi = {
+  stepOne: async (payload: {
+    first_name: string;
+    last_name: string;
+    country: string;
+    date_of_birth: string;
+    email?: string;
+  }) => {
+    const response = await api.post(endpoints.consultations.intake, {
+      firstName: payload.first_name,
+      lastName: payload.last_name,
+      country: payload.country,
+      dateOfBirth: payload.date_of_birth,
+      email: payload.email || getBookingDraft().personalInfo.email || "",
+    });
+    return response.data;
+  },
+
+  stepTwo: async (payload: {
+    procedures: number[];
+  }) => {
+    const intakeId = getBookingDraft().consultationId;
+    if (!intakeId) throw new Error("Intake ID not found in draft");
+
+    const draft = getBookingDraft();
+    const procedureName = draft.procedure || "Dental Procedure";
+
+    const response = await api.patch(endpoints.consultations.updateIntake(intakeId), {
+      procedureIds: payload.procedures,
+      procedureNames: [procedureName],
+    });
+    return response.data;
+  },
+
+  stepThree: async (payload: {
+    consultation_id: string | number;
+    approximate_budget: number;
+    travel_start_date?: string;
+    travel_end_date?: string;
+  }) => {
+    const response = await api.patch(
+      endpoints.consultations.updateIntake(payload.consultation_id),
+      {
+        budget: String(payload.approximate_budget),
+        travelFrom: payload.travel_start_date || null,
+        travelTo: payload.travel_end_date || null,
+      }
+    );
+    return response.data;
+  },
+
+  stepFour: async (payload: {
+    consultation_id: string | number;
+    last_dentist_visit: string;
+    conditions: string[];
+    notes?: string;
+  }) => {
+    const response = await api.patch(
+      endpoints.consultations.updateIntake(payload.consultation_id),
+      {
+        lastVisit: payload.last_dentist_visit,
+        conditions: payload.conditions,
+        additionalInfo: payload.notes || null,
+      }
+    );
+    return response.data;
+  },
+
+  stepFive: async (payload: {
+    consultation_id: string | number;
+    front_smile: File;
+  }) => {
+    const uploadRes = await apiClient.files.upload(payload.front_smile);
+    const secureUrl = uploadRes.data?.secure_url;
+    if (!secureUrl) throw new Error("Failed to upload front smile photo to Cloudinary");
+
+    const response = await api.patch(
+      endpoints.consultations.updateIntake(payload.consultation_id),
+      {
+        photos: [secureUrl],
+      }
+    );
+    return response.data;
+  },
+
+  stepSix: async (payload: {
+    consultation_id: string | number;
+    file: File;
+    notes?: string;
+  }) => {
+    const uploadRes = await apiClient.files.upload(payload.file);
+    const secureUrl = uploadRes.data?.secure_url;
+    if (!secureUrl) throw new Error("Failed to upload X-ray to Cloudinary");
+
+    const response = await api.patch(
+      endpoints.consultations.updateIntake(payload.consultation_id),
+      {
+        xrayUrl: secureUrl,
+        xrayNotes: payload.notes || null,
+      }
+    );
+    return response.data;
+  },
+
+  stepSeven: async (payload: {
+    consultation_id: string | number;
+    dentists: Array<{
+      dentist: string | number | null;
+      scheduled_date: string;
+      scheduled_time: string;
+    }>;
+  }) => {
+    const draft = getBookingDraft();
+    const scheduleSelections = payload.dentists.map((item) => {
+      const dentistIdStr = String(item.dentist);
+      const matchingSelection = draft.scheduleSelections.find(
+        (sel) => String(sel.dentistId) === dentistIdStr
+      );
+      const timezone = matchingSelection?.timezone || "UTC";
+
+      return {
+        dentistId: dentistIdStr,
+        date: item.scheduled_date,
+        timeSlot: item.scheduled_time,
+        timezone,
+      };
+    });
+
+    const response = await api.post(endpoints.consultations.confirm, {
+      intakeId: String(payload.consultation_id),
+      scheduleSelections,
+    });
+    return response.data;
   },
 };

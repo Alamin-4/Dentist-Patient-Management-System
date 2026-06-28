@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
 
@@ -21,12 +21,147 @@ import {
   procedureOptions,
 } from "./types";
 import { useMe } from "@/hooks/auth/useAuth";
-import { useDentistFilters } from "@/hooks/dentist/useDentistFileter";
+import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
 export default function FindDentist() {
-  const filters = useDentistFilters();
+  const [query, setQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "map" | "filter">("list");
+  const [procedure, setProcedure] = useState("All Procedures");
+  const [country, setCountry] = useState("All Countries");
+  const [city, setCity] = useState("All Cities");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1800]);
+  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
+  const [selectedScoreRanges, setSelectedScoreRanges] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [selectedAvailabilityDate, setSelectedAvailabilityDate] = useState<string | null>(null);
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+
+  // Debounce search query to prevent excessive API requests
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  // Fetch from backend using these filters
+  const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory({
+    limit: 100, // Safe limit to prevent backend crashes
+    search: debouncedQuery || undefined,
+    city: city !== "All Cities" ? city : undefined,
+    country: country !== "All Countries" ? country : undefined,
+    specialty: procedure !== "All Procedures" ? procedure : undefined,
+    status: showVerifiedOnly ? "VERIFIED" : undefined,
+  });
+
+  const mappedDentists = useMemo(() => {
+    const apiList = directoryResponse?.data || [];
+    return apiList.map((d: any) => ({
+      id: d.id,
+      name: d.name,
+      slug: d.slug,
+      specialty: d.specialty || "General Dentist",
+      rating: d.googleRating || d.doctoraliaRating || d.rating || 5.0,
+      reviewCount: d.googleReviewCount || d.doctoraliaReviewCount || d.reviewCount || 0,
+      image: d.image || "/placeholder-avatar.png",
+      location: d.fullAddress || d.city || "Mexico",
+      city: d.city || "",
+      country: "Mexico",
+      price: d.price || 0,
+      rdvScore: d.rdvScore || 0,
+      verified: d.status === "VERIFIED",
+      status: d.status,
+      isClaimable: d.isClaimable,
+      procedures: d.specialty ? [d.specialty] : [],
+      languages: d.languages || ["English", "Spanish"],
+      coords: { lat: 19.4326, lng: -99.1332 },
+    }));
+  }, [directoryResponse]);
+
+  const toggleRating = (rating: number) => {
+    setSelectedRatings((prev) =>
+      prev.includes(rating) ? prev.filter((v) => v !== rating) : [...prev, rating]
+    );
+  };
+
+  const toggleScore = (range: string) => {
+    setSelectedScoreRanges((prev) =>
+      prev.includes(range) ? prev.filter((v) => v !== range) : [...prev, range]
+    );
+  };
+
+  const toggleLanguage = (lang: string) => {
+    setSelectedLanguages((prev) =>
+      prev.includes(lang) ? prev.filter((v) => v !== lang) : [...prev, lang]
+    );
+  };
+
+  const resetAll = () => {
+    setQuery("");
+    setProcedure("All Procedures");
+    setCountry("All Countries");
+    setCity("All Cities");
+    setPriceRange([0, 1800]);
+    setSelectedRatings([]);
+    setSelectedScoreRanges([]);
+    setSelectedLanguages([]);
+    setSelectedAvailabilityDate(null);
+    setShowVerifiedOnly(false);
+  };
+
+  // Perform remaining client-side filtering on price, rating, score, language
+  const filteredDentists = useMemo(() => {
+    return mappedDentists.filter((dentist: Dentist) => {
+      const matchesPrice = dentist.price >= priceRange[0] && dentist.price <= priceRange[1];
+      const matchesRating =
+        selectedRatings.length === 0 ||
+        selectedRatings.includes(Math.round(dentist.rating));
+      const matchesScore =
+        selectedScoreRanges.length === 0 ||
+        selectedScoreRanges.some((range) => {
+          if (range === "0-25") return dentist.rdvScore >= 0 && dentist.rdvScore <= 25;
+          if (range === "25-50") return dentist.rdvScore > 25 && dentist.rdvScore <= 50;
+          if (range === "50-75") return dentist.rdvScore > 50 && dentist.rdvScore <= 75;
+          if (range === "75-100") return dentist.rdvScore > 75 && dentist.rdvScore <= 100;
+          return true;
+        });
+      const matchesLanguages =
+        selectedLanguages.length === 0 ||
+        selectedLanguages.every((lang) => dentist.languages.includes(lang));
+
+      return matchesPrice && matchesRating && matchesScore && matchesLanguages;
+    });
+  }, [mappedDentists, priceRange, selectedRatings, selectedScoreRanges, selectedLanguages]);
+
+  const filters = {
+    query,
+    setQuery,
+    viewMode,
+    setViewMode,
+    procedure,
+    setProcedure,
+    country,
+    setCountry,
+    city,
+    setCity,
+    priceRange,
+    setPriceRange,
+    selectedRatings,
+    toggleRating,
+    selectedScoreRanges,
+    toggleScore,
+    selectedLanguages,
+    toggleLanguage,
+    selectedAvailabilityDate,
+    setSelectedAvailabilityDate,
+    showVerifiedOnly,
+    setShowVerifiedOnly,
+    filteredDentists,
+    resetAll,
+  };
 
   const [activeDentistId, setActiveDentistId] = useState<string | null>(null);
   const [isCompareMode, setIsCompareMode] = useState(false);
@@ -39,6 +174,15 @@ export default function FindDentist() {
   // App global state context
   const { setShowSignupModal, setDentistsToCompare, setShowPersonalizeModal, setShowCompareModal } =
     useStateContext();
+
+  // loading state
+  if (isDirLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#003366]"></div>
+      </div>
+    );
+  }
 
   const handleCompareToggle = (dentist: Dentist) => {
     const exists = compareList.some((item) => item.id === dentist.id);

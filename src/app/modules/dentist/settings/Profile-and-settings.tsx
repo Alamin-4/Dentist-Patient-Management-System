@@ -2,6 +2,7 @@
 
 import ChangePassword from "./components/change-password";
 import PaymentInfo from "./components/payment-info";
+import PersonalInfo from "./components/personal-info";
 
 export default function ProfileAndSettings() {
   return (
@@ -11,6 +12,10 @@ export default function ProfileAndSettings() {
       </header>
 
       <div className="grid grid-cols-1 gap-6">
+        <div>
+          <PersonalInfo />
+        </div>
+
         <div className="order-2 lg:order-1">
           <ChangePassword />
         </div>

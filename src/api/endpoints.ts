@@ -24,6 +24,10 @@ export const endpoints = {
     verifyClinicDepthSubmit: "/dentists/verify-clinic-depth/submit",
     progress: "/dentists/progress",
     overview: "/dentists/overview",
+    directoryList: "/dentists/directory",
+    directoryDetail: (slug: string) => `/dentists/directory/${slug}`,
+    directoryClaim: (slug: string) => `/dentists/directory/${slug}/claim`,
+    directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
   },
   procedures: {
     global: "/procedures/global",
@@ -41,9 +45,26 @@ export const endpoints = {
     dentists: "/admin/dentists",
     dentistProfile: (id: string | number) => `/admin/dentists/${id}`,
     dentistVerificationPhases: (id: string | number) => `/admin/dentist-verification/${id}`,
+    uploadDentistDirectory: "/admin/dentist-directory/upload",
   },
   specialties: {
     list: "/specialties",
     byId: (id: string | number) => `/specialties/${id}`,
+  },
+  consultations: {
+    intake: "/consultations/intake",
+    updateIntake: (id: string | number) => `/consultations/intake/${id}`,
+    confirm: "/consultations/confirm",
+    patient: "/consultations/patient",
+    dentist: "/consultations/dentist",
+    byId: (id: string | number) => `/consultations/${id}`,
+    token: (id: string | number) => `/consultations/${id}/token`,
+  },
+  users: {
+    me: "/users/me",
+    updatePatientProfile: "/users/profile/patient",
+    updateDentistProfile: "/users/profile/dentist",
+    updateAdminProfile: "/users/profile/admin",
+    changePassword: "/users/change-password",
   },
 } as const;

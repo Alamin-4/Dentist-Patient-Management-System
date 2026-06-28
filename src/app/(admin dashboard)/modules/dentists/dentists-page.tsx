@@ -22,15 +22,19 @@ import dentistsData from "@/lib/dentists-data";
 import { CustomStats } from "@/app/(admin dashboard)/modules/shared/custom-stats";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
 import { cn } from "@/lib/utils";
+import { useRef } from "react";
+import toast from "react-hot-toast";
 import {
   useAdminDentists,
   type AdminDentist,
+  useUploadDentistDirectory,
 } from "@/hooks/admin/dentist/useDentist";
 
 export type Dentist = Omit<
   (typeof dentistsData.dentists)[number],
   "profile"
 > & {
+  slug?: string | null;
   profile: Omit<
     (typeof dentistsData.dentists)[number]["profile"],
     "verification"
@@ -358,6 +362,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
 
   return {
     id: `DEN-${String(d.id).padStart(3, "0")}`,
+    slug: d.slug || null,
     name: d.full_name || "Unknown Dentist",
     initials,
     avatar_color: avatarColor,
@@ -447,6 +452,41 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
 
 export default function DentistsPage() {
   const router = useRouter();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadMutation = useUploadDentistDirectory();
+
+  const handleImportCSV = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext !== 'csv' && ext !== 'xlsx' && ext !== 'xls') {
+      toast.error("Please upload a valid CSV or Excel file.");
+      return;
+    }
+
+    const toastId = toast.loading("Uploading and importing dentist directory...");
+
+    uploadMutation.mutate(file, {
+      onSuccess: (response: any) => {
+        toast.success(
+          response?.message || "Dentist directory imported successfully.",
+          { id: toastId }
+        );
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      },
+      onError: (err: any) => {
+        const errMsg = err?.response?.data?.message || err?.message || "Failed to import dentist directory.";
+        toast.error(errMsg, { id: toastId });
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    });
+  };
 
   const [activeTab, setActiveTab] = useState<StatusFilter>("all");
   const [tableSearch, setTableSearch] = useState("");
@@ -595,8 +635,23 @@ export default function DentistsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
-            <Upload className="h-4 w-4" />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".csv,.xlsx,.xls"
+            className="hidden"
+          />
+          <button
+            onClick={handleImportCSV}
+            disabled={uploadMutation.isPending}
+            className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+          >
+            {uploadMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="h-4 w-4" />
+            )}
             Import CSV
           </button>
           <button className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">

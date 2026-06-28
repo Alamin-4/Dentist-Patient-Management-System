@@ -5,7 +5,6 @@ import {
   getBookingData,
   updateTreatmentDetails,
 } from "@/lib/storage/bookingService";
-import toast from "react-hot-toast";
 
 const procedures = [
   {

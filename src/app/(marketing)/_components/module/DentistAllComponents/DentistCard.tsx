@@ -61,14 +61,24 @@ export default function DentistCard({
             </div>
 
             <div className="flex w-full flex-col items-center gap-2">
-              <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-                <ShieldCheck className="size-4 text-[#4CA30D]" />
-                VERIFIED
-              </div>
+              {dentist.verified ? (
+                <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
+                  <ShieldCheck className="size-4 text-[#4CA30D]" />
+                  VERIFIED
+                </div>
+              ) : dentist.status === "CLAIMED" ? (
+                <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                  CLAIMED
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
+                  DIRECTORY ENTRY
+                </div>
+              )}
 
               <div className="flex items-center justify-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 text-center">
                 <div className="font-extrabold text-[#0E3E65]">
-                  {dentist.rdvScore}
+                  {dentist.verified ? dentist.rdvScore : "—"}
                 </div>
                 <div className="text-xs font-medium text-[#1A1A2E]">
                   RDV Score
@@ -128,7 +138,7 @@ export default function DentistCard({
 
               <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-[12px] font-medium text-[#0E3E65] hover:bg-sky-50">
                 <Globe2 className="size-3.5" />
-                EN - ES
+                {dentist.languages.join(" - ") || "EN - ES"}
               </Badge>
             </div>
           </div>
@@ -154,12 +164,32 @@ export default function DentistCard({
             >
               View Profile
             </Button>
-            <Button
-              className="h-11 rounded-lg bg-[#003366] px-6 font-bold text-white shadow-sm hover:bg-[#002850] "
-              onClick={onPrimaryAction}
-            >
-              Book Consultation
-            </Button>
+            {dentist.verified ? (
+              <Button
+                className="h-11 rounded-lg bg-[#003366] px-6 font-bold text-white shadow-sm hover:bg-[#002850] "
+                onClick={onPrimaryAction}
+              >
+                Book Consultation
+              </Button>
+            ) : (
+              <>
+                {dentist.isClaimable && dentist.status === "UNVERIFIED" && (
+                  <Button
+                    variant="secondary"
+                    className="h-11 rounded-lg border border-amber-300 bg-amber-50 px-6 font-bold text-amber-700 hover:bg-amber-100"
+                    onClick={() => redirect(`/find-dentist/${dentist.slug}?claim=true`)}
+                  >
+                    Claim Profile
+                  </Button>
+                )}
+                <Button
+                  className="h-11 rounded-lg bg-[#003366] px-6 font-bold text-white shadow-sm hover:bg-[#002850] "
+                  onClick={onPrimaryAction}
+                >
+                  Request Consultation
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
