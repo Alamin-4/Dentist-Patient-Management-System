@@ -34,7 +34,7 @@ jobs:
           file: ./Dockerfile
           push: true
           build-args: |
-            NEXT_PUBLIC_API_BASE_URL=http://52.60.153.12:5000/api/v1
+            NEXT_PUBLIC_API_BASE_URL=https://api.foodvaly.me/api/v1
           tags: |
             ${{ steps.vars.outputs.image }}:latest
             ${{ steps.vars.outputs.image }}:${{ github.sha }}
@@ -65,11 +65,11 @@ jobs:
             docker stop rateddocs-platform || true
             docker rm rateddocs-platform || true
 
-            echo "→ Running container on port 80..."
+            echo "→ Running container on port 3000..."
             docker run -d \
               --name rateddocs-platform \
               --restart unless-stopped \
-              -p 80:3000 \
+              -p 3000:3000 \
               "$IMAGE"
 
             echo "→ Cleaning up old images..."
