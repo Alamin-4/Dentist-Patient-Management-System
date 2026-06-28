@@ -15,7 +15,6 @@ export const api = axios.create({
   },
 });
 
-// Request Interceptor: Attach JWT Access Token to headers if available in cookies
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
