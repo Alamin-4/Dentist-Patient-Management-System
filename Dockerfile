@@ -34,6 +34,9 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile
 
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
 RUN pnpm exec next build
 
 FROM base AS runner

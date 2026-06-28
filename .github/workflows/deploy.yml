@@ -33,6 +33,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=http://52.60.153.12:5000/api/v1
           tags: |
             ${{ steps.vars.outputs.image }}:latest
             ${{ steps.vars.outputs.image }}:${{ github.sha }}
