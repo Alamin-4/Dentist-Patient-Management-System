@@ -214,7 +214,7 @@ export default function Navbar() {
                   </p>
                 </div>
                 <div className="border-b border-slate-100 my-2"></div>
-                <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 rounded-lg py-2" onClick={() => router.push("/patient")}>
+                <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 rounded-lg py-2" onClick={() => router.push(`/${user?.role.toLowerCase()}`)}>
                   My Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 rounded-lg py-2">

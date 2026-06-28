@@ -19,7 +19,7 @@ import { useStateContext } from "@/providers/StateProvider";
 import OtpVerifyModal from "./Otp-Verify-Modal";
 
 import { IRegisterPatient, registerPatientSchema } from "@/hooks/auth/auth.validation";
-import useAuth, { useMe } from "@/hooks/auth/useAuth";
+import useAuth, { useGoogleLogin, useMe } from "@/hooks/auth/useAuth";
 
 export const TOAST_STYLE = {
   borderRadius: "10px",
@@ -54,6 +54,7 @@ export default function SignupModal() {
   const { user } = useMe()
 
   const { registerPatientMutation, isRegisterPatientLoading, resendOtpMutation, isOtpResendLoading } = useAuth();
+  const { mutate: googleLogin } = useGoogleLogin()
 
   const handleSendVerificationOtp = async () => {
     if (!needVerifyEmail) return;
@@ -105,12 +106,30 @@ export default function SignupModal() {
     }
   };
 
-  const handleSocialSignup = (provider: string) => {
-    toast.success(`Signed up with ${provider}!`, { style: TOAST_STYLE });
-    setShowSignupModal(false);
+
+  const handleSocialLogin = (provider: string) => {
+    if (provider === "Google") {
+      const returnTo = window.location.pathname + window.location.search;
+      const hasCompare = !!(dentistsToCompare && dentistsToCompare.length > 0);
+      googleLogin({ returnTo, hasCompare });
+      return;
+    }
+
+    if (provider === "Apple") {
+      toast.error("Apple login is not implemented yet", { style: TOAST_STYLE });
+      return;
+    }
+
+    if (provider === "Facebook") {
+      toast.error("Facebook login is not implemented yet", { style: TOAST_STYLE });
+      return;
+    }
+
+    setShowSigninModal(false);
 
     if (dentistsToCompare && dentistsToCompare.length > 0) {
-      const hasProfileDetails = !!(user?.firstName || user?.name);
+
+      const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
       if (hasProfileDetails) {
         setShowCompareModal(true);
       } else {
@@ -182,7 +201,7 @@ export default function SignupModal() {
             <>
               <div className="mb-4 space-y-3">
                 <button
-                  onClick={() => handleSocialSignup("Google")}
+                  onClick={() => handleSocialLogin("Google")}
                   className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FcGoogle className="text-2xl" />
@@ -190,7 +209,7 @@ export default function SignupModal() {
                 </button>
 
                 <button
-                  onClick={() => handleSocialSignup("Apple")}
+                  onClick={() => handleSocialLogin("Apple")}
                   className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaApple className="text-2xl text-black" />
@@ -198,7 +217,7 @@ export default function SignupModal() {
                 </button>
 
                 <button
-                  onClick={() => handleSocialSignup("Facebook")}
+                  onClick={() => handleSocialLogin("Facebook")}
                   className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaFacebook className="text-2xl text-[#1877F2]" />

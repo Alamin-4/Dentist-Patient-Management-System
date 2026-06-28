@@ -42,12 +42,24 @@ export const apiClient = {
       const response = await api.post(endpoints.auth.loginAdmin, payload);
       return response.data;
     },
-    initiateGoogleLogin: () => {
+    initiateGoogleLogin: (returnTo?: string, hasCompare?: boolean) => {
       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       if (!baseUrl) {
         throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
       }
-      window.location.href = `${baseUrl}${endpoints.auth.googleLogin}`;
+
+      // Build the frontend URL we want to land on after Google OAuth
+      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      const landingPath = returnTo || (typeof window !== "undefined" ? window.location.pathname : "/");
+
+      // Encode hasCompare state so StateProvider can restore modals on landing
+      const landingUrl = new URL(landingPath, origin);
+      if (hasCompare) {
+        landingUrl.searchParams.set("restore_compare", "1");
+      }
+
+      const backendUrl = `${baseUrl}${endpoints.auth.googleLogin}?callbackURL=${encodeURIComponent(landingUrl.toString())}`;
+      window.location.href = backendUrl;
     },
     getSession: async () => {
       const response = await api.get(endpoints.auth.getSession);
@@ -165,7 +177,7 @@ export const apiClient = {
           status: data?.step_three_status || "PENDING",
           data: {
             materials: [],
-            clinic_address: ""
+            clinic_address: data?.prefilled_clinic_address || ""
           }
         }
       };
@@ -245,6 +257,10 @@ export const apiClient = {
     },
     simulateStripeWebhook: async (payload: any) => {
       const response = await api.post("/stripe/webhook", payload);
+      return response.data;
+    },
+    sendClaimOtp: async (payload: { email: string; password?: string; name?: string }) => {
+      const response = await api.post(endpoints.dentists.directorySendClaimOtp, payload);
       return response.data;
     },
   },
@@ -438,7 +454,7 @@ export const consultationBookingApi = {
   },
 
   stepTwo: async (payload: {
-    procedures: number[];
+    procedures: string[];
   }) => {
     const intakeId = getBookingDraft().consultationId;
     if (!intakeId) throw new Error("Intake ID not found in draft");

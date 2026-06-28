@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { getBookingData, updatePersonalInfo } from "@/lib/storage/bookingService";
+import { useMe } from "@/hooks/auth/useAuth";
 
 const COUNTRIES = [
   "United States",
@@ -17,7 +18,29 @@ const COUNTRIES = [
 ];
 
 export default function PersonalInfoForm() {
-  const [formData, setFormData] = useState(() => getBookingData().personalInfo);
+  const [formData, setFormData] = useState(() => {
+    const info = getBookingData().personalInfo || {};
+    return {
+      firstName: info.firstName || "",
+      lastName: info.lastName || "",
+      email: info.email || "",
+      dateOfBirth: info.dateOfBirth || "",
+      country: info.country || "",
+    };
+  });
+  const { user } = useMe();
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        dateOfBirth: "",
+        country: "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -49,7 +72,7 @@ export default function PersonalInfoForm() {
               type="text"
               name="firstName"
               placeholder="Enter Name"
-              value={formData.firstName}
+              value={formData.firstName || ""}
               onChange={handleChange}
               className={inputCls}
             />
@@ -62,7 +85,7 @@ export default function PersonalInfoForm() {
               type="text"
               name="lastName"
               placeholder="Enter Name"
-              value={formData.lastName}
+              value={formData.lastName || ""}
               onChange={handleChange}
               className={inputCls}
             />
@@ -78,7 +101,7 @@ export default function PersonalInfoForm() {
             type="email"
             name="email"
             placeholder="johnsmith@gmail.com"
-            value={formData.email}
+            value={formData.email || ""}
             onChange={handleChange}
             className={inputCls}
           />
@@ -94,7 +117,7 @@ export default function PersonalInfoForm() {
               type="date"
               name="dateOfBirth"
               placeholder="MM/DD/YYYY"
-              value={formData.dateOfBirth}
+              value={formData.dateOfBirth || ""}
               onChange={handleChange}
               className={`${inputCls} pr-12`}
             />
@@ -110,7 +133,7 @@ export default function PersonalInfoForm() {
           <div className="relative">
             <select
               name="country"
-              value={formData.country}
+              value={formData.country || ""}
               onChange={handleChange}
               className={`${inputCls} appearance-none cursor-pointer pr-12`}
             >

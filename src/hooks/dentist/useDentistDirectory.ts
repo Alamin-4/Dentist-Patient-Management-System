@@ -43,3 +43,10 @@ export function useSimulateStripeWebhook() {
     mutationFn: (payload: any) => apiClient.dentists.simulateStripeWebhook(payload),
   });
 }
+
+export function useSendClaimOtp() {
+  return useMutation({
+    mutationFn: (payload: { email: string; password?: string; name?: string }) =>
+      apiClient.dentists.sendClaimOtp(payload),
+  });
+}

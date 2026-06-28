@@ -5,105 +5,33 @@ import {
   getBookingData,
   updateTreatmentDetails,
 } from "@/lib/storage/bookingService";
+import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 
-const procedures = [
-  {
-    id: 2,
-    title: "Porcelain Veneers",
-    desc: "Improve shape, colour, and symmetry",
-  },
-  {
-    id: 1,
-    title: "Dental Implants",
-    desc: "Replace one or more missing teeth permanently",
-  },
-  {
-    id: 4,
-    title: "Teeth Whitening",
-    desc: "Brighten and even your smile",
-  },
-  {
-    id: 3,
-    title: "Dental Crowns",
-    desc: "Restore damaged, worn, or cracked teeth",
-  },
-  {
-    id: 5,
-    title: "Full Smile Makeover",
-    desc: "Comprehensive cosmetic treatment plan",
-  },
-  {
-    id: 6,
-    title: "Dental Bridges",
-    desc: "Replace missing teeth with a natural look",
-  },
-];
 
 type ProcedureOption = {
-  id: number;
-  title: string;
-  desc: string;
+  id: string;
+  name: string;
+  slug: string;
 };
 
-function unwrapProcedureOptions(response: unknown): ProcedureOption[] {
-  const payload = response as {
-    data?: unknown;
-    results?: unknown;
-  };
-  const maybeList =
-    Array.isArray(response)
-      ? response
-      : Array.isArray(payload.data)
-        ? payload.data
-        : typeof payload.data === "object" &&
-          payload.data !== null &&
-          Array.isArray((payload.data as { results?: unknown }).results)
-          ? (payload.data as { results: unknown[] }).results
-          : Array.isArray(payload.results)
-            ? payload.results
-            : [];
-
-  return maybeList
-    .map((item) => {
-      const row = item as {
-        id?: string | number;
-        name?: string;
-        title?: string;
-        label?: string;
-        description?: string;
-      };
-      const id = Number(row.id);
-      const title = row.name ?? row.title ?? row.label;
-
-      if (!Number.isFinite(id) || !title) return null;
-
-      return {
-        id,
-        title,
-        desc: row.description ?? "Select this procedure",
-      };
-    })
-    .filter((item): item is ProcedureOption => Boolean(item));
-}
 
 export default function ProcedureSelectionForm() {
-  const [procedureOptions, setProcedureOptions] =
-    useState<ProcedureOption[]>(procedures);
-  const [selectedIds, setSelectedIds] = useState<number[]>(
+
+  const [selectedIds, setSelectedIds] = useState<string[]>(
     () => getBookingData().procedureIds,
   );
-  const [isLoading, setIsLoading] = useState(false);
 
+  const { data: procedureOptions, isLoading } = useGlobalProcedures();
 
-  const handleSelectProcedure = (id: number) => {
+  const handleSelectProcedure = (id: string) => {
     const nextIds = selectedIds.includes(id)
       ? selectedIds.filter((item) => item !== id)
       : [...selectedIds, id];
 
     setSelectedIds(nextIds);
     const selectedTitles = procedureOptions
-      .filter((procedure) => nextIds.includes(procedure.id))
-      .map((procedure) => procedure.title);
+      .filter((procedure:ProcedureOption) => nextIds.includes(procedure.id))
+      .map((procedure:ProcedureOption) => procedure.name);
 
     updateTreatmentDetails({
       procedure: selectedTitles.join(", "),
@@ -124,12 +52,12 @@ export default function ProcedureSelectionForm() {
         </div>
       )}
 
-      <div className="space-y-4">
-        {procedureOptions.map((item) => {
+      <div className="space-y-4 max-h-[400px] overflow-y-scroll">
+        {procedureOptions.map((item: any) => {
           const isSelected = selectedIds.includes(item.id);
           return (
             <div
-              key={item.id}
+              key={item.slug}
               onClick={() => handleSelectProcedure(item.id)}
               className={`
                 group cursor-pointer relative flex items-center justify-between 
@@ -144,11 +72,9 @@ export default function ProcedureSelectionForm() {
                 <span
                   className={`text-[17px] font-bold ${isSelected ? "text-[#113254]" : "text-[#1A1A2E]"}`}
                 >
-                  {item.title}
+                  {item.name}
                 </span>
-                <span className="text-[14px] font-normal text-[#6B7280]">
-                  {item.desc}
-                </span>
+            
               </div>
 
               <div className="shrink-0">

@@ -124,7 +124,7 @@ export function PatientConsultationsTab({
   return (
     <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
       {/* Sub-tabs */}
-      <div className="border-b border-gray-100 px-4 pt-1">
+      <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
         <CustomTab
           tabs={tabs}
           active={activeTab}

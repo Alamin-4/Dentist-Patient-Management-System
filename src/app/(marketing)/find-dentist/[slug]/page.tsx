@@ -42,6 +42,7 @@ export default function ViewDentistProfile() {
       verified: d.status === "VERIFIED",
       status: d.status,
       isClaimable: d.isClaimable,
+      profileType: d.profileType || "CLAIMABLE",
       procedures: d.specialty ? [d.specialty] : [],
       languages: d.languages || ["English", "Spanish"],
       bio: d.bio || `Dr. ${d.name} is a highly dedicated professional specializing in ${d.specialty || "dentistry"} at ${d.clinicName || "their local clinic"}. Located in ${d.city || "Mexico"}, they are committed to providing outstanding dental care.`,

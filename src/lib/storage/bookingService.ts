@@ -14,17 +14,17 @@ export interface BookingDraft {
   completedSteps: number[];
   consultationId: Id | null;
   selectedDentistIds: string[];
-  selectedBackendDentistIds: number[];
+  selectedBackendDentistIds: string[];
   scheduleSelections: Array<{
     dentistId: string;
-    backendDentistId: number | null;
+    backendDentistId: string | null;
     date: string;
     timeSlot: string;
     timezone: string;
   }>;
   personalInfo: PersonalInfo;
   procedure: string;
-  procedureIds: number[];
+  procedureIds: string[];
   budget: string;
   travelFrom: string;
   travelTo: string;
@@ -115,21 +115,23 @@ function normalizeDraft(value: unknown): BookingDraft {
       : [],
     selectedBackendDentistIds: Array.isArray(record.selectedBackendDentistIds)
       ? record.selectedBackendDentistIds
-          .map(Number)
-          .filter((id) => Number.isFinite(id))
+        .map(String)
+      : [],
+    procedureIds: Array.isArray(record.procedureIds)
+      ? record.procedureIds.map(String)
       : [],
     scheduleSelections: Array.isArray(record.scheduleSelections)
       ? record.scheduleSelections.map((selection) => ({
-          dentistId: String(selection.dentistId ?? ""),
-          backendDentistId:
-            selection.backendDentistId === null ||
+        dentistId: String(selection.dentistId ?? ""),
+        backendDentistId:
+          selection.backendDentistId === null ||
             selection.backendDentistId === undefined
-              ? null
-              : Number(selection.backendDentistId),
-          date: selection.date ?? "",
-          timeSlot: selection.timeSlot ?? "",
-          timezone: selection.timezone ?? "",
-        }))
+            ? null
+            : String(selection.backendDentistId),
+        date: selection.date ?? "",
+        timeSlot: selection.timeSlot ?? "",
+        timezone: selection.timezone ?? "",
+      }))
       : [],
     personalInfo: {
       ...INITIAL_BOOKING_DRAFT.personalInfo,
@@ -274,7 +276,7 @@ export function setConsultationId(consultationId: Id | null) {
 
 export function setSelectedDentistsForBooking(
   dentistIds: string[],
-  backendDentistIds: number[] = [],
+  backendDentistIds: string[] = [],
 ) {
   return saveBookingDraft({
     selectedDentistIds: dentistIds,

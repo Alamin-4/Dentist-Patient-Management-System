@@ -285,7 +285,7 @@ export default function SEOReviewPage() {
         {/* Table card */}
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
           {/* Tabs */}
-          <div className="border-b border-gray-100 px-4">
+          <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
             <CustomTab
               tabs={tabs}
               active={activeTab}

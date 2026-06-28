@@ -29,6 +29,7 @@ import {
   type AdminDentist,
   useUploadDentistDirectory,
 } from "@/hooks/admin/dentist/useDentist";
+import { useSpecialties } from "@/hooks/dentist/useSpecialty";
 
 export type Dentist = Omit<
   (typeof dentistsData.dentists)[number],
@@ -452,6 +453,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
 
 export default function DentistsPage() {
   const router = useRouter();
+  const { data: specialities } = useSpecialties();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadMutation = useUploadDentistDirectory();
@@ -604,6 +606,26 @@ export default function DentistsPage() {
     currentPage * PAGE_SIZE,
   );
 
+  const paginationRange = useMemo(() => {
+    if (totalPages <= 3) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const pages: (number | "...")[] = [1, 2];
+    if (currentPage > 2 && currentPage < totalPages) {
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+      pages.push(currentPage);
+      if (currentPage < totalPages - 1) {
+        pages.push("...");
+      }
+    } else {
+      pages.push("...");
+    }
+    pages.push(totalPages);
+    return pages;
+  }, [totalPages, currentPage]);
+
   const handleTabChange = (key: string) => {
     setActiveTab(key as StatusFilter);
     setPage(1);
@@ -624,7 +646,7 @@ export default function DentistsPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* ── Page Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap gap-3 sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">
             Dentists
@@ -671,7 +693,7 @@ export default function DentistsPage() {
       {/* ── Tabs + Table ─────────────────────────────────────────────── */}
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
         {/* Tabs */}
-        <div className="border-b border-gray-100 px-4 pt-1">
+        <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
           <CustomTab
             tabs={tabs}
             active={activeTab}
@@ -702,9 +724,9 @@ export default function DentistsPage() {
               }}
               className="h-9 appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-[#1A1A2E]"
             >
-              {SPECIALTIES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+              {specialities?.map((s) => (
+                <option key={s.slug} value={s.slug}>
+                  {s.name}
                 </option>
               ))}
             </select>
@@ -729,7 +751,7 @@ export default function DentistsPage() {
           </div>
         </div>
 
-        {/* Table */}
+        
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
@@ -737,6 +759,8 @@ export default function DentistsPage() {
                 <th className="w-8 px-4 py-3">
                   <input type="checkbox" className="rounded border-gray-300" />
                 </th>
+
+             
                 {[
                   "Dentist",
                   "Specialty",
@@ -749,7 +773,7 @@ export default function DentistsPage() {
                 ].map((h, i) => (
                   <th
                     key={i}
-                    className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400"
+                    className="px-4 py-3 text-left text-sm font-normal text-gray-400"
                   >
                     {h}
                   </th>
@@ -770,7 +794,7 @@ export default function DentistsPage() {
                 pageData.map((dentist) => (
                   <tr
                     key={dentist.id}
-                    onClick={() => router.push(`/admin/dentists/${dentist.id}`)}
+                    onClick={() => router.push(`/admin/dentists/${dentist.slug}`)}
                     className="cursor-pointer transition-colors hover:bg-gray-50/80"
                   >
                     {/* Checkbox */}
@@ -889,20 +913,32 @@ export default function DentistsPage() {
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
-                  p === currentPage
-                    ? "bg-[#1A1A2E] text-white"
-                    : "border border-gray-200 text-gray-500 hover:bg-gray-50",
-                )}
-              >
-                {p}
-              </button>
-            ))}
+            {paginationRange.map((p, idx) => {
+              if (p === "...") {
+                return (
+                  <span
+                    key={`ellipsis-${idx}`}
+                    className="flex h-8 w-8 items-center justify-center text-sm font-medium text-gray-400"
+                  >
+                    ...
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={p}
+                  onClick={() => setPage(p as number)}
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
+                    p === currentPage
+                      ? "bg-[#1A1A2E] text-white"
+                      : "border border-gray-200 text-gray-500 hover:bg-gray-50",
+                  )}
+                >
+                  {p}
+                </button>
+              );
+            })}
             <button
               disabled={currentPage === totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}

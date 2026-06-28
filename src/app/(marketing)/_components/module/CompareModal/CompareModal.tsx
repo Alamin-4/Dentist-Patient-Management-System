@@ -94,8 +94,8 @@ export default function CompareModal() {
       selectedIds.includes(dentist.id),
     );
     const backendIds = selectedDentists
-      .map((dentist) => dentist.backendId ?? Number(dentist.id))
-      .filter((id) => Number.isFinite(id));
+      .map((dentist) => String(dentist.backendId ?? dentist.id))
+      .filter(Boolean);
 
     setSelectedDentistsForBooking(selectedIds, backendIds);
 

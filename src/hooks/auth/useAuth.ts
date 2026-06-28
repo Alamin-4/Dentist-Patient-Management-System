@@ -148,8 +148,8 @@ export function useLogout() {
 export function useGoogleLogin() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async () => {
-            apiClient.auth.initiateGoogleLogin();
+        mutationFn: async (params?: { returnTo?: string; hasCompare?: boolean }) => {
+            apiClient.auth.initiateGoogleLogin(params?.returnTo, params?.hasCompare);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: AUTH_KEYS.session });

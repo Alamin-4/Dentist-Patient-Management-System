@@ -27,6 +27,7 @@ export const endpoints = {
     directoryList: "/dentists/directory",
     directoryDetail: (slug: string) => `/dentists/directory/${slug}`,
     directoryClaim: (slug: string) => `/dentists/directory/${slug}/claim`,
+    directorySendClaimOtp: "/dentists/directory/claim/send-otp",
     directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
   },
   procedures: {

@@ -50,7 +50,7 @@ export function Navbar() {
                   {user?.email ? user.email.slice(0, 2).toUpperCase() : "U"}
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm md:block">{displayName}</span>
+              <span className="hidden text-sm md:block">{displayName.split(" ")[0].slice(0, 10)}</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"

@@ -9,7 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
 import type { Dentist } from "./types";
-import { redirect } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useStateContext } from "@/providers/StateProvider";
+import { useMe } from "@/hooks/auth/useAuth";
 
 type DentistCardProps = {
   dentist: Dentist;
@@ -18,7 +20,6 @@ type DentistCardProps = {
   isSelectedForCompare?: boolean;
   onCompareToggle?: () => void;
   onPrimaryAction?: () => void;
-
 };
 
 export default function DentistCard({
@@ -29,13 +30,43 @@ export default function DentistCard({
   onCompareToggle,
   onPrimaryAction,
 }: DentistCardProps) {
+  const pathName = usePathname();
+  const router = useRouter();
+  const { user } = useMe();
+  const {
+    setSelectedDentistId,
+    setShowBookingModal,
+    setShowPersonalizeModal,
+    setShowSignupModal,
+    setRequestConsultationDentist,
+    setShowRequestConsultationModal,
+  } = useStateContext();
+
+  const handleBookConsultation = () => {
+    setSelectedDentistId(dentist.id);
+    if (user) {
+      const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
+      if (hasProfileDetails) {
+        setShowBookingModal("startBooking");
+      } else {
+        setShowPersonalizeModal(true);
+      }
+    } else {
+      setShowSignupModal(true);
+    }
+  };
+
+  const handleRequestConsultation = () => {
+    setRequestConsultationDentist(dentist as any);
+    setShowRequestConsultationModal(true);
+  };
+
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden border border-[#B3C6DC] bg-white transition-all duration-300",
-        "rounded-lg ",
+        "relative w-full overflow-hidden border border-[#CEE0F4] bg-white transition-all duration-300 rounded-lg hover:shadow-md",
         floating && "w-[min(100%,34rem)] shadow-lg",
-        isSelectedForCompare && "border-[#003366] bg-slate-50/20",
+        isSelectedForCompare && "border-[#10436B] bg-slate-50/20",
       )}
     >
       {isCompareMode && (
@@ -43,7 +74,7 @@ export default function DentistCard({
           <Checkbox
             checked={isSelectedForCompare}
             onCheckedChange={onCompareToggle}
-            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#003366]"
+            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#10436B]"
           />
         </div>
       )}
@@ -54,33 +85,28 @@ export default function DentistCard({
             <div className="relative h-20 w-20 overflow-hidden rounded-full bg-slate-100">
               <Image
                 src={dentist.image || "/placeholder-avatar.png"}
-                alt={dentist.name}
+                alt={dentist.name.split(' ')[0].slice(0,4)}
                 fill
                 className="object-cover"
               />
             </div>
 
             <div className="flex w-full flex-col items-center gap-2">
-              {dentist.verified ? (
-                <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-                  <ShieldCheck className="size-4 text-[#4CA30D]" />
-                  VERIFIED
-                </div>
-              ) : dentist.status === "CLAIMED" ? (
-                <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
-                  CLAIMED
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
-                  DIRECTORY ENTRY
-                </div>
-              )}
+              <div className="flex items-center gap-1.5 text-xs font-medium">
+                <ShieldCheck className={cn("size-4", dentist.verified ? "text-emerald-500" : dentist.status === "CLAIMED" ? "text-amber-500" : "text-slate-400")} />
+                <span className={cn(
+                  "text-[11px] font-bold uppercase tracking-wider whitespace-nowrap",
+                  dentist.verified ? "text-emerald-600" : dentist.status === "CLAIMED" ? "text-amber-600" : "text-slate-500"
+                )}>
+                  {dentist.verified ? "VERIFIED" : dentist.status === "CLAIMED" ? "CLAIMED" : "UNCLAIMED"}
+                </span>
+              </div>
 
-              <div className="flex items-center justify-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 text-center">
-                <div className="font-extrabold text-[#0E3E65]">
-                  {dentist.verified ? dentist.rdvScore : "—"}
+              <div className="flex items-center justify-center text-xs gap-2 rounded-md border border-slate-200 px-3 py-1 text-center">
+                <div className="text-[#0E3E65]">
+                  {dentist.verified ? dentist.rdvScore : "0"}
                 </div>
-                <div className="text-xs font-medium text-[#1A1A2E]">
+                <div className=" text-[#1A1A2E]">
                   RDV Score
                 </div>
               </div>
@@ -90,10 +116,10 @@ export default function DentistCard({
           <div className="min-w-0 space-y-3">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="space-y-1">
-                <h3 className="text-[20px] font-bold tracking-[-0.03em] text-slate-900">
+                <h3 className="lg:text-lg font-semibold text-[#1A1A2E]">
                   {dentist.name}
                 </h3>
-                <p className="text-[14px] font-semibold text-[#1A1A2E]">
+                <p className="text-[14px] font-semibold text-[#10436B]">
                   {dentist.specialty}
                 </p>
               </div>
@@ -101,7 +127,7 @@ export default function DentistCard({
 
             <div className="space-y-2">
               <div className="flex items-center gap-1.5">
-                <span className="text-[14px] font-bold text-[#003366]">
+                <span className="text-[14px] font-bold text-[#10436B]">
                   {dentist.rating}
                 </span>
                 <div className="flex gap-0.5">
@@ -147,7 +173,7 @@ export default function DentistCard({
         <div className="flex flex-row sm:flex-col items-end justify-between gap-3 xl:min-w-42.5">
           <div className="text-right">
             <div className="text-[12px] text-[#6B7280]">Starting at</div>
-            <div className="text-[16px] font-bold text-[#0E3E65]">
+            <div className="text-[#0E3E65] font-bold text-xl lg:text-2xl mt-1">
               ${dentist.price.toLocaleString()}
             </div>
           </div>
@@ -159,15 +185,15 @@ export default function DentistCard({
           >
             <Button
               variant="outline"
-              className="h-11 rounded-lg border-[#003366] px-6 font-bold text-[#003366] hover:bg-slate-50 "
-              onClick={() => redirect(`/find-dentist/${dentist.slug}`)}
+              className="h-10 rounded-lg border-[#003366] px-5 text-xs font-bold text-[#003366] hover:bg-slate-50 transition-all"
+              onClick={() => router.push(`/find-dentist/${dentist.slug}`)}
             >
               View Profile
             </Button>
             {dentist.verified ? (
               <Button
-                className="h-11 rounded-lg bg-[#003366] px-6 font-bold text-white shadow-sm hover:bg-[#002850] "
-                onClick={onPrimaryAction}
+                className="h-10 rounded-lg bg-[#003366] px-5 text-xs font-bold text-white shadow-sm hover:bg-[#002850] transition-all"
+                onClick={handleBookConsultation}
               >
                 Book Consultation
               </Button>
@@ -176,15 +202,15 @@ export default function DentistCard({
                 {dentist.isClaimable && dentist.status === "UNVERIFIED" && (
                   <Button
                     variant="secondary"
-                    className="h-11 rounded-lg border border-amber-300 bg-amber-50 px-6 font-bold text-amber-700 hover:bg-amber-100"
-                    onClick={() => redirect(`/find-dentist/${dentist.slug}?claim=true`)}
+                    className="h-10 rounded-lg border border-amber-300 bg-amber-50 px-5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all"
+                    onClick={() => router.push(`/find-dentist/${dentist.slug}?claim=true`)}
                   >
                     Claim Profile
                   </Button>
                 )}
                 <Button
-                  className="h-11 rounded-lg bg-[#003366] px-6 font-bold text-white shadow-sm hover:bg-[#002850] "
-                  onClick={onPrimaryAction}
+                  className="h-10 rounded-lg bg-[#003366] px-5 text-xs font-bold text-white shadow-sm hover:bg-[#002850] transition-all"
+                  onClick={handleRequestConsultation}
                 >
                   Request Consultation
                 </Button>

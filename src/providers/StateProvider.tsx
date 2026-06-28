@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, Suspense } from "react";
+import { createContext, useContext, useEffect, useRef, Suspense, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@/store/useAppStore";
 import { initializeDentistData } from "@/lib/storage/dentistData";
@@ -62,6 +62,10 @@ interface StateContextType {
   setIsNewestFirst: (isNewest: boolean | ((prev: boolean) => boolean)) => void;
   showSigninModal: boolean;
   setShowSigninModal: (show: boolean) => void;
+  showRequestConsultationModal: boolean;
+  setShowRequestConsultationModal: (show: boolean) => void;
+  requestConsultationDentist: Dentist | null;
+  setRequestConsultationDentist: (dentist: Dentist | null) => void;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
@@ -235,7 +239,34 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  // ── Restore compare modal after Google OAuth redirect ──────────────────────
+  // When Google OAuth completes, better-auth redirects to callbackURL which
+  // may carry ?restore_compare=1. Detect this and re-open the compare modal.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("restore_compare") === "1") {
+      // Give auth session a moment to settle, then open compare modal
+      const t = window.setTimeout(() => {
+        store.openModal("compare");
+        // Clean up the param from the URL without a full navigation
+        params.delete("restore_compare");
+        const newSearch = params.toString();
+        const cleanUrl = window.location.pathname + (newSearch ? `?${newSearch}` : "");
+        window.history.replaceState(null, "", cleanUrl);
+      }, 500);
+      return () => window.clearTimeout(t);
+    }
+  }, [store]);
+
+  const [showRequestConsultationModal, setShowRequestConsultationModal] = useState(false);
+  const [requestConsultationDentist, setRequestConsultationDentist] = useState<Dentist | null>(null);
+
   const value: StateContextType = {
+    showRequestConsultationModal,
+    setShowRequestConsultationModal,
+    requestConsultationDentist,
+    setRequestConsultationDentist,
     verificationStatus: store.verificationStatus,
     setVerificationStatus: store.setVerificationStatus,
     verificationStep: store.verificationStep,

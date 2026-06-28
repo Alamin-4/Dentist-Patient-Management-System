@@ -94,7 +94,7 @@ export default function Phase3() {
   });
 
   useEffect(() => {
-    if (isAlreadySubmitted && progressData?.data) {
+    if (progressData?.data) {
       const serverData = progressData.data as any;
 
       let materials = [];
@@ -129,17 +129,27 @@ export default function Phase3() {
           lat: clinicAddress.lat || "0",
           lng: clinicAddress.lng || "0",
         },
-        materials: materials.map((m: any) => ({
-          ownProcedure: String(m.own_procedure),
-          ceCertificate: m.ce_certificate
-            ? new File([], "CE Certificate")
-            : null,
-          materialBrands: m.material_brands
-            ? new File([], "Material Brands")
-            : null,
-          invoice: m.invoice ? new File([], "Invoice") : null,
-          protocolPdf: m.protocol_pdf ? new File([], "Protocol PDF") : null,
-        })),
+        materials: isAlreadySubmitted
+          ? materials.map((m: any) => ({
+              ownProcedure: String(m.own_procedure),
+              ceCertificate: m.ce_certificate
+                ? new File([], "CE Certificate")
+                : null,
+              materialBrands: m.material_brands
+                ? new File([], "Material Brands")
+                : null,
+              invoice: m.invoice ? new File([], "Invoice") : null,
+              protocolPdf: m.protocol_pdf ? new File([], "Protocol PDF") : null,
+            }))
+          : [
+              {
+                ownProcedure: "",
+                ceCertificate: null,
+                materialBrands: null,
+                invoice: null,
+                protocolPdf: null,
+              },
+            ],
       });
     }
   }, [isAlreadySubmitted, progressData, methods]);

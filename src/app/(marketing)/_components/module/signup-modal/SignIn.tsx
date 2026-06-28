@@ -16,10 +16,11 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
-import { useGoogleLogin, useLogin, useMe } from "@/hooks/auth/useAuth";
+import { useGoogleLogin, useLogin, useMe, useResendOtp } from "@/hooks/auth/useAuth";
 import z from "zod";
 import { LoginFormData, loginSchema } from "@/hooks/dentist/dentist.interface";
-
+import toast from "react-hot-toast";
+import OtpVerifyModal from "./Otp-Verify-Modal";
 
 export default function SigninModal() {
   const {
@@ -35,8 +36,13 @@ export default function SigninModal() {
 
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [emailToVerify, setEmailToVerify] = useState("");
+  const [isEmailUnverified, setIsEmailUnverified] = useState(false);
+
   const { mutate: login, isPending, isError, error, } = useLogin()
   const { mutate: googleLogin, isPending: isGooglePending, isError: isGoogleError, error: googleError } = useGoogleLogin()
+  const resendOtpMutation = useResendOtp();
 
   const {
     register,
@@ -45,6 +51,7 @@ export default function SigninModal() {
     clearErrors,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -55,7 +62,7 @@ export default function SigninModal() {
   });
 
   const onSubmit = (data: LoginFormData) => {
-    clearErrors("root");
+    clearErrors();
 
     login(data, {
       onSuccess: () => {
@@ -72,19 +79,70 @@ export default function SigninModal() {
           }
         }
       },
-      onError: (error) => {
-        const serverError = error as any;
-        setError("root.server", {
-          type: "server",
-          message: serverError?.response?.message || "Invalid email or password",
-        });
+      onError: (error: any) => {
+        const apiErrors = error?.errors;
+        const errorMessage = error?.message || "Invalid email or password";
+
+        const isUnverifiedError =
+          errorMessage.toLowerCase().includes("verify") ||
+          apiErrors?.some((err: any) => err.message?.toLowerCase().includes("verify"));
+
+        if (isUnverifiedError) {
+          setIsEmailUnverified(true);
+        } else {
+          setIsEmailUnverified(false);
+        }
+
+        if (Array.isArray(apiErrors) && apiErrors.length > 0) {
+          apiErrors.forEach((err: any) => {
+            if (err.field) {
+              setError(err.field as any, {
+                type: "server",
+                message: err.message,
+              });
+            }
+          });
+        } else {
+          setError("root.server", {
+            type: "server",
+            message: errorMessage,
+          });
+        }
       },
     });
   };
 
+  const handleStartVerification = () => {
+    const email = getValues("email");
+    if (!email) return;
+    setEmailToVerify(email);
+    resendOtpMutation.mutate(
+      { email },
+      {
+        onSuccess: () => {
+          toast.success("Verification OTP sent to your email.");
+          setShowOtpModal(true);
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || err?.message || "Failed to send verification code.");
+        },
+      }
+    );
+  };
+
+  const handleOtpVerified = () => {
+    setShowOtpModal(false);
+    clearErrors();
+    setIsEmailUnverified(false);
+    toast.success("Email verified successfully! Logging you in...");
+    handleSubmit(onSubmit)();
+  };
+
   const handleSocialLogin = (provider: string) => {
     if (provider === "Google") {
-      googleLogin();
+      const returnTo = window.location.pathname + window.location.search;
+      const hasCompare = !!(dentistsToCompare && dentistsToCompare.length > 0);
+      googleLogin({ returnTo, hasCompare });
       return;
     }
     setShowSigninModal(false);
@@ -108,7 +166,8 @@ export default function SigninModal() {
   };
 
   return (
-    <Dialog open={showSigninModal} onOpenChange={setShowSigninModal}>
+    <>
+      <Dialog open={showSigninModal} onOpenChange={setShowSigninModal}>
       <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-xl border-none p-8 gap-0">
         <DialogHeader className="mb-8 text-left">
           <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-[#1A1A2E]">
@@ -168,9 +227,21 @@ export default function SigninModal() {
               className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
             />
             {errors.email && (
-              <p className="mt-1.5 text-sm text-red-500">
-                {errors.email.message}
-              </p>
+              <div className="mt-1.5 flex flex-col items-start gap-1">
+                <p className="text-sm text-red-500">
+                  {errors.email.message}
+                </p>
+                {errors.email.message?.toLowerCase().includes("verify") && (
+                  <button
+                    type="button"
+                    disabled={resendOtpMutation.isPending}
+                    onClick={handleStartVerification}
+                    className="text-xs font-semibold text-[#113254] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {resendOtpMutation.isPending ? "Sending OTP..." : "Verify your email now →"}
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
@@ -216,9 +287,23 @@ export default function SigninModal() {
             )}
           </div>
 
-          {errors.root?.server?.message && (
+          {errors.root?.server?.message && !isEmailUnverified && (
             <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
               {errors.root.server.message}
+            </div>
+          )}
+
+          {isEmailUnverified && (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <span>Your email is not verified yet.</span>
+              <button
+                type="button"
+                disabled={resendOtpMutation.isPending}
+                onClick={handleStartVerification}
+                className="shrink-0 rounded-lg bg-[#113254] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0d2844] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {resendOtpMutation.isPending ? "Sending..." : "Verify Now"}
+              </button>
             </div>
           )}
 
@@ -264,5 +349,13 @@ export default function SigninModal() {
         </p>
       </DialogContent>
     </Dialog>
+
+    <OtpVerifyModal
+      email={emailToVerify}
+      open={showOtpModal}
+      onOpenChange={setShowOtpModal}
+      onVerified={handleOtpVerified}
+    />
+  </>
   );
 }

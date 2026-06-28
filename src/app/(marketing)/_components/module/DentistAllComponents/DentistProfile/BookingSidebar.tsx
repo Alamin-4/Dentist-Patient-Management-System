@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ShieldCheck, MapPin, Globe, Star, FileText, Pen, Loader2, Check, AlertCircle, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { useMe } from "@/hooks/auth/useAuth";
+import { useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
 import {
   Dialog,
   DialogContent,
@@ -23,11 +23,35 @@ import {
   useClaimDentistDirectoryProfile,
   useRequestDirectoryConsultation,
   useSimulateStripeWebhook,
+  useSendClaimOtp,
 } from "@/hooks/dentist/useDentistDirectory";
+
+import { useStateContext } from "@/providers/StateProvider";
 
 export default function BookingSidebar({ dentist }: { dentist: any }) {
   const { user } = useMe();
+  const {
+    setShowSigninModal,
+    setShowSignupModal,
+    setShowBookingModal,
+    setShowPersonalizeModal,
+    setSelectedDentistId,
+  } = useStateContext();
   const searchParams = useSearchParams();
+
+  const handleBookConsultation = () => {
+    setSelectedDentistId(dentist.id);
+    if (user) {
+      const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
+      if (hasProfileDetails) {
+        setShowBookingModal("startBooking");
+      } else {
+        setShowPersonalizeModal(true);
+      }
+    } else {
+      setShowSignupModal(true);
+    }
+  };
 
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
@@ -81,10 +105,14 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
   // Claim Profile Wizard State
   const claimMutation = useClaimDentistDirectoryProfile();
   const webhookMutation = useSimulateStripeWebhook();
+  const sendClaimOtpMutation = useSendClaimOtp();
+  const verifyOtpMutation = useOtpVerify();
+  const resendOtpMutation = useResendOtp();
 
   const [claimStep, setClaimStep] = useState(1);
   const [claimEmail, setClaimEmail] = useState("");
   const [claimPassword, setClaimPassword] = useState("");
+  const [claimOtp, setClaimOtp] = useState("");
   const [yearsOfExperience, setYearsOfExperience] = useState(5);
   const [motivation, setMotivation] = useState("");
   const [internationalPatients, setInternationalPatients] = useState(10);
@@ -102,30 +130,94 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
   const [cardExpiry, setCardExpiry] = useState("12/28");
   const [cardCvc, setCardCvc] = useState("123");
 
-  // Autofill email if user logged in
+  // Autofill email if user logged in & skip to step 3
   useEffect(() => {
     if (user?.email) {
       setClaimEmail(user.email);
+      if (claimStep < 3) {
+        setClaimStep(3);
+      }
     }
-  }, [user]);
+  }, [user, claimStep]);
+
+  const handleSendOtp = () => {
+    if (!claimEmail || !claimPassword) {
+      toast.error("Please provide email and password to create your account.");
+      return;
+    }
+    if (yearsOfExperience < 0) {
+      toast.error("Experience must be a positive number.");
+      return;
+    }
+
+    const toastId = toast.loading("Sending verification OTP to your email...");
+    sendClaimOtpMutation.mutate(
+      {
+        email: claimEmail,
+        password: claimPassword,
+        name: dentist.name,
+      },
+      {
+        onSuccess: () => {
+          toast.success("OTP sent successfully. Please check your email.", { id: toastId });
+          setClaimStep(2);
+        },
+        onError: (err: any) => {
+          const errMsg = err?.response?.data?.message || err?.message || "Failed to send OTP.";
+          toast.error(errMsg, { id: toastId });
+        },
+      }
+    );
+  };
+
+  const handleVerifyOtp = () => {
+    if (!claimOtp || claimOtp.length < 4) {
+      toast.error("Please enter a valid OTP code.");
+      return;
+    }
+
+    const toastId = toast.loading("Verifying OTP...");
+    verifyOtpMutation.mutate(
+      {
+        email: claimEmail,
+        otp: claimOtp,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Email verified and logged in successfully!", { id: toastId });
+          setClaimStep(3);
+        },
+        onError: (err: any) => {
+          const errMsg = err?.response?.data?.message || err?.message || "Invalid OTP code.";
+          toast.error(errMsg, { id: toastId });
+        },
+      }
+    );
+  };
+
+  const handleResendOtpCode = () => {
+    const toastId = toast.loading("Resending OTP...");
+    resendOtpMutation.mutate(
+      { email: claimEmail },
+      {
+        onSuccess: () => {
+          toast.success("Verification OTP resent to your email.", { id: toastId });
+        },
+        onError: (err: any) => {
+          const errMsg = err?.response?.data?.message || err?.message || "Failed to resend OTP.";
+          toast.error(errMsg, { id: toastId });
+        },
+      }
+    );
+  };
 
   const handleNextStep = () => {
-    if (claimStep === 1) {
-      if (!user && (!claimEmail || !claimPassword)) {
-        toast.error("Please provide email and password to create your account.");
-        return;
-      }
-      if (yearsOfExperience < 0) {
-        toast.error("Experience must be a positive number.");
-        return;
-      }
-      setClaimStep(2);
-    } else if (claimStep === 2) {
+    if (claimStep === 3) {
       if (!hasSterilizationDocs || !hasBeforeAfterPhotos || !hasMaterialsDocs || !hasEducationCertificates || !hasGuarantees) {
         toast.error("You must fulfill and agree to all quality standards to claim this profile.");
         return;
       }
-      setClaimStep(3);
+      setClaimStep(4);
     }
   };
 
@@ -138,7 +230,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
         slug: dentist.slug,
         payload: {
           email: claimEmail,
-          password: user ? undefined : claimPassword,
+          password: undefined,
           yearsOfExperience: Number(yearsOfExperience),
           motivation,
           internationalPatients: Number(internationalPatients),
@@ -176,7 +268,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
             {
               onSuccess: () => {
                 toast.success("Profile successfully claimed & payment verified!", { id: toastId });
-                setClaimStep(4); // Success screen!
+                setClaimStep(5);
               },
               onError: (err: any) => {
                 const errMsg = err?.response?.data?.message || err?.message || "Payment simulation failed.";
@@ -282,7 +374,10 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
         </div>
 
         {dentist.verified ? (
-          <Button className="h-14 flex-1 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]">
+          <Button
+            onClick={handleBookConsultation}
+            className="h-14 flex-1 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
+          >
             Book consultation
           </Button>
         ) : (
@@ -382,6 +477,12 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
       {/* ── Claim Profile Wizard Modal ─────────────────────────────────── */}
       <Dialog open={isClaimOpen} onOpenChange={setIsClaimOpen}>
         <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-2xl rounded-xl overflow-hidden p-0">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Claim Dentist Profile</DialogTitle>
+            <DialogDescription>
+              Verify your identity, select a premium plan, and start getting international patient leads.
+            </DialogDescription>
+          </DialogHeader>
           <div className="bg-[#0E3E65] text-white p-6">
             <h3 className="text-xl font-bold">Claim Dentist Profile</h3>
             <p className="text-sky-100 text-xs mt-1">
@@ -390,7 +491,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
             {/* Step Indicators */}
             <div className="flex items-center gap-2 mt-4">
-              {[1, 2, 3].map((s) => (
+              {[1, 2, 3, 4].map((s) => (
                 <div key={s} className="flex items-center gap-1">
                   <div
                     className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
@@ -399,9 +500,9 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                         : "bg-[#0E3E65] border border-sky-400/40 text-sky-200"
                     }`}
                   >
-                    {claimStep > s ? <Check className="size-3.5 stroke-[3]" /> : s}
+                    {claimStep > s ? <Check className="size-3.5 stroke-3" /> : s}
                   </div>
-                  {s < 3 && <div className={`w-8 h-[2px] ${claimStep > s ? "bg-amber-400" : "bg-sky-400/20"}`} />}
+                  {s < 4 && <div className={`w-8 h-[2px] ${claimStep > s ? "bg-amber-400" : "bg-sky-400/20"}`} />}
                 </div>
               ))}
             </div>
@@ -474,17 +575,82 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
                 <div className="flex justify-end pt-4 border-t border-slate-100">
                   <Button
-                    onClick={handleNextStep}
+                    onClick={handleSendOtp}
+                    disabled={sendClaimOtpMutation.isPending}
                     className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold"
                   >
-                    Continue to Standards
+                    {sendClaimOtpMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending OTP...
+                      </>
+                    ) : (
+                      "Send OTP & Continue"
+                    )}
                   </Button>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Quality Checkmarks */}
+            {/* Step 2: OTP Verification */}
             {claimStep === 2 && (
+              <div className="space-y-4">
+                <div className="rounded-lg bg-sky-50 border border-sky-100 p-4">
+                  <p className="text-sky-900 text-xs font-medium">
+                    We sent a verification code to <span className="font-semibold">{claimEmail}</span>. Enter the 6-digit OTP code below:
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-700 font-semibold">Verification Code</Label>
+                  <Input
+                    value={claimOtp}
+                    onChange={(e) => setClaimOtp(e.target.value)}
+                    placeholder="0 0 0 0 0 0"
+                    maxLength={6}
+                    className="border-slate-200 focus:border-[#0E3E65] text-center text-lg font-mono tracking-widest"
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleResendOtpCode}
+                    disabled={resendOtpMutation.isPending}
+                    className="text-xs text-[#0E3E65] hover:underline font-semibold"
+                  >
+                    {resendOtpMutation.isPending ? "Resending..." : "Resend Code"}
+                  </button>
+                </div>
+
+                <div className="flex justify-between pt-4 border-t border-slate-100">
+                  <Button
+                    variant="outline"
+                    onClick={() => setClaimStep(1)}
+                    className="border-slate-200 text-slate-600 hover:bg-slate-50"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleVerifyOtp}
+                    disabled={verifyOtpMutation.isPending}
+                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold"
+                  >
+                    {verifyOtpMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      "Verify & Continue"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Quality Checkmarks */}
+            {claimStep === 3 && (
               <div className="space-y-4">
                 <div className="rounded-lg bg-amber-50/50 border border-amber-200 p-4 mb-2">
                   <p className="text-amber-800 text-xs font-medium flex items-center gap-1.5">
@@ -555,16 +721,18 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                 </div>
 
                 <div className="flex justify-between pt-4 border-t border-slate-100">
-                  <Button
-                    variant="outline"
-                    onClick={() => setClaimStep(1)}
-                    className="border-slate-200 text-slate-600 hover:bg-slate-50"
-                  >
-                    Back
-                  </Button>
+                  {!user && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setClaimStep(2)}
+                      className="border-slate-200 text-slate-600 hover:bg-slate-50"
+                    >
+                      Back
+                    </Button>
+                  )}
                   <Button
                     onClick={handleNextStep}
-                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold"
+                    className={`${user ? "w-full" : ""} bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold`}
                   >
                     Continue to Payment
                   </Button>
@@ -572,8 +740,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
               </div>
             )}
 
-            {/* Step 3: Secure Payment Simulation */}
-            {claimStep === 3 && (
+            {/* Step 4: Secure Payment Simulation */}
+            {claimStep === 4 && (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3 mb-2">
                   <div
@@ -641,7 +809,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                 <div className="flex justify-between pt-4 border-t border-slate-100">
                   <Button
                     variant="outline"
-                    onClick={() => setClaimStep(2)}
+                    onClick={() => setClaimStep(3)}
                     disabled={claimMutation.isPending || webhookMutation.isPending}
                     className="border-slate-200 text-slate-600 hover:bg-slate-50"
                   >
@@ -665,8 +833,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
               </div>
             )}
 
-            {/* Step 4: Success Celebratory Screen */}
-            {claimStep === 4 && (
+            {/* Step 5: Success Celebratory Screen */}
+            {claimStep === 5 && (
               <div className="text-center py-6 space-y-4 animate-scaleUp">
                 <div className="mx-auto size-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
                   <ShieldCheck className="size-10 stroke-[1.5]" />
@@ -680,13 +848,13 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
                 <div className="p-4 rounded-lg bg-slate-50 border border-slate-150 inline-block text-left text-xs space-y-1.5 text-slate-600">
                   <p className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Check className="size-4 text-emerald-500 stroke-[3]" /> Credentials registered successfully
+                    <Check className="size-4 text-emerald-500 stroke-3" /> Credentials registered successfully
                   </p>
                   <p className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Check className="size-4 text-emerald-500 stroke-[3]" /> Stripe signature and payment verified
+                    <Check className="size-4 text-emerald-500 stroke-3" /> Stripe signature and payment verified
                   </p>
                   <p className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Check className="size-4 text-emerald-500 stroke-[3]" /> EJS Email template notifications dispatched
+                    <Check className="size-4 text-emerald-500 stroke-3" /> EJS Email template notifications dispatched
                   </p>
                 </div>
 
@@ -694,11 +862,11 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                   <Button
                     onClick={() => {
                       setIsClaimOpen(false);
-                      window.location.reload(); // Reload to refresh profile state
+                      setShowSigninModal(true);
                     }}
                     className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold px-8"
                   >
-                    Finish & View Profile
+                    Finish & Sign In
                   </Button>
                 </div>
               </div>

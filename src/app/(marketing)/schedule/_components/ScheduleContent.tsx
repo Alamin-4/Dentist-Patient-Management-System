@@ -113,7 +113,7 @@ export default function ScheduleContent() {
             );
             return {
               dentistId: selection.dentistId,
-              backendDentistId: resolvedBackendId ? Number(resolvedBackendId) : null,
+              backendDentistId: resolvedBackendId ? String(resolvedBackendId) : null,
               date: selection.date?.toISOString() ?? "",
               timeSlot: selection.timeSlot,
               timezone: selection.timezone,
