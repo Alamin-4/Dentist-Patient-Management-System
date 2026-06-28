@@ -6,10 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import FilterSidebar from "./SideBar/FilterSidebar";
-import type { ComponentProps } from "react";
-
-type FilterSidebarProps = ComponentProps<typeof FilterSidebar>;
+import FilterSidebar, { type FilterSidebarProps } from "./SideBar/FilterSidebar";
 
 interface FilterSheetProps extends FilterSidebarProps {
   open: boolean;

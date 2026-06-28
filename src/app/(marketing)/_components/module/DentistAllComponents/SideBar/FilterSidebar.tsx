@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-interface FilterSidebarProps {
+export interface FilterSidebarProps {
   procedure: string;
   onProcedureChange: (value: string) => void;
   country: string;
@@ -318,7 +318,7 @@ export default function FilterSidebar({
               className="size-4.5 rounded border-slate-300 data-[state=checked]:border-[#003366] data-[state=checked]:bg-[#003366]"
             />
             <label htmlFor="verified" className={styles.checkboxLabel}>
-              Verified Providers
+              Only Verified
             </label>
           </div>
         </div>
