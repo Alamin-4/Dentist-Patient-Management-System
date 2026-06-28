@@ -17,7 +17,7 @@ In `.github/workflows/deploy.yml`, change the port mapping:
 ```yaml
             echo "→ Running new container..."
             docker run -d \
-              --name rated-docs-website \
+              --name rateddocs-platform \
               --restart unless-stopped \
               -p 3000:3000 \
               "$IMAGE"
