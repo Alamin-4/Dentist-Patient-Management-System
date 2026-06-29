@@ -357,7 +357,7 @@ export default function Navbar() {
                     <Link
                       href="/patient"
                       className="flex items-center justify-center rounded-lg border border-gray-200 py-3 text-center font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => router.push(`/${user?.role.toLowerCase()}`)}
                     >
                       My Dashboard
                     </Link>
