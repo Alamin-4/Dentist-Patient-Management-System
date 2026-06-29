@@ -23,7 +23,6 @@ export default function NotFound() {
             404
           </span>
 
-          {/* Magnifying glass overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg
               viewBox="0 0 220 220"
@@ -32,9 +31,8 @@ export default function NotFound() {
               className="w-36 h-36 sm:w-44 sm:h-44 drop-shadow"
               aria-hidden="true"
             >
-              {/* Glass circle */}
               <circle cx="92" cy="92" r="72" fill="white" stroke="#DC2626" strokeWidth="12" />
-              {/* 404 inside glass */}
+
               <text
                 x="92"
                 y="104"
@@ -47,7 +45,6 @@ export default function NotFound() {
               >
                 404
               </text>
-              {/* Handle */}
               <line
                 x1="148"
                 y1="148"
@@ -57,14 +54,12 @@ export default function NotFound() {
                 strokeWidth="16"
                 strokeLinecap="round"
               />
-              {/* Decorative dots */}
               <circle cx="38" cy="50" r="5" fill="#10436B" opacity="0.3" />
               <circle cx="160" cy="30" r="3.5" fill="#E3A32A" opacity="0.5" />
               <circle cx="20" cy="130" r="4" fill="#DC2626" opacity="0.25" />
             </svg>
           </div>
 
-          {/* Floating decorative leaves */}
           <svg
             viewBox="0 0 80 80"
             className="absolute -top-2 left-1/2 -translate-x-4 w-10 h-10 opacity-70"
