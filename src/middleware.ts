@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
 
       // CRITICAL: We forward User-Agent and IP headers to avoid triggering the backend
       // session fingerprint mismatch security check which deletes the user's session!
-      const response = await fetch(`${baseUrl}/api/v1/auth/current-user-session`, {
+      const response = await fetch(`${baseUrl}/auth/current-user-session`, {
         headers: {
           Cookie: request.headers.get("cookie") || "",
           "User-Agent": request.headers.get("user-agent") || "",
