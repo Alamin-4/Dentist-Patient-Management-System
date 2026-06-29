@@ -34,7 +34,7 @@ jobs:
           file: ./Dockerfile
           push: true
           build-args: |
-            NEXT_PUBLIC_API_BASE_URL=https://api.rateddocs.com/api/v1
+            NEXT_PUBLIC_API_BASE_URL=https://api.mvp.rateddocs.com/api/v1
           tags: |
             ${{ steps.vars.outputs.image }}:latest
             ${{ steps.vars.outputs.image }}:${{ github.sha }}
