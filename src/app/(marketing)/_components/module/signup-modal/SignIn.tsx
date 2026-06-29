@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
@@ -33,6 +33,12 @@ export default function SigninModal() {
   } = useStateContext();
 
   const { user } = useMe()
+
+  useEffect(() => {
+    if (user && showSigninModal) {
+      setShowSigninModal(false);
+    }
+  }, [user, showSigninModal, setShowSigninModal]);
 
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -140,7 +146,10 @@ export default function SigninModal() {
 
   const handleSocialLogin = (provider: string) => {
     if (provider === "Google") {
-      const returnTo = window.location.pathname + window.location.search;
+      const params = new URLSearchParams(window.location.search);
+      params.delete("modal");
+      const search = params.toString();
+      const returnTo = window.location.pathname + (search ? `?${search}` : "");
       const hasCompare = !!(dentistsToCompare && dentistsToCompare.length > 0);
       googleLogin({ returnTo, hasCompare });
       return;
