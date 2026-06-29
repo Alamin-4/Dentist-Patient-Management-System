@@ -43,14 +43,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Fall back to calling the backend session API if JWT isn't present/expired
-  if (!user && (accessToken || sessionToken)) {
+  // 2. Fall back to calling the backend session API if JWT isn't present/expired.
+  // IMPORTANT: After Google OAuth, no custom accessToken cookie is set — only the
+  // Better-Auth session cookie. So we trigger the fallback on sessionToken alone too.
+  if (!user && (sessionToken || accessToken)) {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
       // CRITICAL: We forward User-Agent and IP headers to avoid triggering the backend
       // session fingerprint mismatch security check which deletes the user's session!
-      const response = await fetch(`${baseUrl}/auth/current-user-session`, {
+      const response = await fetch(`${baseUrl}/api/v1/auth/current-user-session`, {
         headers: {
           Cookie: request.headers.get("cookie") || "",
           "User-Agent": request.headers.get("user-agent") || "",

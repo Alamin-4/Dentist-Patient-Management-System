@@ -48,11 +48,9 @@ export const apiClient = {
         throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
       }
 
-      // Build the frontend URL we want to land on after Google OAuth
       const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
       const landingPath = returnTo || (typeof window !== "undefined" ? window.location.pathname : "/");
 
-      // Encode hasCompare state so StateProvider can restore modals on landing
       const landingUrl = new URL(landingPath, origin);
       if (hasCompare) {
         landingUrl.searchParams.set("restore_compare", "1");
