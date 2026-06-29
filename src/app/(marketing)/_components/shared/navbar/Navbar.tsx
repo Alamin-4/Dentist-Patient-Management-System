@@ -214,7 +214,7 @@ export default function Navbar() {
                   </p>
                 </div>
                 <div className="border-b border-slate-100 my-2"></div>
-                <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 rounded-lg py-2" onClick={() => router.push(`/${user?.role.toLowerCase()}`)}>
+                <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 rounded-lg py-2" onClick={() => router.push(`/${user?.role === "PATIENT" || "DENTIST" ? user?.role.toLowerCase() : "/admin"}`)}>
                   My Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 rounded-lg py-2">
@@ -357,7 +357,7 @@ export default function Navbar() {
                     <Link
                       href="/patient"
                       className="flex items-center justify-center rounded-lg border border-gray-200 py-3 text-center font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                      onClick={() => router.push(`/${user?.role.toLowerCase()}`)}
+                      onClick={() => router.push(`/${user?.role === "PATIENT" || "DENTIST" ? user?.role.toLowerCase() : "/admin"}`)}
                     >
                       My Dashboard
                     </Link>
