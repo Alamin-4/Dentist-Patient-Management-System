@@ -273,6 +273,26 @@ export const apiClient = {
       const response = await api.get(`${endpoints.procedures.global}/${slug}`);
       return response.data;
     },
+    createGlobal: async (payload: { name: string; specialtyId?: string | null }) => {
+      const response = await api.post(endpoints.procedures.global, payload);
+      return response.data;
+    },
+    deleteGlobal: async (ids: Array<string | number>) => {
+      const response = await api.delete(endpoints.procedures.global, {
+        data: { ids },
+      });
+      return response.data;
+    },
+    uploadGlobalCsv: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await api.post(endpoints.procedures.globalCsv, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
     getDentist: async () => {
       const response = await api.get(endpoints.procedures.dentist);
       return response.data;
@@ -374,26 +394,38 @@ export const apiClient = {
     },
   },
   specialties: {
-    list: async (search?: string) => {
-      const response = await api.get(endpoints.specialties.list, {
+    getSpecialties: async (search?: string) => {
+      const response = await api.get(endpoints.specialties.getSpecialties, {
         params: search ? { search } : undefined,
       });
       return response.data;
     },
     getBySlug: async (slug: string) => {
-      const response = await api.get(`${endpoints.specialties.list}/${slug}`);
+      const response = await api.get(`${endpoints.specialties.getSpecialties}/${slug}`);
       return response.data;
     },
     create: async (payload: { name: string; description?: string }) => {
-      const response = await api.post(endpoints.specialties.list, payload);
+      const response = await api.post(endpoints.specialties.getSpecialties, payload);
       return response.data;
     },
     update: async (id: string | number, payload: { name?: string; description?: string }) => {
-      const response = await api.patch(endpoints.specialties.byId(id), payload);
+      const response = await api.patch(endpoints.specialties.getSpecialties, payload);
       return response.data;
     },
-    delete: async (id: string | number) => {
-      const response = await api.delete(endpoints.specialties.byId(id));
+    delete: async (ids: Array<string | number>) => {
+      const response = await api.delete(endpoints.specialties.getSpecialties, {
+        data: { ids },
+      });
+      return response.data;
+    },
+    upload: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await api.post(endpoints.specialties.uploadSpecialties, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     },
   },

@@ -50,8 +50,18 @@ const adminNav: NavGroup[] = [
         icon: ShieldCheck,
         label: "Verification Queue",
         href: "/admin/verification-queue",
-        badge: 12,
+        badge: 0,
       },
+      {
+        icon: Stethoscope,
+        label: "Specialty",
+        href: "/admin/specialty",
+      },
+      {
+        icon: Stethoscope,
+        label: "Procedures",
+        href: "/admin/procedures",
+      }
     ],
   },
   {

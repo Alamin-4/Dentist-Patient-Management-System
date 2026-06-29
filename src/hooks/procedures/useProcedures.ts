@@ -129,3 +129,42 @@ export function useBulkUploadProcedures() {
     },
   });
 }
+
+export function useCreateGlobalProcedure() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: { name: string; specialtyId?: string | null }) => {
+      return await apiClient.procedures.createGlobal(payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["procedures", "global"] });
+    },
+  });
+}
+
+export function useDeleteGlobalProcedures() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (ids: Array<string | number>) => {
+      return await apiClient.procedures.deleteGlobal(ids);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["procedures", "global"] });
+    },
+  });
+}
+
+export function useBulkUploadGlobalProcedures() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      return await apiClient.procedures.uploadGlobalCsv(file);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["procedures", "global"] });
+    },
+  });
+}

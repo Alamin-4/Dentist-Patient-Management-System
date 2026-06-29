@@ -16,7 +16,7 @@ export function useSpecialties(search?: string) {
   return useQuery<Specialty[]>({
     queryKey: ["specialties", search],
     queryFn: async () => {
-      const response = await apiClient.specialties.list(search);
+      const response = await apiClient.specialties.getSpecialties(search);
       // Backend returns { success, message, data } — extract the array
       return response?.data ?? response ?? [];
     },

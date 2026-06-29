@@ -31,10 +31,11 @@ export const endpoints = {
     directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
   },
   procedures: {
-    global: "/procedures/global",
     dentist: "/procedures/dentist",
     dentistCsv: "/procedures/dentist/csv",
     deleteDentistProcedure: (id: string | number) => `/procedures/dentist/${id}`,
+    global: "/procedures/global",
+    globalCsv: "/procedures/global/csv",
   },
   admin: {
     verifications: "/admin/verifications",
@@ -49,8 +50,12 @@ export const endpoints = {
     uploadDentistDirectory: "/admin/dentist-directory/upload",
   },
   specialties: {
-    list: "/specialties",
-    byId: (id: string | number) => `/specialties/${id}`,
+    getSpecialties: "/specialties",
+    getSpecialtyBySlug: (slug: string) => `/specialties/${slug}`,
+    createSpecialty: "/specialties",
+    updateSpecialty: (id: string) => `/specialties/${id}`,
+    deleteSpecialty: (id: string) => `/specialties/${id}`,
+    uploadSpecialties: "/specialties/upload",
   },
   consultations: {
     intake: "/consultations/intake",
