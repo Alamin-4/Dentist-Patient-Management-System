@@ -63,7 +63,7 @@ export default function DentistScheduleCard({
       <div className="flex items-start justify-between gap-4 p-6 border-b border-[#F3F4F6]">
         <div className="flex items-center gap-4">
           <Image
-            src={dentist.image}
+            src={dentist.image ?? "/placeholder-avatar.png"}
             alt={dentist.name}
             width={64}
             height={64}
@@ -76,7 +76,7 @@ export default function DentistScheduleCard({
             <p className="text-[14px] text-[#6B7280]">{dentist.specialty}</p>
             <p className="flex items-center gap-1 text-[13px] text-[#9CA3AF] mt-0.5">
               <MapPin className="size-3.5 shrink-0" />
-              {dentist.location}
+              {dentist.location.fullAddress ?? dentist.location.city ?? ""}
             </p>
           </div>
         </div>

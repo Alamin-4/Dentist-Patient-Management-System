@@ -16,32 +16,25 @@ import FilterSheet from "./FilterSheet";
 import TopBar from "./TopBar";
 import CompareStickyBar from "./CompareStickyBar";
 
-import {
-  Dentist,
-  cityOptions,
-  countryOptions,
-  procedureOptions,
-} from "./types";
+import { Dentist, cityOptions, countryOptions, procedureOptions } from "./types";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
 const PAGE_SIZE = 20;
+// Default Mexico City coords for dentists without geocoords in the API
+const DEFAULT_COORDS = { lat: 19.4326, lng: -99.1332 };
 
 function getPages(page: number, totalPages: number): (number | "...")[] {
   if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-
   const pages: (number | "...")[] = [1];
   if (page > 3) pages.push("...");
-
   const start = Math.max(2, page - 1);
   const end = Math.min(totalPages - 1, page + 1);
   for (let i = start; i <= end; i++) pages.push(i);
-
   if (page < totalPages - 2) pages.push("...");
   pages.push(totalPages);
-
   return pages;
 }
 
@@ -103,21 +96,24 @@ function Pagination({
 }
 
 export default function FindDentist() {
-  // --- Server-side filter state (name, country, city) ---
+  // ── SERVER-SIDE filter state (each change triggers API refetch + page reset) ──
   const [query, setQuery] = useState("");
-  const [country, setCountry] = useState("All Countries");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [city, setCity] = useState("All Cities");
-  const [page, setPage] = useState(1);
-
-  // --- UI-only filter state (client-side applied) ---
+  const [country, setCountry] = useState("All Countries");
   const [procedure, setProcedure] = useState("All Procedures");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1800]);
+  const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>([0, 1800]);
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedScoreRanges, setSelectedScoreRanges] = useState<string[]>([]);
+
+  // ── CLIENT-SIDE only (no schema support yet) ──────────────────────────────
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [selectedAvailabilityDate, setSelectedAvailabilityDate] = useState<string | null>(null);
-  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
 
+  // ── UI state ──────────────────────────────────────────────────────────────
+  const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState<"list" | "map" | "filter">("list");
   const [activeDentistId, setActiveDentistId] = useState<string | null>(null);
   const [isCompareMode, setIsCompareMode] = useState(false);
@@ -125,98 +121,112 @@ export default function FindDentist() {
   const [showMapFilters, setShowMapFilters] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  // ── Debounce: search query (400 ms) ──────────────────────────────────────
   useEffect(() => {
-    const handler = setTimeout(() => {
+    const t = setTimeout(() => {
       setDebouncedQuery(query);
       setPage(1);
     }, 400);
-    return () => clearTimeout(handler);
+    return () => clearTimeout(t);
   }, [query]);
 
-  // Reset page when server-side filters change
-  useEffect(() => { setPage(1); }, [country, city]);
+  // ── Debounce: price slider (600 ms — avoids rapid refetches during drag) ─
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedPrice(priceRange), 600);
+    return () => clearTimeout(t);
+  }, [priceRange]);
 
-  // Fetch with server-side params: name search + country + city + pagination
-  const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory({
-    page,
-    limit: PAGE_SIZE,
-    search: debouncedQuery || undefined,
-    city: city !== "All Cities" ? city : undefined,
-    country: country !== "All Countries" ? country : undefined,
-  });
+  // ── Reset page whenever any server-side filter changes ────────────────────
+  useEffect(() => { setPage(1); }, [
+    city, country, procedure, showVerifiedOnly,
+    selectedScoreRanges, selectedRatings,
+  ]);
 
-  // Map API response to Dentist shape
+  // ── Derive numeric params from multi-select filter state ──────────────────
+  // Score ranges ("50-75", "75-100") → minimum lower-bound threshold
+  const rdvScoreMin = useMemo(() => {
+    if (selectedScoreRanges.length === 0) return undefined;
+    const min = Math.min(...selectedScoreRanges.map((r) => parseInt(r.split("-")[0], 10)));
+    return min > 0 ? min : undefined;
+  }, [selectedScoreRanges]);
+
+  // Star ratings ([3, 4, 5]) → minimum selected star = ratingMin
+  const ratingMin = useMemo(
+    () => (selectedRatings.length > 0 ? Math.min(...selectedRatings) : undefined),
+    [selectedRatings],
+  );
+
+  // ── Build API params object ───────────────────────────────────────────────
+  const serverParams = useMemo(() => {
+    const params: Record<string, any> = { page, limit: PAGE_SIZE };
+    if (debouncedQuery) params.search = debouncedQuery;
+    if (city !== "All Cities") params.city = city;
+    if (country !== "All Countries") params.country = country;
+    if (procedure !== "All Procedures") params.procedure = procedure;
+    if (debouncedPrice[0] > 0 || debouncedPrice[1] < 1800) {
+      params["price[min]"] = debouncedPrice[0];
+      params["price[max]"] = debouncedPrice[1];
+    }
+    if (showVerifiedOnly) params.verified = "true";
+    if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
+    if (ratingMin !== undefined) params.ratingMin = ratingMin;
+    return params;
+  }, [
+    page, debouncedQuery, city, country, procedure,
+    debouncedPrice, showVerifiedOnly, rdvScoreMin, ratingMin,
+  ]);
+
+  const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(serverParams);
+
+  // ── Map flat API response → Dentist shape with nested rating/location ──────
   const apiDentists = useMemo<Dentist[]>(() => {
-    const apiList = directoryResponse?.data || [];
-    return apiList.map((d: any) => ({
-      id: d.id,
-      backendId: d.backendId ?? null,
-      name: d.name,
-      slug: d.slug,
-      specialty: d.specialty || "General Dentist",
-      rating: d.googleRating ?? d.doctoraliaRating ?? d.rating ?? 5.0,
-      reviewCount: d.googleReviewCount ?? d.doctoraliaReviewCount ?? d.reviewCount ?? 0,
-      image: d.image || "/placeholder-avatar.png",
-      location: d.fullAddress || d.city || "Mexico",
-      city: d.city || "",
-      country: "Mexico",
-      price: d.price || 0,
-      rdvScore: d.rdvScore || 0,
-      verified: d.status === "VERIFIED",
-      status: d.status,
-      isClaimable: d.isClaimable,
-      procedures: d.specialty ? [d.specialty] : [],
-      languages: d.languages || ["English", "Spanish"],
-      coords: { lat: 19.4326, lng: -99.1332 },
-    }));
+    return (directoryResponse?.data ?? []).map((d: any): Dentist => {
+      const google: number | null = d.googleRating ?? null;
+      const doctoralia: number | null = d.doctoraliaRating ?? null;
+      const combined: number | null =
+        google != null && doctoralia != null
+          ? (google + doctoralia) / 2
+          : google ?? doctoralia ?? null;
+
+      const accountType: Dentist['accountType'] =
+        d.isClaimable === false
+          ? 'REGISTERED'
+          : d.status === 'CLAIMED' || d.status === 'VERIFIED'
+            ? 'CLAIMED'
+            : 'CLAIMABLE';
+
+      return {
+        ...d,
+        coords: DEFAULT_COORDS,
+        rating: {
+          google,
+          googleReviewCount: d.googleReviewCount ?? null,
+          doctoralia,
+          doctoraliaReviewCount: d.doctoraliaReviewCount ?? null,
+          combined,
+        },
+        location: {
+          city: d.city ?? null,
+          country: d.country ?? '',
+          fullAddress: d.fullAddress ?? null,
+          googleMapsUrl: d.googleMapsUrl ?? null,
+        },
+        accountType,
+        isClaimed: d.status === 'CLAIMED' || d.status === 'VERIFIED',
+        isVerified: d.status === 'VERIFIED',
+        surpriseGuarantee: d.surpriseGuarantee ?? false,
+        verificationPhase: d.verificationPhase ?? null,
+      };
+    });
   }, [directoryResponse]);
 
-  // Apply client-side filters on top of current page results
+  // Languages filter is client-side only (field not yet in DB schema)
   const filteredDentists = useMemo<Dentist[]>(() => {
-    return apiDentists.filter((dentist) => {
-      const matchesProcedure =
-        procedure === "All Procedures" ||
-        dentist.procedures.some((p) =>
-          p.toLowerCase().includes(procedure.toLowerCase()),
-        );
-      const matchesPrice =
-        dentist.price >= priceRange[0] && dentist.price <= priceRange[1];
-      const matchesRating =
-        selectedRatings.length === 0 ||
-        selectedRatings.includes(Math.round(dentist.rating));
-      const matchesScore =
-        selectedScoreRanges.length === 0 ||
-        selectedScoreRanges.some((range) => {
-          if (range === "0-25") return dentist.rdvScore >= 0 && dentist.rdvScore <= 25;
-          if (range === "25-50") return dentist.rdvScore > 25 && dentist.rdvScore <= 50;
-          if (range === "50-75") return dentist.rdvScore > 50 && dentist.rdvScore <= 75;
-          if (range === "75-100") return dentist.rdvScore > 75 && dentist.rdvScore <= 100;
-          return true;
-        });
-      const matchesLanguages =
-        selectedLanguages.length === 0 ||
-        selectedLanguages.every((lang) => dentist.languages.includes(lang));
-      const matchesVerified = !showVerifiedOnly || dentist.verified;
-
-      return (
-        matchesProcedure &&
-        matchesPrice &&
-        matchesRating &&
-        matchesScore &&
-        matchesLanguages &&
-        matchesVerified
-      );
-    });
-  }, [
-    apiDentists,
-    procedure,
-    priceRange,
-    selectedRatings,
-    selectedScoreRanges,
-    selectedLanguages,
-    showVerifiedOnly,
-  ]);
+    if (selectedLanguages.length === 0) return apiDentists;
+    return apiDentists.filter((d) =>
+      selectedLanguages.every((lang) => d.languages.includes(lang)),
+    );
+  }, [apiDentists, selectedLanguages]);
 
   const meta = directoryResponse?.meta;
   const totalCount: number = meta?.total ?? meta?.totalCount ?? 0;
@@ -224,9 +234,14 @@ export default function FindDentist() {
     meta?.totalPages ?? (totalCount > 0 ? Math.ceil(totalCount / PAGE_SIZE) : 0);
 
   const { user } = useMe();
-  const { setShowSignupModal, setDentistsToCompare, setShowPersonalizeModal, setShowCompareModal } =
-    useStateContext();
+  const {
+    setShowSignupModal,
+    setDentistsToCompare,
+    setShowPersonalizeModal,
+    setShowCompareModal,
+  } = useStateContext();
 
+  // ── Filter helpers ────────────────────────────────────────────────────────
   const toggleRating = (rating: number) =>
     setSelectedRatings((prev) =>
       prev.includes(rating) ? prev.filter((v) => v !== rating) : [...prev, rating],
@@ -244,10 +259,12 @@ export default function FindDentist() {
 
   const resetAll = () => {
     setQuery("");
+    setDebouncedQuery("");
     setCountry("All Countries");
     setCity("All Cities");
     setProcedure("All Procedures");
     setPriceRange([0, 1800]);
+    setDebouncedPrice([0, 1800]);
     setSelectedRatings([]);
     setSelectedScoreRanges([]);
     setSelectedLanguages([]);
@@ -256,6 +273,7 @@ export default function FindDentist() {
     setPage(1);
   };
 
+  // ── Compare helpers ───────────────────────────────────────────────────────
   const handleCompareToggle = (dentist: Dentist) => {
     const exists = compareList.some((item) => item.id === dentist.id);
     if (exists) {
@@ -267,9 +285,8 @@ export default function FindDentist() {
     }
   };
 
-  const removeSelectedDentist = (id: string) => {
+  const removeSelectedDentist = (id: string) =>
     setCompareList((prev) => prev.filter((item) => item.id !== id));
-  };
 
   const handleCompareSubmit = () => {
     setDentistsToCompare(compareList);
@@ -291,13 +308,14 @@ export default function FindDentist() {
     setIsCompareMode(false);
   };
 
+  // ── Shared props for both sidebar + sheet ────────────────────────────────
   const sharedFilterProps = {
     procedure,
-    onProcedureChange: setProcedure,
+    onProcedureChange: (v: string) => { setProcedure(v); setPage(1); },
     country,
-    onCountryChange: setCountry,
+    onCountryChange: (v: string) => { setCountry(v); setPage(1); },
     city,
-    onCityChange: setCity,
+    onCityChange: (v: string) => { setCity(v); setPage(1); },
     priceRange,
     onPriceRangeChange: setPriceRange,
     selectedRatings,
@@ -309,7 +327,7 @@ export default function FindDentist() {
     selectedAvailabilityDate,
     onAvailabilityDateChange: setSelectedAvailabilityDate,
     showVerifiedOnly,
-    onShowVerifiedOnlyChange: setShowVerifiedOnly,
+    onShowVerifiedOnlyChange: (v: boolean) => { setShowVerifiedOnly(v); setPage(1); },
     onClear: handleClearAllFilters,
     availableProcedures: procedureOptions,
     availableCountries: countryOptions,
@@ -370,16 +388,16 @@ export default function FindDentist() {
                     ) : (
                       <>
                         <span className="font-semibold text-slate-700">
-                          {filteredDentists.length}
+                          {totalCount}
                         </span>{" "}
-                        Verified Dentists
+                        Dentists Found
                         {city !== "All Cities"
                           ? ` in ${city}`
                           : country !== "All Countries"
                             ? ` in ${country}`
-                            : ""}{" "}
-                        | ${priceRange[0]} – $
-                        {priceRange[1] >= 1800 ? "1,800+" : priceRange[1].toLocaleString()}
+                            : ""}
+                        {" "} | ${debouncedPrice[0]} – $
+                        {debouncedPrice[1] >= 1800 ? "1,800+" : debouncedPrice[1].toLocaleString()}
                       </>
                     )}
                   </h2>
@@ -450,7 +468,7 @@ export default function FindDentist() {
                   )}
                 </div>
 
-                {/* Server-side pagination */}
+                {/* Server-driven pagination */}
                 {!isDirLoading && totalPages > 1 && (
                   <Pagination
                     page={page}

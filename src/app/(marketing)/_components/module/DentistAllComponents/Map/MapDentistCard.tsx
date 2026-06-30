@@ -67,7 +67,7 @@ export default function MapDentistCard({
                   key={index}
                   className={cn(
                     "size-3",
-                    index < Math.floor(dentist.rating)
+                    index < Math.floor(dentist.rating.combined ?? dentist.rating.google ?? 0)
                       ? "fill-[#E6A400] text-[#E6A400]"
                       : "text-slate-200",
                   )}
@@ -75,15 +75,17 @@ export default function MapDentistCard({
               ))}
             </div>
             <span className="text-xs font-bold text-slate-400">
-              ({dentist.reviewCount})
+              ({dentist.rating.googleReviewCount ?? dentist.rating.doctoraliaReviewCount ?? 0})
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full">
+            {dentist.surpriseGuarantee && (
             <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-xs font-medium text-[#0E3E65] hover:bg-sky-50">
               <BadgeCheck className="size-4" />
               No Surprise Guarantee
             </Badge>
+            )}
 
             <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-xs font-medium text-[#0E3E65] hover:bg-sky-50">
               <Globe2 className="size-3.5" />

@@ -59,10 +59,10 @@ export default function DentistMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {dentists.map((dentist) => (
+        {dentists.filter((d) => d.coords).map((dentist) => (
           <Marker
             key={dentist.id}
-            position={[dentist.coords.lat, dentist.coords.lng]}
+            position={[dentist.coords!.lat, dentist.coords!.lng]}
             icon={customIcon}
             eventHandlers={{
               click: () => onMarkerClick(dentist),
@@ -80,7 +80,7 @@ export default function DentistMap({
           </Marker>
         ))}
 
-        {activeDentist && (
+        {activeDentist?.coords && (
           <RecenterMap
             coords={[activeDentist.coords.lat, activeDentist.coords.lng]}
           />

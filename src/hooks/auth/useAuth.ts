@@ -25,10 +25,16 @@ export function useSession() {
     return useQuery({
         queryKey: AUTH_KEYS.session,
         queryFn: async () => {
-            const res = await apiClient.auth.getSession();
-            return res?.data || res;
+            try {
+                const res = await apiClient.auth.getSession();
+                return res?.data || res;
+            } catch (error: any) {
+                if (error?.statusCode === 401 || error?.status === 401) {
+                    return null;
+                }
+                throw error;
+            }
         },
-        // enabled: typeof window !== "undefined" && hasSessionCookie(),
         retry: false,
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 10,

@@ -25,17 +25,17 @@ export function useDentistFilters(initialDentists: Dentist[] = defaultDentists) 
         return initialDentists.filter((dentist: Dentist) => {
             const matchesQuery =
                 !query || dentist.name.toLowerCase().includes(query.toLowerCase());
-            const matchesProcedure =
-                procedure === "All Procedures" ||
-                dentist.procedures.some((p: string) => p.toLowerCase().includes(procedure.toLowerCase()));
+            // procedure filter is now server-side; treat all as matching here
+            const matchesProcedure = true;
             const matchesCountry =
                 country === "All Countries" || dentist.country === country;
-            const matchesCity = city === "All Cities" || dentist.city === city;
+            const matchesCity = city === "All Cities" || dentist.location.city === city;
             const matchesPrice =
                 dentist.price >= priceRange[0] && dentist.price <= priceRange[1];
+            const combinedRating = dentist.rating.combined ?? dentist.rating.google ?? 0;
             const matchesRating =
                 selectedRatings.length === 0 ||
-                selectedRatings.includes(Math.round(dentist.rating));
+                selectedRatings.includes(Math.round(combinedRating));
             const matchesScore =
                 selectedScoreRanges.length === 0 ||
                 selectedScoreRanges.some((range) => {
@@ -52,7 +52,7 @@ export function useDentistFilters(initialDentists: Dentist[] = defaultDentists) 
             const matchesLanguages =
                 selectedLanguages.length === 0 ||
                 selectedLanguages.every((lang) => dentist.languages.includes(lang));
-            const matchesVerified = !showVerifiedOnly || dentist.verified;
+            const matchesVerified = !showVerifiedOnly || dentist.isVerified;
 
             return (
                 matchesQuery &&

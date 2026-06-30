@@ -147,7 +147,7 @@ export default function Navbar() {
               height={200}
               width={400}
               loading="eager"
-              className="w-43 h-auto object-contain"
+              className="w-28 lg:w-43 h-auto object-contain"
             />
           </div>
         </Link>
@@ -193,18 +193,18 @@ export default function Navbar() {
           {isAuthenticated ? (
             /* Logged In User Dropdown */
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#F2F5F6] hover:bg-[#E2E8F0] focus:outline-none transition-colors">
-                <Avatar className="h-9 w-9 border border-gray-200">
+              <DropdownMenuTrigger className="flex items-center gap-1.5 p-1 rounded-full bg-[#F2F5F6] hover:bg-[#E2E8F0] focus:outline-none transition-colors">
+                <Avatar className="h-8 w-8 border border-gray-200">
                   <AvatarImage src="/avatar.jpg" />
                   <AvatarFallback className="bg-[#10436B] text-white font-semibold text-xs">
                     {user?.email ? user.email.slice(0, 2).toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden text-sm font-semibold text-gray-700 md:block max-w-[120px] truncate">
-                  {displayName}
+                <span className="hidden text-sm font-semibold md:block max-w-25 w-full pr-2 truncate">
+                  {displayName.slice(0, 10)}
                 </span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 space-y-2 p-4 mt-2 bg-white border border-gray-100 shadow-xl rounded-xl">
+              <DropdownMenuContent align="center" className="w-56 space-y-2 p-4 mt-2 bg-white border border-gray-100 shadow-xl rounded-xl">
                 <div>
                   <p className="text-sm font-semibold text-[#1A1A2E] truncate">
                     {displayName}
@@ -233,7 +233,7 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setShowSigninModal(true)}
-                className="text-[15px] font-semibold text-[#10436B] hover:text-[#0b2d49] transition-colors cursor-pointer"
+                className="text-sm lg:text-base font-semibold text-[#10436B] hover:text-[#0b2d49] transition-colors cursor-pointer"
               >
                 Sign In
               </button>
@@ -285,10 +285,10 @@ export default function Navbar() {
                 className="lg:hidden text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
                 aria-label="Toggle menu"
               >
-                <Menu size={28} />
+                <Menu size={26} />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[350px] p-6 bg-white flex flex-col gap-6 overflow-y-auto border-l border-gray-100 shadow-xl">
+            <SheetContent side="right" className="w-75 sm:w-87.5 p-6 bg-white flex flex-col gap-6 overflow-y-auto border-l border-gray-100 shadow-xl">
               <SheetHeader className="p-0 border-b border-gray-100 pb-4">
                 <SheetTitle className="text-left font-semibold text-lg text-[#10436B] flex items-center gap-2">
                   <Image

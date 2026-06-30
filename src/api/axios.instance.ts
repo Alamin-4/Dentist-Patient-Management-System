@@ -13,7 +13,37 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // ✅ ADD THIS: Custom params serializer for nested objects
+  paramsSerializer: (params) => {
+    const searchParams = new URLSearchParams();
+    
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      
+      // Handle nested objects like { price: { min: 100, max: 500 } }
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          if (subValue !== undefined && subValue !== null) {
+            searchParams.append(`${key}[${subKey}]`, String(subValue));
+          }
+        });
+      } 
+      // Handle arrays
+      else if (Array.isArray(value)) {
+        value.forEach((item) => {
+          searchParams.append(`${key}[]`, String(item));
+        });
+      } 
+      // Handle primitives
+      else {
+        searchParams.append(key, String(value));
+      }
+    });
+    
+    return searchParams.toString();
+  },
 });
+
 
 api.interceptors.request.use(
   (config) => {

@@ -283,7 +283,7 @@ export default function ScheduleContent() {
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <Image
-                        src={doc.image}
+                        src={doc.image ?? "/placeholder-avatar.png"}
                         alt={doc.name}
                         width={48}
                         height={48}

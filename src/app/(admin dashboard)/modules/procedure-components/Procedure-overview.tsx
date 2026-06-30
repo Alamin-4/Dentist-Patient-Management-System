@@ -439,7 +439,7 @@ export default function ProcedureOverview() {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"
             onClick={() => setIsAddModalOpen(false)}
           />
           <div className="relative z-10 w-full max-w-md rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">

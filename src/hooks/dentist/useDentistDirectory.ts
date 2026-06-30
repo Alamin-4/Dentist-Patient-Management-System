@@ -3,9 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useDentistDirectory(params?: Record<string, any>) {
   return useQuery({
-    queryKey: ["dentistDirectoryList", params],
+    queryKey: ["dentistDirectoryList", JSON.stringify(params)],
     queryFn: () => apiClient.dentists.getDirectoryList(params),
     staleTime: 30_000,
+    enabled: !!params,
   });
 }
 

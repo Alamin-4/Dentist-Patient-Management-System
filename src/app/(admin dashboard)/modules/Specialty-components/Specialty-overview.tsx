@@ -2,8 +2,9 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, Upload } from "lucide-react";
-import { Specialty, useDeleteSpecialty, useSpecialties, useUploadSpecialties, useBulkDeleteSpecialties } from "@/hooks/admin/specialty/useSpecialty";
+import { Search, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+// Note: Ensure useCreateSpecialty is exported from your hook file
+import { Specialty, useDeleteSpecialty, useSpecialties, useUploadSpecialties, useBulkDeleteSpecialties, useCreateSpecialty } from "@/hooks/admin/specialty/useSpecialty";
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "./ConfirmDialog";
 
@@ -26,11 +27,17 @@ export default function SpecialtyOverview() {
     const [deleteTarget, setDeleteTarget] = useState<string | number | null>(null);
     const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
+    // ── Add Modal States ──
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [newName, setNewName] = useState("");
+    const [newDescription, setNewDescription] = useState("");
+
     // Fetch data using your hook
     const { data: specialties = [], isLoading } = useSpecialties(search);
     const deleteMutation = useDeleteSpecialty();
     const uploadMutation = useUploadSpecialties();
     const bulkDeleteMutation = useBulkDeleteSpecialties();
+    const createMutation = useCreateSpecialty(); // Ensure this exists in your hook
 
     const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -45,6 +52,26 @@ export default function SpecialtyOverview() {
                 const errMsg = err?.response?.data?.message || err?.message || "Failed to upload specialties";
                 toast.error(errMsg);
                 e.target.value = "";
+            }
+        });
+    };
+
+    const handleAddSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        const payload: any = { name: newName };
+        if (newDescription) payload.description = newDescription;
+
+        createMutation.mutate(payload, {
+            onSuccess: (res: any) => {
+                toast.success(res?.message || "Specialty created successfully!");
+                setIsAddModalOpen(false);
+                setNewName("");
+                setNewDescription("");
+            },
+            onError: (err: any) => {
+                const errMsg = err?.response?.data?.message || err?.message || "Failed to create specialty";
+                toast.error(errMsg);
             }
         });
     };
@@ -175,8 +202,9 @@ export default function SpecialtyOverview() {
                             className="hidden"
                         />
                     </label>
+                    {/* Changed to open the modal instead of routing */}
                     <button
-                        onClick={() => router.push("/admin/specialties/new")}
+                        onClick={() => setIsAddModalOpen(true)}
                         className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
                     >
                         <Plus className="h-4 w-4" />
@@ -208,7 +236,7 @@ export default function SpecialtyOverview() {
             {/* ── Table Card ─────────────────────────────────────────── */}
             <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
                 {/* Filters row */}
-                <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3 min-h-[53px]">
+                <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3 min-h-13.25">
                     {selectedIds.length > 0 ? (
                         <div className="flex flex-1 items-center justify-between rounded-lg bg-red-50/50 border border-red-100 px-3 py-1.5">
                             <span className="text-sm font-medium text-red-700">
@@ -395,6 +423,74 @@ export default function SpecialtyOverview() {
                 cancelText="Cancel"
                 isLoading={bulkDeleteMutation.isPending}
             />
+
+            {/* ── Add Specialty Modal ─────────────────────────────────── */}
+            {isAddModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+                        onClick={() => setIsAddModalOpen(false)}
+                    />
+                    <div className="relative z-10 w-full max-w-md rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <h3 className="text-lg font-semibold text-[#1A1A2E]">Add New Specialty</h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsAddModalOpen(false)}
+                                className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleAddSubmit} className="mt-4 flex flex-col gap-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                    Specialty Name
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="e.g. Cardiology"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                    Description (Optional)
+                                </label>
+                                <textarea
+                                    placeholder="Brief description of the specialty..."
+                                    value={newDescription}
+                                    onChange={(e) => setNewDescription(e.target.value)}
+                                    rows={3}
+                                    className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] resize-none"
+                                />
+                            </div>
+
+                            <div className="mt-2 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddModalOpen(false)}
+                                    disabled={createMutation.isPending}
+                                    className="inline-flex h-10 items-center rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={createMutation.isPending}
+                                    className="inline-flex h-10 items-center rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white transition-colors hover:bg-[#2A2A3E] disabled:opacity-50"
+                                >
+                                    {createMutation.isPending ? "Creating..." : "Create"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

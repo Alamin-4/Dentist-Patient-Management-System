@@ -179,7 +179,7 @@ export default function CompareModal() {
                   className="flex flex-col items-center text-center px-4"
                 >
                   <Image
-                    src={doc.image}
+                    src={doc.image ?? "/placeholder-avatar.png"}
                     alt={doc.name}
                     width={80}
                     height={80}
@@ -227,11 +227,6 @@ export default function CompareModal() {
               values={dentists.map((d) => `${d.rdvScore}/100`)}
             />
             <Row
-              label="EXPERIENCE"
-              colCount={colCount}
-              values={dentists.map((d) => `${d.experience} years`)}
-            />
-            <Row
               label="PATIENT RATING"
               colCount={colCount}
               values={dentists.map((d) => (
@@ -241,10 +236,10 @@ export default function CompareModal() {
                 >
                   <Star className="size-4 shrink-0 fill-yellow-400 text-yellow-400" />
                   <span className="font-semibold text-foreground">
-                    {d.rating}
+                    {(d.rating.combined ?? d.rating.google ?? 0).toFixed(1)}
                   </span>
                   <span className="text-muted-foreground text-sm">
-                    ({d.reviewCount} Reviews)
+                    ({d.rating.googleReviewCount ?? d.rating.doctoraliaReviewCount ?? 0} Reviews)
                   </span>
                 </span>
               ))}
@@ -252,7 +247,7 @@ export default function CompareModal() {
             <Row
               label="LOCATION"
               colCount={colCount}
-              values={dentists.map((d) => d.location)}
+              values={dentists.map((d) => d.location.fullAddress ?? d.location.city ?? "")}
             />
             <Row
               label="LANGUAGES"
