@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
+import ProfilePageSkeleton from "../../_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
 
 const DentistProfile = dynamic(
   () =>
@@ -36,25 +37,27 @@ export default function ViewDentistProfile() {
       image: d.image || "/placeholder-avatar.png",
       location: d.fullAddress || d.city || "Mexico",
       city: d.city || "",
-      country: "Mexico",
+      country: d.country || "Mexico",
       price: d.price || 0,
       rdvScore: d.rdvScore || 0,
       verified: d.status === "VERIFIED",
       status: d.status,
       isClaimable: d.isClaimable,
       profileType: d.profileType || "CLAIMABLE",
-      procedures: d.specialty ? [d.specialty] : [],
+      procedures: d.procedures || [],
       languages: d.languages || ["English", "Spanish"],
-      bio: d.bio || `Dr. ${d.name} is a highly dedicated professional specializing in ${d.specialty || "dentistry"} at ${d.clinicName || "their local clinic"}. Located in ${d.city || "Mexico"}, they are committed to providing outstanding dental care.`,
+      bio: d.description || d.bio || `Dr. ${d.name} is a highly dedicated professional specializing in ${d.specialty || "dentistry"} at ${d.clinicName || "their local clinic"}. Located in ${d.city || "Mexico"}, they are committed to providing outstanding dental care.`,
+      googleRating: d.googleRating || d.rating || 5.0,
+      googleReviewCount: d.googleReviewCount || d.reviewCount || 0,
+      dentistLicense: d.dentistLicense,
+      dentistOperations: d.dentistOperations,
+      materials: d.materials || [],
+      backendId: d.backendId,
     };
   }, [directoryDetailResponse]);
 
   if (!mounted || isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#003366]"></div>
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   if (isError || !mappedDentist) {

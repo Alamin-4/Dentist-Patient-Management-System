@@ -84,7 +84,19 @@ export const apiClient = {
   },
   dentists: {
     register: async (payload: IRegisterDentist) => {
-      const response = await api.post(endpoints.dentists.register, payload);
+      const formData = new FormData();
+      formData.append("firstName", payload.firstName);
+      formData.append("lastName", payload.lastName);
+      formData.append("email", payload.email);
+      formData.append("password", payload.password);
+      formData.append("confirmPassword", payload.confirmPassword);
+      formData.append("phoneNumber", payload.phoneNumber);
+      formData.append("gender", payload.gender);
+      if (payload.referralCode) formData.append("referralCode", payload.referralCode);
+      if (payload.image) formData.append("image", payload.image);
+      const response = await api.post(endpoints.dentists.register, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data;
     },
     professionalData: async (payload: ProfessionalDataPayload) => {

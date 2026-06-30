@@ -109,14 +109,14 @@ const formSchema = z.object({
 interface LicenceFormProps {
   onVerify: (data: z.infer<typeof formSchema>) => void;
   defaultValues?: Partial<z.infer<typeof formSchema>> | null;
-  isAlreadySubmitted: boolean;
+  isFormLocked: boolean;
   isVerifying: boolean;
 }
 
 export default function LicenceForm({
   onVerify,
   defaultValues,
-  isAlreadySubmitted,
+  isFormLocked,
   isVerifying,
 }: LicenceFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -166,7 +166,7 @@ export default function LicenceForm({
             control={form.control}
             render={({ field }) => (
               <Select
-                disabled={isAlreadySubmitted || isVerifying}
+                disabled={isFormLocked || isVerifying}
                 onValueChange={(val) => {
                   field.onChange(val);
                   form.setValue("city", "");
@@ -197,7 +197,7 @@ export default function LicenceForm({
             control={form.control}
             render={({ field }) => (
               <Select
-                disabled={isAlreadySubmitted || isVerifying || !selectedCountry}
+                disabled={isFormLocked || isVerifying || !selectedCountry}
                 onValueChange={(val) => {
                   field.onChange(val);
                   form.setValue("authority", "");
@@ -229,7 +229,7 @@ export default function LicenceForm({
             control={form.control}
             render={({ field }) => (
               <Select
-                disabled={isAlreadySubmitted || isVerifying || !selectedCity}
+                disabled={isFormLocked || isVerifying || !selectedCity}
                 onValueChange={field.onChange}
                 value={field.value}
               >
@@ -254,7 +254,7 @@ export default function LicenceForm({
             Registration No
           </Label>
           <Input
-            disabled={isAlreadySubmitted || isVerifying}
+            disabled={isFormLocked || isVerifying}
             {...form.register("regNo")}
             className="h-14 rounded-xl border-border bg-card px-4 py-0"
             placeholder="Enter Reg No"
@@ -264,12 +264,12 @@ export default function LicenceForm({
 
       <div className="">
         <Button
-          disabled={isAlreadySubmitted || isVerifying}
+          disabled={isFormLocked || isVerifying}
           type="submit"
           className="h-12 rounded-lg px-10 font-semibold flex items-center justify-center gap-2"
         >
           {isVerifying && <Loader2 className="h-4 w-4 animate-spin" />}
-          {isAlreadySubmitted ? "Submitted" : isVerifying ? "Verifying..." : "Verify"}
+          {isFormLocked ? "Submitted" : isVerifying ? "Verifying..." : "Verify"}
         </Button>
       </div>
     </form>

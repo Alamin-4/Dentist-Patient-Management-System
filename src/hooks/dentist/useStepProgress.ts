@@ -1,20 +1,11 @@
 import { apiClient } from "@/api/client";
 import { useQuery } from "@tanstack/react-query";
 
-const hasSessionCookie = (): boolean => {
-  if (typeof document === "undefined") return false;
-  return document.cookie
-    .split("; ")
-    .some((item) =>
-      item.startsWith("better-auth.session_token=") ||
-      item.startsWith("accessToken=")
-    );
-};
+export type StepStatus = "PENDING" | "SUBMITTED" | "APPROVED" | "REJECTED";
 
-// Shape of each step-check API response body
 export interface StepCheckResponse {
     submitted: boolean;
-    status: string | null;
+    status: StepStatus | null;
     data?: Record<string, unknown>;
 }
 
@@ -25,10 +16,6 @@ const RDV_SCORE_BY_STEP: Record<VerificationPhaseStep, number> = {
     2: 40,
     3: 30,
 };
-
-function isSubmitted(response?: StepCheckResponse) {
-    return response?.submitted === true;
-}
 
 export default function useVerificationProgress() {
     const checkLicenseVerifyProgress = useQuery<StepCheckResponse>({
@@ -64,23 +51,30 @@ export default function useVerificationProgress() {
         retry: false,
     });
 
-    const step1Submitted = isSubmitted(checkLicenseVerifyProgress.data);
-    const step2Submitted = isSubmitted(checkPhotoVerifyProgress.data);
-    const step3Submitted = isSubmitted(checkIdVerifyProgress.data);
+    const step1Status = checkLicenseVerifyProgress.data?.status ?? "PENDING";
+    const step2Status = checkPhotoVerifyProgress.data?.status ?? "PENDING";
+    const step3Status = checkIdVerifyProgress.data?.status ?? "PENDING";
 
+    // A step counts as "submitted" for badge/display purposes when SUBMITTED or APPROVED
     const submittedByStep: Record<VerificationPhaseStep, boolean> = {
-        1: step1Submitted,
-        2: step2Submitted,
-        3: step3Submitted,
+        1: step1Status === "SUBMITTED" || step1Status === "APPROVED",
+        2: step2Status === "SUBMITTED" || step2Status === "APPROVED",
+        3: step3Status === "SUBMITTED" || step3Status === "APPROVED",
     };
 
-    const nextIncompleteStep: VerificationPhaseStep = !step1Submitted
+    // Access to the next step only unlocks when the previous step is APPROVED
+    const canAccessStep = (step: VerificationPhaseStep): boolean => {
+        if (step === 1) return true;
+        if (step === 2) return step1Status === "APPROVED";
+        return step2Status === "APPROVED";
+    };
+
+    // The next incomplete step is the first step that hasn't been APPROVED yet
+    const nextIncompleteStep: VerificationPhaseStep = step1Status !== "APPROVED"
         ? 1
-        : !step2Submitted
+        : step2Status !== "APPROVED"
             ? 2
-            : !step3Submitted
-                ? 3
-                : 3;
+            : 3;
 
     const rdvScore = (Object.entries(submittedByStep) as [string, boolean][])
         .reduce((score, [step, submitted]) => {
@@ -88,16 +82,13 @@ export default function useVerificationProgress() {
             return score + RDV_SCORE_BY_STEP[Number(step) as VerificationPhaseStep];
         }, 0);
 
-    const canAccessStep = (step: VerificationPhaseStep) => {
-        if (step === 1) return true;
-        if (step === 2) return step1Submitted;
-        return step1Submitted && step2Submitted;
-    };
-
     return {
         checkLicenseVerifyProgress,
         checkPhotoVerifyProgress,
         checkIdVerifyProgress,
+        step1Status,
+        step2Status,
+        step3Status,
         submittedByStep,
         nextIncompleteStep,
         rdvScore,

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Camera } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -28,6 +28,16 @@ interface CreateAccountFormProps {
 export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [needVerifyEmail, setNeedVerifyEmail] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
   const { user } = useMe()
 
   const router = useRouter();
@@ -92,7 +102,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
     clearErrors(); // <--- Clear any previous manual errors before new submission
     localStorage.setItem("registerEmail", data.email);
 
-    registerDentistMutation.mutate(data, {
+    registerDentistMutation.mutate({ ...data, image: imageFile ?? undefined }, {
       onSuccess: (res: any) => {
         if (res?.data?.needEmailVerify) {
           setNeedVerifyEmail(data.email);
@@ -162,6 +172,34 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+
+      {/* Optional profile photo */}
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={() => imageInputRef.current?.click()}
+          className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-dashed border-gray-300 bg-gray-50 hover:border-[#163E5C] transition-colors flex items-center justify-center"
+          aria-label="Upload profile photo"
+        >
+          {imagePreview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imagePreview} alt="Profile preview" className="h-full w-full object-cover" />
+          ) : (
+            <Camera className="h-6 w-6 text-gray-400" />
+          )}
+        </button>
+        <div>
+          <p className="text-sm font-medium text-gray-700">Profile photo <span className="text-gray-400 font-normal">(optional)</span></p>
+          <p className="text-xs text-gray-400">JPG or PNG, up to 5 MB</p>
+        </div>
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/jpeg,image/png"
+          className="hidden"
+          onChange={handleImageChange}
+        />
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">

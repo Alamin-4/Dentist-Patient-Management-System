@@ -3,7 +3,13 @@
 import Image from "next/image";
 import { Star, ChevronDown } from "lucide-react";
 
-export default function ReviewSection() {
+export default function ReviewSection({
+  googleRating = 5.0,
+  googleReviewCount = 0,
+}: {
+  googleRating?: number;
+  googleReviewCount?: number;
+}) {
   const metrics = [
     { label: "Communication", score: "4.0", stars: 4 },
     { label: "Value for money", score: "5.0", stars: 5 },
@@ -36,13 +42,20 @@ export default function ReviewSection() {
       <div className="flex flex-col gap-6 pb-8 border-b border-slate-200">
         <div className="flex items-start gap-4">
           <span className="text-2xl lg:text-3xl font-bold text-[#033355]">
-            4.9
+            {googleRating.toFixed(1)}
           </span>
           <div className="space-y-1 mt-1.5">
-            <span className="text-xs text-[#6B7280] block">45 Ratings</span>
+            <span className="text-xs text-[#6B7280] block">
+              {googleReviewCount} Rating{googleReviewCount !== 1 ? "s" : ""}
+            </span>
             <div className="flex gap-0.5 text-[#FFC107]">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="size-3.5 fill-current" />
+                <Star
+                  key={i}
+                  className={`size-3.5 ${
+                    i < Math.round(googleRating) ? "fill-current" : "text-slate-200"
+                  }`}
+                />
               ))}
             </div>
           </div>

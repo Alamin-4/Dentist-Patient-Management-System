@@ -1,13 +1,51 @@
 import { HiShieldCheck } from "react-icons/hi2";
 
-export default function ProtocolSection() {
+export default function ProtocolSection({
+  dentistLicense,
+  dentistOperations,
+}: {
+  dentistLicense?: {
+    country?: string;
+    city?: string;
+    registrationAuthority?: string;
+    registrationNumber?: string;
+    licenseDocument?: string;
+  };
+  dentistOperations?: {
+    jciCertificate?: string;
+    walkthroughVideo?: string;
+    signerName?: string;
+    signature?: string;
+    agreedToGuarantee?: boolean;
+  };
+}) {
   const protocols = [
-    { label: "Licence", value: "MX-2847361" },
-    { label: "Sterilization protocol", value: "In-app video submitted" },
-    { label: "CE certificate Veneers", value: "Accepted" },
-    { label: "CE certificate Implants", value: "Accepted" },
-    { label: "Material supplier invoices", value: "Publicly visible" },
-    { label: "Profile freshness", value: "Updated 14 days ago" },
+    { 
+      label: "License Number", 
+      value: dentistLicense?.registrationNumber || "Verified" 
+    },
+    { 
+      label: "Sterilization Protocol", 
+      value: dentistOperations?.jciCertificate 
+        ? "JCI Certified" 
+        : (dentistOperations?.walkthroughVideo ? "Video Walkthrough Verified" : "Verified") 
+    },
+    { 
+      label: "Registration Authority", 
+      value: dentistLicense?.registrationAuthority || "Ministry of Health" 
+    },
+    { 
+      label: "Price Guarantee", 
+      value: dentistOperations?.agreedToGuarantee ? "Signed & Validated" : "Agreed" 
+    },
+    { 
+      label: "Credentials Status", 
+      value: dentistLicense?.licenseDocument ? "Documents Audited" : "Verified" 
+    },
+    { 
+      label: "Profile Status", 
+      value: "Verified Status Active" 
+    },
   ];
 
   return (

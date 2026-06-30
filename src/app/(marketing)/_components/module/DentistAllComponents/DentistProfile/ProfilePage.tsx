@@ -28,7 +28,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
             {activeTab === "overview" && (
               <AboutSection name={dentist.name} bio={dentist.bio} />
             )}
-            
+
             {showPlaceholder ? (
               <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center space-y-5 shadow-sm">
                 <div className="mx-auto size-14 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
@@ -59,10 +59,25 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
               </div>
             ) : (
               <>
-                {activeTab === "pricing" && <PricingSection />}
-                {activeTab === "reviews" && <ReviewSection />}
-                {activeTab === "protocols" && <ProtocolSection />}
-                {activeTab === "materials" && <MaterialsSection />}
+                {activeTab === "pricing" && <PricingSection procedures={dentist.procedures} />}
+                {activeTab === "reviews" && (
+                  <ReviewSection
+                    googleRating={dentist.googleRating}
+                    googleReviewCount={dentist.googleReviewCount}
+                  />
+                )}
+                {activeTab === "protocols" && (
+                  <ProtocolSection
+                    dentistLicense={dentist.dentistLicense}
+                    dentistOperations={dentist.dentistOperations}
+                  />
+                )}
+                {activeTab === "materials" && (
+                  <MaterialsSection
+                    procedures={dentist.procedures}
+                    materials={dentist.materials}
+                  />
+                )}
                 {activeTab === "results" && <ResultsSection />}
               </>
             )}

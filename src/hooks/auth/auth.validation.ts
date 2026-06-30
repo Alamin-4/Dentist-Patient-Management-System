@@ -25,5 +25,7 @@ export const registerPatientSchema = z.object({
     path: ['confirmPassword'],
 });
 
-export type IRegisterDentist = z.infer<typeof registerDentistSchema>;
+export type IRegisterDentist = z.infer<typeof registerDentistSchema> & {
+    image?: File;
+};
 export type IRegisterPatient = z.infer<typeof registerPatientSchema>;

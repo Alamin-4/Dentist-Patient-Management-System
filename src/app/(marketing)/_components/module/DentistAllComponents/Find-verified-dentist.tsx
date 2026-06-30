@@ -125,7 +125,6 @@ export default function FindDentist() {
   const [showMapFilters, setShowMapFilters] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Debounce search — resets page on new query
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -152,6 +151,7 @@ export default function FindDentist() {
     const apiList = directoryResponse?.data || [];
     return apiList.map((d: any) => ({
       id: d.id,
+      backendId: d.backendId ?? null,
       name: d.name,
       slug: d.slug,
       specialty: d.specialty || "General Dentist",
@@ -376,8 +376,8 @@ export default function FindDentist() {
                         {city !== "All Cities"
                           ? ` in ${city}`
                           : country !== "All Countries"
-                          ? ` in ${country}`
-                          : ""}{" "}
+                            ? ` in ${country}`
+                            : ""}{" "}
                         | ${priceRange[0]} – $
                         {priceRange[1] >= 1800 ? "1,800+" : priceRange[1].toLocaleString()}
                       </>

@@ -17,14 +17,16 @@ import { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
+import { VerificationStatusScreen } from "../VerificationStatusScreen";
 
 export default function MultiStepForm() {
   const router = useRouter();
   const { stepTwoMutation } = useDentist();
-  const { checkPhotoVerifyProgress } = useVerificationProgress();
+  const { checkPhotoVerifyProgress, step2Status } = useVerificationProgress();
 
   const progressData = checkPhotoVerifyProgress?.data;
-  const isAlreadySubmitted = progressData?.submitted === true;
+  // Pre-fill form whenever there is server data (submitted, approved, or rejected resubmission)
+  const hasServerData = !!progressData?.data;
 
   const methods = useForm<FormInputValues, unknown, FormValues>({
     resolver: zodResolver(formSchema),
@@ -39,9 +41,9 @@ export default function MultiStepForm() {
     },
   });
 
-  // Load existing data if already submitted
+  // Load existing data when server has previous submission (including rejected resubmissions)
   useEffect(() => {
-    if (isAlreadySubmitted && progressData?.data) {
+    if (hasServerData && progressData?.data) {
       const serverData = progressData.data as any;
 
       let procedures = [];
@@ -76,16 +78,9 @@ export default function MultiStepForm() {
         agreeToGuarantee: guarantee.accepted_terms || false,
       });
     }
-  }, [isAlreadySubmitted, progressData, methods]);
+  }, [hasServerData, progressData, methods]);
 
   const onSubmit = (data: FormValues) => {
-    if (isAlreadySubmitted) {
-      toast.error(
-        "Operations verification is already submitted and pending review.",
-      );
-      return;
-    }
-
     const procedures = data.procedures.map((p) => ({
       procedureName: p.name,
       price: Number(p.price),
@@ -105,7 +100,7 @@ export default function MultiStepForm() {
       onSuccess: () => {
         setTimeout(() => {
           router.push("/dentist/verification?phase=clinic-depth-verify");
-        }, 1500); 
+        }, 1500);
       },
       onError: (error: unknown) => {
         const errMsg =
@@ -119,25 +114,45 @@ export default function MultiStepForm() {
     });
   };
 
+  // While waiting for admin review — show status screen only
+  if (step2Status === "SUBMITTED") {
+    return (
+      <VerificationStatusScreen
+        status="SUBMITTED"
+        phaseName="Operations Verification"
+      />
+    );
+  }
+
+  const formLocked = step2Status === "APPROVED";
+
   return (
-    <FormProvider {...methods}>
-      <form
-        id="phase-2-verification-form"
-        onSubmit={methods.handleSubmit(onSubmit)}
-        className="space-y-0"
-      >
-        <SterilizationSection disabled={isAlreadySubmitted} />
-        <ProcedurePricingSection disabled={isAlreadySubmitted} />
-        <GuaranteeSection disabled={isAlreadySubmitted} />
-        {stepTwoMutation.isPending && (
-          <div className="flex justify-center items-center py-6 border-t bg-card">
-            <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
-            <span className="ml-2 text-sm text-muted-foreground">
-              Submitting Phase 2...
-            </span>
-          </div>
-        )}
-      </form>
-    </FormProvider>
+    <div className="space-y-6">
+      {step2Status === "REJECTED" && (
+        <VerificationStatusScreen
+          status="REJECTED"
+          phaseName="Operations Verification"
+        />
+      )}
+      <FormProvider {...methods}>
+        <form
+          id="phase-2-verification-form"
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="space-y-0"
+        >
+          <SterilizationSection disabled={formLocked} />
+          <ProcedurePricingSection disabled={formLocked} />
+          <GuaranteeSection disabled={formLocked} />
+          {stepTwoMutation.isPending && (
+            <div className="flex justify-center items-center py-6 border-t bg-card">
+              <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
+              <span className="ml-2 text-sm text-muted-foreground">
+                Submitting Phase 2...
+              </span>
+            </div>
+          )}
+        </form>
+      </FormProvider>
+    </div>
   );
 }

@@ -11,6 +11,7 @@ export default function DentistCard({
   onBookConsultation,
   onRequestConsultation,
 }: any) {
+  console.log(dentist.image)
   return (
     <div
       className={cn(
@@ -19,7 +20,6 @@ export default function DentistCard({
         isCompareMode && "pl-10 sm:pl-12"
       )}
     >
-      {/* Compare Checkbox Overlay */}
       {isCompareMode && (
         <button
           onClick={() => onSelect(dentist.id)}
@@ -36,13 +36,12 @@ export default function DentistCard({
         </button>
       )}
 
-      {/* Main Info Row */}
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 w-full justify-between">
         {/* Avatar + Verified Badge */}
         <div className="relative flex flex-col items-center gap-3 shrink-0">
           <div className="relative w-20 h-20 rounded-full overflow-hidden border border-slate-100 shadow-sm bg-slate-50">
             <img
-              src={dentist.image}
+              src={"dentist.image"}
               className="w-full h-full object-cover"
               alt={dentist.name}
             />

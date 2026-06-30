@@ -46,14 +46,12 @@ export interface ActivityItem {
   timeAgo: string;
 }
 
-// ─── Stats ───────────────────────────────────────────────────────────────────
-
 export const statCards: StatCard[] = [
   {
     id: "active-dentists",
     label: "Active dentists",
-    value: "1,284",
-    trend: "+8.2%",
+    value: "0",
+    trend: "0%",
     trendUp: true,
     comparison: "vs last week",
     icon: "stethoscope",
@@ -63,8 +61,8 @@ export const statCards: StatCard[] = [
   {
     id: "total-patients",
     label: "Total patients",
-    value: "28,491",
-    trend: "+12.5%",
+    value: "0",
+    trend: "0%",
     trendUp: true,
     comparison: "vs last week",
     icon: "users",
@@ -74,8 +72,8 @@ export const statCards: StatCard[] = [
   {
     id: "bookings-today",
     label: "Bookings today",
-    value: "312",
-    trend: "-2.1%",
+    value: "0",
+    trend: "0%",
     trendUp: false,
     comparison: "vs yesterday",
     icon: "calendar",
@@ -85,8 +83,8 @@ export const statCards: StatCard[] = [
   {
     id: "revenue-mtd",
     label: "Revenue (MTD)",
-    value: "$184,210",
-    trend: "+18.4%",
+    value: "$0",
+    trend: "0%",
     trendUp: true,
     comparison: "vs last month",
     icon: "dollar",
@@ -98,23 +96,22 @@ export const statCards: StatCard[] = [
 // ─── Chart ───────────────────────────────────────────────────────────────────
 
 export const chartData: ChartPoint[] = [
-  { date: "Apr 16", bookings: 215, revenue: 22000 },
-  { date: "Apr 17", bookings: 238, revenue: 24000 },
-  { date: "Apr 18", bookings: 262, revenue: 26500 },
-  { date: "Apr 19", bookings: 244, revenue: 25000 },
-  { date: "Apr 20", bookings: 282, revenue: 28500 },
-  { date: "Apr 21", bookings: 308, revenue: 31000 },
-  { date: "Apr 22", bookings: 335, revenue: 33500 },
-  { date: "Apr 23", bookings: 318, revenue: 32000 },
-  { date: "Apr 24", bookings: 358, revenue: 36000 },
-  { date: "Apr 25", bookings: 382, revenue: 38500 },
-  { date: "Apr 26", bookings: 402, revenue: 41000 },
-  { date: "Apr 27", bookings: 424, revenue: 43500 },
-  { date: "Apr 28", bookings: 412, revenue: 44000 },
-  { date: "Apr 29", bookings: 435, revenue: 46000 },
+  { date: "Apr 16", bookings: 0, revenue: 0 },
+  { date: "Apr 17", bookings: 0, revenue: 0 },
+  { date: "Apr 18", bookings: 0, revenue: 0 },
+  { date: "Apr 19", bookings: 0, revenue: 0 },
+  { date: "Apr 20", bookings: 0, revenue: 0 },
+  { date: "Apr 21", bookings: 0, revenue: 0 },
+  { date: "Apr 22", bookings: 0, revenue: 0 },
+  { date: "Apr 23", bookings: 0, revenue: 0 },
+  { date: "Apr 24", bookings: 0, revenue: 0 },
+  { date: "Apr 25", bookings: 0, revenue: 0 },
+  { date: "Apr 26", bookings: 0, revenue: 0 },
+  { date: "Apr 27", bookings: 0, revenue: 0 },
+  { date: "Apr 28", bookings: 0, revenue: 0 },
+  { date: "Apr 29", bookings: 0, revenue: 0 },
 ];
 
-// ─── Verification Queue ──────────────────────────────────────────────────────
 
 export const verificationQueue: QueueDoctor[] = [
   {
@@ -156,8 +153,6 @@ export const verificationQueue: QueueDoctor[] = [
 ];
 
 export const verificationQueueTotal = 6;
-
-// ─── Top Dentists ─────────────────────────────────────────────────────────────
 
 export const topDentists: TopDentist[] = [
   {

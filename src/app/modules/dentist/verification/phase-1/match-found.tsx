@@ -106,10 +106,10 @@ export function VerificationResult({
   return (
     <>
       {!selectedFile && !existingFileUrl ? (
-        <div className="mt-6 space-y-4 rounded-xl border border-destructive-100 bg-destructive-50/70 p-5 sm:p-6">
-          <h4 className="text-lg font-semibold text-foreground">Match not Found</h4>
+        <div className="mt-6 space-y-4 rounded-xl border border-border bg-muted/40 p-5 sm:p-6">
+          <h4 className="text-lg font-semibold text-foreground">Manual Verification Required</h4>
           <p className="text-sm text-muted-foreground">
-            Upload your registration certificate manually to continue verification.
+            We couldn&apos;t verify your license automatically. Please upload your license document.
           </p>
 
           <div

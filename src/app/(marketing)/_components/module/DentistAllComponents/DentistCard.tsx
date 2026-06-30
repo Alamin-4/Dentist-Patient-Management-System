@@ -84,23 +84,30 @@ export default function DentistCard({
           <div className="flex shrink-0 flex-col items-center gap-3 xl:w-35">
             <div className="relative h-20 w-20 overflow-hidden rounded-full bg-slate-100">
               <Image
-                src={dentist.image || "/placeholder-avatar.png"}
-                alt={dentist.name.split(' ')[0].slice(0,4)}
+                src={dentist.image}
+                alt={dentist.name.split(' ')[0].slice(0, 4)}
                 fill
                 className="object-cover"
               />
             </div>
 
             <div className="flex w-full flex-col items-center gap-2">
-              <div className="flex items-center gap-1.5 text-xs font-medium">
-                <ShieldCheck className={cn("size-4", dentist.verified ? "text-emerald-500" : dentist.status === "CLAIMED" ? "text-amber-500" : "text-slate-400")} />
-                <span className={cn(
-                  "text-[11px] font-bold uppercase tracking-wider whitespace-nowrap",
-                  dentist.verified ? "text-emerald-600" : dentist.status === "CLAIMED" ? "text-amber-600" : "text-slate-500"
-                )}>
-                  {dentist.verified ? "VERIFIED" : dentist.status === "CLAIMED" ? "CLAIMED" : "UNCLAIMED"}
-                </span>
-              </div>
+              {(() => {
+                // A dentist with a real account (self-registered or claimed via claim flow)
+                // has a non-null backendId. Only directory-only entries with no account are truly UNCLAIMED.
+                const isClaimed = dentist.status === "CLAIMED" || (!!dentist.backendId && !dentist.verified);
+                const label = dentist.verified ? "VERIFIED" : isClaimed ? "CLAIMED" : "UNCLAIMED";
+                const iconColor = dentist.verified ? "text-emerald-500" : isClaimed ? "text-amber-500" : "text-slate-400";
+                const textColor = dentist.verified ? "text-emerald-600" : isClaimed ? "text-amber-600" : "text-slate-500";
+                return (
+                  <div className="flex items-center gap-1.5 text-xs font-medium">
+                    <ShieldCheck className={cn("size-4", iconColor)} />
+                    <span className={cn("text-[11px] font-bold uppercase tracking-wider whitespace-nowrap", textColor)}>
+                      {label}
+                    </span>
+                  </div>
+                );
+              })()}
 
               <div className="flex items-center justify-center text-xs gap-2 rounded-md border border-slate-200 px-3 py-1 text-center">
                 <div className="text-[#0E3E65]">
@@ -199,7 +206,8 @@ export default function DentistCard({
               </Button>
             ) : (
               <>
-                {dentist.isClaimable && dentist.status === "UNVERIFIED" && (
+                {/* Only show Claim Profile for truly unclaimed directory entries (no real account) */}
+                {dentist.isClaimable && !dentist.backendId && (
                   <Button
                     variant="secondary"
                     className="h-10 rounded-lg border border-amber-300 bg-amber-50 px-5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all"

@@ -14,6 +14,7 @@ import useDentist, {
 import { StepThreeI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
+import { VerificationStatusScreen } from "../VerificationStatusScreen";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
@@ -54,22 +55,19 @@ type Phase3Values = z.infer<typeof phase3Schema>;
 type Phase3InputValues = z.input<typeof phase3Schema>;
 
 export default function Phase3() {
-  const {
-    setVerificationCompletedStep,
-    setVerificationStep,
-    setVerificationStepReady,
-  } = useVerificationStore();
+  const { setVerificationStepReady } = useVerificationStore();
   const router = useRouter()
   const { stepThreeMutation, dentistProcedureList } = useDentist();
   const dentistProcedures =
     (dentistProcedureList?.data as any)?.data || [];
   const updatePhase = useUpdateVerificationPhase();
-  const { checkIdVerifyProgress } = useVerificationProgress();
+  const { checkIdVerifyProgress, step3Status } = useVerificationProgress();
 
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const progressData = checkIdVerifyProgress?.data;
-  const isAlreadySubmitted = progressData?.submitted === true;
+  // Form is locked only when APPROVED; REJECTED allows resubmission
+  const isFormLocked = step3Status === "APPROVED";
 
   const methods = useForm<Phase3InputValues, unknown, Phase3Values>({
     resolver: zodResolver(phase3Schema),
@@ -129,7 +127,7 @@ export default function Phase3() {
           lat: clinicAddress.lat || "0",
           lng: clinicAddress.lng || "0",
         },
-        materials: isAlreadySubmitted
+        materials: isFormLocked
           ? materials.map((m: any) => ({
               ownProcedure: String(m.own_procedure),
               ceCertificate: m.ce_certificate
@@ -152,7 +150,7 @@ export default function Phase3() {
             ],
       });
     }
-  }, [isAlreadySubmitted, progressData, methods]);
+  }, [isFormLocked, progressData, methods]);
 
   useEffect(() => {
     dentistProcedureList.refetch();
@@ -166,11 +164,6 @@ export default function Phase3() {
   });
 
   const onSubmit = (payload: Phase3Values) => {
-    if (isAlreadySubmitted) {
-      toast.error("Phase 3 details are already submitted.");
-      return;
-    }
-
     const formattedPayload: StepThreeI = {
       clinic_address: payload.clinic_address,
       materials: payload.materials.map((m) => ({
@@ -215,7 +208,7 @@ export default function Phase3() {
   };
 
   useEffect(() => {
-    if (isAlreadySubmitted) {
+    if (isFormLocked) {
       setVerificationStepReady(3, true);
       return;
     }
@@ -224,7 +217,7 @@ export default function Phase3() {
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [methods.formState.isValid, isAlreadySubmitted, setVerificationStepReady]);
+  }, [methods.formState.isValid, isFormLocked, setVerificationStepReady]);
 
   const isPending = stepThreeMutation.isPending || updatePhase.isPending;
   const selectedAddress = methods.watch("clinic_address") || {
@@ -233,7 +226,23 @@ export default function Phase3() {
     lng: "",
   };
 
+  if (step3Status === "SUBMITTED") {
+    return (
+      <VerificationStatusScreen
+        status="SUBMITTED"
+        phaseName="Clinical Excellence"
+      />
+    );
+  }
+
   return (
+    <div className="space-y-6">
+      {step3Status === "REJECTED" && (
+        <VerificationStatusScreen
+          status="REJECTED"
+          phaseName="Clinical Excellence"
+        />
+      )}
     <FormProvider {...methods}>
       <form
         id="phase-3-verification-form"
@@ -253,14 +262,14 @@ export default function Phase3() {
                 <div className="relative flex gap-2">
                   <input
                     type="text"
-                    disabled={isAlreadySubmitted}
+                    disabled={isFormLocked}
                     {...methods.register("clinic_address.address")}
                     className="border border-gray-200 rounded-md p-3 w-full pr-12 disabled:opacity-60 disabled:cursor-not-allowed text-sm"
                     placeholder="Enter your clinic address"
                   />
                   <button
                     type="button"
-                    disabled={isAlreadySubmitted}
+                    disabled={isFormLocked}
                     onClick={() => setIsMapOpen(true)}
                     className="p-3 border border-gray-200 rounded-md hover:bg-slate-50 transition-colors text-slate-500 hover:text-[#0E3E65] disabled:opacity-60 shrink-0"
                     title="Select on Map"
@@ -303,7 +312,7 @@ export default function Phase3() {
                     </label>
                     <select
                       disabled={
-                        isAlreadySubmitted || dentistProcedureList.isFetching
+                        isFormLocked || dentistProcedureList.isFetching
                       }
                       {...methods.register(
                         `materials.${index}.ownProcedure` as const,
@@ -342,7 +351,7 @@ export default function Phase3() {
                     <DocumentUpload
                       label="Upload CE certificate"
                       name={`materials.${index}.ceCertificate`}
-                      disabled={isAlreadySubmitted}
+                      disabled={isFormLocked}
                       error={getErrorMessage(
                         methods.formState.errors.materials?.[index]
                           ?.ceCertificate?.message,
@@ -351,7 +360,7 @@ export default function Phase3() {
                     <DocumentUpload
                       label="Upload Material brands"
                       name={`materials.${index}.materialBrands`}
-                      disabled={isAlreadySubmitted}
+                      disabled={isFormLocked}
                       error={getErrorMessage(
                         methods.formState.errors.materials?.[index]
                           ?.materialBrands?.message,
@@ -360,7 +369,7 @@ export default function Phase3() {
                     <DocumentUpload
                       label="Upload Invoice"
                       name={`materials.${index}.invoice`}
-                      disabled={isAlreadySubmitted}
+                      disabled={isFormLocked}
                       error={getErrorMessage(
                         methods.formState.errors.materials?.[index]?.invoice
                           ?.message,
@@ -369,7 +378,7 @@ export default function Phase3() {
                     <DocumentUpload
                       label="Upload protocol PDF"
                       name={`materials.${index}.protocolPdf`}
-                      disabled={isAlreadySubmitted}
+                      disabled={isFormLocked}
                       error={getErrorMessage(
                         methods.formState.errors.materials?.[index]?.protocolPdf
                           ?.message,
@@ -379,7 +388,7 @@ export default function Phase3() {
                 </div>
               </div>
 
-              {!isAlreadySubmitted && (
+              {!isFormLocked && (
                 <div className="p-4 flex justify-end">
                   <button
                     type="button"
@@ -393,7 +402,7 @@ export default function Phase3() {
             </div>
           ))}
 
-          {!isAlreadySubmitted && (
+          {!isFormLocked && (
             <div className="p-6">
               <button
                 type="button"
@@ -442,5 +451,6 @@ export default function Phase3() {
         />
       </form>
     </FormProvider>
+    </div>
   );
 }

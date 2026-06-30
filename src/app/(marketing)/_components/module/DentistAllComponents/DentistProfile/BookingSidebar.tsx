@@ -223,7 +223,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
   const handleClaimAndPay = async () => {
     const toastId = toast.loading("Processing claim registration...");
-    
+
     // 1. Submit claim payload to backend
     claimMutation.mutate(
       {
@@ -330,10 +330,19 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
           <p className="font-semibold text-[#1A1A2E]">{dentist.specialty}</p>
           <div className="flex flex-col lg:flex-row lg:items-center gap-2">
             <div className="flex items-center gap-1">
-              <span className="font-semibold text-[#003366]">{dentist.rating}</span>
+              <span className="font-semibold text-[#003366]">
+                {(dentist.googleRating ?? dentist.rating ?? 5.0).toFixed(1)}
+              </span>
               <div className="flex text-amber-400">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="size-4 fill-current text-amber-400" />
+                  <Star
+                    key={i}
+                    className={`size-4 ${
+                      i < Math.round(dentist.googleRating ?? dentist.rating ?? 5.0)
+                        ? "fill-current text-amber-400"
+                        : "text-slate-200"
+                    }`}
+                  />
                 ))}
               </div>
             </div>
@@ -351,7 +360,10 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
           </div>
           <div className="flex items-center gap-3">
             <FileText className="size-5 text-slate-400" /> License No.{" "}
-            <span className="text-slate-900">{dentist.verified ? "MX-2847361" : "Pending Claim"}</span>
+            <span className="text-slate-900">
+              {dentist.dentistLicense?.registrationNumber ||
+                (dentist.verified ? "MX-2847361" : "Pending Claim")}
+            </span>
           </div>
         </div>
 
@@ -474,7 +486,6 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
         </DialogContent>
       </Dialog>
 
-      {/* ── Claim Profile Wizard Modal ─────────────────────────────────── */}
       <Dialog open={isClaimOpen} onOpenChange={setIsClaimOpen}>
         <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-2xl rounded-xl overflow-hidden p-0">
           <DialogHeader className="sr-only">
@@ -494,11 +505,10 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
               {[1, 2, 3, 4].map((s) => (
                 <div key={s} className="flex items-center gap-1">
                   <div
-                    className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                      claimStep >= s
-                        ? "bg-amber-400 text-[#0E3E65] scale-110"
-                        : "bg-[#0E3E65] border border-sky-400/40 text-sky-200"
-                    }`}
+                    className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${claimStep >= s
+                      ? "bg-amber-400 text-[#0E3E65] scale-110"
+                      : "bg-[#0E3E65] border border-sky-400/40 text-sky-200"
+                      }`}
                   >
                     {claimStep > s ? <Check className="size-3.5 stroke-3" /> : s}
                   </div>
@@ -746,22 +756,20 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                 <div className="grid grid-cols-2 gap-3 mb-2">
                   <div
                     onClick={() => setSelectedPlan("6_MONTH")}
-                    className={`border rounded-lg p-3 text-center cursor-pointer transition-all ${
-                      selectedPlan === "6_MONTH"
-                        ? "border-[#0E3E65] bg-sky-50/40 ring-1 ring-[#0E3E65]"
-                        : "border-slate-200 hover:bg-slate-50"
-                    }`}
+                    className={`border rounded-lg p-3 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
+                      ? "border-[#0E3E65] bg-sky-50/40 ring-1 ring-[#0E3E65]"
+                      : "border-slate-200 hover:bg-slate-50"
+                      }`}
                   >
                     <span className="block text-xs font-bold text-slate-500 uppercase">6 Months</span>
                     <span className="block text-xl font-extrabold text-[#0E3E65] mt-1">$89</span>
                   </div>
                   <div
                     onClick={() => setSelectedPlan("1_YEAR")}
-                    className={`border rounded-lg p-3 text-center cursor-pointer transition-all ${
-                      selectedPlan === "1_YEAR"
-                        ? "border-[#0E3E65] bg-sky-50/40 ring-1 ring-[#0E3E65]"
-                        : "border-slate-200 hover:bg-slate-50"
-                    }`}
+                    className={`border rounded-lg p-3 text-center cursor-pointer transition-all ${selectedPlan === "1_YEAR"
+                      ? "border-[#0E3E65] bg-sky-50/40 ring-1 ring-[#0E3E65]"
+                      : "border-slate-200 hover:bg-slate-50"
+                      }`}
                   >
                     <span className="block text-xs font-bold text-slate-500 uppercase">1 Year</span>
                     <span className="block text-xl font-extrabold text-[#0E3E65] mt-1">$149</span>
