@@ -58,7 +58,7 @@ export default function DentistCard({
         </div>
 
         {/* Info */}
-        <div className="flex-1 text-center sm:text-left min-w-0 mt-2 sm:mt-0">
+        <div className="flex-1 min-w-0 mt-2 sm:mt-0">
           <h4 className="font-bold text-[#1A1A2E] lg:text-lg mb-1 truncate">
             {dentist.name}
           </h4>
@@ -91,40 +91,6 @@ export default function DentistCard({
         </div>
       </div>
 
-      {/* {!isCompareMode && (
-        <div className="mt-5 flex flex-wrap gap-2 w-full justify-end border-t border-slate-100 pt-4">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              window.location.href = `/find-dentist/${dentist.slug}`;
-            }}
-            className="h-10 px-5 rounded-lg border border-[#003366] text-[#003366] hover:bg-slate-50 text-xs font-bold transition-all cursor-pointer"
-          >
-            View Profile
-          </button>
-          {dentist.verified === "VERIFIED" || dentist.verified === true ? (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onBookConsultation(dentist);
-              }}
-              className="h-10 px-5 rounded-lg bg-[#003366] hover:bg-[#002850] text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
-            >
-              Book Consultation
-            </button>
-          ) : (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onRequestConsultation(dentist);
-              }}
-              className="h-10 px-5 rounded-lg bg-[#003366] hover:bg-[#002850] text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
-            >
-              Request Consultation
-            </button>
-          )}
-        </div>
-      )} */}
     </div>
   );
 }

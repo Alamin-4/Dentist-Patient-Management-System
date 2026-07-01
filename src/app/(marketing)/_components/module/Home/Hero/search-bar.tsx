@@ -13,7 +13,7 @@ export default function SearchBar() {
   const [selectedProcedure, setSelectedProcedure] = useState("");
   const [budget, setBudget] = useState({ min: "0", max: "1800" });
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+
   const { data: procedures = [], isLoading: proceduresLoading } = useGlobalProcedures(search);
 
   useEffect(() => {
@@ -27,28 +27,27 @@ export default function SearchBar() {
   }, []);
 
   const handleSearch = () => {
-    // ✅ Build URL with query params
     const params = new URLSearchParams();
-    
+
     if (selectedProcedure && selectedProcedure !== "All Procedures") {
       params.append("procedure", selectedProcedure);
     }
-    
+
     const minPrice = Number(budget.min);
     const maxPrice = Number(budget.max);
-    
+
     if (!isNaN(minPrice) && !isNaN(maxPrice) && (minPrice > 0 || maxPrice < 1800)) {
       params.append("price[min]", minPrice.toString());
       params.append("price[max]", maxPrice.toString());
     }
-    
+
     // ✅ Redirect to /find-dentist with params
     router.push(`/find-dentist?${params.toString()}`);
   };
 
   return (
     <div className="relative flex w-full flex-col items-center gap-2 rounded-md border border-blue-50 bg-[#F4F9FD] p-2 shadow-sm md:flex-row md:gap-0">
-      
+
       {/* Procedure Dropdown */}
       <div className="relative w-full md:w-1/2" ref={dropdownRef}>
         <button
@@ -63,9 +62,9 @@ export default function SearchBar() {
             )}>
               {selectedProcedure || "Select procedures"}
             </span>
-            <ChevronDown 
-              size={16} 
-              className={cn("text-gray-400 transition-transform", isOpen && "rotate-180")} 
+            <ChevronDown
+              size={16}
+              className={cn("text-gray-400 transition-transform", isOpen && "rotate-180")}
             />
           </div>
         </button>
@@ -77,7 +76,7 @@ export default function SearchBar() {
             ) : procedures?.length === 0 ? (
               <div className="px-4 py-3 text-sm text-gray-500">No procedures found</div>
             ) : (
-              procedures?.map((p: {name: string, slug: string}) => (
+              procedures?.map((p: { name: string, slug: string }) => (
                 <button
                   key={p.slug}
                   onClick={() => {
@@ -119,7 +118,7 @@ export default function SearchBar() {
       </div>
 
       {/* Search Button */}
-      <button 
+      <button
         onClick={handleSearch}
         className="group flex w-full items-center justify-center gap-2 rounded-md bg-[#10436B] py-3.5 text-sm font-bold text-white transition-all active:scale-95 md:w-auto md:px-8 hover:bg-[#0D3658] hover:shadow-lg"
       >
