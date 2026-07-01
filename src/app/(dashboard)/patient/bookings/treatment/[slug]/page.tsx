@@ -105,7 +105,7 @@ export default function TreatmentDetailsPage() {
       <h1 className="text-2xl font-bold text-[#1A1A2E] mb-5">Treatment Detail</h1>
 
       {/* Doctor Header Card */}
-      <div className="bg-white border border-[#CEE0F4] rounded-xl p-5 md:p-6 mb-6">
+      <div className="bg-white border border-[#CEE0F4] rounded-lg p-5 md:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
           {/* Avatar + badges */}
           <div className="flex flex-col items-center gap-1.5 shrink-0">
@@ -186,7 +186,7 @@ export default function TreatmentDetailsPage() {
         <div className="lg:col-span-7 space-y-4">
 
           {/* Estimate Treatment plan (collapsible) */}
-          <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-slate-100 rounded-lg shadow-sm overflow-hidden">
             <button
               onClick={() => setEstimatePlanOpen((v) => !v)}
               className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
@@ -207,7 +207,7 @@ export default function TreatmentDetailsPage() {
                   totalLabel="Estimate amount"
                   total={booking.treatmentPlan.totalEstimate}
                 />
-                <div className="mt-4 bg-[#F0F9FF] p-4 rounded-xl border border-[#B3D8FF]">
+                <div className="mt-4 bg-[#F0F9FF] p-4 rounded-lg border border-[#B3D8FF]">
                   <p className="text-[#0E3E65] font-bold text-sm mb-1">
                     {booking.treatmentPlan.leewayPercent}% leeway
                   </p>
@@ -224,7 +224,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Final Treatment Plan (visible when finalPlan exists) */}
           {finalPlan && (
-            <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-100 rounded-lg shadow-sm overflow-hidden">
               <button
                 onClick={() => setFinalPlanOpen((v) => !v)}
                 className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
@@ -264,7 +264,7 @@ export default function TreatmentDetailsPage() {
                   {!isWithinLeeway && !isApproved && (
                     <button
                       onClick={() => setNoSurpriseRejectModalOpen(true)}
-                      className="mt-4 w-full py-3 rounded-xl border border-[#F43F5E] text-[#F43F5E] text-sm font-semibold hover:bg-[#FFF1F2] transition-colors cursor-pointer"
+                      className="mt-4 w-full py-3 rounded-lg border border-[#F43F5E] text-[#F43F5E] text-sm font-semibold hover:bg-[#FFF1F2] transition-colors cursor-pointer"
                     >
                       No surprise reject
                     </button>
@@ -276,7 +276,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Journey Completed (visible when approved) */}
           {isApproved && booking.journeyCompleted && (
-            <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-100 rounded-lg shadow-sm overflow-hidden">
               <button
                 onClick={() => setJourneyOpen((v) => !v)}
                 className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
@@ -316,7 +316,7 @@ export default function TreatmentDetailsPage() {
         <div className="lg:col-span-5 space-y-4">
 
           {/* Treatment Timeline */}
-          <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-5 md:p-6">
+          <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
             <h4 className="font-bold text-[#1A1A2E] mb-6">Treatment Timeline</h4>
             <div className="space-y-0">
               {booking.timeline.map((step, i) => (
@@ -334,7 +334,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Payment Code (visible when approved) */}
           {isApproved && (
-            <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-5 md:p-6">
+            <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
               <p className="text-sm font-bold text-[#1A1A2E] mb-3">Payment Code</p>
               <div className="flex items-center justify-between">
                 <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">
@@ -366,12 +366,12 @@ export default function TreatmentDetailsPage() {
           <div className="flex items-center gap-3">
             {isApproved ? (
               <>
-                <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
+                <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
                   View Document
                 </button>
                 <button
                   onClick={() => setReviewModalOpen(true)}
-                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                 >
                   Review Doctor
                 </button>
@@ -381,7 +381,7 @@ export default function TreatmentDetailsPage() {
                 {isWithinLeeway && finalPlan && (
                   <button
                     onClick={() => setRejectModalOpen(true)}
-                    className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
                   >
                     Reject Plan
                   </button>
@@ -391,7 +391,7 @@ export default function TreatmentDetailsPage() {
                     setIsApproved(true);
                     setApproveModalOpen(true);
                   }}
-                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                 >
                   Approve
                 </button>
@@ -418,7 +418,7 @@ function PlanTable({
   isFinal?: boolean;
 }) {
   return (
-    <div className="border border-slate-100 rounded-xl overflow-hidden">
+    <div className="border border-slate-100 rounded-lg overflow-hidden">
       <div className="flex justify-between bg-slate-50 px-4 py-3 border-b border-slate-100">
         <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
           Procedure breakdown

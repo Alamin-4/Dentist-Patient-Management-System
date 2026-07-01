@@ -18,7 +18,7 @@ export default function PaymentInfo({ connected = true, card = null }: PaymentIn
   const [isConnected, setIsConnected] = useState(connected);
 
   return (
-    <section className="rounded-xl border border-[#EEF2F7] bg-white p-6 shadow-sm">
+    <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
       <div className="flex items-start justify-between">
         <h2 className="text-lg font-semibold text-[#0E3E65]">Payment Information</h2>
         <div className="text-sm text-[#475569]">Stripe Connect</div>

@@ -81,9 +81,8 @@ export default function DocumentsPage() {
         <div className="flex gap-12 border-b border-gray-200 mb-8 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab("treatment")}
-            className={`pb-4 font-medium transition-all relative ${
-              activeTab === "treatment" ? "text-[#113254]" : "text-[#9CA3AF]"
-            }`}
+            className={`pb-4 font-medium transition-all relative ${activeTab === "treatment" ? "text-[#113254]" : "text-[#9CA3AF]"
+              }`}
           >
             Treatment Document
             {activeTab === "treatment" && (
@@ -92,9 +91,8 @@ export default function DocumentsPage() {
           </button>
           <button
             onClick={() => setActiveTab("my-docs")}
-            className={`pb-4 font-medium transition-all relative ${
-              activeTab === "my-docs" ? "text-[#113254]" : "text-[#9CA3AF]"
-            }`}
+            className={`pb-4 font-medium transition-all relative ${activeTab === "my-docs" ? "text-[#113254]" : "text-[#9CA3AF]"
+              }`}
           >
             My Documents
             {activeTab === "my-docs" && (
@@ -108,7 +106,7 @@ export default function DocumentsPage() {
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="bg-white p-5 md:p-6 rounded-xl border border-gray-100 hover:border-[#113254]/20 hover:shadow-md transition-all group"
+              className="bg-white p-5 md:p-6 rounded-lg border border-gray-100 hover:border-[#113254]/20 hover:shadow-md transition-all group"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* Info Section */}

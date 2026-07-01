@@ -170,7 +170,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
         <Button
           type="submit"
           disabled={isOtpVerifyLoading}
-          className="h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl text-lg font-semibold transition-colors shadow-lg flex items-center justify-center gap-2"
+          className="h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg text-lg font-semibold transition-colors shadow-lg flex items-center justify-center gap-2"
         >
           {isOtpVerifyLoading ? (
             <>

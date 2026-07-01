@@ -51,7 +51,7 @@ export function HeadshotUpload({ onChange, existingImageUrl, disabled }: Headsho
   }
 
   return (
-    <div className={`group relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-background p-10 transition-all ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:border-primary hover:bg-card"}`}>
+    <div className={`group relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-background p-10 transition-all ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:border-primary hover:bg-card"}`}>
       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-card shadow-sm transition-transform group-hover:scale-110">
         <UploadCloud className="h-6 w-6 text-primary" />
       </div>

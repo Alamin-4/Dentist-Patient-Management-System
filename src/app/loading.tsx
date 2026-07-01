@@ -23,12 +23,12 @@ function HeroSkeleton() {
       <div className="mx-auto max-w-400 w-11/12">
         <div className="max-w-2xl mx-auto text-center space-y-5">
           <Skeleton className="h-4 w-32 rounded-full mx-auto" />
-          <Skeleton className="h-12 w-full rounded-xl" />
-          <Skeleton className="h-12 w-4/5 rounded-xl mx-auto" />
+          <Skeleton className="h-12 w-full rounded-lg" />
+          <Skeleton className="h-12 w-4/5 rounded-lg mx-auto" />
           <Skeleton className="h-6 w-3/4 rounded mx-auto" />
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
-            <Skeleton className="h-12 w-40 rounded-xl" />
-            <Skeleton className="h-12 w-40 rounded-xl" />
+            <Skeleton className="h-12 w-40 rounded-lg" />
+            <Skeleton className="h-12 w-40 rounded-lg" />
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function GlobalLoading() {
           <SectionTitleSkeleton />
           <DentistCardRowSkeleton />
           <div className="flex justify-center mt-8">
-            <Skeleton className="h-11 w-40 rounded-xl" />
+            <Skeleton className="h-11 w-40 rounded-lg" />
           </div>
         </div>
       </section>
@@ -101,9 +101,9 @@ export default function GlobalLoading() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="rounded-xl border border-slate-200 bg-[#F8FAFC] p-6 space-y-3"
+                className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-6 space-y-3"
               >
-                <Skeleton className="h-10 w-10 rounded-xl" />
+                <Skeleton className="h-10 w-10 rounded-lg" />
                 <Skeleton className="h-5 w-40" />
                 <Skeleton className="h-3.5 w-full" />
                 <Skeleton className="h-3.5 w-5/6" />
@@ -116,9 +116,9 @@ export default function GlobalLoading() {
       {/* CTA section */}
       <section className="py-16 px-6 bg-[#003366]">
         <div className="mx-auto max-w-400 w-11/12 flex flex-col items-center gap-4 text-center">
-          <Skeleton className="h-8 w-72 rounded-xl bg-white/20" />
+          <Skeleton className="h-8 w-72 rounded-lg bg-white/20" />
           <Skeleton className="h-4 w-96 max-w-full rounded bg-white/10" />
-          <Skeleton className="h-12 w-40 rounded-xl bg-white/20 mt-2" />
+          <Skeleton className="h-12 w-40 rounded-lg bg-white/20 mt-2" />
         </div>
       </section>
     </div>

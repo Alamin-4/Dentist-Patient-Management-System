@@ -86,7 +86,7 @@ export default function NotFound() {
           <button
             type="button"
             onClick={() => window.history.back()}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-7 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 active:scale-[0.97] sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-7 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 active:scale-[0.97] sm:w-auto"
           >
             <ArrowLeft className="size-4" />
             Go back
@@ -94,7 +94,7 @@ export default function NotFound() {
 
           <Link
             href="/find-dentist"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#10436B] px-7 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#0d3558] active:scale-[0.97] sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#10436B] px-7 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#0d3558] active:scale-[0.97] sm:w-auto"
           >
             <Search className="size-4" />
             Find Verified Dentist

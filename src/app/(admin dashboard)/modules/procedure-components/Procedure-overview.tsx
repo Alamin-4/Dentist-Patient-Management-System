@@ -243,7 +243,7 @@ export default function ProcedureOverview() {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}
@@ -256,7 +256,7 @@ export default function ProcedureOverview() {
       </div>
 
       {/* ── Table Card ─────────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
         {/* Filters and Actions Row */}
         <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3 min-h-[53px]">
           {selectedIds.length > 0 ? (
@@ -442,7 +442,7 @@ export default function ProcedureOverview() {
             className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"
             onClick={() => setIsAddModalOpen(false)}
           />
-          <div className="relative z-10 w-full max-w-md rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+          <div className="relative z-10 w-full max-w-md rounded-lg border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <h3 className="text-lg font-semibold text-[#1A1A2E]">Add New Procedure</h3>
               <button

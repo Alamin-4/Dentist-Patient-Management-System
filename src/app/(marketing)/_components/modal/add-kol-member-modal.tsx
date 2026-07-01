@@ -257,20 +257,18 @@ export default function AddKolMemberModal() {
                   >
                     {index !== steps.length - 1 && (
                       <div
-                        className={`absolute left-[calc(50%+1.25rem)] top-4 h-px w-[calc(100%-2.5rem)] sm:top-5 ${
-                          isCompleted ? "bg-(--light-green)" : "bg-border"
-                        }`}
+                        className={`absolute left-[calc(50%+1.25rem)] top-4 h-px w-[calc(100%-2.5rem)] sm:top-5 ${isCompleted ? "bg-(--light-green)" : "bg-border"
+                          }`}
                       />
                     )}
 
                     <div
-                      className={`relative z-10 flex size-8 items-center justify-center rounded-full border text-sm font-semibold sm:size-10 ${
-                        isCompleted
+                      className={`relative z-10 flex size-8 items-center justify-center rounded-full border text-sm font-semibold sm:size-10 ${isCompleted
                           ? "border-(--light-green) bg-(--light-green) text-white"
                           : isActive
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border bg-muted text-muted-foreground"
-                      }`}
+                        }`}
                     >
                       {isCompleted ? (
                         <svg
@@ -291,13 +289,12 @@ export default function AddKolMemberModal() {
                     </div>
 
                     <p
-                      className={`mt-2 max-w-28 text-[11px] font-semibold leading-tight sm:mt-3 sm:max-w-none sm:text-sm ${
-                        isCompleted
+                      className={`mt-2 max-w-28 text-[11px] font-semibold leading-tight sm:mt-3 sm:max-w-none sm:text-sm ${isCompleted
                           ? "text-(--light-green)"
                           : isActive
                             ? "text-foreground"
                             : "text-muted-foreground"
-                      }`}
+                        }`}
                     >
                       {step}
                     </p>
@@ -358,7 +355,7 @@ export default function AddKolMemberModal() {
               <Button
                 onClick={currentStepIndex === 0 ? handleClose : handlePrevious}
                 variant="outline"
-                className="h-12 w-full rounded-xl border-input px-5 text-base font-medium text-foreground sm:w-auto"
+                className="h-12 w-full rounded-lg border-input px-5 text-base font-medium text-foreground sm:w-auto"
               >
                 {currentStepIndex === 0 ? "Cancel" : "Back"}
                 {currentStepIndex > 0 && <ArrowLeft className="size-4" />}
@@ -370,7 +367,7 @@ export default function AddKolMemberModal() {
 
               <Button
                 onClick={isLastStep ? handleSubmit : handleNext}
-                className="h-12 w-full cursor-pointer rounded-xl bg-primary px-5 text-base font-medium text-sidebar-primary-foreground sm:w-auto"
+                className="h-12 w-full cursor-pointer rounded-lg bg-primary px-5 text-base font-medium text-sidebar-primary-foreground sm:w-auto"
               >
                 {getStepButtonLabel()}
                 {!isLastStep && <ArrowRight className="size-4" />}
@@ -420,7 +417,7 @@ export default function AddKolMemberModal() {
             <Button
               type="button"
               onClick={handleSuccessClose}
-              className="mt-8 h-12 rounded-xl bg-primary px-7 text-base font-medium text-primary-foreground hover:bg-sidebar-primary"
+              className="mt-8 h-12 rounded-lg bg-primary px-7 text-base font-medium text-primary-foreground hover:bg-sidebar-primary"
             >
               Done
             </Button>

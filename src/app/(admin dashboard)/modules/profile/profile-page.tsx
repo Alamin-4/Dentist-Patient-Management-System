@@ -87,7 +87,7 @@ function ProfileInfo({ user, refetch }: { user: any; refetch: () => void }) {
   return (
     <div className="flex-1 space-y-6">
       {/* Avatar card */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="relative">
             {user?.image ? (
@@ -130,7 +130,7 @@ function ProfileInfo({ user, refetch }: { user: any; refetch: () => void }) {
       </div>
 
       {/* Personal details */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <h3 className="mb-5 text-base font-semibold text-[#1A1A2E]">Personal details</h3>
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* First name */}
@@ -139,30 +139,28 @@ function ProfileInfo({ user, refetch }: { user: any; refetch: () => void }) {
             <input
               disabled={updateProfileMutation.isPending}
               {...register("firstName", { required: "First name is required" })}
-              className={`h-11 w-full rounded-xl border bg-white px-4 text-sm text-[#1A1A2E] outline-none focus:ring-1 focus:ring-[#1A1A2E] ${
-                errors.firstName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
-              }`}
+              className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-[#1A1A2E] outline-none focus:ring-1 focus:ring-[#1A1A2E] ${errors.firstName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                }`}
             />
             {errors.firstName && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.firstName.message}</p>
             )}
           </div>
-          
+
           {/* Last name */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-500">Last name</label>
             <input
               disabled={updateProfileMutation.isPending}
               {...register("lastName", { required: "Last name is required" })}
-              className={`h-11 w-full rounded-xl border bg-white px-4 text-sm text-[#1A1A2E] outline-none focus:ring-1 focus:ring-[#1A1A2E] ${
-                errors.lastName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
-              }`}
+              className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-[#1A1A2E] outline-none focus:ring-1 focus:ring-[#1A1A2E] ${errors.lastName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                }`}
             />
             {errors.lastName && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.lastName.message}</p>
             )}
           </div>
-          
+
           {/* Email - Read-only */}
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-gray-500">Email address</label>
@@ -172,7 +170,7 @@ function ProfileInfo({ user, refetch }: { user: any; refetch: () => void }) {
                 value={user?.email || ""}
                 disabled
                 readOnly
-                className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm text-gray-400 cursor-not-allowed outline-none"
+                className="h-11 w-full rounded-lg border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm text-gray-400 cursor-not-allowed outline-none"
               />
             </div>
           </div>
@@ -181,7 +179,7 @@ function ProfileInfo({ user, refetch }: { user: any; refetch: () => void }) {
             <button
               type="submit"
               disabled={updateProfileMutation.isPending}
-              className="flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-[#1A1A2E] hover:bg-[#1A1A2E]/90 disabled:opacity-60 disabled:cursor-not-allowed min-w-[130px] cursor-pointer"
+              className="flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white bg-[#1A1A2E] hover:bg-[#1A1A2E]/90 disabled:opacity-60 disabled:cursor-not-allowed min-w-[130px] cursor-pointer"
             >
               {updateProfileMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -245,7 +243,7 @@ function ChangePassword() {
 
   return (
     <div className="flex-1">
-      <form onSubmit={handleSubmit(onSubmit)} className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+      <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
         <div className="mb-6 flex items-center gap-3">
           <Lock className="h-5 w-5 text-gray-400" />
           <div>
@@ -264,9 +262,8 @@ function ChangePassword() {
                 disabled={changePasswordMutation.isPending}
                 placeholder="Enter old password"
                 {...register("oldPassword", { required: "Current password is required" })}
-                className={`h-12 w-full rounded-xl border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${
-                  errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
-                }`}
+                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                  }`}
               />
               <button
                 type="button"
@@ -293,9 +290,8 @@ function ChangePassword() {
                   required: "New password is required",
                   minLength: { value: 8, message: "New password must be at least 8 characters long" },
                 })}
-                className={`h-12 w-full rounded-xl border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${
-                  errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
-                }`}
+                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                  }`}
               />
               <button
                 type="button"
@@ -322,9 +318,8 @@ function ChangePassword() {
                   required: "Please confirm your password",
                   validate: (val) => val === newPasswordVal || "Passwords must match",
                 })}
-                className={`h-12 w-full rounded-xl border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${
-                  errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
-                }`}
+                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                  }`}
               />
               <button
                 type="button"
@@ -341,7 +336,7 @@ function ChangePassword() {
         </div>
 
         {/* Requirements check list */}
-        <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4">
+        <div className="mt-4 rounded-lg border border-gray-100 bg-gray-50 p-4">
           <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Password Requirements</p>
           <div className="space-y-1.5">
             {[
@@ -369,7 +364,7 @@ function ChangePassword() {
             type="submit"
             disabled={changePasswordMutation.isPending || !Object.values(checks).every(Boolean) || newPasswordVal !== watch("confirmNewPassword")}
             className={cn(
-              "flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer min-w-[160px]",
+              "flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer min-w-[160px]",
               changePasswordMutation.isPending || !Object.values(checks).every(Boolean) || newPasswordVal !== watch("confirmNewPassword")
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90"
@@ -421,7 +416,7 @@ export default function ProfilePage() {
 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
         {/* Sidebar nav */}
-        <div className="w-full rounded-xl border border-gray-100 bg-white p-3 shadow-sm sm:w-56 sm:shrink-0">
+        <div className="w-full rounded-lg border border-gray-100 bg-white p-3 shadow-sm sm:w-56 sm:shrink-0">
           <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wide text-gray-400">{sectionLabel}</p>
           {navItems.map(({ key, label, icon: Icon }) => (
             <button

@@ -54,7 +54,7 @@ function VerificationCardComponent({
     : "D";
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
+    <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Left: info */}
         <div className="flex items-start gap-3 sm:gap-4">

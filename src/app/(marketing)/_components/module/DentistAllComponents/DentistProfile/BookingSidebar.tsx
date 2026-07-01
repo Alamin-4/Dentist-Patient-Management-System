@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { ShieldCheck, MapPin, Globe, Star, FileText, Pen, Loader2, Check, AlertCircle, ShieldAlert } from "lucide-react";
+import { ShieldCheck, MapPin, Star, FileText, Pen, Loader2, Check, AlertCircle, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
@@ -291,7 +291,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
         <div className="flex flex-col gap-4 items-center">
           <div className="relative size-24 shrink-0 overflow-hidden rounded-full ring-4 ring-slate-50 bg-slate-100">
             <Image
-              src={dentist.image || "/placeholder-avatar.png"}
+              src={dentist.image || "/images/man-avatar.png"}
               alt={dentist.name}
               fill
               className="object-cover"
@@ -337,11 +337,10 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`size-4 ${
-                      i < Math.round(dentist.googleRating ?? dentist.rating ?? 5.0)
-                        ? "fill-current text-amber-400"
-                        : "text-slate-200"
-                    }`}
+                    className={`size-4 ${i < Math.round(dentist.googleRating ?? dentist.rating ?? 5.0)
+                      ? "fill-current text-amber-400"
+                      : "text-slate-200"
+                      }`}
                   />
                 ))}
               </div>
@@ -361,8 +360,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
           <div className="flex items-center gap-3">
             <FileText className="size-5 text-slate-400" /> License No.{" "}
             <span className="text-slate-900">
-              {dentist.dentistLicense?.registrationNumber ||
-                (dentist.verified ? "MX-2847361" : "Pending Claim")}
+              {dentist.dentistLicense?.registrationNumber || "Pending Claim"}
             </span>
           </div>
         </div>
@@ -371,18 +369,16 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
           <div className="flex items-center gap-2 rounded-full bg-[#EEF8FF] px-4 py-2 text-xs font-medium text-[#0E3E65]">
             <ShieldCheck className="size-4 text-[#003366]" /> No Surprise Guarantee
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-[#EEF8FF] px-4 py-2 text-xs font-medium text-[#0E3E65]">
-            <Globe className="size-4 text-[#003366]" /> {dentist.languages.join(" · ")}
-          </div>
         </div>
       </div>
 
       <div className="mt-10 flex items-center justify-between gap-6">
         <div>
-          <p className="text-xs text-[#6B7280]">Starting at</p>
+          <p className="text-xs text-[#6B7280]">Starting from</p>
           <p className="text-xl lg:text-2xl font-extrabold text-[#0E3E65]">
-            ${dentist.price ? dentist.price.toLocaleString() : "1,500"}
+            ${dentist.price ? dentist.price.toLocaleString() : "0"}
           </p>
+          <p className="text-[10px] text-[#9CA3AF]">Estimate</p>
         </div>
 
         {dentist.verified ? (
@@ -394,7 +390,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
           </Button>
         ) : (
           <div className="flex flex-col gap-2 flex-1">
-            {dentist.isClaimable && dentist.status === "UNVERIFIED" && (
+            {dentist.isClaimable && (
               <Button
                 variant="outline"
                 className="h-11 border-amber-500 text-amber-700 bg-amber-50/50 hover:bg-amber-50 font-bold"
@@ -415,7 +411,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
       {/* ── Consultation Request Modal ─────────────────────────────────── */}
       <Dialog open={isConsultationOpen} onOpenChange={setIsConsultationOpen}>
-        <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-xl">
+        <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-[#0E3E65] font-bold text-xl">Request a Consultation</DialogTitle>
             <DialogDescription className="text-slate-500">
@@ -487,7 +483,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
       </Dialog>
 
       <Dialog open={isClaimOpen} onOpenChange={setIsClaimOpen}>
-        <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-2xl rounded-xl overflow-hidden p-0">
+        <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-2xl rounded-lg overflow-hidden p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Claim Dentist Profile</DialogTitle>
             <DialogDescription>

@@ -107,7 +107,7 @@ export default function Phase1() {
 
     return Boolean(submittedLicence && hasLicenseVerified && hasHeadshot);
   }, [isFormLocked, verificationStatus, licenseFile, submittedLicence, hasHeadshot]);
-  
+
 
   useEffect(() => {
     setVerificationStepReady(1, isStepReady);
@@ -188,7 +188,7 @@ export default function Phase1() {
         />
       )}
 
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="rounded-lg border border-border bg-card shadow-sm">
         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
           <PhaseStep step={1} title="Verify your dental licence" />
 

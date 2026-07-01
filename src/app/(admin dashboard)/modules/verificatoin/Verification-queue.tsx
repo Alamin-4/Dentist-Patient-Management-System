@@ -210,7 +210,7 @@ export default function VerificationQueue() {
           {STAT_CARDS.map((card) => (
             <div
               key={card.key}
-              className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
+              className="flex flex-col gap-3 rounded-lg border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
             >
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-full ${card.iconBg}`}
@@ -229,7 +229,7 @@ export default function VerificationQueue() {
         </div>
 
         {/* Tabs + list */}
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
           <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
             <CustomTab
               tabs={tabs}

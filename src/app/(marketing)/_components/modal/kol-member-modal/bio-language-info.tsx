@@ -29,7 +29,7 @@ export default function BioLanguageInfoForm({
 					onChange={(event) => onChange("bio", event.target.value)}
 					placeholder="Prof. Mendez leads the implantology department at the University of Barcelona and has placed over 8,000 implants in his career."
 					rows={7}
-					className="min-h-40 rounded-xl border-input px-4 py-3 text-base shadow-none focus-visible:ring-ring md:text-base"
+					className="min-h-40 rounded-lg border-input px-4 py-3 text-base shadow-none focus-visible:ring-ring md:text-base"
 				/>
 				<p className="text-sm text-muted-foreground">
 					Shown on the KOL&apos;s card in the dentist directory.
@@ -44,7 +44,7 @@ export default function BioLanguageInfoForm({
 					value={data.languages}
 					onChange={(event) => onChange("languages", event.target.value)}
 					placeholder="Spanish, English, Portuguese"
-					className="h-12 rounded-xl border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
+					className="h-12 rounded-lg border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
 				/>
 				<p className="text-sm text-muted-foreground">Separate with commas.</p>
 			</div>

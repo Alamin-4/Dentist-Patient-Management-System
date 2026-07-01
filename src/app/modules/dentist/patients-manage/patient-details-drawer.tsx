@@ -29,7 +29,7 @@ function InfoCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
       {title && (
         <div className="border-b border-border px-4 py-3">
           <p className="text-sm font-semibold text-foreground">{title}</p>
@@ -94,7 +94,7 @@ export default function PatientDetailsDrawer({
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="flex w-full max-h-[calc(100vh-2rem)] my-auto rounded-xl overflow-hidden flex-col gap-0 border-l border-border bg-card p-0 mx-6 sm:max-w-md data-[side=right]:w-full data-[side=right]:sm:max-w-md"
+        className="flex w-full max-h-[calc(100vh-2rem)] my-auto rounded-lg overflow-hidden flex-col gap-0 border-l border-border bg-card p-0 mx-6 sm:max-w-md data-[side=right]:w-full data-[side=right]:sm:max-w-md"
       >
         <header className="shrink-0 border-b border-border bg-card px-5 pt-5 pb-0">
           <div className="mb-4 flex items-center justify-between">
@@ -119,11 +119,10 @@ export default function PatientDetailsDrawer({
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative mr-6 pb-3 text-sm transition-colors px-4 ${
-                    isActive
+                  className={`relative mr-6 pb-3 text-sm transition-colors px-4 ${isActive
                       ? "font-semibold text-primary"
                       : "font-medium text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   {tab.label}
                   {isActive && (
@@ -194,15 +193,14 @@ export default function PatientDetailsDrawer({
               {(patient.treatmentNote || patient.consultationSummary) && (
                 <div className="border-b border-border px-5 py-4">
                   <div
-                    className={`rounded-xl border px-4 py-3 text-sm font-medium ${
-                      patient.treatmentPlan === "rejected"
+                    className={`rounded-lg border px-4 py-3 text-sm font-medium ${patient.treatmentPlan === "rejected"
                         ? "border-rose-200 bg-rose-50 text-rose-600"
                         : patient.treatmentPlan === "awaiting response"
                           ? "border-amber-200 bg-amber-50 text-amber-700"
                           : patient.treatmentPlan === "accepted"
                             ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                             : "border-slate-200 bg-slate-50 text-slate-600"
-                    }`}
+                      }`}
                   >
                     {patient.treatmentNote ?? patient.consultationSummary}
                   </div>
@@ -244,9 +242,8 @@ export default function PatientDetailsDrawer({
                               alt={item.label}
                               fill
                               sizes="(max-width: 480px) 30vw, 140px"
-                              className={`object-cover ${
-                                item.label === "X-Ray" ? "grayscale" : ""
-                              }`}
+                              className={`object-cover ${item.label === "X-Ray" ? "grayscale" : ""
+                                }`}
                             />
                           </div>
                           <figcaption className="text-xs text-muted-foreground">
@@ -339,7 +336,7 @@ export default function PatientDetailsDrawer({
                       onChange={(e) => setAdditionalNotes(e.target.value)}
                       placeholder="Care instructions, follow-up"
                       rows={4}
-                      className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-slate-400 focus:outline-none"
+                      className="w-full resize-none rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-slate-400 focus:outline-none"
                     />
                   </div>
                 </div>

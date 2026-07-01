@@ -11,7 +11,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
   const name = user?.name || `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Dentist Profile";
   const specialtyName = dentist?.specialty?.name || "General Dentist";
   const image = user?.image;
-  
+
   const initials = name
     .split(" ")
     .map((n: string) => n[0])
@@ -43,7 +43,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-between rounded-xl border border-gray-100 bg-white p-8 md:flex-row gap-6">
+    <div className="flex flex-col items-center justify-between rounded-lg border border-gray-100 bg-white p-8 md:flex-row gap-6">
       <div className="flex items-center gap-6">
         <Avatar className="h-20 w-20">
           {image && (

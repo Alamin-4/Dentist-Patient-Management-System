@@ -91,8 +91,8 @@ function StatCard({ icon, label, value, sub, iconBg, valueColor }: {
   valueColor: string;
 }) {
   return (
-    <div className="flex items-start gap-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", iconBg)}>
+    <div className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
+      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", iconBg)}>
         {icon}
       </div>
       <div className="min-w-0 flex-1">
@@ -112,7 +112,7 @@ function KolCard({ kol, onEdit, onDeactivate, onReactivate }: {
   onReactivate: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-start gap-3">
         <Avatar initials={kol.initials} color={kol.avatar_color} headshot={kol.headshot} size="lg" />
         <div className="min-w-0 flex-1">
@@ -189,7 +189,7 @@ function FilterDropdown({ label, options, value, onChange }: {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute top-full z-20 mt-1 min-w-40 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+          <div className="absolute top-full z-20 mt-1 min-w-40 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={() => { onChange(""); setOpen(false); }}
               className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50",
@@ -324,7 +324,7 @@ export default function KolPage() {
           </div>
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 rounded-xl bg-[#1A1A2E] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
+            className="flex items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
           >
             <Plus className="h-4 w-4" />
             Add KOL
@@ -360,7 +360,7 @@ export default function KolPage() {
         </div>
 
         {/* Table card */}
-        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
           {/* Filter bar */}
           <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 p-4">
             <div className="relative flex-1 min-w-50">

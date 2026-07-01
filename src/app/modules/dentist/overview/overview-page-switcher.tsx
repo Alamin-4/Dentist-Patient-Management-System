@@ -42,7 +42,7 @@ export function OverviewPageSwitcher() {
   if (isLoading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center w-full px-4">
-        <div className="mx-auto max-w-xl w-full bg-white p-6 lg:p-8 rounded-xl border border-gray-200 shadow-sm animate-pulse">
+        <div className="mx-auto max-w-xl w-full bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm animate-pulse">
           <div className="flex flex-col items-center text-center">
             {/* Circular progress skeleton */}
             <div className="mb-8 h-44 w-44 sm:h-52 sm:w-52 rounded-full bg-gray-100 flex items-center justify-center">
@@ -69,7 +69,7 @@ export function OverviewPageSwitcher() {
             </div>
 
             <div className="mt-8 w-full">
-              <div className="h-14 w-full rounded-xl bg-gray-200" />
+              <div className="h-14 w-full rounded-lg bg-gray-200" />
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@ export function OverviewPageSwitcher() {
           </p>
           <button
             onClick={() => refetch()}
-            className="mt-5 inline-flex items-center justify-center rounded-xl bg-[#0E3E65] hover:bg-[#082842] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors"
+            className="mt-5 inline-flex items-center justify-center rounded-lg bg-[#0E3E65] hover:bg-[#082842] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors"
           >
             Retry Connection
           </button>

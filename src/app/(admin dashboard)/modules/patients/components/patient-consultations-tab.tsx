@@ -108,8 +108,8 @@ export function PatientConsultationsTab({
     activeTab === "upcoming"
       ? upcoming
       : activeTab === "active"
-      ? active
-      : estimates;
+        ? active
+        : estimates;
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
@@ -122,7 +122,7 @@ export function PatientConsultationsTab({
   };
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
       {/* Sub-tabs */}
       <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
         <CustomTab
@@ -144,7 +144,7 @@ export function PatientConsultationsTab({
           currentList.map((c) => (
             <div
               key={c.id}
-              className="rounded-xl border border-gray-100 p-5 shadow-sm"
+              className="rounded-lg border border-gray-100 p-5 shadow-sm"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <DentistCard c={c} />
@@ -202,7 +202,7 @@ export function PatientConsultationsTab({
           currentList.map((c) => (
             <div
               key={c.id}
-              className="rounded-xl border border-gray-100 p-5 shadow-sm"
+              className="rounded-lg border border-gray-100 p-5 shadow-sm"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <DentistCard c={c} />

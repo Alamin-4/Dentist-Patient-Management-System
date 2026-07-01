@@ -39,7 +39,7 @@ export default function ClinicLocationModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.18 }}
-            className="relative bg-white rounded-xl p-6 w-full max-w-[520px] shadow-2xl z-10"
+            className="relative bg-white rounded-lg p-6 w-full max-w-[520px] shadow-2xl z-10"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
@@ -56,7 +56,7 @@ export default function ClinicLocationModal({
             <p className="text-sm text-[#475569] mb-4">{address}</p>
 
             {/* Map */}
-            <div className="w-full h-64 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+            <div className="w-full h-64 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
               <iframe
                 src={mapSrc}
                 width="100%"

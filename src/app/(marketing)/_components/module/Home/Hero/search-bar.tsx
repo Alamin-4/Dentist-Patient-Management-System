@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 
 export default function SearchBar() {
-  const router = useRouter(); // ✅ Router initialize
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProcedure, setSelectedProcedure] = useState("");
@@ -70,7 +70,7 @@ export default function SearchBar() {
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-xl border border-gray-100 bg-white p-2 shadow animate-in fade-in zoom-in duration-150 max-h-60 overflow-y-auto">
+          <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-lg border border-gray-100 bg-white p-2 shadow animate-in fade-in zoom-in duration-150 max-h-60 overflow-y-auto">
             {proceduresLoading ? (
               <div className="px-4 py-3 text-sm text-gray-500">Loading...</div>
             ) : procedures?.length === 0 ? (

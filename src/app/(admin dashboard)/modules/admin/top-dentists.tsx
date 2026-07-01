@@ -3,7 +3,7 @@ import { topDentists } from "./overview-data";
 
 export function TopDentists() {
   return (
-    <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[15px] font-bold text-[#1A1A2E]">Top dentists</h3>

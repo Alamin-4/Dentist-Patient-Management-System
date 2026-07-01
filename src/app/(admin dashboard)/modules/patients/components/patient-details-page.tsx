@@ -117,7 +117,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
       </div>
 
       {/* ── Hero card ─────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           {/* Left: avatar + info */}
           <div className="flex items-start gap-4">
@@ -202,7 +202,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
         {detailStats.map((s, i) => (
           <div
             key={i}
-            className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+            className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}

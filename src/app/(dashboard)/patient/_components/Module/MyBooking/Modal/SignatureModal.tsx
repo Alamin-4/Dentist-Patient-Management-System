@@ -84,7 +84,7 @@ const SignatureModal = ({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden"
+        className="bg-white w-full max-w-lg rounded-lg shadow-2xl overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
@@ -99,7 +99,7 @@ const SignatureModal = ({
 
         {/* Tabs */}
         <div className="p-6">
-          <div className="flex bg-[#F8FAFC] p-1 rounded-xl mb-6">
+          <div className="flex bg-[#F8FAFC] p-1 rounded-lg mb-6">
             <button
               onClick={() => setActiveTab("draw")}
               className={cn(
@@ -125,7 +125,7 @@ const SignatureModal = ({
           </div>
 
           {/* Canvas/Input Area */}
-          <div className="relative border border-slate-200 rounded-xl overflow-hidden min-h-50 bg-white group">
+          <div className="relative border border-slate-200 rounded-lg overflow-hidden min-h-50 bg-white group">
             {activeTab === "draw" ? (
               <>
                 <canvas
@@ -166,13 +166,13 @@ const SignatureModal = ({
         <div className="px-6 py-6 border-t border-slate-100 flex items-center justify-between gap-4">
           <button
             onClick={onClose}
-            className="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors"
+            className="flex-1 py-3 border border-slate-200 rounded-lg font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
-            className="flex-1 py-3 bg-[#0F3659] text-white rounded-xl font-bold hover:bg-[#0A2640] transition-colors"
+            className="flex-1 py-3 bg-[#0F3659] text-white rounded-lg font-bold hover:bg-[#0A2640] transition-colors"
           >
             Confirm Sign
           </button>

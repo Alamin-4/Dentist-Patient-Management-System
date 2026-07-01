@@ -35,7 +35,7 @@ export function RejectPhaseModal({
         onClick={onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export function RejectPhaseModal({
               onChange={(e) => setReason(e.target.value)}
               placeholder="Enter rejection reason..."
               rows={4}
-              className="w-full resize-none rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+              className="w-full resize-none rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
             />
           </div>
 
@@ -77,14 +77,14 @@ export function RejectPhaseModal({
           <div className="mt-5 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               disabled={!reason.trim()}
               onClick={() => onConfirm(reason.trim())}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
             >
               <XCircle className="h-4 w-4" />
               Confirm Rejection

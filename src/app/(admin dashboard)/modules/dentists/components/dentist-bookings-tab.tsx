@@ -55,7 +55,7 @@ export function DentistBookingsTab({ bookings }: DentistBookingsTabProps) {
       : bookings.filter((b) => b.status === activeStatus);
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
       {/* Sub-tabs */}
       <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
         <CustomTab

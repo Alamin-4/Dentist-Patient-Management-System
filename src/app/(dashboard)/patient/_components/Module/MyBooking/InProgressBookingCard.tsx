@@ -18,7 +18,7 @@ export default function InProgressBookingCard({ booking }: Props) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white border border-[#CEE0F4] rounded-xl overflow-hidden"
+      className="bg-white border border-[#CEE0F4] rounded-lg overflow-hidden"
     >
       {/* Top Section */}
       <div className="p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">

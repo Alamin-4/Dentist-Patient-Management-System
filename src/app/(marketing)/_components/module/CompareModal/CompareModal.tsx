@@ -56,24 +56,24 @@ export default function CompareModal() {
     if (!showCompareModal) return;
 
     const timeoutId = window.setTimeout(() => {
-    if (dentistsToCompare.length > 0) {
-      setDentists(dentistsToCompare);
-      setSelectedIds(dentistsToCompare.map((d) => d.id));
-      return;
-    }
+      if (dentistsToCompare.length > 0) {
+        setDentists(dentistsToCompare);
+        setSelectedIds(dentistsToCompare.map((d) => d.id));
+        return;
+      }
 
-    // Fallback: load from storage (postBooking flow or direct open)
-    const stored = getDentistsFromStorage();
-    if (isPostBooking && selectedDentistId) {
-      const main = stored.find((d) => d.id === selectedDentistId);
-      const others = stored.filter((d) => d.id !== selectedDentistId);
-      const list = main ? [main, ...others.slice(0, 2)] : stored.slice(0, 3);
-      setDentists(list);
-      setSelectedIds([selectedDentistId]);
-    } else {
-      setDentists(stored.slice(0, 3));
-      setSelectedIds([]);
-    }
+      // Fallback: load from storage (postBooking flow or direct open)
+      const stored = getDentistsFromStorage();
+      if (isPostBooking && selectedDentistId) {
+        const main = stored.find((d) => d.id === selectedDentistId);
+        const others = stored.filter((d) => d.id !== selectedDentistId);
+        const list = main ? [main, ...others.slice(0, 2)] : stored.slice(0, 3);
+        setDentists(list);
+        setSelectedIds([selectedDentistId]);
+      } else {
+        setDentists(stored.slice(0, 3));
+        setSelectedIds([]);
+      }
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
@@ -86,7 +86,7 @@ export default function CompareModal() {
       return [...prev, id];
     });
   };
-// please here add some console to debug this function
+  // please here add some console to debug this function
   const handleBook = () => {
     if (selectedIds.length === 0) return;
     setSelectedDentistId(selectedIds[0]);
@@ -131,7 +131,7 @@ export default function CompareModal() {
 
   return (
     <Dialog open={showCompareModal} onOpenChange={setShowCompareModal}>
-      <DialogContent className="sm:max-w-4xl w-full p-0 rounded-xl overflow-hidden bg-white max-h-[92vh] flex flex-col">
+      <DialogContent className="sm:max-w-4xl w-full p-0 rounded-lg overflow-hidden bg-white max-h-[92vh] flex flex-col">
         <DialogTitle className="sr-only">
           {isPostBooking
             ? "Your personalised estimates are ready"
@@ -179,7 +179,7 @@ export default function CompareModal() {
                   className="flex flex-col items-center text-center px-4"
                 >
                   <Image
-                    src={doc.image ?? "/placeholder-avatar.png"}
+                    src={doc.image ?? "/images/man-avatar.png"}
                     alt={doc.name}
                     width={80}
                     height={80}
@@ -196,11 +196,10 @@ export default function CompareModal() {
                         <CheckCircle2 className="size-5 fill-primary text-primary stroke-white" />
                       ) : (
                         <Circle
-                          className={`size-5 transition-colors ${
-                            selectedIds.length >= 2
-                              ? "text-gray-200 cursor-not-allowed"
-                              : "text-gray-400 hover:text-primary"
-                          }`}
+                          className={`size-5 transition-colors ${selectedIds.length >= 2
+                            ? "text-gray-200 cursor-not-allowed"
+                            : "text-gray-400 hover:text-primary"
+                            }`}
                         />
                       )}
                     </button>
@@ -275,7 +274,7 @@ export default function CompareModal() {
             {/* Guarantee banner — post-booking only */}
             {isPostBooking && (
               <div className="px-8 py-4 border-b border-border">
-                <div className="flex items-center justify-center gap-2 px-6 py-3 bg-primary/5 border border-primary/20 rounded-xl">
+                <div className="flex items-center justify-center gap-2 px-6 py-3 bg-primary/5 border border-primary/20 rounded-lg">
                   <ShieldCheck className="size-4 shrink-0 text-primary" />
                   <p className="text-sm text-primary font-medium text-center">
                     These estimates are binding and protected by the No Surprise
@@ -292,7 +291,7 @@ export default function CompareModal() {
           <button
             onClick={handleBook}
             disabled={selectedIds.length === 0}
-            className="inline-flex items-center gap-3 rounded-xl bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-40"
+            className="inline-flex items-center gap-3 rounded-lg bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-40"
           >
             <span>
               {schedule

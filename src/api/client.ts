@@ -237,7 +237,7 @@ export const apiClient = {
       });
       return response.data;
     },
-    stepThree: async (payload: { clinicAddress: string; procedureDocs: any[] }) => {
+    stepThree: async (payload: { clinicAddress: string; latitude?: number; longitude?: number; procedureDocs: any[] }) => {
       const response = await api.post(endpoints.dentists.verifyClinicDepthSubmit, payload);
       return response.data;
     },

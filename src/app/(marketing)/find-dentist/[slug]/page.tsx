@@ -27,17 +27,27 @@ export default function ViewDentistProfile() {
   const mappedDentist = useMemo(() => {
     if (!directoryDetailResponse?.data) return null;
     const d = directoryDetailResponse.data;
+    const googleRating: number | null = d.googleRating ?? null;
+    const doctoraliaRating: number | null = d.doctoraliaRating ?? null;
+    const combinedRating: number | null =
+      googleRating != null && doctoraliaRating != null
+        ? (googleRating + doctoraliaRating) / 2
+        : googleRating ?? doctoraliaRating ?? null;
+    const reviewCount = d.googleReviewCount ?? d.doctoraliaReviewCount ?? 0;
+
     return {
       id: d.id,
       name: d.name,
       slug: d.slug,
       specialty: d.specialty || "General Dentist",
-      rating: d.rating || 5.0,
-      reviewCount: d.reviewCount || 0,
-      image: d.image || "/placeholder-avatar.png",
+      rating: combinedRating ?? 0,
+      reviewCount,
+      image: d.image || "/images/man-avatar.png",
       location: d.fullAddress || d.city || "Mexico",
       city: d.city || "",
       country: d.country || "Mexico",
+      latitude: d.latitude ?? null,
+      longitude: d.longitude ?? null,
       price: d.price || 0,
       rdvScore: d.rdvScore || 0,
       verified: d.status === "VERIFIED",
@@ -45,10 +55,10 @@ export default function ViewDentistProfile() {
       isClaimable: d.isClaimable,
       profileType: d.profileType || "CLAIMABLE",
       procedures: d.procedures || [],
-      languages: d.languages || ["English", "Spanish"],
+      languages: d.languages || [],
       bio: d.description || d.bio || `Dr. ${d.name} is a highly dedicated professional specializing in ${d.specialty || "dentistry"} at ${d.clinicName || "their local clinic"}. Located in ${d.city || "Mexico"}, they are committed to providing outstanding dental care.`,
-      googleRating: d.googleRating || d.rating || 5.0,
-      googleReviewCount: d.googleReviewCount || d.reviewCount || 0,
+      googleRating: googleRating ?? combinedRating ?? 0,
+      googleReviewCount: reviewCount,
       dentistLicense: d.dentistLicense,
       dentistOperations: d.dentistOperations,
       materials: d.materials || [],

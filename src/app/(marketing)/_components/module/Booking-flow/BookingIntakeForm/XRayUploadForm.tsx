@@ -68,7 +68,7 @@ export default function XRayUploadForm() {
 
         {file ? (
           <div className="flex flex-col items-center animate-in zoom-in duration-300">
-            <div className="relative p-4 bg-white rounded-xl shadow-sm mb-4">
+            <div className="relative p-4 bg-white rounded-lg shadow-sm mb-4">
               <FileText className="w-10 h-10 text-[#113254]" />
               <button
                 onClick={(e) => {
@@ -108,12 +108,12 @@ export default function XRayUploadForm() {
             updateXrayNotes(event.target.value);
           }}
           placeholder="Add any context about this file"
-          className="w-full min-h-28 rounded-xl border border-[#E5E7EB] p-4 text-[#1A1A2E] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#113254]"
+          className="w-full min-h-28 rounded-lg border border-[#E5E7EB] p-4 text-[#1A1A2E] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#113254]"
         />
       </div>
 
       {/* Warning Banner from image_e09336.png */}
-      <div className="mt-10 p-6 bg-[#FFFBEB] border border-[#FEF3C7] rounded-xl">
+      <div className="mt-10 p-6 bg-[#FFFBEB] border border-[#FEF3C7] rounded-lg">
         <p className="text-[#1A1A2E] text-[15px] leading-relaxed font-medium">
           Without X-rays, your estimate range may be wider. Your doctors may
           also request them during your video consultation before confirming a

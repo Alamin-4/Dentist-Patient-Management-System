@@ -116,7 +116,7 @@ export default function CreateFinalTreatmentPlanModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
         <DialogOverlay className="bg-black/30 backdrop-blur-sm" />
-        <DialogContent className="w-[95vw] max-w-3xl rounded-xl p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
+        <DialogContent className="w-[95vw] max-w-3xl rounded-lg p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
           {/* ── Modal Header ── */}
           <div className="flex items-center justify-between px-7 py-5 border-b border-slate-100 shrink-0">
             <DialogTitle className="text-lg font-bold text-[#1A1A2E]">
@@ -168,7 +168,7 @@ export default function CreateFinalTreatmentPlanModal({
                 </div>
 
                 {/* Dental History Box */}
-                <div className="border border-slate-200 rounded-xl bg-white overflow-hidden">
+                <div className="border border-slate-200 rounded-lg bg-white overflow-hidden">
                   <div className="px-4 py-2.5 border-b border-slate-100">
                     <p className="text-sm font-semibold text-[#4A4A4C]">Dental History</p>
                   </div>
@@ -190,7 +190,7 @@ export default function CreateFinalTreatmentPlanModal({
               {/* ── Estimate Section ── */}
               <div>
                 <h4 className="text-sm font-semibold text-slate-700 mb-3">Estimate</h4>
-                <div className="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-lg border border-slate-100">
                   <span className="text-sm text-slate-600">Estimate Total</span>
                   <span className="text-sm font-bold text-[#0A2540]">{estimateTotal}</span>
                 </div>
@@ -204,11 +204,10 @@ export default function CreateFinalTreatmentPlanModal({
                   onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                   onDragLeave={() => setIsDragging(false)}
                   onDrop={handleFileDrop}
-                  className={`w-full border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
-                    isDragging
+                  className={`w-full border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${isDragging
                       ? "border-[#163E5C] bg-[#F0F5FA]"
                       : "border-slate-200 bg-white hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   <Upload className="w-5 h-5 text-slate-400" />
                   {uploadedFile ? (
@@ -330,7 +329,7 @@ export default function CreateFinalTreatmentPlanModal({
               </div>
 
               {/* ── Disclaimer ── */}
-              <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+              <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
                 <p className="text-sm text-blue-700 text-center">
                   No treatment can begin until the patient confirms this final plan.
                 </p>
@@ -342,7 +341,7 @@ export default function CreateFinalTreatmentPlanModal({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#0E3E65] hover:bg-[#082f46] text-white h-12 px-8 rounded-xl font-semibold text-sm"
+                className="bg-[#0E3E65] hover:bg-[#082f46] text-white h-12 px-8 rounded-lg font-semibold text-sm"
               >
                 {isSubmitting ? "Submitting…" : "Submit Final Treatment Plan"}
               </Button>

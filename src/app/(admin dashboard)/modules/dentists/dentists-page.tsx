@@ -166,7 +166,7 @@ function ActionMenu({
               setOpen(false);
             }}
           />
-          <div className="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+          <div className="absolute right-0 z-20 mt-1 w-44 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -691,7 +691,7 @@ export default function DentistsPage() {
       <CustomStats stats={stats} />
 
       {/* ── Tabs + Table ─────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
         {/* Tabs */}
         <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
           <CustomTab
@@ -751,7 +751,7 @@ export default function DentistsPage() {
           </div>
         </div>
 
-        
+
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
@@ -760,7 +760,7 @@ export default function DentistsPage() {
                   <input type="checkbox" className="rounded border-gray-300" />
                 </th>
 
-             
+
                 {[
                   "Dentist",
                   "Specialty",

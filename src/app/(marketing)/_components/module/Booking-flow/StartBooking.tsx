@@ -21,7 +21,7 @@ export default function StartBookingModal() {
       open={showBookingModal === "startBooking"}
       onOpenChange={() => setShowBookingModal(null)}
     >
-      <DialogContent className="sm:max-w-190 w-full p-0 border-none rounded-xl overflow-hidden bg-white">
+      <DialogContent className="sm:max-w-190 w-full p-0 border-none rounded-lg overflow-hidden bg-white">
         <div className="px-8 py-6 border-b border-[#F3F4F6]">
           <DialogTitle className="text-[24px] font-bold text-[#1A1A2E]">
             Book Consultation
@@ -79,7 +79,7 @@ export default function StartBookingModal() {
             <button
               onClick={() => setShowBookingModal("book")}
               disabled={!agreed}
-              className="px-10 py-4 rounded-xl text-white font-semibold text-[16px] transition-all bg-[#113254] hover:bg-[#0d2844] active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="px-10 py-4 rounded-lg text-white font-semibold text-[16px] transition-all bg-[#113254] hover:bg-[#0d2844] active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Continue to Booking
             </button>

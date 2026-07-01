@@ -22,7 +22,7 @@ export default function PricingSection({
             All prices are all-inclusive. No hidden fees — guaranteed.
           </p>
         </div>
-        <div className="text-center py-10 text-slate-500 bg-[#F8FAFC] rounded-xl border border-dashed border-slate-200">
+        <div className="text-center py-10 text-slate-500 bg-[#F8FAFC] rounded-lg border border-dashed border-slate-200">
           No procedures or pricing details have been configured for this dentist.
         </div>
       </section>
@@ -46,11 +46,10 @@ export default function PricingSection({
           return (
             <div
               key={proc.id || index}
-              className={`rounded-xl border p-5 space-y-4 flex flex-col ${
-                highlighted
+              className={`rounded-lg border p-5 space-y-4 flex flex-col ${highlighted
                   ? "border-[#003366] bg-[#EEF8FF]"
                   : "border-slate-200 bg-white"
-              }`}
+                }`}
             >
               {highlighted && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[#003366] px-3 py-1 text-[11px] font-bold text-white w-fit">
@@ -78,11 +77,10 @@ export default function PricingSection({
                 </li>
               </ul>
               <Button
-                className={`w-full h-10 rounded-lg font-semibold text-sm ${
-                  highlighted
+                className={`w-full h-10 rounded-lg font-semibold text-sm ${highlighted
                     ? "bg-[#003366] text-white hover:bg-[#002850]"
                     : "bg-white border border-[#003366] text-[#003366] hover:bg-slate-50"
-                }`}
+                  }`}
                 variant={highlighted ? "default" : "outline"}
               >
                 Book this package

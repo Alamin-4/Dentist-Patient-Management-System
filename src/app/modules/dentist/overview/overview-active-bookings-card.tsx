@@ -37,7 +37,7 @@ function actionText(status: string) {
 
 export function OverviewActiveBookingsCard({ activeBookings }: Props) {
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-lg font-semibold text-foreground">
@@ -135,7 +135,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
           return (
             <article
               key={booking.patient_info.email}
-              className="rounded-xl border border-border bg-background p-4"
+              className="rounded-lg border border-border bg-background p-4"
             >
               {/* Top row */}
               <div className="flex items-start justify-between gap-3">

@@ -121,7 +121,7 @@ export function VerificationBanner() {
   ];
 
   return (
-    <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-xl border border-gray-200 shadow-sm">
+    <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm">
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-8 h-44 w-44 sm:h-52 sm:w-52">
           <svg
@@ -200,7 +200,7 @@ export function VerificationBanner() {
           <div className="mt-8">
             <Button
               size="lg"
-              className="w-full h-14 rounded-xl bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer"
+              className="w-full h-14 rounded-lg bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer"
               onClick={() => {
                 if (step2Status === VerificationStatus.SUBMITTED || step2Status === VerificationStatus.APPROVED) {
                   router.push("/dentist/verification?phase=clinic-depth-verify");

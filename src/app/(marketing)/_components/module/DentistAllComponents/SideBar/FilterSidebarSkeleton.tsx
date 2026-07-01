@@ -30,8 +30,8 @@ export default function FilterSidebarSkeleton() {
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-2 w-full rounded-full mt-6 mb-5" />
         <div className="flex gap-3">
-          <Skeleton className="flex-1 h-9 rounded-xl" />
-          <Skeleton className="flex-1 h-9 rounded-xl" />
+          <Skeleton className="flex-1 h-9 rounded-lg" />
+          <Skeleton className="flex-1 h-9 rounded-lg" />
         </div>
       </div>
 

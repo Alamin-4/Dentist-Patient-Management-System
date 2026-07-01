@@ -1,5 +1,6 @@
 import { apiClient } from "@/api/client";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export type StepStatus = "PENDING" | "SUBMITTED" | "APPROVED" | "REJECTED";
 
@@ -18,13 +19,23 @@ const RDV_SCORE_BY_STEP: Record<VerificationPhaseStep, number> = {
 };
 
 export default function useVerificationProgress() {
+    // `enabled` must be identical between the server render and the client's
+    // first (hydration) render, or React throws a hydration mismatch. Gating
+    // on a `mounted` flag flipped in an effect (instead of `typeof window`,
+    // which is already true during the client's hydration pass) keeps both
+    // renders in sync; the queries simply start one tick later on the client.
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const checkLicenseVerifyProgress = useQuery<StepCheckResponse>({
         queryKey: ["licenseVerifyProgress"],
         queryFn: () =>
             apiClient.dentists.stepOneCheck()
                 .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
                 .catch(() => ({ submitted: false, status: null })),
-        enabled: typeof window !== "undefined",
+        enabled: mounted,
         staleTime: 60_000,
         retry: false,
     });
@@ -35,7 +46,7 @@ export default function useVerificationProgress() {
             apiClient.dentists.stepTwoCheck()
                 .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
                 .catch(() => ({ submitted: false, status: null })),
-        enabled: typeof window !== "undefined",
+        enabled: mounted,
         staleTime: 60_000,
         retry: false,
     });
@@ -46,7 +57,7 @@ export default function useVerificationProgress() {
             apiClient.dentists.stepThreeCheck()
                 .then((res) => (res?.data as StepCheckResponse) || { submitted: false, status: null })
                 .catch(() => ({ submitted: false, status: null })),
-        enabled: typeof window !== "undefined",
+        enabled: mounted,
         staleTime: 60_000,
         retry: false,
     });

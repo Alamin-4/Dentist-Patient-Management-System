@@ -25,22 +25,18 @@ const SkeletonCard = () => (
 );
 
 export default function VerifiedDentists() {
-  const [procedure, setProcedure] = useState("Orthodontist");
+  const [procedure, setProcedure] = useState("");
   const [compareMode, setCompareMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  
+
   const {
     setShowSignupModal,
     setShowPersonalizeModal,
     setDentistsToCompare,
     setShowCompareModal,
     searchQuery,
-    setShowBookingModal,
-    setSelectedDentistId,
-    setShowRequestConsultationModal,
-    setRequestConsultationDentist,
   } = useStateContext();
-  
+
   const { user } = useMe();
 
   const { data: directoryResponse, isLoading } = useDentistDirectory({
@@ -48,7 +44,7 @@ export default function VerifiedDentists() {
     specialty: procedure !== "All Procedures" ? procedure : undefined,
     limit: 6,
   });
-console.log(directoryResponse)
+
   const dentists = useMemo(() => {
     const apiList = directoryResponse?.data || [];
     return apiList.map((d: any) => ({
@@ -91,24 +87,7 @@ console.log(directoryResponse)
     return dentists.filter((doc: any) => selectedIds.includes(doc.id));
   }, [dentists, selectedIds]);
 
-  const handleBookConsultation = (dentist: any) => {
-    setSelectedDentistId(dentist.id);
-    if (user) {
-      const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
-      if (hasProfileDetails) {
-        setShowBookingModal("startBooking");
-      } else {
-        setShowPersonalizeModal(true);
-      }
-    } else {
-      setShowSignupModal(true);
-    }
-  };
 
-  const handleRequestConsultation = (dentist: any) => {
-    setRequestConsultationDentist(dentist);
-    setShowRequestConsultationModal(true);
-  };
 
   return (
     <section className="py-20">
@@ -157,9 +136,9 @@ console.log(directoryResponse)
               </button>
             </div>
           </header>
-          
+
           {selectedDentists.length > 0 && (
-            <div className="w-full mb-6 flex flex-row gap-4 items-center justify-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <div className="w-full mb-6 flex flex-row gap-4 items-center justify-center bg-slate-50 p-4 rounded-lg border border-slate-100">
               <div className="flex flex-row gap-2 items-center justify-center">
                 {selectedDentists.map((dentist: any, i: number) => (
                   <div key={dentist.id} className="relative group">
@@ -199,12 +178,12 @@ console.log(directoryResponse)
               </div>
             </div>
           )}
-          
+
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
             ) : dentists.length === 0 ? (
-              <div className="col-span-2 text-center py-20 bg-slate-50 rounded-xl border border-slate-100">
+              <div className="col-span-2 text-center py-20 bg-slate-50 rounded-lg border border-slate-100">
                 <p className="text-slate-500 font-semibold">No dentists found matching the criteria.</p>
                 <p className="text-slate-400 text-sm mt-1">Try selecting another procedure or searching in the navbar.</p>
               </div>
@@ -216,8 +195,6 @@ console.log(directoryResponse)
                   isCompareMode={compareMode}
                   isSelected={selectedIds.includes(doc.id)}
                   onSelect={toggleSelect}
-                  onBookConsultation={handleBookConsultation}
-                  onRequestConsultation={handleRequestConsultation}
                 />
               ))
             )}

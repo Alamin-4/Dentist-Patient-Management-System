@@ -196,7 +196,7 @@ export function ProfessionalDetailsForm({
       <Button
         type="submit"
         disabled={isProfessionalDetailsLoading}
-        className="mt-4  h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] rounded-xl text-lg font-semibold shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+        className="mt-4  h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] rounded-lg text-lg font-semibold shadow-lg flex items-center justify-center gap-2 cursor-pointer"
       >
         {isProfessionalDetailsLoading && (
           <Loader2 className="h-5 w-5 animate-spin" />

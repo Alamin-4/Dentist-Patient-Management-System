@@ -84,7 +84,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Patient & Dentist */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
           Patient &amp; {booking.status === "Cancelled" ? "Provider" : "Dentist"}
         </h3>
@@ -189,7 +189,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
       </div>
 
       {/* Appointment Details */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
           Appointment Details
         </h3>
@@ -227,7 +227,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
       </div>
 
       {/* Payment & Escrow */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
           Payment &amp; Escrow
         </h3>
@@ -255,10 +255,10 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
                 escrowType === "released"
                   ? "text-emerald-600"
                   : escrowType === "refunded"
-                  ? "text-red-500"
-                  : escrowType === "in_escrow"
-                  ? "text-amber-600"
-                  : "text-gray-500"
+                    ? "text-red-500"
+                    : escrowType === "in_escrow"
+                      ? "text-amber-600"
+                      : "text-gray-500"
               )}
             >
               {booking.payment.escrow_status ?? "—"}
@@ -269,7 +269,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
 
       {/* Cancellation Details */}
       {"cancellation" in booking && booking.cancellation && (
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-[#1A1A2E]">
               Cancellation Details

@@ -99,10 +99,10 @@ export default function RequestConsultationModal() {
   return (
     <Dialog open={showRequestConsultationModal} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl transition-all duration-300">
-        
+
         {/* Decorative top accent gradient */}
         <div className="h-2 w-full bg-linear-to-r from-blue-600 via-[#10436B] to-emerald-500" />
-        
+
         <div className="p-8">
           <DialogHeader className="gap-2 text-left relative">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#10436B] border border-blue-100 w-fit">
@@ -118,7 +118,7 @@ export default function RequestConsultationModal() {
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5" noValidate>
-            
+
             {/* Patient Name */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -130,9 +130,8 @@ export default function RequestConsultationModal() {
                 </span>
                 <Input
                   placeholder="Enter your full name"
-                  className={`h-12 pl-11 rounded-xl bg-slate-50 border transition-all ${
-                    errors.patientName ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
-                  }`}
+                  className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${errors.patientName ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
+                    }`}
                   {...register("patientName")}
                 />
               </div>
@@ -153,9 +152,8 @@ export default function RequestConsultationModal() {
                 <Input
                   type="email"
                   placeholder="name@example.com"
-                  className={`h-12 pl-11 rounded-xl bg-slate-50 border transition-all ${
-                    errors.patientEmail ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
-                  }`}
+                  className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${errors.patientEmail ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
+                    }`}
                   {...register("patientEmail")}
                 />
               </div>
@@ -175,7 +173,7 @@ export default function RequestConsultationModal() {
                 </span>
                 <Textarea
                   placeholder="Briefly describe your symptoms, requested treatment, or questions..."
-                  className="min-h-[100px] pl-11 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all resize-none"
+                  className="min-h-[100px] pl-11 rounded-lg bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all resize-none"
                   {...register("message")}
                 />
               </div>
@@ -188,14 +186,14 @@ export default function RequestConsultationModal() {
                 variant="outline"
                 onClick={handleClose}
                 disabled={requestMutation.isPending}
-                className="h-11 px-5 rounded-xl border-slate-200 hover:bg-slate-50 transition-colors"
+                className="h-11 px-5 rounded-lg border-slate-200 hover:bg-slate-50 transition-colors"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={requestMutation.isPending}
-                className="h-11 px-6 rounded-xl bg-[#10436B] hover:bg-[#0c314f] text-white transition-all shadow-sm font-semibold flex items-center gap-2"
+                className="h-11 px-6 rounded-lg bg-[#10436B] hover:bg-[#0c314f] text-white transition-all shadow-sm font-semibold flex items-center gap-2"
               >
                 {requestMutation.isPending ? (
                   <>

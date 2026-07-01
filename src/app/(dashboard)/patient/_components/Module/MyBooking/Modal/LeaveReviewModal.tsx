@@ -55,7 +55,7 @@ export function LeaveReviewModal({
 
         <div className="p-6 space-y-6 overflow-y-auto">
           {/* Doctor Info Card - Matches image_2e7035.png */}
-          <div className="p-6 rounded-xl border border-[#E2E8F0] bg-white flex flex-col md:flex-row items-center md:items-start gap-6">
+          <div className="p-6 rounded-lg border border-[#E2E8F0] bg-white flex flex-col md:flex-row items-center md:items-start gap-6">
             <div className="flex flex-col items-center gap-2">
               <div className="relative size-24 rounded-full overflow-hidden border-2 border-slate-50">
                 <Image
@@ -115,11 +115,10 @@ export function LeaveReviewModal({
                       className="focus:outline-none transition-transform active:scale-90"
                     >
                       <Star
-                        className={`size-6 ${
-                          star <= (ratings as any)[cat.id]
+                        className={`size-6 ${star <= (ratings as any)[cat.id]
                             ? "fill-[#FBBF24] text-[#FBBF24]"
                             : "text-slate-200"
-                        }`}
+                          }`}
                       />
                     </button>
                   ))}
@@ -132,7 +131,7 @@ export function LeaveReviewModal({
             <p className="text-lg font-semibold text-[#1A1A2E]">Write Review</p>
             <Textarea
               placeholder="Share your experience with this vendor..."
-              className="min-h-40 rounded-xl border-slate-200 p-4 text-base resize-none focus-visible:ring-[#0F3659]"
+              className="min-h-40 rounded-lg border-slate-200 p-4 text-base resize-none focus-visible:ring-[#0F3659]"
             />
           </div>
         </div>

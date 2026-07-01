@@ -76,7 +76,7 @@ export default function DentalHistoryForm() {
             <select
               value={lastVisit}
               onChange={handleLastVisitChange}
-              className="w-full h-14 pl-5 pr-12 appearance-none bg-white border border-[#E5E7EB] rounded-xl text-[#9CA3AF] outline-none focus:border-[#113254] transition-all cursor-pointer"
+              className="w-full h-14 pl-5 pr-12 appearance-none bg-white border border-[#E5E7EB] rounded-lg text-[#9CA3AF] outline-none focus:border-[#113254] transition-all cursor-pointer"
             >
               <option value="">Select time period</option>
               <option value="MONTH_6">
@@ -102,10 +102,9 @@ export default function DentalHistoryForm() {
                   key={item}
                   onClick={() => toggleCondition(item)}
                   className={`px-6 py-2.5 rounded-full border text-[14px] font-medium transition-all
-                    ${
-                      isActive
-                        ? "bg-[#113254] border-[#113254] text-white"
-                        : "bg-white border-[#E5E7EB] text-[#4B5563] hover:border-[#D1D5DB]"
+                    ${isActive
+                      ? "bg-[#113254] border-[#113254] text-white"
+                      : "bg-white border-[#E5E7EB] text-[#4B5563] hover:border-[#D1D5DB]"
                     }`}
                 >
                   {item}
@@ -124,7 +123,7 @@ export default function DentalHistoryForm() {
             placeholder="Enter here"
             value={additionalInfo}
             onChange={handleAdditionalInfoChange}
-            className="w-full min-h-32 p-5 border border-[#E5E7EB] rounded-xl outline-none focus:border-[#113254] text-[#1A1A2E] placeholder:text-[#9CA3AF] resize-none"
+            className="w-full min-h-32 p-5 border border-[#E5E7EB] rounded-lg outline-none focus:border-[#113254] text-[#1A1A2E] placeholder:text-[#9CA3AF] resize-none"
           />
         </div>
       </div>

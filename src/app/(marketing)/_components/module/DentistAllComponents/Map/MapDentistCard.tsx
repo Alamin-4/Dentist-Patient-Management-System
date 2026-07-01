@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BadgeCheck, Globe2, ShieldCheck, Star } from "lucide-react";
+import { BadgeCheck, ShieldCheck, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,22 @@ export default function MapDentistCard({
   onConsult,
   onViewProfile,
 }: MapDentistCardProps) {
+  const badgeLabel = dentist.isVerified
+    ? "VERIFIED"
+    : dentist.accountType === "CLAIMED"
+      ? "CLAIMED"
+      : dentist.accountType === "REGISTERED"
+        ? "REGISTERED"
+        : "UNCLAIMED";
+
+  const badgeColor = dentist.isVerified
+    ? "text-[#4CA30D]"
+    : dentist.accountType === "CLAIMED"
+      ? "text-amber-500"
+      : dentist.accountType === "REGISTERED"
+        ? "text-blue-500"
+        : "text-slate-400";
+
   return (
     <div className="w-full">
       <div className="flex items-start gap-4">
@@ -27,7 +43,7 @@ export default function MapDentistCard({
         <div className="flex flex-col items-center gap-2 shrink-0">
           <div className="relative h-16 w-16 overflow-hidden rounded-full bg-slate-100 ring-2 ring-slate-50">
             <Image
-              src={dentist.image || "/placeholder-avatar.png"}
+              src={dentist.image || "/images/man-avatar.png"}
               alt={dentist.name}
               fill
               className="object-cover"
@@ -35,13 +51,13 @@ export default function MapDentistCard({
           </div>
           <div>
             <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-              <ShieldCheck className="size-4 text-[#4CA30D]" />
-              VERIFIED
+              <ShieldCheck className={cn("size-4", badgeColor)} />
+              {badgeLabel}
             </div>
           </div>
           <div className="flex items-center gap-1 rounded-md bg-slate-50 px-3 py-1.5 border border-slate-200">
             <span className="text-xs font-bold text-[#003366] leading-none">
-              {dentist.rdvScore}
+              {dentist.rdvScore > 0 ? dentist.rdvScore : "—"}
             </span>
             <span className="text-xs font-medium text-[#6B7280]">Score</span>
           </div>
@@ -53,7 +69,9 @@ export default function MapDentistCard({
             <h3 className="truncate text-[17px] font-extrabold leading-none text-slate-900 tracking-tight">
               {dentist.name}
             </h3>
-            <ShieldCheck className="size-3.5 text-[#4CA30D] shrink-0" />
+            {dentist.isVerified && (
+              <ShieldCheck className="size-3.5 text-[#4CA30D] shrink-0" />
+            )}
           </div>
 
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">
@@ -81,26 +99,22 @@ export default function MapDentistCard({
 
           <div className="flex flex-wrap items-center gap-2 w-full">
             {dentist.surpriseGuarantee && (
-            <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-xs font-medium text-[#0E3E65] hover:bg-sky-50">
-              <BadgeCheck className="size-4" />
-              No Surprise Guarantee
-            </Badge>
+              <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-xs font-medium text-[#0E3E65] hover:bg-sky-50">
+                <BadgeCheck className="size-4" />
+                No Surprise Guarantee
+              </Badge>
             )}
-
-            <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-xs font-medium text-[#0E3E65] hover:bg-sky-50">
-              <Globe2 className="size-3.5" />
-              EN - ES
-            </Badge>
           </div>
         </div>
 
         {/* Top Right: Price */}
         <div className="flex flex-col">
           <div className="text-right shrink-0 space-y-1">
-            <div className="text-xs text-[#6B7280]">Starting to</div>
+            <div className="text-xs text-[#6B7280]">Starting from</div>
             <div className="font-bold text-lg text-[#003366] leading-none">
               ${dentist.price.toLocaleString()}
             </div>
+            <div className="text-[10px] text-[#9CA3AF]">Estimate</div>
           </div>
           <div className="mt-4 flex flex-col gap-2">
             <Button

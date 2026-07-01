@@ -15,7 +15,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
 
   if (!review) {
     return (
-      <div className="rounded-xl border border-gray-100 bg-white p-12 text-center shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-12 text-center shadow-sm">
         <p className="text-sm text-gray-400">
           No review available for this booking.
         </p>
@@ -26,7 +26,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Patient Review */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold text-[#1A1A2E]">
             Patient Review
@@ -110,7 +110,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
       </div>
 
       {/* Before & After Results */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
           Before &amp; After Results
         </h3>

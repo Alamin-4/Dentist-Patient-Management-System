@@ -50,7 +50,7 @@ export function PlatformFee({ initialFee }: PlatformFeeProps) {
               value={rate}
               onChange={(e) => setRate(Math.max(0, Math.min(100, Number(e.target.value) || 0)))}
               className={cn(
-                "h-11 w-full rounded-xl border px-4 pr-10 text-sm font-medium outline-none transition-colors",
+                "h-11 w-full rounded-lg border px-4 pr-10 text-sm font-medium outline-none transition-colors",
                 "border-gray-200 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
               )}
             />
@@ -69,7 +69,7 @@ export function PlatformFee({ initialFee }: PlatformFeeProps) {
           onClick={handleSave}
           disabled={saving || !isValid}
           className={cn(
-            "flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95",
+            "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95",
             isValid ? "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90" : "cursor-not-allowed bg-gray-300"
           )}
         >

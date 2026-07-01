@@ -118,11 +118,11 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
               placeholder="Search..."
-              className="h-12 rounded-xl border-input pl-10 pr-4 text-base shadow-none focus-visible:ring-ring"
+              className="h-12 rounded-lg border-input pl-10 pr-4 text-base shadow-none focus-visible:ring-ring"
             />
           </div>
 
-          <div className="max-h-[45vh] overflow-y-auto rounded-xl border border-border bg-background">
+          <div className="max-h-[45vh] overflow-y-auto rounded-lg border border-border bg-background">
             {options.length ? (
               options.map((option) => (
                 <button
@@ -164,7 +164,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
           value={data.fullName}
           onChange={(e) => onChange("fullName", e.target.value)}
           placeholder="Prof. Carlos Mendez"
-          className="h-12 rounded-xl border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
+          className="h-12 rounded-lg border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
         />
       </div>
 
@@ -177,7 +177,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
             value={data.credentials}
             onChange={(e) => onChange("credentials", e.target.value)}
             placeholder="DDS, PhD"
-            className="h-12 rounded-xl border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
+            className="h-12 rounded-lg border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
           />
         </div>
 
@@ -191,7 +191,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
             placeholder="24"
             type="number"
             min="0"
-            className="h-12 rounded-xl border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
+            className="h-12 rounded-lg border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
           />
         </div>
 
@@ -205,7 +205,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
               setSpecialtyOpen((current) => !current);
               setCountryOpen(false);
             }}
-            className="flex h-12 w-full items-center justify-between rounded-xl border border-input bg-background px-4 text-left text-base transition-colors hover:bg-muted sm:h-14"
+            className="flex h-12 w-full items-center justify-between rounded-lg border border-input bg-background px-4 text-left text-base transition-colors hover:bg-muted sm:h-14"
           >
             <span className={data.specialty ? "text-foreground" : "text-muted-foreground"}>
               {data.specialty || "Select specialty"}
@@ -226,7 +226,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
               setCountryOpen((current) => !current);
               setSpecialtyOpen(false);
             }}
-            className="flex h-12 w-full items-center justify-between rounded-xl border border-input bg-background px-4 text-left text-base transition-colors hover:bg-muted sm:h-14"
+            className="flex h-12 w-full items-center justify-between rounded-lg border border-input bg-background px-4 text-left text-base transition-colors hover:bg-muted sm:h-14"
           >
             <span className={data.country ? "text-foreground" : "text-muted-foreground"}>
               {data.country || "Select country"}

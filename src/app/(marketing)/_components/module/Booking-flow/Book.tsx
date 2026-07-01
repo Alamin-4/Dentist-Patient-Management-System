@@ -230,7 +230,7 @@ export default function IntakeModal() {
 
   return (
     <Dialog open={showBookingModal === "book"} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-xl bg-white">
+      <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">
           <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
@@ -268,7 +268,7 @@ export default function IntakeModal() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="px-8 py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] font-semibold text-[16px] rounded-xl hover:bg-[#F9FAFB] active:scale-95 transition-all"
+                className="px-8 py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] font-semibold text-[16px] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all"
               >
                 Back
               </button>
@@ -279,7 +279,7 @@ export default function IntakeModal() {
               type="button"
               onClick={handleNext}
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-xl active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex items-center justify-center gap-2 px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSubmitting && <Loader2 className="size-5 animate-spin" />}
               {step === TOTAL_STEPS ? "Submit and Get Estimates" : "Continue"}

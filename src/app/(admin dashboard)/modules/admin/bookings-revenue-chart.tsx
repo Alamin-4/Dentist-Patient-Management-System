@@ -100,7 +100,7 @@ export function BookingsRevenueChart() {
   const xLabels = chartData.filter((_, i) => i % 2 === 0);
 
   return (
-    <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-5 shadow-sm h-full">
+    <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm h-full">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>

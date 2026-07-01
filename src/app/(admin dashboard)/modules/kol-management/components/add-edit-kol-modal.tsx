@@ -233,7 +233,7 @@ export function AddEditKolModal({ open, mode, kol, onClose, onSave }: AddEditKol
         onClick={onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="relative flex w-full max-w-[520px] flex-col rounded-xl bg-white shadow-2xl">
+        <div className="relative flex w-full max-w-[520px] flex-col rounded-lg bg-white shadow-2xl">
           {/* Header */}
           <div className="flex items-start justify-between border-b border-gray-100 px-6 py-5">
             <div>
@@ -444,7 +444,7 @@ export function AddEditKolModal({ open, mode, kol, onClose, onSave }: AddEditKol
                 {/* Headshot */}
                 <div>
                   <p className="mb-2 text-sm font-semibold text-[#1A1A2E]">Headshot</p>
-                  <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  <div className="flex items-center gap-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div
                       className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white"
                       style={{ backgroundColor: kol?.avatar_color ?? avatarColor }}
@@ -579,7 +579,7 @@ function ContactOption({
       type="button"
       onClick={onSelect}
       className={cn(
-        "w-full rounded-xl border px-4 py-3.5 text-left transition-colors",
+        "w-full rounded-lg border px-4 py-3.5 text-left transition-colors",
         selected ? "border-[#1A1A2E] bg-gray-50" : "border-gray-200 bg-white hover:border-gray-300"
       )}
     >

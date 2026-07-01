@@ -34,7 +34,7 @@ export function ApprovePhaseModal({
         onClick={isPending ? undefined : onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -60,7 +60,7 @@ export function ApprovePhaseModal({
           </div>
 
           {/* Info box */}
-          <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-emerald-50 px-4 py-3">
+          <div className="mt-4 flex items-start gap-2.5 rounded-lg bg-emerald-50 px-4 py-3">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
             <p className="text-sm text-emerald-700">
               Once approved, the dentist will be notified and their RDV score will be updated accordingly.
@@ -72,14 +72,14 @@ export function ApprovePhaseModal({
             <button
               disabled={isPending}
               onClick={onClose}
-              className="flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50 disabled:opacity-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               disabled={isPending}
               onClick={onConfirm}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
             >
               {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

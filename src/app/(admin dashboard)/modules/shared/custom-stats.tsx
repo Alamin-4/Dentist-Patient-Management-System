@@ -21,7 +21,7 @@ export function CustomStats({ stats, className }: CustomStatsProps) {
       {stats.map((stat, i) => (
         <div
           key={i}
-          className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
+          className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
         >
           <div className="flex items-start justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 sm:text-[11px]">

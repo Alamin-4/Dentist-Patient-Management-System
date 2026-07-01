@@ -174,7 +174,7 @@ export default function LicenceForm({
                 }}
                 value={field.value}
               >
-                <SelectTrigger className="h-14! w-full rounded-xl border-border bg-card px-4 py-0">
+                <SelectTrigger className="h-14! w-full rounded-lg border-border bg-card px-4 py-0">
                   <SelectValue placeholder="Select Country" />
                 </SelectTrigger>
                 <SelectContent className="px-2 *:py-2">
@@ -204,7 +204,7 @@ export default function LicenceForm({
                 }}
                 value={field.value}
               >
-                <SelectTrigger className="h-14! w-full rounded-xl border-border bg-card px-4 py-0">
+                <SelectTrigger className="h-14! w-full rounded-lg border-border bg-card px-4 py-0">
                   <SelectValue placeholder="Select City" />
                 </SelectTrigger>
                 <SelectContent className="px-2 *:py-2">
@@ -233,7 +233,7 @@ export default function LicenceForm({
                 onValueChange={field.onChange}
                 value={field.value}
               >
-                <SelectTrigger className="h-14! w-full rounded-xl border-border bg-card px-4 py-0">
+                <SelectTrigger className="h-14! w-full rounded-lg border-border bg-card px-4 py-0">
                   <SelectValue placeholder="Select Authority" />
                 </SelectTrigger>
                 <SelectContent className="px-2 *:py-2">
@@ -256,7 +256,7 @@ export default function LicenceForm({
           <Input
             disabled={isFormLocked || isVerifying}
             {...form.register("regNo")}
-            className="h-14 rounded-xl border-border bg-card px-4 py-0"
+            className="h-14 rounded-lg border-border bg-card px-4 py-0"
             placeholder="Enter Reg No"
           />
         </div>

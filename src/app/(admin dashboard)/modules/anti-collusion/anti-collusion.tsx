@@ -122,7 +122,7 @@ function CountryDropdown({ countries, value, onChange }: {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute top-full z-20 mt-1 min-w-40 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+          <div className="absolute top-full z-20 mt-1 min-w-40 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={() => { onChange(""); setOpen(false); }}
               className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors", !value ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
@@ -153,7 +153,7 @@ function StatCard({ icon, label, value, valueColor = "text-[#1A1A2E]" }: {
   valueColor?: string;
 }) {
   return (
-    <div className="flex items-start justify-between rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex items-start justify-between rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{label}</p>
         <p className={cn("mt-1.5 text-3xl font-bold tracking-tight", valueColor)}>{value}</p>
@@ -167,7 +167,7 @@ function StatCard({ icon, label, value, valueColor = "text-[#1A1A2E]" }: {
 function DentistCard({ dentist, onView }: { dentist: Dentist; onView: () => void }) {
   const isSuspended = dentist.status === "suspended";
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-start gap-3">
         <Avatar initials={dentist.initials} color={dentist.avatar_color} />
         <div className="min-w-0 flex-1">
@@ -340,7 +340,7 @@ export default function AntiCollusion() {
         </div>
 
         {/* Table card */}
-        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
           {/* Tabs */}
           <div className="border-b border-gray-100">
             <CustomTab

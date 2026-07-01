@@ -73,7 +73,7 @@ export default function ContactInfoForm({
 						<div
 							key={option.id}
 							className={cn(
-								"rounded-xl border bg-background transition-all",
+								"rounded-lg border bg-background transition-all",
 								isSelected
 									? "border-primary bg-primary/5 shadow-sm"
 									: "border-border hover:border-primary/40 hover:bg-muted/40",
@@ -93,7 +93,7 @@ export default function ContactInfoForm({
 									{isSelected ? <CheckCircle2 className="size-4" /> : <Circle className="size-4" />}
 								</span>
 
-								<span className={cn("rounded-lg p-2 transition-colors", isSelected ? "text-primary" : "text-muted-foreground") }>
+								<span className={cn("rounded-lg p-2 transition-colors", isSelected ? "text-primary" : "text-muted-foreground")}>
 									<Icon className="size-5" />
 								</span>
 
@@ -124,14 +124,14 @@ export default function ContactInfoForm({
 											onFieldChange(option.id === "email" ? "email" : "whatsapp", event.target.value)
 										}
 										placeholder={option.placeholder}
-										className="h-12 rounded-xl border-input px-4 text-base shadow-none focus-visible:ring-ring"
+										className="h-12 rounded-lg border-input px-4 text-base shadow-none focus-visible:ring-ring"
 									/>
 								</div>
 							)}
 
 							{isSelected && option.id === "platform" && (
 								<div className="border-t border-border px-4 pb-4 sm:px-5">
-									<div className="mt-4 flex flex-col gap-2 rounded-xl border border-dashed border-[color:var(--light-green)]/40 bg-[color:var(--light-green)]/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+									<div className="mt-4 flex flex-col gap-2 rounded-lg border border-dashed border-[color:var(--light-green)]/40 bg-[color:var(--light-green)]/5 p-4 sm:flex-row sm:items-center sm:justify-between">
 										<div>
 											<p className="text-sm font-semibold text-foreground">Built-in contact flow enabled</p>
 											<p className="mt-1 text-sm text-muted-foreground">

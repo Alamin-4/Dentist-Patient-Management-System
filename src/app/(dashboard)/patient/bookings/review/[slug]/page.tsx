@@ -20,7 +20,7 @@ function SectionCard({
   className?: string;
 }) {
   return (
-    <div className={cn("bg-white rounded-xl p-6 border border-slate-100", className)}>
+    <div className={cn("bg-white rounded-lg p-6 border border-slate-100", className)}>
       {children}
     </div>
   );
@@ -89,7 +89,7 @@ export default function ReviewPlanPage() {
         <div className="lg:col-span-7 space-y-6">
           <SectionCard>
             {/* Doctor header */}
-            <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl mb-8">
+            <div className="flex items-center justify-between p-4 border border-slate-100 rounded-lg mb-8">
               <div className="flex items-center gap-4">
                 <div className="relative size-16 rounded-full overflow-hidden bg-slate-100">
                   <Image
@@ -112,7 +112,7 @@ export default function ReviewPlanPage() {
 
             {/* Treatment breakdown */}
             <h4 className="font-semibold mb-4 text-[#1A1A2E]">Treatment plan breakdown</h4>
-            <div className="border border-slate-100 rounded-xl overflow-hidden">
+            <div className="border border-slate-100 rounded-lg overflow-hidden">
               <div className="flex justify-between bg-slate-50 px-4 py-3 border-b border-slate-100 font-bold text-sm">
                 <span>Procedure breakdown</span>
                 <span>Price</span>
@@ -138,7 +138,7 @@ export default function ReviewPlanPage() {
             </div>
 
             {/* 15% leeway */}
-            <div className="mt-6 bg-[#F0F9FF] p-5 rounded-xl border border-[#B3D8FF]">
+            <div className="mt-6 bg-[#F0F9FF] p-5 rounded-lg border border-[#B3D8FF]">
               <p className="text-[#0E3E65] font-bold mb-1">15% leeway</p>
               <p className="text-[#203A55] text-sm leading-relaxed">
                 Your final price on Day 1 will be within {leewayAmount.toLocaleString()} of $
@@ -194,14 +194,14 @@ export default function ReviewPlanPage() {
             </div>
 
             {/* Sign to confirm */}
-            <div className="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-100">
+            <div className="mt-8 bg-slate-50 p-6 rounded-lg border border-slate-100">
               <h5 className="font-bold text-[#1A1A2E] mb-1">Sign to confirm plan</h5>
               <p className="text-[11px] text-slate-500 mb-4">
                 Read each point carefully. You must agree to all three before your payment is processed.
               </p>
 
               {signatureData ? (
-                <div className="relative h-32 bg-white border-2 border-[#10B981] rounded-xl overflow-hidden">
+                <div className="relative h-32 bg-white border-2 border-[#10B981] rounded-lg overflow-hidden">
                   {signatureData.startsWith("data:image") ? (
                     <img
                       src={signatureData}
@@ -227,7 +227,7 @@ export default function ReviewPlanPage() {
                 <button
                   type="button"
                   onClick={() => setSignModalOpen(true)}
-                  className="w-full h-32 bg-white border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center hover:border-[#0F3659] transition-all"
+                  className="w-full h-32 bg-white border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center hover:border-[#0F3659] transition-all"
                 >
                   <div className="flex items-center gap-2 text-slate-500">
                     <span className="text-sm font-bold border-b-2 border-black pb-0.5">
@@ -255,7 +255,7 @@ export default function ReviewPlanPage() {
             <button
               type="button"
               onClick={() => setRejectModalOpen(true)}
-              className="flex-1 md:flex-none px-8 py-3.5 rounded-xl border border-slate-300 font-bold text-[#EF4444] hover:bg-red-50 transition-all"
+              className="flex-1 md:flex-none px-8 py-3.5 rounded-lg border border-slate-300 font-bold text-[#EF4444] hover:bg-red-50 transition-all"
             >
               Reject
             </button>
@@ -264,7 +264,7 @@ export default function ReviewPlanPage() {
               onClick={() => setShowSuccess(true)}
               disabled={!agreed || !signatureData}
               className={cn(
-                "flex-1 md:flex-none px-10 py-3.5 rounded-xl font-bold text-[15px] transition-all",
+                "flex-1 md:flex-none px-10 py-3.5 rounded-lg font-bold text-[15px] transition-all",
                 agreed && signatureData
                   ? "bg-[#0F3659] text-white hover:bg-[#0A2640] active:scale-95"
                   : "bg-slate-200 text-slate-400 cursor-not-allowed"

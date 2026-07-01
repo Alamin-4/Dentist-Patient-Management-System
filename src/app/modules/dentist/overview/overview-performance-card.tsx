@@ -27,7 +27,7 @@ export function OverviewPerformanceCard({ chart }: Props) {
   const pct = Math.min(Math.max(chart.score, 0), 100);
 
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
       {/* Main layout: chart left + metrics right */}
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center">
         {/* Donut chart */}

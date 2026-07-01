@@ -35,13 +35,12 @@ export function DocumentUpload({ label, name, error, disabled }: Props) {
       {!file ? (
         <div
           onClick={() => !disabled && inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 flex transition-all ${
-            disabled
+          className={`border-2 border-dashed rounded-lg p-6 flex transition-all ${disabled
               ? "border-gray-200 bg-gray-50/30 cursor-not-allowed opacity-60"
               : error
                 ? "border-red-200 bg-red-50/30 cursor-pointer group"
                 : "border-gray-200 bg-gray-50/50 hover:bg-white cursor-pointer group"
-          }`}
+            }`}
         >
           <div className="flex gap-3">
             <UploadCloud
@@ -63,7 +62,7 @@ export function DocumentUpload({ label, name, error, disabled }: Props) {
           />
         </div>
       ) : (
-        <div className="flex items-center justify-between p-4 border border-gray-100 rounded-xl bg-white shadow-sm animate-in fade-in slide-in-from-bottom-1">
+        <div className="flex items-center justify-between p-4 border border-gray-100 rounded-lg bg-white shadow-sm animate-in fade-in slide-in-from-bottom-1">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center">
               <FileText className="text-orange-500 w-5 h-5" />

@@ -36,7 +36,7 @@ export default function TreatmentDetailsForm() {
           <label className="text-[15px] font-medium text-[#4B5563]">
             Approximate budget
           </label>
-          <div className="flex items-center h-14 w-full border border-[#E5E7EB] rounded-xl overflow-hidden focus-within:border-[#113254] transition-colors">
+          <div className="flex items-center h-14 w-full border border-[#E5E7EB] rounded-lg overflow-hidden focus-within:border-[#113254] transition-colors">
             <div className="flex items-center justify-center w-12 h-full bg-[#F9FAFB] border-r border-[#E5E7EB] shrink-0">
               <span className="text-[#9CA3AF] font-medium">$</span>
             </div>
@@ -83,7 +83,7 @@ function DateInput({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="relative flex items-center h-14 border border-[#E5E7EB] rounded-xl focus-within:border-[#113254] transition-colors">
+    <div className="relative flex items-center h-14 border border-[#E5E7EB] rounded-lg focus-within:border-[#113254] transition-colors">
       <input
         type="date"
         placeholder={placeholder}

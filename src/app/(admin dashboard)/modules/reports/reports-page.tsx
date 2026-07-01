@@ -16,7 +16,7 @@ import {
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
 
 /* ─── Formatters ────────────────────────────────────────────────────────────── */
-const fmt    = (n: number) => n >= 1000 ? `£${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : `£${n.toLocaleString()}`;
+const fmt = (n: number) => n >= 1000 ? `£${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : `£${n.toLocaleString()}`;
 const fmtNum = (n: number) => n.toLocaleString();
 
 /* ─── Avatar ────────────────────────────────────────────────────────────────── */
@@ -38,7 +38,7 @@ function Section({ title, sub, action, children }: {
   title: string; sub?: string; action?: React.ReactNode; children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2 border-b border-gray-100 px-5 py-4">
         <div>
           <h3 className="text-sm font-bold text-[#1A1A2E]">{title}</h3>
@@ -56,12 +56,12 @@ function RevenueBarChart() {
   const [metric, setMetric] = useState<"revenue" | "bookings" | "fees">("revenue");
 
   const vals = monthlyData.map((r) => r[metric]);
-  const max  = Math.max(...vals);
+  const max = Math.max(...vals);
 
   const labels: Record<typeof metric, string> = {
-    revenue:  "Gross Revenue",
+    revenue: "Gross Revenue",
     bookings: "Bookings",
-    fees:     "Platform Fees",
+    fees: "Platform Fees",
   };
 
   const formatVal = (v: number) => metric === "bookings" ? String(v) : fmt(v);
@@ -107,13 +107,13 @@ function RevenueBarChart() {
           {/* Bars */}
           <div className="absolute inset-0 flex items-end gap-2 pl-8">
             {monthlyData.map((row, i) => {
-              const v      = row[metric];
-              const h      = max > 0 ? (v / max) * 100 : 0;
+              const v = row[metric];
+              const h = max > 0 ? (v / max) * 100 : 0;
               const isLast = i === monthlyData.length - 1;
               return (
                 <div key={row.month} className="group relative flex flex-1 flex-col items-center">
                   {/* Hover tooltip */}
-                  <div className="pointer-events-none absolute bottom-full mb-2 hidden rounded-xl border border-gray-100 bg-white px-3 py-2 shadow-lg group-hover:block z-10 whitespace-nowrap text-center">
+                  <div className="pointer-events-none absolute bottom-full mb-2 hidden rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-lg group-hover:block z-10 whitespace-nowrap text-center">
                     <p className="text-xs font-bold text-[#1A1A2E]">{formatVal(v)}</p>
                     <p className="text-[10px] text-gray-400">{row.month}</p>
                   </div>
@@ -142,8 +142,8 @@ function RevenueBarChart() {
       {/* Footer totals */}
       <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100">
         {[
-          { label: "Total Revenue",  value: fmt(monthlyData.reduce((s, r) => s + r.revenue, 0)) },
-          { label: "Total Fees",     value: fmt(monthlyData.reduce((s, r) => s + r.fees, 0)) },
+          { label: "Total Revenue", value: fmt(monthlyData.reduce((s, r) => s + r.revenue, 0)) },
+          { label: "Total Fees", value: fmt(monthlyData.reduce((s, r) => s + r.fees, 0)) },
           { label: "Total Bookings", value: fmtNum(monthlyData.reduce((s, r) => s + r.bookings, 0)) },
         ].map((s) => (
           <div key={s.label} className="flex flex-col items-center gap-0.5 py-3.5">
@@ -158,12 +158,12 @@ function RevenueBarChart() {
 
 /* ─── KPI Cards ─────────────────────────────────────────────────────────────── */
 const KPI_ICONS: Record<string, { icon: React.ElementType; iconBg: string; iconColor: string }> = {
-  revenue:  { icon: DollarSign,    iconBg: "bg-success-50",        iconColor: "text-success-600"     },
-  fees:     { icon: BarChart3,     iconBg: "bg-sky-50",             iconColor: "text-sky-600"         },
-  escrow:   { icon: ShieldCheck,   iconBg: "bg-amber-50",           iconColor: "text-amber-500"       },
-  bookings: { icon: CalendarDays,  iconBg: "bg-purple-50",          iconColor: "text-purple-500"      },
-  dentists: { icon: Users,         iconBg: "bg-gray-100",           iconColor: "text-gray-600"        },
-  refunds:  { icon: AlertTriangle, iconBg: "bg-destructive-50",     iconColor: "text-destructive-500" },
+  revenue: { icon: DollarSign, iconBg: "bg-success-50", iconColor: "text-success-600" },
+  fees: { icon: BarChart3, iconBg: "bg-sky-50", iconColor: "text-sky-600" },
+  escrow: { icon: ShieldCheck, iconBg: "bg-amber-50", iconColor: "text-amber-500" },
+  bookings: { icon: CalendarDays, iconBg: "bg-purple-50", iconColor: "text-purple-500" },
+  dentists: { icon: Users, iconBg: "bg-gray-100", iconColor: "text-gray-600" },
+  refunds: { icon: AlertTriangle, iconBg: "bg-destructive-50", iconColor: "text-destructive-500" },
 };
 
 function KpiCards() {
@@ -173,17 +173,17 @@ function KpiCards() {
         const meta = KPI_ICONS[kpi.id];
         const Icon = meta.icon;
         return (
-          <div key={kpi.id} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div key={kpi.id} className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-2">
-              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", meta.iconBg)}>
+              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", meta.iconBg)}>
                 <Icon className={cn("h-4.5 w-4.5", meta.iconColor)} />
               </div>
               {kpi.trend !== 0 && (
                 <span className={cn(
                   "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold",
-                  kpi.trendDir === "up"   ? "bg-success-50 text-success-700"         :
-                  kpi.trendDir === "down" ? "bg-destructive-50 text-destructive-700" :
-                  "bg-gray-100 text-gray-500"
+                  kpi.trendDir === "up" ? "bg-success-50 text-success-700" :
+                    kpi.trendDir === "down" ? "bg-destructive-50 text-destructive-700" :
+                      "bg-gray-100 text-gray-500"
                 )}>
                   {kpi.trendDir === "up"
                     ? <TrendingUp className="h-2.5 w-2.5" />
@@ -357,10 +357,10 @@ function RevenueTab() {
 /* ─── Bookings Tab ──────────────────────────────────────────────────────────── */
 function BookingsTab() {
   const summaryCards = [
-    { label: "Total Bookings",    value: "438",  icon: CalendarDays, bg: "bg-purple-50",          color: "text-purple-500"      },
-    { label: "Completed",         value: "274",  icon: CheckCircle2, bg: "bg-success-50",          color: "text-success-600"     },
-    { label: "Cancellations",     value: "38",   icon: XCircle,      bg: "bg-destructive-50",      color: "text-destructive-500" },
-    { label: "Avg Booking Value", value: "£474", icon: DollarSign,   bg: "bg-amber-50",            color: "text-amber-500"       },
+    { label: "Total Bookings", value: "438", icon: CalendarDays, bg: "bg-purple-50", color: "text-purple-500" },
+    { label: "Completed", value: "274", icon: CheckCircle2, bg: "bg-success-50", color: "text-success-600" },
+    { label: "Cancellations", value: "38", icon: XCircle, bg: "bg-destructive-50", color: "text-destructive-500" },
+    { label: "Avg Booking Value", value: "£474", icon: DollarSign, bg: "bg-amber-50", color: "text-amber-500" },
   ];
   return (
     <div className="flex flex-col gap-4">
@@ -368,8 +368,8 @@ function BookingsTab() {
         {summaryCards.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", s.bg)}>
+            <div key={s.label} className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
+              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", s.bg)}>
                 <Icon className={cn("h-4.5 w-4.5", s.color)} />
               </div>
               <div>
@@ -424,10 +424,10 @@ function BookingsTab() {
 /* ─── Dentists Tab ──────────────────────────────────────────────────────────── */
 function DentistsTab() {
   const summaryCards = [
-    { label: "Total Dentists",  value: "1,418", icon: Users,        bg: "bg-gray-100",    color: "text-gray-600"    },
-    { label: "Active",          value: "1,284", icon: CheckCircle2, bg: "bg-success-50",  color: "text-success-600" },
-    { label: "Pending Verify",  value: "12",    icon: Clock,        bg: "bg-amber-50",    color: "text-amber-500"   },
-    { label: "New This Week",   value: "+34",   icon: TrendingUp,   bg: "bg-sky-50",      color: "text-sky-600"     },
+    { label: "Total Dentists", value: "1,418", icon: Users, bg: "bg-gray-100", color: "text-gray-600" },
+    { label: "Active", value: "1,284", icon: CheckCircle2, bg: "bg-success-50", color: "text-success-600" },
+    { label: "Pending Verify", value: "12", icon: Clock, bg: "bg-amber-50", color: "text-amber-500" },
+    { label: "New This Week", value: "+34", icon: TrendingUp, bg: "bg-sky-50", color: "text-sky-600" },
   ];
   return (
     <div className="flex flex-col gap-4">
@@ -435,8 +435,8 @@ function DentistsTab() {
         {summaryCards.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", s.bg)}>
+            <div key={s.label} className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
+              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", s.bg)}>
                 <Icon className={cn("h-4.5 w-4.5", s.color)} />
               </div>
               <div>
@@ -467,9 +467,9 @@ function DentistsTab() {
                     <span className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold",
                       d.rank === 1 ? "bg-amber-100 text-amber-700" :
-                      d.rank === 2 ? "bg-gray-200 text-gray-600" :
-                      d.rank === 3 ? "bg-orange-100 text-orange-600" :
-                      "bg-gray-100 text-gray-500"
+                        d.rank === 2 ? "bg-gray-200 text-gray-600" :
+                          d.rank === 3 ? "bg-orange-100 text-orange-600" :
+                            "bg-gray-100 text-gray-500"
                     )}>
                       {d.rank}
                     </span>
@@ -525,12 +525,12 @@ function DentistsTab() {
               </div>
               <div className="grid grid-cols-4 gap-2">
                 {[
-                  { label: "Submitted", val: row.submitted, color: "text-gray-700",        dot: "bg-gray-400" },
-                  { label: "Approved",  val: row.approved,  color: "text-success-700",     dot: "bg-success-500" },
-                  { label: "Rejected",  val: row.rejected,  color: "text-destructive-600", dot: "bg-destructive-400" },
-                  { label: "Pending",   val: row.pending,   color: "text-amber-600",        dot: "bg-amber-400" },
+                  { label: "Submitted", val: row.submitted, color: "text-gray-700", dot: "bg-gray-400" },
+                  { label: "Approved", val: row.approved, color: "text-success-700", dot: "bg-success-500" },
+                  { label: "Rejected", val: row.rejected, color: "text-destructive-600", dot: "bg-destructive-400" },
+                  { label: "Pending", val: row.pending, color: "text-amber-600", dot: "bg-amber-400" },
                 ].map((s) => (
-                  <div key={s.label} className="rounded-xl border border-gray-100 bg-gray-50 p-3 text-center">
+                  <div key={s.label} className="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
                     <p className={cn("text-xl font-bold", s.color)}>{s.val}</p>
                     <p className="mt-0.5 flex items-center justify-center gap-1 text-[11px] text-gray-400">
                       <span className={cn("h-1.5 w-1.5 rounded-full", s.dot)} />
@@ -553,7 +553,7 @@ function ComplianceTab() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {complianceData.map((item) => (
-          <div key={item.label} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm text-center">
+          <div key={item.label} className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm text-center">
             <p className={cn("text-2xl font-bold", item.color)}>{item.value}</p>
             <p className="mt-1 text-xs font-semibold text-[#1A1A2E]">{item.label}</p>
             <p className="mt-0.5 text-[10px] text-gray-400">{item.sub}</p>
@@ -592,12 +592,12 @@ function ComplianceTab() {
         <Section title="Platform Health" sub="System-wide compliance metrics">
           <div className="divide-y divide-gray-50 px-5">
             {[
-              { label: "Escrow Accuracy",        val: "99.4%", ok: true,  note: "All funds reconciled" },
-              { label: "Avg Verification Time",  val: "2.3d",  ok: true,  note: "Below 3-day target" },
-              { label: "Anti-Collusion Rate",    val: "0.6%",  ok: true,  note: "Under 1% threshold" },
-              { label: "Fake Review Detection",  val: "94%",   ok: true,  note: "AI model accuracy" },
-              { label: "Refund Processing Time", val: "3.1d",  ok: false, note: "Target is <2 days" },
-              { label: "Open Investigations",    val: "3",     ok: false, note: "Avg 4.2 days outstanding" },
+              { label: "Escrow Accuracy", val: "99.4%", ok: true, note: "All funds reconciled" },
+              { label: "Avg Verification Time", val: "2.3d", ok: true, note: "Below 3-day target" },
+              { label: "Anti-Collusion Rate", val: "0.6%", ok: true, note: "Under 1% threshold" },
+              { label: "Fake Review Detection", val: "94%", ok: true, note: "AI model accuracy" },
+              { label: "Refund Processing Time", val: "3.1d", ok: false, note: "Target is <2 days" },
+              { label: "Open Investigations", val: "3", ok: false, note: "Avg 4.2 days outstanding" },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between gap-4 py-3.5">
                 <div className="flex min-w-0 items-center gap-2.5">
@@ -630,7 +630,7 @@ function DateRangeSelector({ value, onChange }: { value: string; onChange: (v: s
     <div className="relative">
       <button
         onClick={() => setOpen((p) => !p)}
-        className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 transition-colors"
+        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 transition-colors"
       >
         <Calendar className="h-3.5 w-3.5 text-gray-400" />
         {value}
@@ -639,7 +639,7 @@ function DateRangeSelector({ value, onChange }: { value: string; onChange: (v: s
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-20 mt-1 w-44 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+          <div className="absolute right-0 top-full z-20 mt-1 w-44 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             {DATE_RANGES.map((r) => (
               <button
                 key={r}
@@ -661,15 +661,15 @@ function DateRangeSelector({ value, onChange }: { value: string; onChange: (v: s
 type TabKey = "overview" | "revenue" | "bookings" | "dentists" | "compliance";
 
 const TABS = [
-  { key: "overview",   label: "Overview"   },
-  { key: "revenue",    label: "Revenue"    },
-  { key: "bookings",   label: "Bookings"   },
-  { key: "dentists",   label: "Dentists"   },
+  { key: "overview", label: "Overview" },
+  { key: "revenue", label: "Revenue" },
+  { key: "bookings", label: "Bookings" },
+  { key: "dentists", label: "Dentists" },
   { key: "compliance", label: "Compliance" },
 ];
 
 export default function ReportsPage() {
-  const [tab, setTab]             = useState<TabKey>("overview");
+  const [tab, setTab] = useState<TabKey>("overview");
   const [dateRange, setDateRange] = useState("Last 6 months");
 
   return (
@@ -686,7 +686,7 @@ export default function ReportsPage() {
           <DateRangeSelector value={dateRange} onChange={setDateRange} />
           <button
             onClick={() => toast.success(`Exporting ${tab} report as CSV…`)}
-            className="flex items-center gap-2 rounded-xl bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
+            className="flex items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
           >
             <Download className="h-3.5 w-3.5" />
             Export CSV
@@ -698,7 +698,7 @@ export default function ReportsPage() {
       <KpiCards />
 
       {/* Tabs */}
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <CustomTab
             tabs={TABS}
@@ -711,10 +711,10 @@ export default function ReportsPage() {
       </div>
 
       {/* Tab content */}
-      {tab === "overview"   && <OverviewTab />}
-      {tab === "revenue"    && <RevenueTab />}
-      {tab === "bookings"   && <BookingsTab />}
-      {tab === "dentists"   && <DentistsTab />}
+      {tab === "overview" && <OverviewTab />}
+      {tab === "revenue" && <RevenueTab />}
+      {tab === "bookings" && <BookingsTab />}
+      {tab === "dentists" && <DentistsTab />}
       {tab === "compliance" && <ComplianceTab />}
     </div>
   );

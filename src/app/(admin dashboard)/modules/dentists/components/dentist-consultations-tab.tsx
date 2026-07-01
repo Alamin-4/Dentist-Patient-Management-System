@@ -51,7 +51,7 @@ function ConsultationCard({
   onViewDetails: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
       {/* Patient row */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
@@ -112,7 +112,7 @@ function ConsultationCard({
 
       <button
         onClick={onViewDetails}
-        className="w-full rounded-xl border border-gray-200 bg-white py-2 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+        className="w-full rounded-lg border border-gray-200 bg-white py-2 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
       >
         View Details
       </button>
@@ -140,7 +140,7 @@ export function DentistConsultationsTab({ consultations }: DentistConsultationsT
 
   return (
     <>
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
         {/* Sub-tabs */}
         <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
           <CustomTab

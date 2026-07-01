@@ -8,12 +8,12 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
   const user = dentist?.user;
   const email = user?.email || "N/A";
   const phone = dentist?.phoneNumber || "N/A";
-  
+
   const city = dentist?.dentistProfessionalData?.city;
   const countryCode = dentist?.country;
   let location = "N/A";
   if (city || countryCode) {
-    const formattedCity = city 
+    const formattedCity = city
       ? city.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
       : "";
     const formattedCountry = countryCode ? countryCode.toUpperCase() : "";
@@ -31,7 +31,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
   ];
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-lg font-bold text-gray-900">Basic Details</h3>
         <button className="text-gray-400 hover:text-[#163E5C] transition-colors">
@@ -42,7 +42,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {details.map((item, index) => (
           <div key={index} className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-50 text-gray-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
               <item.icon className="h-5 w-5" />
             </div>
             <div className="space-y-0.5">

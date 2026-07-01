@@ -119,11 +119,10 @@ export default function ReferralsPageComponent() {
               </div>
 
               <div
-                className={`px-6 py-2 rounded-xl font-bold text-sm whitespace-nowrap ${
-                  item.status === "Credit issued"
+                className={`px-6 py-2 rounded-lg font-bold text-sm whitespace-nowrap ${item.status === "Credit issued"
                     ? "bg-[#0BB05F] text-white"
                     : "bg-[#F7941D] text-white"
-                }`}
+                  }`}
               >
                 {item.status}
               </div>

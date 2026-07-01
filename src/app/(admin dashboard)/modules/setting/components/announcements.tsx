@@ -96,7 +96,7 @@ export function Announcements({ initialAnnouncements }: AnnouncementsProps) {
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-xl bg-[#1A1A2E] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 rounded-lg bg-[#1A1A2E] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
           >
             <Plus className="h-4 w-4" />
             New announcement
@@ -113,7 +113,7 @@ export function Announcements({ initialAnnouncements }: AnnouncementsProps) {
             announcements.map((ann) => (
               <div
                 key={ann.id}
-                className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">

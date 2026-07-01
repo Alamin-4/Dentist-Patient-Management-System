@@ -136,7 +136,7 @@ export default function AiSmilePreview() {
             {/* Split button — navy text area + gold icon area */}
             <button
               onClick={handleTryPreview}
-              className="inline-flex items-center overflow-hidden rounded-xl transition-opacity hover:opacity-90 active:scale-[0.98] bg-primary px-4 space-x-2"
+              className="inline-flex items-center overflow-hidden rounded-lg transition-opacity hover:opacity-90 active:scale-[0.98] bg-primary px-4 space-x-2"
             >
               <span className="flex h-11.5 items-center text-sm font-semibold text-primary-foreground">
                 Try AI Smile Preview
@@ -180,7 +180,7 @@ export default function AiSmilePreview() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="relative w-full overflow-hidden rounded-xl"
+          className="relative w-full overflow-hidden rounded-lg"
           style={{
             aspectRatio: "2 / 1",
             background:

@@ -52,9 +52,8 @@ export function ChangePasswordForm() {
             placeholder="Enter old password"
             disabled={changePasswordMutation.isPending}
             {...register("oldPassword", { required: "Old password is required" })}
-            className={`w-full h-16 px-6 rounded-xl border text-lg font-medium text-[#1A1A2E] bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3659] transition-all ${
-              errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-            }`}
+            className={`w-full h-16 px-6 rounded-lg border text-lg font-medium text-[#1A1A2E] bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3659] transition-all ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              }`}
           />
           {errors.oldPassword && (
             <p className="text-sm font-semibold text-red-500 mt-1">{errors.oldPassword.message}</p>
@@ -72,9 +71,8 @@ export function ChangePasswordForm() {
               required: "New password is required",
               minLength: { value: 8, message: "New password must be at least 8 characters long" },
             })}
-            className={`w-full h-16 px-6 rounded-xl border text-lg font-medium text-[#1A1A2E] bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3659] transition-all ${
-              errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-            }`}
+            className={`w-full h-16 px-6 rounded-lg border text-lg font-medium text-[#1A1A2E] bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3659] transition-all ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              }`}
           />
           {errors.newPassword && (
             <p className="text-sm font-semibold text-red-500 mt-1">{errors.newPassword.message}</p>
@@ -92,9 +90,8 @@ export function ChangePasswordForm() {
               required: "Confirm password is required",
               validate: (val) => val === newPasswordVal || "Passwords do not match",
             })}
-            className={`w-full h-16 px-6 rounded-xl border text-lg font-medium text-[#1A1A2E] bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3659] transition-all ${
-              errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-            }`}
+            className={`w-full h-16 px-6 rounded-lg border text-lg font-medium text-[#1A1A2E] bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3659] transition-all ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              }`}
           />
           {errors.confirmNewPassword && (
             <p className="text-sm font-semibold text-red-500 mt-1">{errors.confirmNewPassword.message}</p>
@@ -107,14 +104,14 @@ export function ChangePasswordForm() {
           type="button"
           disabled={changePasswordMutation.isPending}
           onClick={() => reset()}
-          className="px-10 py-4 rounded-xl border border-slate-300 font-bold text-[#1A1A2E] text-xl hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-10 py-4 rounded-lg border border-slate-300 font-bold text-[#1A1A2E] text-xl hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={changePasswordMutation.isPending}
-          className="px-10 py-4 rounded-xl bg-[#0F3659] font-bold text-white text-xl hover:bg-[#0a2640] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[220px]"
+          className="px-10 py-4 rounded-lg bg-[#0F3659] font-bold text-white text-xl hover:bg-[#0a2640] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[220px]"
         >
           {changePasswordMutation.isPending ? (
             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

@@ -79,7 +79,7 @@ export default function CreateTreatmentPlanModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
         <DialogOverlay className="bg-black/20 backdrop-blur-sm" />
-        <DialogContent className="sm:max-w-275 w-[95vw] rounded-xl overflow-y-auto p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none">
+        <DialogContent className="sm:max-w-275 w-[95vw] rounded-lg overflow-y-auto p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none">
           {/* Header */}
           <div className="px-8 py-6 border-b border-slate-200">
             <DialogTitle className="text-lg lg:text-xl font-semibold text-[#1A1A2E]">
@@ -94,7 +94,7 @@ export default function CreateTreatmentPlanModal({
             {/* Patient Header Section */}
             <section className="px-8 py-10 bg-[#F9FAFB]">
               <div className="flex flex-col gap-8 items-start">
-            
+
                 <div className="flex items-center gap-4">
                   <Avatar className="h-16 w-16 bg-[#E8EEF2]">
                     <AvatarFallback className="text-[#5B7083] font-semibold text-xl">
@@ -145,7 +145,7 @@ export default function CreateTreatmentPlanModal({
                     </div>
                   </div>
                   {/* Dental History Box */}
-                  <div className="border border-slate-100 rounded-xl bg-white p-0 overflow-hidden">
+                  <div className="border border-slate-100 rounded-lg bg-white p-0 overflow-hidden">
                     <div className="p-4 border-b border-slate-100">
                       <p className="text-sm font-semibold text-[#4A4A4C]">
                         Dental History
@@ -261,7 +261,7 @@ export default function CreateTreatmentPlanModal({
                 <Textarea
                   {...register("additionalInfo")}
                   placeholder="Care instructions, follow-up"
-                  className="min-h-35 border-slate-200 rounded-xl p-4 text-[16px] resize-none focus-visible:ring-0"
+                  className="min-h-35 border-slate-200 rounded-lg p-4 text-[16px] resize-none focus-visible:ring-0"
                 />
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function CreateTreatmentPlanModal({
             <footer className="p-6 border-t border-slate-100 flex justify-end bg-white">
               <Button
                 type="submit"
-                className="bg-[#0E3E65] hover:bg-[#082f46] cursor-pointer text-white h-14 px-8 rounded-xl font-semibold"
+                className="bg-[#0E3E65] hover:bg-[#082f46] cursor-pointer text-white h-14 px-8 rounded-lg font-semibold"
               >
                 Create plan and send to patient
               </Button>

@@ -109,7 +109,7 @@ function DateInputField({
       <Input
         type="text"
         placeholder={placeholder}
-        className={cn("h-12! rounded-xl pr-10", hasError && "border-destructive", className)}
+        className={cn("h-12! rounded-lg pr-10", hasError && "border-destructive", className)}
         {...props}
       />
       <CalendarDaysIcon className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-muted-foreground pointer-events-none" />
@@ -143,7 +143,7 @@ export default function PersonalizeComparisonModal() {
 
   return (
     <Dialog open={showPersonalizeModal} onOpenChange={setShowPersonalizeModal}>
-      <DialogContent className="sm:max-w-[590px] gap-6 p-8 rounded-xl">
+      <DialogContent className="sm:max-w-[590px] gap-6 p-8 rounded-lg">
         <DialogHeader className="gap-2">
           <DialogTitle className="text-2xl font-bold font-heading text-foreground leading-tight">
             Personalize your comparison
@@ -161,7 +161,7 @@ export default function PersonalizeComparisonModal() {
               <FieldLabel required>First Name</FieldLabel>
               <Input
                 placeholder="Enter Name"
-                className={cn("h-12! rounded-xl", errors.firstName && "border-destructive")}
+                className={cn("h-12! rounded-lg", errors.firstName && "border-destructive")}
                 {...register("firstName")}
               />
             </div>
@@ -170,7 +170,7 @@ export default function PersonalizeComparisonModal() {
               <FieldLabel required>Last Name</FieldLabel>
               <Input
                 placeholder="Enter Name"
-                className={cn("h-12! rounded-xl", errors.lastName && "border-destructive")}
+                className={cn("h-12! rounded-lg", errors.lastName && "border-destructive")}
                 {...register("lastName")}
               />
             </div>
@@ -181,7 +181,7 @@ export default function PersonalizeComparisonModal() {
               <Input
                 type="tel"
                 placeholder="Enter Phone Number"
-                className={cn("h-12! rounded-xl", errors.phoneNumber && "border-destructive")}
+                className={cn("h-12! rounded-lg", errors.phoneNumber && "border-destructive")}
                 {...register("phoneNumber")}
               />
             </div>
@@ -196,7 +196,7 @@ export default function PersonalizeComparisonModal() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       className={cn(
-                        "w-full h-12! rounded-xl",
+                        "w-full h-12! rounded-lg",
                         errors.country && "border-destructive",
                       )}
                     >
@@ -222,7 +222,7 @@ export default function PersonalizeComparisonModal() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       className={cn(
-                        "w-full h-12! rounded-xl",
+                        "w-full h-12! rounded-lg",
                         errors.gender && "border-destructive",
                       )}
                     >
@@ -257,7 +257,7 @@ export default function PersonalizeComparisonModal() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       className={cn(
-                        "w-full h-12! rounded-xl",
+                        "w-full h-12! rounded-lg",
                         errors.treatment && "border-destructive",
                       )}
                     >
@@ -276,7 +276,7 @@ export default function PersonalizeComparisonModal() {
             {/* Budget */}
             <div className="flex flex-col gap-1.5">
               <FieldLabel>What&apos;s your rough budget?</FieldLabel>
-              <div className="flex h-12 items-center overflow-hidden rounded-xl border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+              <div className="flex h-12 items-center overflow-hidden rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
                 <div className="flex h-full shrink-0 items-center border-r border-input px-3">
                   <span className="text-sm text-muted-foreground">$</span>
                 </div>
@@ -308,7 +308,7 @@ export default function PersonalizeComparisonModal() {
           <div className="mt-6 flex flex-col gap-3">
             <Button
               type="submit"
-              className="h-12 w-full rounded-xl text-base font-medium"
+              className="h-12 w-full rounded-lg text-base font-medium"
             >
               Show my comparison →
             </Button>

@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { BadgeCheck, Globe2, MapPin, ShieldCheck, Star } from "lucide-react";
+import { BadgeCheck, MapPin, ShieldCheck, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
-import type { Dentist } from "./types";
+import type { Dentist } from "../DentistAllComponents/types";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
@@ -140,12 +140,12 @@ export default function DentistCard({
       )}
 
       <div className="flex flex-col justify-between gap-4 p-4 xl:flex-row xl:gap-5 xl:p-6">
-        <div className="flex flex-row gap-4 max-w-5/8 w-full">
+        <div className="flex flex-row gap-4 md:max-w-5/8 w-full">
           {/* ── Avatar + badge + RDV score ────────────────────────────────── */}
           <div className="flex shrink-0 flex-col items-center gap-3 xl:w-35">
-            <div className="relative h-20 w-20 overflow-hidden rounded-full bg-slate-100">
+            <div className="relative h-15 w-15 md:h-20 md:w-20 overflow-hidden rounded-full bg-slate-100">
               <Image
-                src={dentist.image ?? "/placeholder-avatar.png"}
+                src={dentist.image ?? "/images/man-avatar.png"}
                 alt={dentist.name.split(" ")[0].slice(0, 4)}
                 fill
                 className="object-cover"
@@ -236,12 +236,6 @@ export default function DentistCard({
                 </Badge>
               )}
 
-              {dentist.languages.length > 0 && (
-                <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-[12px] font-medium text-[#0E3E65] hover:bg-sky-50">
-                  <Globe2 className="size-3.5" />
-                  {dentist.languages.join(" - ")}
-                </Badge>
-              )}
             </div>
           </div>
         </div>
@@ -249,10 +243,11 @@ export default function DentistCard({
         {/* ── Right column: price + actions ───────────────────────────────── */}
         <div className="flex flex-row sm:flex-col items-end justify-between gap-3 xl:min-w-50">
           <div className="text-right">
-            <div className="text-[12px] text-[#6B7280]">Starting at</div>
+            <div className="text-[12px] text-[#6B7280]">Starting from</div>
             <div className="text-[#0E3E65] font-bold text-xl lg:text-2xl mt-1">
               ${dentist.price.toLocaleString()}
             </div>
+            <div className="text-[10px] text-[#9CA3AF]">Estimate</div>
           </div>
 
           <div className="flex flex-wrap items-end justify-end gap-2 sm:w-auto">
@@ -273,8 +268,8 @@ export default function DentistCard({
               </Button>
             ) : (
               <>
-                {/* Only unclaimed admin-added profiles show "Claim Profile" */}
-                {dentist.accountType === "CLAIMABLE" && (
+                {/* isClaimable is the single source of truth for showing "Claim Profile" */}
+                {dentist.isClaimable && (
                   <Button
                     variant="secondary"
                     className="h-10 rounded-lg border border-amber-300 bg-amber-50 px-5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all"

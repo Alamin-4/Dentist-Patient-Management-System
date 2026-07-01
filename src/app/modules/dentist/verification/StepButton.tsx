@@ -6,6 +6,16 @@ import { Loader2 } from "lucide-react";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import { useIsMutating } from "@tanstack/react-query";
+import type {
+  DentistVerificationProgress,
+  VerificationPhase,
+} from "../overview/verification-progress.types";
+
+const PHASE_BY_STEP: Record<number, VerificationPhase> = {
+  1: "LICENSE",
+  2: "OPERATIONAL",
+  3: "CLINICAL",
+};
 
 export default function StepButton() {
   const router = useRouter();
@@ -33,14 +43,26 @@ export default function StepButton() {
     );
   }
 
-  const { data } = progressData;
-  const steps = data.steps;
+  const progress = progressData.data as DentistVerificationProgress;
+  const steps = progress.steps || [];
 
-  // Get data for the step the user is currently viewing
-  const stepIndex = verificationStep - 1;
-  const stepData = steps[stepIndex];
+  // Get data for the step the user is currently viewing. `steps` isn't
+  // guaranteed by the API, so fall back to the flat step_x_status fields
+  // (same fallback pattern used by verification-banner.tsx / verification-sidebar.tsx).
+  const flatStatusByStep: Record<number, string | null | undefined> = {
+    1: progress.step_one_status,
+    2: progress.step_two_status,
+    3: progress.step_three_status,
+  };
+  const matchingStep = steps.find(
+    (step) => step.phase === PHASE_BY_STEP[verificationStep],
+  );
+  const flatStatus = flatStatusByStep[verificationStep];
 
-  const currentStatus = stepData?.status || "PENDING";
+  const currentStatus =
+    (flatStatus && flatStatus !== "PENDING" ? flatStatus : null) ||
+    matchingStep?.status ||
+    (matchingStep?.completed ? "APPROVED" : "PENDING");
   const isStepSubmitted = currentStatus === "SUBMITTED" || currentStatus === "SUBMIT";
   const isStepApproved = currentStatus === "APPROVED";
 

@@ -93,7 +93,7 @@ export function RdvScoreWeights({ initialWeights }: RdvScoreWeightsProps) {
           onClick={handleSave}
           disabled={saving || !isValid}
           className={cn(
-            "flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95",
+            "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95",
             isValid
               ? "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90"
               : "cursor-not-allowed bg-gray-300"

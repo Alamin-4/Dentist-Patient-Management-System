@@ -378,7 +378,7 @@ export default function Reviews() {
             { label: "Flagged for review", value: meta.flagged_for_review, sub: "Awaiting decision", color: "text-amber-600" },
             { label: "Rejected", value: meta.rejected, sub: "Not published", color: "text-red-500" },
           ].map((s) => (
-            <div key={s.label} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+            <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
               <p className="text-sm text-gray-500">{s.label}</p>
               <p className={cn("mt-1 text-3xl font-bold tracking-tight", s.color)}>{s.value}</p>
               <p className="mt-0.5 text-xs text-gray-400">{s.sub}</p>
@@ -387,7 +387,7 @@ export default function Reviews() {
         </div>
 
         {/* AI Banner */}
-        <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3.5">
+        <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3.5">
           <Shield className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
           <div className="text-sm">
             <p className="font-semibold text-blue-700">AI-first moderation is active</p>
@@ -396,7 +396,7 @@ export default function Reviews() {
         </div>
 
         {/* Tabs + table */}
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-gray-100 px-4 pt-1">
             <CustomTab tabs={tabs} active={activeTab} onChange={(k) => { setActiveTab(k as TabKey); setSearch(""); }} />
             <div className="relative py-2">

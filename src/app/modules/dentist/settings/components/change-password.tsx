@@ -43,7 +43,7 @@ export default function ChangePassword() {
   const newVal = watch("newPassword");
 
   return (
-    <section className="rounded-xl border border-[#EEF2F7] bg-white p-6 shadow-sm">
+    <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-[#0E3E65]">Change Password</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
         {/* Old Password */}
@@ -54,9 +54,8 @@ export default function ChangePassword() {
               type={showOld ? "text" : "password"}
               disabled={changePasswordMutation.isPending}
               {...register("oldPassword", { required: "Old password is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] ${
-                errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             <button
               type="button"
@@ -82,9 +81,8 @@ export default function ChangePassword() {
                 required: "New password is required",
                 minLength: { value: 8, message: "New password must be at least 8 characters long" },
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] ${
-                errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             <button
               type="button"
@@ -110,9 +108,8 @@ export default function ChangePassword() {
                 required: "Please confirm your new password",
                 validate: (val) => val === newVal || "Passwords must match",
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] ${
-                errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             <button
               type="button"

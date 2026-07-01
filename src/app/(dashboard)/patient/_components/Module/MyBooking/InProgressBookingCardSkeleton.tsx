@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/feedback/skeleton";
 
 export default function InProgressBookingCardSkeleton() {
   return (
-    <div className="bg-white border border-[#CEE0F4] rounded-xl overflow-hidden">
+    <div className="bg-white border border-[#CEE0F4] rounded-lg overflow-hidden">
       {/* Top Section */}
       <div className="p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
         {/* Avatar + badges */}

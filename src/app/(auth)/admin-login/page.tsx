@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
           {/* Logo */}
           <div className="px-8 pt-8 sm:px-12">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#C9963F] shrink-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C9963F] shrink-0">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"

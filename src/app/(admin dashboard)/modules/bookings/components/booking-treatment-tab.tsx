@@ -25,7 +25,7 @@ function PlanTable({
   totalColor?: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-base font-semibold text-[#1A1A2E]">{label}</h3>
         {badge && (
@@ -68,9 +68,8 @@ function PlanTable({
                 {totalLabel}
               </td>
               <td
-                className={`px-4 py-3 text-right text-sm font-bold ${
-                  totalColor ?? "text-blue-600"
-                }`}
+                className={`px-4 py-3 text-right text-sm font-bold ${totalColor ?? "text-blue-600"
+                  }`}
               >
                 ${total.toLocaleString()}
               </td>
@@ -113,7 +112,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
       {/* Final plan (if available for completed bookings) */}
       {plan.final_plan && (
         <>
-          <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-base font-semibold text-[#1A1A2E]">
                 {plan.final_plan.label}
@@ -171,7 +170,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
 
       {/* Treatment Plan Agreement */}
       {plan.signed_by && (
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
             Treatment Plan Agreement
           </h3>

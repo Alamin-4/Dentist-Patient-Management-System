@@ -106,7 +106,7 @@ export const ConsultationDetailsSidebar = ({
             </SectionCard>
 
             {/* Media Section */}
-            <div className=" border border-[#E5E7EB] rounded-xl space-y-4">
+            <div className=" border border-[#E5E7EB] rounded-lg space-y-4">
               <h4 className="text-sm font-bold text-[#4A4A4C] pt-4 pl-4">
                 Media
               </h4>
@@ -141,10 +141,10 @@ export const ConsultationDetailsSidebar = ({
         </div>
 
         <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
-          <button className="flex-1 h-12 rounded-xl border border-red-200 text-red-500 font-bold text-sm hover:bg-red-50 transition-colors">
+          <button className="flex-1 h-12 rounded-lg border border-red-200 text-red-500 font-bold text-sm hover:bg-red-50 transition-colors">
             Reject
           </button>
-          <button className="flex-1 h-12 rounded-xl border border-emerald-200 text-emerald-500 font-bold text-sm hover:bg-emerald-50 transition-colors">
+          <button className="flex-1 h-12 rounded-lg border border-emerald-200 text-emerald-500 font-bold text-sm hover:bg-emerald-50 transition-colors">
             Accept
           </button>
         </div>

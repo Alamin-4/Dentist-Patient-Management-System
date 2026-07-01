@@ -47,7 +47,7 @@ const PaymentSuccessModal = ({ isOpen, onClose }: PaymentSuccessModalProps) => {
           <button
             type="button"
             onClick={handleGoToBookings}
-            className="px-8 py-3.5 bg-[#0F3659] hover:bg-[#0A2640] text-white font-bold text-[15px] rounded-xl active:scale-95 transition-all"
+            className="px-8 py-3.5 bg-[#0F3659] hover:bg-[#0A2640] text-white font-bold text-[15px] rounded-lg active:scale-95 transition-all"
           >
             Go to My Bookings
           </button>

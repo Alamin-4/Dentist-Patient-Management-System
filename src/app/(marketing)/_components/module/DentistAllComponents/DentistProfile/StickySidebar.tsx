@@ -90,7 +90,7 @@ export default function StickySidebar({ dentist }: { dentist: any }) {
           </p>
           <p className="text-4xl font-black text-[#003366]">$1,500</p>
         </div>
-        <Button className="h-16 flex-1 rounded-xl bg-[#003366] text-lg font-black text-white hover:bg-[#002850]">
+        <Button className="h-16 flex-1 rounded-lg bg-[#003366] text-lg font-black text-white hover:bg-[#002850]">
           Book consultation
         </Button>
       </div>

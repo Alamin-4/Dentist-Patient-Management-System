@@ -117,16 +117,16 @@ export default function BookingDetailPage() {
   // Build display data (real booking or demo fallback)
   const display = booking
     ? {
-        name: `${booking.personalInfo.firstName} ${booking.personalInfo.lastName}`,
-        email: booking.personalInfo.email,
-        initials: `${booking.personalInfo.firstName[0] || ""}${booking.personalInfo.lastName[0] || ""}`,
-        procedure: booking.procedure,
-        budget: booking.budget || "$1,200",
-        travelFrom: booking.travelFrom || "12–24 Jan, 2024",
-        lastVisited: booking.dentalHistory?.lastVisit || "Wed 24 Jan, 2024",
-        conditions:
-          booking.dentalHistory?.conditions?.join(", ") || "Bone loss, Gum Disease",
-      }
+      name: `${booking.personalInfo.firstName} ${booking.personalInfo.lastName}`,
+      email: booking.personalInfo.email,
+      initials: `${booking.personalInfo.firstName[0] || ""}${booking.personalInfo.lastName[0] || ""}`,
+      procedure: booking.procedure,
+      budget: booking.budget || "$1,200",
+      travelFrom: booking.travelFrom || "12–24 Jan, 2024",
+      lastVisited: booking.dentalHistory?.lastVisit || "Wed 24 Jan, 2024",
+      conditions:
+        booking.dentalHistory?.conditions?.join(", ") || "Bone loss, Gum Disease",
+    }
     : DEMO_BOOKING;
 
   const stepValue = STEP_VALUES[step];
@@ -150,8 +150,8 @@ export default function BookingDetailPage() {
         stepValue >= 3
           ? ("completed" as const)
           : stepValue === 2
-          ? ("current" as const)
-          : ("pending" as const),
+            ? ("current" as const)
+            : ("pending" as const),
     },
     {
       label: "Final Treatment Plan Confirmed",
@@ -184,7 +184,7 @@ export default function BookingDetailPage() {
       <div className="animate-pulse space-y-6">
         <div className="h-6 w-32 bg-slate-200 rounded" />
         <div className="h-8 w-52 bg-slate-200 rounded" />
-        <div className="bg-white rounded-xl p-6 border border-slate-100">
+        <div className="bg-white rounded-lg p-6 border border-slate-100">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-slate-200" />
@@ -198,8 +198,8 @@ export default function BookingDetailPage() {
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 h-72 bg-white rounded-xl border border-slate-100" />
-          <div className="h-72 bg-white rounded-xl border border-slate-100" />
+          <div className="lg:col-span-2 h-72 bg-white rounded-lg border border-slate-100" />
+          <div className="h-72 bg-white rounded-lg border border-slate-100" />
         </div>
       </div>
     );
@@ -223,7 +223,7 @@ export default function BookingDetailPage() {
         </div>
 
         {/* ── Patient Info Card ── */}
-        <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-100 shadow-sm">
+        <div className="bg-white rounded-lg p-5 sm:p-6 border border-slate-100 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             {/* Avatar + Name + Status */}
             <div className="flex items-start sm:items-center gap-4">
@@ -263,7 +263,7 @@ export default function BookingDetailPage() {
           {/* ── Left Column ── */}
           <div className="lg:col-span-2 space-y-5">
             {/* Estimate Treatment Plan */}
-            <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-100 shadow-sm overflow-hidden">
               <button
                 type="button"
                 onClick={() => setTreatmentPlanOpen((v) => !v)}
@@ -279,7 +279,7 @@ export default function BookingDetailPage() {
 
               {treatmentPlanOpen && (
                 <div className="px-6 pb-6">
-                  <div className="rounded-xl border border-slate-100 overflow-hidden">
+                  <div className="rounded-lg border border-slate-100 overflow-hidden">
                     <table className="w-full text-sm">
                       <thead className="bg-slate-50">
                         <tr>
@@ -327,9 +327,9 @@ export default function BookingDetailPage() {
             {step === "day1_arrival" && (
               <div className="space-y-4">
                 {/* Dark verification banner */}
-                <div className="bg-[#0A2540] rounded-xl px-5 py-4 flex items-center justify-between gap-4">
+                <div className="bg-[#0A2540] rounded-lg px-5 py-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                       <KeyRound className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -347,7 +347,7 @@ export default function BookingDetailPage() {
                 </div>
 
                 {/* Info box */}
-                <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3.5 flex items-start gap-3">
+                <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3.5 flex items-start gap-3">
                   <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
                   <p className="text-sm text-blue-700 leading-relaxed">
                     The patient received a unique arrival code when they booked. Ask
@@ -373,17 +373,16 @@ export default function BookingDetailPage() {
                         setCodeError(false);
                       }}
                       placeholder="e.g. 7429"
-                      className={`flex-1 h-12 rounded-xl border px-4 text-base tracking-widest text-center font-mono bg-white focus:outline-none focus:ring-2 transition-all ${
-                        codeError
+                      className={`flex-1 h-12 rounded-lg border px-4 text-base tracking-widest text-center font-mono bg-white focus:outline-none focus:ring-2 transition-all ${codeError
                           ? "border-red-400 focus:ring-red-200"
                           : "border-slate-200 focus:ring-[#163E5C]/20 focus:border-[#163E5C]"
-                      }`}
+                        }`}
                     />
                     <button
                       type="button"
                       onClick={handleVerify}
                       disabled={arrivalCode.length !== 4 || isVerifying}
-                      className="h-12 px-6 rounded-xl bg-[#0A2540] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#0d2f50] transition-colors"
+                      className="h-12 px-6 rounded-lg bg-[#0A2540] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#0d2f50] transition-colors"
                     >
                       <ShieldCheck className="w-4 h-4" />
                       {isVerifying ? "Verifying…" : "Verify"}
@@ -400,7 +399,7 @@ export default function BookingDetailPage() {
 
             {/* Step: Final Treatment Plan */}
             {step === "final_plan" && (
-              <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
+              <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6">
                 <h3 className="font-bold text-[#0F172A] text-base mb-5">
                   Final Treatment plan
                 </h3>
@@ -420,7 +419,7 @@ export default function BookingDetailPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-4 py-4 text-center">
-                    <div className="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-lg bg-slate-50 flex items-center justify-center">
                       <Target className="w-7 h-7 text-slate-400" />
                     </div>
                     <p className="text-sm text-slate-500 max-w-xs leading-relaxed">
@@ -431,7 +430,7 @@ export default function BookingDetailPage() {
                     <button
                       type="button"
                       onClick={() => setShowFinalModal(true)}
-                      className="w-full max-w-sm h-12 bg-[#0A2540] hover:bg-[#0d2f50] text-white font-semibold rounded-xl text-sm transition-colors"
+                      className="w-full max-w-sm h-12 bg-[#0A2540] hover:bg-[#0d2f50] text-white font-semibold rounded-lg text-sm transition-colors"
                     >
                       Create Final Plan
                     </button>
@@ -442,7 +441,7 @@ export default function BookingDetailPage() {
           </div>
 
           {/* ── Right Column: Patient Timeline ── */}
-          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 h-fit">
+          <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 h-fit">
             <h4 className="font-bold text-[#0F172A] mb-6">Patient Timeline</h4>
             <ol className="space-y-0">
               {timelineItems.map((item, i) => (
@@ -452,18 +451,16 @@ export default function BookingDetailPage() {
                     <TimelineIcon status={item.status} />
                     {i < timelineItems.length - 1 && (
                       <div
-                        className={`w-px flex-1 min-h-7 my-1 ${
-                          item.status === "completed" ? "bg-[#0A2540]" : "bg-slate-200"
-                        }`}
+                        className={`w-px flex-1 min-h-7 my-1 ${item.status === "completed" ? "bg-[#0A2540]" : "bg-slate-200"
+                          }`}
                       />
                     )}
                   </div>
                   {/* Content */}
                   <div className="pb-5">
                     <div
-                      className={`font-semibold text-sm leading-tight ${
-                        item.status === "pending" ? "text-slate-500" : "text-[#0F172A]"
-                      }`}
+                      className={`font-semibold text-sm leading-tight ${item.status === "pending" ? "text-slate-500" : "text-[#0F172A]"
+                        }`}
                     >
                       {item.label}
                     </div>
@@ -476,7 +473,7 @@ export default function BookingDetailPage() {
         </div>
 
         {/* ── Dev Step Navigator (for demo) ── */}
-        <div className="flex flex-wrap gap-2 mt-2 p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+        <div className="flex flex-wrap gap-2 mt-2 p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
           <p className="w-full text-xs text-slate-400 mb-1">
             Demo — simulate booking step:
           </p>
@@ -492,11 +489,10 @@ export default function BookingDetailPage() {
               key={s}
               type="button"
               onClick={() => saveStep(s)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium border transition-colors ${
-                step === s
+              className={`text-xs px-3 py-1.5 rounded-lg font-medium border transition-colors ${step === s
                   ? "bg-[#0A2540] text-white border-[#0A2540]"
                   : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
-              }`}
+                }`}
             >
               {s.replace(/_/g, " ")}
             </button>

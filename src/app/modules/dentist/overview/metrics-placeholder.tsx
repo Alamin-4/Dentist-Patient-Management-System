@@ -20,7 +20,7 @@ export function MetricsPlaceholder() {
             </p>
           </div>
 
-          <div className="hidden rounded-xl border border-border bg-background px-4 py-3 text-right sm:block">
+          <div className="hidden rounded-lg border border-border bg-background px-4 py-3 text-right sm:block">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Status
             </p>
@@ -34,7 +34,7 @@ export function MetricsPlaceholder() {
             ["Booking clicks", "—"],
             ["Conversion rate", "—"],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-xl border border-border bg-background p-4">
+            <div key={label} className="rounded-lg border border-border bg-background p-4">
               <p className="text-sm text-muted-foreground">{label}</p>
               <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{value}</p>
             </div>
@@ -44,7 +44,7 @@ export function MetricsPlaceholder() {
 
       <div className="rounded-[28px] border border-border bg-card p-6 shadow-[0_18px_40px_rgba(15,35,61,0.06)] sm:p-8">
         <div className="flex items-center gap-3">
-          <div className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">
+          <div className="grid size-11 place-items-center rounded-lg bg-primary/10 text-primary">
             <Clock3 className="size-5" />
           </div>
           <div>
@@ -63,7 +63,7 @@ export function MetricsPlaceholder() {
             "Your profile becomes visible in search and listings.",
             "Behavioural metrics start collecting live performance data.",
           ].map((item) => (
-            <div key={item} className="flex gap-3 rounded-xl border border-border bg-background p-4">
+            <div key={item} className="flex gap-3 rounded-lg border border-border bg-background p-4">
               <Info className="mt-0.5 size-4 shrink-0 text-sidebar-primary" />
               <p className="text-sm leading-6 text-muted-foreground">{item}</p>
             </div>

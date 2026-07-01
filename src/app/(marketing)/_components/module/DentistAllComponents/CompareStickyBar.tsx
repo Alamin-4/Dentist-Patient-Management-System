@@ -19,7 +19,7 @@ export default function CompareStickyBar({
   if (compareList.length === 0) return null;
 
   return (
-    <div className="w-full mb-6 flex flex-row gap-4 items-center justify-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+    <div className="w-full mb-6 flex flex-row gap-4 items-center justify-center bg-slate-50 p-4 rounded-lg border border-slate-100">
       <div className="flex flex-row gap-4 items-center justify-center">
         {compareList.map((dentist, i) => (
           <div key={dentist.id || i} className="relative group cursor-pointer">

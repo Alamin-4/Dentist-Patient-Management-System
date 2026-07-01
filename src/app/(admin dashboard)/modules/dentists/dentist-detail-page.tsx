@@ -115,8 +115,8 @@ function VerificationStatus({
         {isDone
           ? "Complete"
           : status === "pending" ||
-              status === "in_review" ||
-              status === "SUBMITTED"
+            status === "in_review" ||
+            status === "SUBMITTED"
             ? "Pending"
             : status === "rejected"
               ? "Rejected"
@@ -225,7 +225,7 @@ export default function DentistDetailPage({
         <span className="font-medium text-[#1A1A2E]">{dentist.name}</span>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           {/* Left: avatar + name + badges + meta */}
           <div className="flex items-start gap-4">
@@ -301,11 +301,10 @@ export default function DentistDetailPage({
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${
-                      i < Math.round(dentist.rating!)
+                    className={`h-4 w-4 ${i < Math.round(dentist.rating!)
                         ? "fill-amber-400 text-amber-400"
                         : "fill-gray-200 text-gray-200"
-                    }`}
+                      }`}
                   />
                 ))}
                 <span className="ml-1 text-xl font-bold text-[#1A1A2E]">
@@ -325,7 +324,7 @@ export default function DentistDetailPage({
         {statCards.map((s, i) => (
           <div
             key={i}
-            className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+            className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}
@@ -379,7 +378,7 @@ export default function DentistDetailPage({
               />
             )}
             {activeTab === "patient_results" && (
-              <div className="rounded-xl border border-gray-100 bg-white p-8 text-center text-sm text-gray-400 shadow-sm">
+              <div className="rounded-lg border border-gray-100 bg-white p-8 text-center text-sm text-gray-400 shadow-sm">
                 No patient results yet
               </div>
             )}
@@ -389,7 +388,7 @@ export default function DentistDetailPage({
         {/* Right sidebar */}
         <div className="hidden w-64 shrink-0 flex-col gap-4 lg:flex">
           {/* Performance */}
-          <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
             <p className="mb-1 text-sm font-bold text-[#1A1A2E]">Performance</p>
             <p className="mb-3 text-xs text-gray-400">Based on last 90 days</p>
             <div className="flex flex-col gap-3">
@@ -414,7 +413,7 @@ export default function DentistDetailPage({
 
           {/* Verification (consultations tab only) */}
           {showVerificationSidebar ? (
-            <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
               <p className="mb-3 text-sm font-bold text-[#1A1A2E]">
                 Verification
               </p>
@@ -437,20 +436,20 @@ export default function DentistDetailPage({
               </div>
             </div>
           ) : (
-            <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
               <p className="mb-3 text-sm font-bold text-[#1A1A2E]">
                 Admin actions
               </p>
               <div className="flex flex-col gap-2">
-                <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
+                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
                   <Pencil className="h-4 w-4 text-gray-400" />
                   Edit profile
                 </button>
-                <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-amber-600 transition-colors hover:bg-amber-50">
+                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-amber-600 transition-colors hover:bg-amber-50">
                   <ShieldOff className="h-4 w-4" />
                   Suspend account
                 </button>
-                <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50">
+                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50">
                   <Trash2 className="h-4 w-4" />
                   Delete account
                 </button>

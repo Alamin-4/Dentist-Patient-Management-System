@@ -47,7 +47,7 @@ export function NoSurpriseRejectModal({
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter Reason"
             rows={4}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F3659] resize-none"
+            className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F3659] resize-none"
           />
         </div>
 
@@ -55,14 +55,14 @@ export function NoSurpriseRejectModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-slate-300 font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors cursor-pointer"
+            className="flex-1 py-3 rounded-lg border border-slate-300 font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleConfirm}
-            className="flex-1 py-3 rounded-xl bg-[#0F3659] font-bold text-white hover:bg-[#0A2640] transition-colors cursor-pointer"
+            className="flex-1 py-3 rounded-lg bg-[#0F3659] font-bold text-white hover:bg-[#0A2640] transition-colors cursor-pointer"
           >
             Yes Reject
           </button>

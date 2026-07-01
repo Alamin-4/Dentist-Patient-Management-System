@@ -33,9 +33,9 @@ export function ConsultationCard({
 
   return (
     <>
-      <div className="rounded-xl border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
+      <div className="rounded-lg border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
         {consultation.alertMessage ? (
-          <div className="mb-4 flex items-start gap-3 rounded-xl border border-[#FACC15]/40 bg-[#FFF7E6] px-4 py-3 text-[12px] leading-relaxed text-[#7A4A00]">
+          <div className="mb-4 flex items-start gap-3 rounded-lg border border-[#FACC15]/40 bg-[#FFF7E6] px-4 py-3 text-[12px] leading-relaxed text-[#7A4A00]">
             <div className="mt-0.5 size-5 rounded-full bg-white flex items-center justify-center text-[#F59E0B] shrink-0">
               <CalendarDays className="size-3.5" />
             </div>
@@ -133,9 +133,8 @@ export function ConsultationCard({
             <button
               type="button"
               onClick={onPrimaryAction}
-              className={`w-full rounded-xl px-6 py-3 text-[14px] font-bold text-white transition-all active:scale-95 sm:w-auto ${
-                showRescheduleAction ? "bg-[#113254] hover:bg-[#0d2844]" : "bg-[#113254] hover:bg-[#0d2844]"
-              }`}
+              className={`w-full rounded-lg px-6 py-3 text-[14px] font-bold text-white transition-all active:scale-95 sm:w-auto ${showRescheduleAction ? "bg-[#113254] hover:bg-[#0d2844]" : "bg-[#113254] hover:bg-[#0d2844]"
+                }`}
             >
               {consultation.primaryActionLabel}
             </button>

@@ -80,7 +80,7 @@ function ProgressBar({ value, color }: { value: number; color: string }) {
 
 function formatDate(dateStr: string) {
   const [y, m, d] = dateStr.split("-");
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return `${months[parseInt(m) - 1]} ${parseInt(d)}, ${y}`;
 }
 
@@ -99,7 +99,7 @@ export function PatientOverviewTab({
       {/* Left (main) column */}
       <div className="flex flex-col gap-4 lg:col-span-2">
         {/* Personal Information card */}
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-[#1A1A2E]">
               Personal information
@@ -125,7 +125,7 @@ export function PatientOverviewTab({
         </div>
 
         {/* Recent Bookings card */}
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-[#1A1A2E]">
               Recent bookings
@@ -201,7 +201,7 @@ export function PatientOverviewTab({
       {/* Right sidebar */}
       <div className="flex flex-col gap-4">
         {/* Engagement card */}
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
             Engagement
           </h3>
@@ -247,7 +247,7 @@ export function PatientOverviewTab({
         </div>
 
         {/* Referrals card */}
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
             Referrals
           </h3>
@@ -283,7 +283,7 @@ export function PatientOverviewTab({
         </div>
 
         {/* Activity card */}
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
             Activity
           </h3>

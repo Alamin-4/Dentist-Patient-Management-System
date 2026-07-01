@@ -27,7 +27,7 @@ export function CustomTable<T>({
   footer,
 }: CustomTableProps<T>) {
   return (
-    <div className={cn("overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm", className)}>
+    <div className={cn("overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm", className)}>
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>

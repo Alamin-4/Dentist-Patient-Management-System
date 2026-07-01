@@ -27,13 +27,13 @@ export default function ResultsSection() {
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                   Before
                 </span>
-                <Skeleton className="h-36 w-full rounded-xl" />
+                <Skeleton className="h-36 w-full rounded-lg" />
               </div>
               <div className="space-y-1.5">
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                   After
                 </span>
-                <Skeleton className="h-36 w-full rounded-xl" />
+                <Skeleton className="h-36 w-full rounded-lg" />
               </div>
             </div>
             <div>

@@ -19,7 +19,7 @@ export function DentistsPageSkeleton() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div key={i} className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
             <Skeleton className="h-4 w-24 mb-2" />
             <Skeleton className="h-5 w-20" />
             <Skeleton className="h-3 w-16 mt-1" />

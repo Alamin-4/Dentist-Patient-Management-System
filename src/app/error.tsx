@@ -72,7 +72,7 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
         </div>
 
         {/* Error detail card */}
-        <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-6">
+        <div className="w-full max-w-lg rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden mb-6">
           {/* Error summary */}
           <div className="flex items-start gap-3 px-5 py-4 bg-red-50/60 border-b border-red-100">
             <div className="mt-0.5 shrink-0 size-2 rounded-full bg-red-400 animate-pulse" />
@@ -136,14 +136,14 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
           <button
             type="button"
             onClick={reset}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#003366] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#002850] active:scale-[0.98] transition-all"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#003366] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#002850] active:scale-[0.98] transition-all"
           >
             <RefreshCw className="size-4" />
             Try Again
           </button>
           <Link
             href="/"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#003366] px-6 py-3.5 text-sm font-bold text-[#003366] hover:bg-[#EEF8FF] transition-all"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#003366] px-6 py-3.5 text-sm font-bold text-[#003366] hover:bg-[#EEF8FF] transition-all"
           >
             <Home className="size-4" />
             Go Home

@@ -87,7 +87,7 @@ export default function SuccessContent() {
         </p>
 
         {/* Appointment summary */}
-        <div className="w-full mt-6 rounded-xl border border-[#E9EDEE] overflow-hidden">
+        <div className="w-full mt-6 rounded-lg border border-[#E9EDEE] overflow-hidden">
           {dentists.map((doc) => {
             const sel = getSelection(doc.id);
             return (
@@ -97,7 +97,7 @@ export default function SuccessContent() {
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <Image
-                    src={doc.image ?? "/placeholder-avatar.png"}
+                    src={doc.image ?? "/images/man-avatar.png"}
                     alt={doc.name}
                     width={48}
                     height={48}
@@ -132,7 +132,7 @@ export default function SuccessContent() {
         <button
           type="button"
           onClick={() => router.push("/patient/bookings")}
-          className="mt-6 px-8 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-xl active:scale-95 transition-all"
+          className="mt-6 px-8 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all"
         >
           Go to my Bookings
         </button>

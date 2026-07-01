@@ -34,7 +34,7 @@ export function ConfirmDialog({
             />
 
             {/* Modal Content */}
-            <div className="relative z-10 w-full max-w-md rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+            <div className="relative z-10 w-full max-w-md rounded-lg border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
                 <div className="flex items-start gap-4">
                     {/* Warning Icon */}
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">

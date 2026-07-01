@@ -26,7 +26,7 @@ export default function ConsultationMeetingPage() {
     /* 1. Uses h-[calc(100vh-theme(spacing.12))] (adjusted to fit within standard layout dashboard shell space)
       2. Uses max-h-full layout with flex-col to force everything inside the boundaries 
     */
-    <div className="flex flex-col h-screen max-h-screen w-full rounded-xl border border-border bg-card p-6 font-sans antialiased overflow-hidden">
+    <div className="flex flex-col h-screen max-h-screen w-full rounded-lg border border-border bg-card p-6 font-sans antialiased overflow-hidden">
       {/* Header Container Area */}
       <div className="flex-none flex items-start justify-between gap-4 border-b border-border pb-4">
         <div className="space-y-1">
@@ -51,7 +51,7 @@ export default function ConsultationMeetingPage() {
       {/* Main Dynamically Sized Dynamic Video Area Box */}
       <div className="flex-1 min-h-0 py-4 flex flex-col justify-between gap-4">
         {/* Core Video Dynamic Sandbox Container */}
-        <div className="relative flex-1 min-h-0 w-full rounded-xl border border-border bg-gray-50 overflow-hidden group">
+        <div className="relative flex-1 min-h-0 w-full rounded-lg border border-border bg-gray-50 overflow-hidden group">
           {/* Main Stage Doctor Feed */}
           <div className="relative w-full h-full bg-navy-900 flex items-center justify-center">
             <Image
@@ -70,7 +70,7 @@ export default function ConsultationMeetingPage() {
             </div>
 
             {/* PIP Frame Component Layout Positioning */}
-            <div className="absolute bottom-4 right-4 w-40 sm:w-48 md:w-56 overflow-hidden rounded-xl border border-white/20 bg-navy-800 shadow-md transition-all duration-300">
+            <div className="absolute bottom-4 right-4 w-40 sm:w-48 md:w-56 overflow-hidden rounded-lg border border-white/20 bg-navy-800 shadow-md transition-all duration-300">
               <div className="relative aspect-4/3 w-full bg-gray-100">
                 <div className="absolute inset-0 flex items-center justify-center bg-navy-900">
                   <Image
@@ -90,7 +90,7 @@ export default function ConsultationMeetingPage() {
         </div>
 
         {/* Action Controls Toolbar Module Utility */}
-        <div className="flex-none flex items-center justify-center rounded-xl border border-border bg-white p-3">
+        <div className="flex-none flex items-center justify-center rounded-lg border border-border bg-white p-3">
           <div className="flex items-center justify-center gap-3">
             {/* Mic Toggle Trigger */}
             <button

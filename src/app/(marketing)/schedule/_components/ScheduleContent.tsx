@@ -218,7 +218,7 @@ export default function ScheduleContent() {
           <button
             type="button"
             onClick={() => setShowCompareModal(true)}
-            className="shrink-0 px-5 py-2.5 border border-[#E5E7EB] rounded-xl text-[14px] font-semibold text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors"
+            className="shrink-0 px-5 py-2.5 border border-[#E5E7EB] rounded-lg text-[14px] font-semibold text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors"
           >
             View Comparison
           </button>
@@ -242,7 +242,7 @@ export default function ScheduleContent() {
             type="button"
             onClick={handleConfirm}
             disabled={isConfirming}
-            className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-xl active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+            className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isConfirming ? "Confirming..." : "Confirm Video Consultation"}
           </button>
@@ -273,7 +273,7 @@ export default function ScheduleContent() {
             </p>
 
             {/* Booked appointments */}
-            <div className="w-full mt-6 rounded-xl border border-[#E9EDEE] overflow-hidden">
+            <div className="w-full mt-6 rounded-lg border border-[#E9EDEE] overflow-hidden">
               {dentists.map((doc, i) => {
                 const sel = selections[i];
                 return (
@@ -283,7 +283,7 @@ export default function ScheduleContent() {
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <Image
-                        src={doc.image ?? "/placeholder-avatar.png"}
+                        src={doc.image ?? "/images/man-avatar.png"}
                         alt={doc.name}
                         width={48}
                         height={48}
@@ -318,7 +318,7 @@ export default function ScheduleContent() {
             <button
               type="button"
               onClick={handleGoToBookings}
-              className="mt-6 px-8 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-xl active:scale-95 transition-all"
+              className="mt-6 px-8 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all"
             >
               Go to my Bookings
             </button>

@@ -41,7 +41,7 @@ function getIconConfig(type: ActivityItem["type"]): IconConfig {
 
 export function RecentActivity() {
   return (
-    <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       {/* Header */}
       <h3 className="text-[15px] font-bold text-[#1A1A2E] mb-5">
         Recent activity

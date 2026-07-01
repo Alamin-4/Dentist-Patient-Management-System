@@ -78,7 +78,7 @@ export default function SmileTransformations() {
             {CASE_STUDIES.map((study) => (
               <div
                 key={study.id}
-                className="bg-white rounded-xl overflow-hidden border border-gray-200 flex flex-col group transition-shadow duration-300 hover:shadow-sm"
+                className="bg-white rounded-lg overflow-hidden border border-gray-200 flex flex-col group transition-shadow duration-300 hover:shadow-sm"
               >
                 {/* Image Frame Container */}
                 <div className="relative w-full aspect-4/3 bg-gray-100 overflow-hidden">

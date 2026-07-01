@@ -9,7 +9,7 @@ export function DentistDetailPageSkeleton() {
         <Skeleton className="h-4 w-24" />
       </div>
       {/* Hero Card */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-4">
             <Skeleton className="h-14 w-14 sm:h-16 sm:w-16 rounded-full" />
@@ -23,7 +23,7 @@ export function DentistDetailPageSkeleton() {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div key={i} className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
               <Skeleton className="h-3 w-16 mb-1" />
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-3 w-20" />

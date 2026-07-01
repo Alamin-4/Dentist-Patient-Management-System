@@ -96,7 +96,7 @@ export default function OfflinePage() {
               <button
                 onClick={handleRetry}
                 disabled={isReconnecting}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-navy-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-navy-700 active:scale-[0.98] disabled:opacity-50 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/95"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-navy-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-navy-700 active:scale-[0.98] disabled:opacity-50 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/95"
               >
                 <RefreshCw
                   className={`h-4 w-4 ${isReconnecting ? "animate-spin" : ""}`}
@@ -106,7 +106,7 @@ export default function OfflinePage() {
 
               <Link
                 href="/"
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-foreground hover:bg-gray-50 active:scale-[0.98] dark:border-gray-800 dark:bg-card dark:hover:bg-gray-800/40"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-foreground hover:bg-gray-50 active:scale-[0.98] dark:border-gray-800 dark:bg-card dark:hover:bg-gray-800/40"
               >
                 <Home className="h-4 w-4 text-muted-foreground" />
                 Go to Homepage

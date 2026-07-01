@@ -9,7 +9,7 @@ interface Props {
 
 export function OverviewAlertsCard({ alerts }: Props) {
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
       <h2 className="text-lg font-semibold text-foreground">Alerts</h2>
 
       <div className="mt-5 divide-y divide-border">

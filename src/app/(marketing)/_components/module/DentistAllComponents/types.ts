@@ -64,7 +64,11 @@ export type Dentist = {
   // Structured location
   location: DentistLocation;
 
-  // Geo coords — not in API yet; mapping layer provides a default
+  // Real geo coords from the API (null/undefined until the dentist's address
+  // has been geocoded / captured via the clinic-depth map picker). No pin
+  // should be rendered when either is missing.
+  latitude?: number | null;
+  longitude?: number | null;
   coords?: { lat: number; lng: number };
 };
 

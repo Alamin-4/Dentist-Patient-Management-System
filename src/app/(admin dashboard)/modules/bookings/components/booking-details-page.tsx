@@ -61,7 +61,7 @@ export default function BookingDetailPage({
     const et = booking.payment.escrow_type;
     if (et === "in_escrow") {
       return (
-        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700">
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700">
           <AlertCircle className="h-4 w-4 shrink-0 text-amber-500" />
           <div>
             <p className="text-sm font-semibold">
@@ -76,7 +76,7 @@ export default function BookingDetailPage({
     }
     if (et === "released") {
       return (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
           <div>
             <p className="text-sm font-semibold">
@@ -89,7 +89,7 @@ export default function BookingDetailPage({
     }
     if (et === "refunded") {
       return (
-        <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-600">
+        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-600">
           <XCircle className="h-4 w-4 shrink-0 text-red-500" />
           <div>
             <p className="text-sm font-semibold">
@@ -188,7 +188,7 @@ export default function BookingDetailPage({
         {/* Right sidebar */}
         <div className="flex flex-col gap-4">
           {/* Booking Journey */}
-          <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
             <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
               Booking Journey
             </h3>
@@ -227,8 +227,8 @@ export default function BookingDetailPage({
                           isCompleted || isCurrent
                             ? "text-[#1A1A2E]"
                             : isCancelledStep
-                            ? "text-red-500"
-                            : "text-gray-300"
+                              ? "text-red-500"
+                              : "text-gray-300"
                         )}
                       >
                         {step.step}
@@ -244,7 +244,7 @@ export default function BookingDetailPage({
           </div>
 
           {/* Platform Fee */}
-          <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
             <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
               Platform Fee
             </h3>

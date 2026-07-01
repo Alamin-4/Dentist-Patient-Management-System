@@ -17,7 +17,7 @@ export function OverviewReferralsCard({ referralCode }: Props) {
   };
 
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
       <p className="text-sm font-medium text-muted-foreground">
         Your referral code
       </p>
@@ -30,7 +30,7 @@ export function OverviewReferralsCard({ referralCode }: Props) {
         <button
           type="button"
           onClick={handleCopy}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:bg-gray-100"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:bg-gray-100"
         >
           <Copy className="size-4 shrink-0" />
           {copied ? "Copied!" : "Copy code"}

@@ -55,7 +55,7 @@ export function VerificationNextStepModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-136 rounded-xl border border-border bg-card p-0 shadow-2xl">
+      <DialogContent className="sm:max-w-136 rounded-lg border border-border bg-card p-0 shadow-2xl">
         <div className="px-6 py-8 sm:px-8 sm:py-10">
           <DialogHeader className="items-center text-center">
             <div className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">

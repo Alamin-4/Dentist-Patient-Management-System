@@ -58,12 +58,12 @@ export default function DentistScheduleCard({
   onUpdate,
 }: DentistScheduleCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-[#E9EDEE] overflow-hidden shadow-sm">
+    <div className="bg-white rounded-lg border border-[#E9EDEE] overflow-hidden shadow-sm">
       {/* ── Doctor header ── */}
       <div className="flex items-start justify-between gap-4 p-6 border-b border-[#F3F4F6]">
         <div className="flex items-center gap-4">
           <Image
-            src={dentist.image ?? "/placeholder-avatar.png"}
+            src={dentist.image ?? "/images/man-avatar.png"}
             alt={dentist.name}
             width={64}
             height={64}
@@ -134,7 +134,7 @@ export default function DentistScheduleCard({
             <select
               value={selection.timezone}
               onChange={(e) => onUpdate({ timezone: e.target.value })}
-              className="w-full h-11 pl-4 pr-10 appearance-none bg-white border border-[#E5E7EB] rounded-xl text-[13px] text-[#374151] outline-none focus:border-[#113254] transition-colors cursor-pointer"
+              className="w-full h-11 pl-4 pr-10 appearance-none bg-white border border-[#E5E7EB] rounded-lg text-[13px] text-[#374151] outline-none focus:border-[#113254] transition-colors cursor-pointer"
             >
               <option value="">Select Time Zone</option>
               {TIMEZONES.map((tz) => (
@@ -160,11 +160,10 @@ export default function DentistScheduleCard({
                   key={slot}
                   type="button"
                   onClick={() => onUpdate({ timeSlot: slot })}
-                  className={`shrink-0 px-3 py-2 rounded-lg border text-[12px] font-medium whitespace-nowrap transition-all ${
-                    isActive
-                      ? "bg-[#113254] text-white border-[#113254]"
-                      : "bg-white text-[#4B5563] border-[#E5E7EB] hover:border-[#113254] hover:text-[#113254]"
-                  }`}
+                  className={`shrink-0 px-3 py-2 rounded-lg border text-[12px] font-medium whitespace-nowrap transition-all ${isActive
+                    ? "bg-[#113254] text-white border-[#113254]"
+                    : "bg-white text-[#4B5563] border-[#E5E7EB] hover:border-[#113254] hover:text-[#113254]"
+                    }`}
                 >
                   {slot}
                 </button>

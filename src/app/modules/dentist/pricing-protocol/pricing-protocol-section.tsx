@@ -38,7 +38,7 @@ export default function PricingProtocolSection() {
   };
 
   return (
-    <div className=" bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden p-6 font-sans">
+    <div className=" bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden p-6 font-sans">
       <div className="flex items-center justify-between pb-5 border-b border-gray-100">
         <h2 className="text-xl font-semibold text-[#0F172A]">
           Pricing Protocols
@@ -71,7 +71,7 @@ export default function PricingProtocolSection() {
       </div>
 
       <div className="mt-4">
-        <div className="flex items-center justify-between p-4 bg-white border border-[#E2E8F0] rounded-xl hover:border-gray-300 transition-colors duration-150 cursor-pointer group">
+        <div className="flex items-center justify-between p-4 bg-white border border-[#E2E8F0] rounded-lg hover:border-gray-300 transition-colors duration-150 cursor-pointer group">
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-12 h-12 bg-[#FFF1F2] rounded-lg border border-[#FFE4E6]">
               <FileText className="w-6 h-6 text-[#F43F5E] stroke-[1.5]" />

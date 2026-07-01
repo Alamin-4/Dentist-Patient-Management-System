@@ -30,7 +30,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
             )}
 
             {showPlaceholder ? (
-              <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center space-y-5 shadow-sm">
+              <div className="rounded-lg border border-dashed border-slate-200 bg-white p-10 text-center space-y-5 shadow-sm">
                 <div className="mx-auto size-14 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
                   <ShieldAlert className="size-8 text-amber-500" />
                 </div>
@@ -40,7 +40,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
                     Verified pricing, sterilisation protocols, and material certifications will be published once Dr. {dentist.name} claims this profile and completes the RatedDocs 3-phase verification.
                   </p>
                 </div>
-                {dentist.status === "UNVERIFIED" && dentist.isClaimable && (
+                {dentist.isClaimable && (
                   <div className="flex justify-center">
                     <Button
                       variant="default"

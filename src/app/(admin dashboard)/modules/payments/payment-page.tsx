@@ -24,10 +24,10 @@ function Avatar({ initials, color, size = "md" }: { initials: string; color: str
 }
 
 const STATUS_STYLES: Record<string, { dot: string; text: string; bg: string; border: string }> = {
-  "In Escrow":      { dot: "bg-amber-400",  text: "text-amber-700",  bg: "bg-amber-50",  border: "border-amber-200" },
-  Released:         { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
-  "Refunded (100%)": { dot: "bg-red-400",    text: "text-red-600",    bg: "bg-red-50",    border: "border-red-200" },
-  "Refunded (90%)": { dot: "bg-red-400",    text: "text-red-600",    bg: "bg-red-50",    border: "border-red-200" },
+  "In Escrow": { dot: "bg-amber-400", text: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200" },
+  Released: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
+  "Refunded (100%)": { dot: "bg-red-400", text: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
+  "Refunded (90%)": { dot: "bg-red-400", text: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
   "Refund Pending": { dot: "bg-orange-400", text: "text-orange-700", bg: "bg-orange-50", border: "border-orange-200" },
 };
 
@@ -90,7 +90,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
           {/* Transaction details */}
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Transaction Details</p>
-            <div className="divide-y divide-gray-50 rounded-xl border border-gray-100 bg-white">
+            <div className="divide-y divide-gray-50 rounded-lg border border-gray-100 bg-white">
               {detailRows.map((row, i) => (
                 <div key={i} className="flex items-center justify-between px-4 py-3">
                   <span className="text-sm text-gray-400">{row.label}</span>
@@ -103,7 +103,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
           {/* Escrow Timeline */}
           <div>
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Escrow Timeline</p>
-            <div className="rounded-xl border border-gray-100 bg-white p-4">
+            <div className="rounded-lg border border-gray-100 bg-white p-4">
               <ol className="space-y-4">
                 {txn.escrow_timeline.map((step, i) => {
                   const isCurrent = "current" in step && step.current === true;
@@ -198,7 +198,7 @@ export default function PaymentPage() {
             { icon: <DollarSign className="h-6 w-6 text-emerald-500" />, iconBg: "bg-emerald-50", label: "Released This Month", value: `$${meta.released_this_month.toLocaleString()}`, sub: "Paid out to dentists", valueColor: "text-emerald-600" },
             { icon: <Clock className="h-6 w-6 text-red-500" />, iconBg: "bg-red-50", label: "Pending Refunds", value: `$${meta.pending_refunds.toLocaleString()}`, sub: "Awaiting processing", valueColor: "text-red-500" },
           ].map((s) => (
-            <div key={s.label} className="flex items-start gap-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div key={s.label} className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
               <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-full", s.iconBg)}>{s.icon}</div>
               <div>
                 <p className="text-sm text-gray-500">{s.label}</p>
@@ -210,7 +210,7 @@ export default function PaymentPage() {
         </div>
 
         {/* Filters + Table */}
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
           {/* Filters */}
           <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
             <div className="relative flex-1">
@@ -223,7 +223,7 @@ export default function PaymentPage() {
                 Status: {statusFilter} <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
               </button>
               {statusOpen && (
-                <div className="absolute left-0 top-10 z-20 w-44 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+                <div className="absolute left-0 top-10 z-20 w-44 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
                   {statusOptions.map((opt) => (
                     <button key={opt} onClick={() => { setStatusFilter(opt); setStatusOpen(false); }} className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50", statusFilter === opt ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}>
                       {opt}

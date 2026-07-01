@@ -150,7 +150,7 @@ export default function Patients() {
       <CustomStats stats={stats} />
 
       {/* ── Tabs + Table card ─────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
         {/* Tabs row */}
         <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
           <CustomTab

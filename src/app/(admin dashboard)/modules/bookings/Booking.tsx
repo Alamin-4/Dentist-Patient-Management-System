@@ -102,7 +102,7 @@ export default function Booking() {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}
@@ -115,7 +115,7 @@ export default function Booking() {
       </div>
 
       {/* ── Tabs + Table card ─────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
         {/* Tabs */}
         <div className="border-b border-gray-100 px-4 pt-1">
           <CustomTab

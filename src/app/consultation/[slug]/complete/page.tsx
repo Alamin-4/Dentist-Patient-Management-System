@@ -35,7 +35,7 @@ export default function ConsultationCompletePage() {
         <button
           type="button"
           onClick={() => router.push("/patient/bookings")}
-          className="mt-8 rounded-xl bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
+          className="mt-8 rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
         >
           Go to my Bookings
         </button>

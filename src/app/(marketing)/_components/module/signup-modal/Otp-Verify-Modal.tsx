@@ -99,7 +99,7 @@ export default function OtpVerifyModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-125 rounded-xl border-none p-8">
+      <DialogContent className="sm:max-w-125 rounded-lg border-none p-8">
         <DialogHeader className="mb-8 text-center">
           <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-full bg-[#EAF2F8] text-[#113254]">
             <MailCheck className="size-7" />
@@ -148,7 +148,7 @@ export default function OtpVerifyModal({
           <button
             type="submit"
             disabled={otpVerifyMutation.isPending || !email}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {otpVerifyMutation.isPending ? (
               <>

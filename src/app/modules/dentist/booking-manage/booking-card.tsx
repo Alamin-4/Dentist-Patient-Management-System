@@ -36,7 +36,7 @@ export default function BookingCard({
   };
 
   return (
-    <div className="w-full bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-sm font-sans">
+    <div className="w-full bg-white border border-[#E2E8F0] rounded-lg p-6 shadow-sm font-sans">
       <div className="flex items-center gap-4 pb-5 border-b border-gray-100">
         <div className="flex items-center justify-center w-14 h-14 bg-[#F1F5F9] rounded-full text-[#1E3A8A] font-bold text-base tracking-wide shrink-0">
           {initials}
@@ -75,7 +75,7 @@ export default function BookingCard({
       </div>
 
       <div className="mt-5">
-        <div className="flex items-center justify-between w-full h-12 px-4 bg-[#FEF3C7] border border-[#FDE68A] rounded-xl">
+        <div className="flex items-center justify-between w-full h-12 px-4 bg-[#FEF3C7] border border-[#FDE68A] rounded-lg">
           <span className="text-[15px] font-medium text-[#334155]">
             {timelineLabel}
           </span>
@@ -89,7 +89,7 @@ export default function BookingCard({
         <button
           type="button"
           onClick={handleViewDetail}
-          className="w-full h-12 flex items-center justify-center border border-[#163E5C] text-[#163E5C] hover:bg-[#F8FAFC] active:bg-[#F1F5F9] rounded-xl font-bold text-base transition-colors"
+          className="w-full h-12 flex items-center justify-center border border-[#163E5C] text-[#163E5C] hover:bg-[#F8FAFC] active:bg-[#F1F5F9] rounded-lg font-bold text-base transition-colors"
         >
           View Detail
         </button>

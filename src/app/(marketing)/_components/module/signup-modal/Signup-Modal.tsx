@@ -164,7 +164,7 @@ export default function SignupModal() {
   return (
     <>
       <Dialog open={showSignupModal} onOpenChange={setShowSignupModal}>
-        <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-xl border-none p-8 gap-0">
+        <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0">
           <DialogHeader className="mb-8 text-left">
             <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-[#1A1A2E]">
               Sign up
@@ -187,7 +187,7 @@ export default function SignupModal() {
                 type="button"
                 onClick={handleSendVerificationOtp}
                 disabled={isOtpResendLoading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {isOtpResendLoading ? (
                   <>
@@ -211,7 +211,7 @@ export default function SignupModal() {
               <div className="mb-4 space-y-3">
                 <button
                   onClick={() => handleSocialLogin("Google")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FcGoogle className="text-2xl" />
                   <span className="text-[#6B7280]">Continue with Google</span>
@@ -219,7 +219,7 @@ export default function SignupModal() {
 
                 <button
                   onClick={() => handleSocialLogin("Apple")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaApple className="text-2xl text-black" />
                   <span className="text-[#6B7280]">Continue with Apple</span>
@@ -227,7 +227,7 @@ export default function SignupModal() {
 
                 <button
                   onClick={() => handleSocialLogin("Facebook")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaFacebook className="text-2xl text-[#1877F2]" />
                   <span className="text-[#6B7280]">Continue with Facebook</span>
@@ -323,7 +323,7 @@ export default function SignupModal() {
                 <button
                   type="submit"
                   disabled={isRegisterPatientLoading}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {isRegisterPatientLoading ? (
                     <>

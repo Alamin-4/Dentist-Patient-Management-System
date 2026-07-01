@@ -46,14 +46,14 @@ export default function TabBarAndSearch() {
             placeholder="Search by name, Procedure..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-slate-400 focus:outline-none focus:ring-0"
+            className="h-10 w-full rounded-lg border border-border bg-card pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-slate-400 focus:outline-none focus:ring-0"
           />
         </div>
 
         <button
           type="button"
           onClick={() => setIsNewestFirst((prev) => !prev)}
-          className="flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+          className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
         >
           {isNewestFirst ? "Newest first" : "Oldest first"}
           <ChevronDown className="h-4 w-4 text-muted-foreground" />

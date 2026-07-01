@@ -16,7 +16,7 @@ export default function TestimonialCard({
 }: TestimonialProps) {
   return (
     <div className="rounded-[32px] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center text-center h-full mx-2">
-      <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-6 group cursor-pointer">
+      <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-6 group cursor-pointer">
         <img
           src={image}
           alt={name}

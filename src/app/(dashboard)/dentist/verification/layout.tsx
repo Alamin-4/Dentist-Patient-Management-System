@@ -108,7 +108,7 @@ export default function VerificationLayout({
       {/* Middle Part - Changeable Content */}
       <main className="flex-1 py-10 pb-32">
         <div className="min-h-full ">
-          <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
+          <div className="rounded-lg border border-gray-100 bg-white shadow-sm p-6">
             {isProgressLoading ? (
               <div className="flex min-h-80 items-center justify-center">
                 <Loader2 className="h-7 w-7 animate-spin text-[#0E3E65]" />

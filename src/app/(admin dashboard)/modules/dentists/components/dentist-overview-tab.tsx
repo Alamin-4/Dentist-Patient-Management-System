@@ -58,7 +58,7 @@ function FileAttachment({
 }) {
   const isVideo = type === "video";
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-3">
+    <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3">
       <div
         className={cn(
           "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
@@ -257,7 +257,7 @@ export function DentistOverviewTab({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-bold text-gray-700">
@@ -328,7 +328,7 @@ export function DentistOverviewTab({
         )}
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-bold text-gray-700">
@@ -357,7 +357,7 @@ export function DentistOverviewTab({
         </div>
 
         {isSubmitted(phase2Status) && (
-          <div className="mb-4 flex items-start gap-2.5 rounded-xl bg-amber-50 px-4 py-3">
+          <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-amber-50 px-4 py-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
             <div>
               <p className="text-sm font-semibold text-amber-700">
@@ -373,7 +373,7 @@ export function DentistOverviewTab({
 
         {/* Rejected banner */}
         {phase2Status === "rejected" && (
-          <div className="mb-4 flex items-start gap-2.5 rounded-xl bg-red-50 px-4 py-3">
+          <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-red-50 px-4 py-3">
             <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
             <div>
               <p className="text-sm font-semibold text-red-700">
@@ -421,7 +421,7 @@ export function DentistOverviewTab({
       </div>
 
       {/* ── Phase 3: Clinical ──────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-bold text-gray-700">Clinical Depth</h3>
@@ -448,7 +448,7 @@ export function DentistOverviewTab({
         </div>
 
         {!isSubmitted(phaseStatuses.phase3) &&
-        phaseStatuses.phase3 !== "complete" ? (
+          phaseStatuses.phase3 !== "complete" ? (
           <div className="py-8 text-center">
             <p className="text-sm font-semibold text-gray-500">
               Phase 3 not yet started

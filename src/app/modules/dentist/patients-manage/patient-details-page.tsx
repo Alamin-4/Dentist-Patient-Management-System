@@ -20,7 +20,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
       <div className="border-b border-border px-5 py-4">
         <div className="flex items-center justify-between gap-3">
           <h3 className="font-semibold text-foreground">{title}</h3>
@@ -139,7 +139,7 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
         </h1>
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6">
+      <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-bold text-muted-foreground">
@@ -199,11 +199,10 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
 
       {patient.treatmentNote && (
         <div
-          className={`rounded-xl border px-4 py-3 text-sm font-medium ${
-            patient.treatmentPlan === "rejected"
+          className={`rounded-lg border px-4 py-3 text-sm font-medium ${patient.treatmentPlan === "rejected"
               ? "border-rose-200 bg-rose-50 text-rose-600"
               : "border-amber-200 bg-amber-50 text-amber-700"
-          }`}
+            }`}
         >
           {patient.treatmentNote}
         </div>
@@ -302,7 +301,7 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
             <h3 className="font-bold text-foreground">Patient Timeline</h3>
             <div className="relative mt-6 space-y-0 pl-1">
               {patient.timeline.map((event, index) => (
@@ -316,10 +315,10 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
             <h3 className="font-bold text-foreground">Payment Received</h3>
 
-            <div className="mt-4 flex items-center justify-between rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
+            <div className="mt-4 flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
               <span className="font-medium text-foreground/70">
                 Payment received from escrow
               </span>
@@ -329,7 +328,7 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
             </div>
 
             {patient.attachedDocument && (
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-border bg-card p-3.5 transition-colors hover:bg-muted/30">
+              <div className="mt-4 flex items-center justify-between rounded-lg border border-border bg-card p-3.5 transition-colors hover:bg-muted/30">
                 <div className="flex items-center gap-3">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-xs font-bold text-rose-500">
                     PDF
@@ -350,7 +349,7 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
       </div>
 
       {shouldShowReview && patient.review && (
-        <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm space-y-5">
           <div>
             <h3 className="mb-2 font-bold text-foreground">Review</h3>
             <p className="text-sm font-medium leading-relaxed text-muted-foreground">

@@ -59,7 +59,7 @@ export default function PhotoUploadForm() {
       </h2>
 
       {/* Tip banner */}
-      <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-xl mb-8">
+      <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-lg mb-8">
         <div>
           <p className="font-bold text-[#1A1A2E] text-[15px] mb-1">
             Tip for best results
@@ -73,7 +73,7 @@ export default function PhotoUploadForm() {
         <button
           type="button"
           onClick={() => setShowGuidelines(true)}
-          className="shrink-0 px-4 py-2.5 border border-[#113254] text-[#113254] font-semibold text-[13px] rounded-xl hover:bg-[#113254] hover:text-white transition-all whitespace-nowrap"
+          className="shrink-0 px-4 py-2.5 border border-[#113254] text-[#113254] font-semibold text-[13px] rounded-lg hover:bg-[#113254] hover:text-white transition-all whitespace-nowrap"
         >
           View Guidelines
         </button>
@@ -150,7 +150,7 @@ function UploadCard({ label, slot, onFile }: UploadCardProps) {
   };
 
   return (
-    <div className="relative min-h-40 rounded-xl overflow-hidden border-2 border-dashed border-[#E5E7EB] hover:border-[#113254] transition-colors cursor-pointer group">
+    <div className="relative min-h-40 rounded-lg overflow-hidden border-2 border-dashed border-[#E5E7EB] hover:border-[#113254] transition-colors cursor-pointer group">
       <input
         ref={inputRef}
         type="file"

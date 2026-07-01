@@ -15,7 +15,7 @@ export function SuccessState({ setStep }: { setStep: (step: number) => void }) {
       </h2>
 
       <Button
-        className="w-full h-14 bg-[#163E5C] hover:bg-[#113149] text-white text-lg font-semibold rounded-xl transition-all shadow-sm"
+        className="w-full h-14 bg-[#163E5C] hover:bg-[#113149] text-white text-lg font-semibold rounded-lg transition-all shadow-sm"
         onClick={() => setStep(4)}
       >
         Continue

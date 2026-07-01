@@ -55,10 +55,10 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-xl bg-white shadow-2xl">
+        <div className="w-full max-w-md rounded-lg bg-white shadow-2xl">
           {/* Header */}
           <div className="flex items-start gap-3 border-b border-gray-100 p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning-50">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning-50">
               <Megaphone className="h-5 w-5 text-warning-600" />
             </div>
             <div className="min-w-0 flex-1">
@@ -85,7 +85,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
                 placeholder="e.g. Scheduled maintenance on May 15"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="h-10 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
+                className="h-10 w-full rounded-lg border border-gray-200 px-3.5 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
               />
             </div>
 
@@ -99,7 +99,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
                 placeholder="Write the announcement body. Keep it clear and concise."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full resize-none rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
+                className="w-full resize-none rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
               />
             </div>
 
@@ -112,7 +112,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
                     key={opt.value}
                     onClick={() => setAudience(opt.value)}
                     className={cn(
-                      "flex-1 rounded-xl border py-2 text-sm font-medium transition-colors",
+                      "flex-1 rounded-lg border py-2 text-sm font-medium transition-colors",
                       audience === opt.value
                         ? "border-[#1A1A2E] bg-[#1A1A2E] text-white"
                         : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
@@ -129,7 +129,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
           <div className="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-4">
             <button
               onClick={handleClose}
-              className="rounded-xl border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="rounded-lg border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -137,7 +137,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
               onClick={handlePublish}
               disabled={!canPublish || publishing}
               className={cn(
-                "flex items-center gap-2 rounded-xl px-5 py-2 text-sm font-semibold text-white transition-all active:scale-95",
+                "flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-semibold text-white transition-all active:scale-95",
                 canPublish
                   ? "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90 shadow-sm"
                   : "cursor-not-allowed bg-gray-300"

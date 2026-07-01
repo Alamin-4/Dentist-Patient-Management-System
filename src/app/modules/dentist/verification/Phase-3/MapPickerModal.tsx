@@ -227,7 +227,7 @@ export default function MapPickerModal({
   return (
     <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative flex flex-col w-full sm:max-w-3xl h-[92vh] sm:h-[80vh] max-h-[850px] bg-white rounded-t-3xl sm:rounded-2xl border border-slate-100 shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
-        {/* Drag handle for mobile bottom sheet */}
+
         <div className="flex justify-center py-2.5 sm:hidden">
           <div className="w-12 h-1 bg-slate-200 rounded-full" />
         </div>
@@ -268,7 +268,7 @@ export default function MapPickerModal({
                   }
                 }}
                 placeholder="Search for address, city, or clinic..."
-                className="w-full pl-10 pr-20 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0E3E65] focus:border-transparent transition-all"
+                className="w-full pl-10 pr-20 py-2.5 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E3E65] focus:border-transparent transition-all"
               />
               <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
 
@@ -305,7 +305,7 @@ export default function MapPickerModal({
               type="button"
               onClick={detectUserLocation}
               disabled={isLocating}
-              className="p-2.5 bg-white border border-slate-200 rounded-xl text-gray-600 hover:text-[#0E3E65] hover:bg-slate-100 transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
+              className="p-2.5 bg-white border border-slate-200 rounded-lg text-gray-600 hover:text-[#0E3E65] hover:bg-slate-100 transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
               title="Use current location"
             >
               {isLocating ? (
@@ -371,11 +371,10 @@ export default function MapPickerModal({
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <div className="flex flex-col items-center">
               <div
-                className={`transition-all duration-300 ease-out transform ${
-                  isMapMoving
-                    ? "-translate-y-4 scale-105"
-                    : "translate-y-0 scale-100"
-                }`}
+                className={`transition-all duration-300 ease-out transform ${isMapMoving
+                  ? "-translate-y-4 scale-105"
+                  : "translate-y-0 scale-100"
+                  }`}
               >
                 {/* Custom modern map pin SVG */}
                 <svg
@@ -397,11 +396,10 @@ export default function MapPickerModal({
               </div>
               {/* Animated pin shadow */}
               <div
-                className={`w-3.5 h-1 bg-slate-950/20 rounded-full blur-[1px] transition-all duration-300 ${
-                  isMapMoving
-                    ? "scale-50 opacity-40 blur-[2px]"
-                    : "scale-100 opacity-100"
-                }`}
+                className={`w-3.5 h-1 bg-slate-950/20 rounded-full blur-[1px] transition-all duration-300 ${isMapMoving
+                  ? "scale-50 opacity-40 blur-[2px]"
+                  : "scale-100 opacity-100"
+                  }`}
               />
             </div>
           </div>
@@ -410,7 +408,7 @@ export default function MapPickerModal({
         {/* Footer Area with Selected Details & Actions */}
         <div className="px-5 sm:px-6 py-4.5 border-t border-slate-100 bg-white flex flex-col gap-4 relative z-30">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 bg-slate-50 text-[#0E3E65] rounded-xl shrink-0 mt-0.5">
+            <div className="p-2.5 bg-slate-50 text-[#0E3E65] rounded-lg shrink-0 mt-0.5">
               <MapPin className="h-5 w-5" />
             </div>
             <div className="text-left flex-1 min-w-0">
@@ -432,7 +430,7 @@ export default function MapPickerModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-5 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-gray-700 text-sm font-bold rounded-xl transition-all"
+              className="flex-1 px-5 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-gray-700 text-sm font-bold rounded-lg transition-all"
             >
               Cancel
             </button>
@@ -440,7 +438,7 @@ export default function MapPickerModal({
               type="button"
               onClick={handleConfirm}
               disabled={!position || isMapMoving}
-              className="flex-1 px-6 py-3 bg-[#0E3E65] hover:bg-[#082842] disabled:bg-slate-100 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition-all disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
+              className="flex-1 px-6 py-3 bg-[#0E3E65] hover:bg-[#082842] disabled:bg-slate-100 disabled:text-slate-400 text-white text-sm font-bold rounded-lg transition-all disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
             >
               <Check className="h-4 w-4" />
               Confirm Location

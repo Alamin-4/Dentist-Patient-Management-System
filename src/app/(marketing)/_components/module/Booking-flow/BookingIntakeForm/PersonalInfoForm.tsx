@@ -53,7 +53,7 @@ export default function PersonalInfoForm() {
 
   const labelCls = "block text-[#1A1A2E] font-medium text-sm mb-2.5";
   const inputCls =
-    "w-full px-4 py-4 border border-[#E5E7EB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#113254]/10 focus:border-[#113254] placeholder-[#9EA9AA] transition-all bg-white";
+    "w-full px-4 py-4 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#113254]/10 focus:border-[#113254] placeholder-[#9EA9AA] transition-all bg-white";
 
   return (
     <div className="animate-in fade-in duration-500">

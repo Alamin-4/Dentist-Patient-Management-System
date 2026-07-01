@@ -25,7 +25,7 @@ export function DeactivateModal({ open, kolName, onClose, onConfirm }: Deactivat
         onClick={onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-2xl">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
             <AlertTriangle className="h-6 w-6 text-red-500" />
           </div>

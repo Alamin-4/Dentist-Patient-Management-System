@@ -17,7 +17,7 @@ function SpecialtySectionComponent({ specialty }: SpecialtySectionProps) {
   const hasMissing = specialty.status === "missing";
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-100">
+    <div className="overflow-hidden rounded-lg border border-gray-100">
       <button
         onClick={() => setOpen((value) => !value)}
         className="flex w-full items-center justify-between bg-white px-4 py-3"

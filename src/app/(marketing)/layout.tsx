@@ -6,7 +6,7 @@ import RequestConsultationModal from "./_components/modal/request-consultation-m
 import SignupModal from "./_components/module/signup-modal/Signup-Modal";
 import SigninModal from "./_components/module/signup-modal/SignIn";
 import Footer from "./_components/shared/footer/footer";
-import Navbar from "./_components/shared/navbar/Navbar";
+import NavbarPublic from "./_components/shared/navbar/Navbar";
 
 export default function PublicLayout({
   children,
@@ -15,7 +15,7 @@ export default function PublicLayout({
 }) {
   return (
     <div>
-      <Navbar />
+      <NavbarPublic />
       <main className="min-h-150 h-full">{children}</main>
       <SignupModal />
       <SigninModal />

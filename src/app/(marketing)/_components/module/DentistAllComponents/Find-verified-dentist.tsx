@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useStateContext } from "@/providers/StateProvider";
 
-import DentistCard from "./DentistCard";
+import DentistCard from "../find-dentist-components/DentistCard";
 import DentistCardSkeleton from "./DentistCardSkeleton";
 import FilterSidebar from "./SideBar";
 import FilterSheet from "./FilterSheet";
@@ -18,13 +18,11 @@ import CompareStickyBar from "./CompareStickyBar";
 
 import { Dentist, cityOptions, countryOptions, procedureOptions } from "./types";
 import { useMe } from "@/hooks/auth/useAuth";
-import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
+import { useDentistDirectory, useDirectoryCountries } from "@/hooks/dentist/useDentistDirectory";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
-const PAGE_SIZE = 20;
-// Default Mexico City coords for dentists without geocoords in the API
-const DEFAULT_COORDS = { lat: 19.4326, lng: -99.1332 };
+const PAGE_SIZE = 6;
 
 function getPages(page: number, totalPages: number): (number | "...")[] {
   if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -177,6 +175,7 @@ export default function FindDentist() {
   ]);
 
   const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(serverParams);
+  const { data: dynamicCountryOptions } = useDirectoryCountries();
 
   // ── Map flat API response → Dentist shape with nested rating/location ──────
   const apiDentists = useMemo<Dentist[]>(() => {
@@ -195,9 +194,11 @@ export default function FindDentist() {
             ? 'CLAIMED'
             : 'CLAIMABLE';
 
+      const hasCoords = typeof d.latitude === "number" && typeof d.longitude === "number";
+
       return {
         ...d,
-        coords: DEFAULT_COORDS,
+        coords: hasCoords ? { lat: d.latitude, lng: d.longitude } : undefined,
         rating: {
           google,
           googleReviewCount: d.googleReviewCount ?? null,
@@ -330,7 +331,7 @@ export default function FindDentist() {
     onShowVerifiedOnlyChange: (v: boolean) => { setShowVerifiedOnly(v); setPage(1); },
     onClear: handleClearAllFilters,
     availableProcedures: procedureOptions,
-    availableCountries: countryOptions,
+    availableCountries: dynamicCountryOptions ?? countryOptions,
     availableCities: cityOptions,
   };
 

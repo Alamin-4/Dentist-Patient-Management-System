@@ -239,10 +239,10 @@ export default function FilterSidebar({
         </div>
 
         <div className="mt-4 flex gap-3">
-          <div className="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-center text-[14px] font-bold text-slate-700 shadow-sm">
+          <div className="flex-1 rounded-lg border border-slate-200 bg-white py-2 text-center text-[14px] font-bold text-slate-700 shadow-sm">
             {priceRange[0]}
           </div>
-          <div className="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-center text-[14px] font-bold text-slate-700 shadow-sm">
+          <div className="flex-1 rounded-lg border border-slate-200 bg-white py-2 text-center text-[14px] font-bold text-slate-700 shadow-sm">
             {priceRange[1] >= maxPrice ? "Any" : priceRange[1]}
           </div>
         </div>
@@ -389,7 +389,7 @@ export default function FilterSidebar({
             const isSelected =
               selectedAvailabilityDate &&
               new Date(selectedAvailabilityDate).toDateString() ===
-                cell.date.toDateString();
+              cell.date.toDateString();
 
             return (
               <button
@@ -413,13 +413,13 @@ export default function FilterSidebar({
           })}
         </div>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] font-medium text-slate-700">
+        <div className="mt-4 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px] font-medium text-slate-700">
           {selectedAvailabilityDate
             ? new Date(selectedAvailabilityDate).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
             : "Any date"}
         </div>
       </div>

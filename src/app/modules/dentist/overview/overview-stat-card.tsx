@@ -33,14 +33,14 @@ export function OverviewStatCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card p-5 shadow-[0_4px_20px_rgba(15,35,61,0.06)]",
+        "rounded-lg border border-border bg-card p-5 shadow-[0_4px_20px_rgba(15,35,61,0.06)]",
         className,
       )}
     >
       {/* Label row */}
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gray-100">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-100">
           <Icon className="size-5 text-gray-500" />
         </div>
       </div>

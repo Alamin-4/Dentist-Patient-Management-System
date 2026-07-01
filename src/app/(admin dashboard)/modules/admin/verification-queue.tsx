@@ -3,7 +3,7 @@ import { verificationQueue, verificationQueueTotal } from "./overview-data";
 
 export function VerificationQueue() {
   return (
-    <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-5 shadow-sm h-full">
+    <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[15px] font-bold text-[#1A1A2E]">

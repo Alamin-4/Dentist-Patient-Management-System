@@ -19,7 +19,7 @@ export const GuaranteeSection = ({ disabled }: GuaranteeSectionProps) => {
           </h2>
         </div>
 
-        <div className="rounded-xl border border-border bg-background p-4 sm:p-5">
+        <div className="rounded-lg border border-border bg-background p-4 sm:p-5">
           <p className="text-sm leading-6 font-medium text-primary">
             You agree that final treatment prices will remain within 15% of your quoted estimate unless approved by the patient.
           </p>
@@ -35,7 +35,7 @@ export const GuaranteeSection = ({ disabled }: GuaranteeSectionProps) => {
             <input
               disabled={disabled}
               {...register("signerFullName")}
-              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="h-12 w-full rounded-lg border border-border bg-card px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
           <div className="space-y-2">
@@ -45,12 +45,12 @@ export const GuaranteeSection = ({ disabled }: GuaranteeSectionProps) => {
             <input
               disabled={disabled}
               {...register("typedSignature")}
-              className="h-12 w-full rounded-xl border border-border bg-card px-4 text-sm italic text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="h-12 w-full rounded-lg border border-border bg-card px-4 text-sm italic text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
         </div>
 
-        <label className={`flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-background"}`}>
+        <label className={`flex items-start gap-3 rounded-lg border border-border bg-card p-4 transition-colors ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-background"}`}>
           <input
             type="checkbox"
             disabled={disabled}

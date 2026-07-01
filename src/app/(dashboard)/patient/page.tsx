@@ -41,14 +41,14 @@ function EmptySlate({ tab }: { tab: Tab }) {
   const { title, body } = EMPTY_STATE[tab];
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="size-14 rounded-xl bg-[#113254] flex items-center justify-center mb-5">
+      <div className="size-14 rounded-lg bg-[#113254] flex items-center justify-center mb-5">
         <Video className="size-7 text-white" />
       </div>
       <p className="text-[17px] font-bold text-[#1A1A2E] mb-2">{title}</p>
       <p className="text-[14px] text-[#6B7280] max-w-xs leading-relaxed mb-6">{body}</p>
       <Link
         href="/find-dentist"
-        className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-xl transition-all active:scale-95"
+        className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95"
       >
         Find a dentist
       </Link>
@@ -84,7 +84,7 @@ export default function Overview() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           icon={<DollarSign className="w-5 h-5" />}
-          value="$1500"
+          value="0"
           label="Amount in escrow"
         />
         <StatCard
@@ -110,11 +110,10 @@ export default function Overview() {
               key={key}
               type="button"
               onClick={() => setActiveTab(key)}
-              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px ${
-                activeTab === key
-                  ? "text-[#113254] border-[#113254]"
-                  : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
-              }`}
+              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px ${activeTab === key
+                ? "text-[#113254] border-[#113254]"
+                : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
+                }`}
             >
               {label}
             </button>
@@ -161,7 +160,7 @@ export default function Overview() {
           onConfirmed={() => setActiveTab("active")}
           onAddToCalendar={() => router.push(`/consultation/${selectedConsultation.slug}`)}
 
-          />
+        />
       ) : null}
     </div>
   );

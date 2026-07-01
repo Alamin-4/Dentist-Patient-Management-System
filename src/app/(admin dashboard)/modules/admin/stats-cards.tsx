@@ -27,7 +27,7 @@ function StatIcon({ icon, bg, color }: { icon: StatCard["icon"]; bg: string; col
 
 function StatCardItem({ card }: { card: StatCard }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       <StatIcon icon={card.icon} bg={card.iconBg} color={card.iconColor} />
 
       <div>

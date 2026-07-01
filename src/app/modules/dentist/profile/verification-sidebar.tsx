@@ -25,7 +25,7 @@ export function VerificationSidebar() {
   const router = useRouter();
   const { data: progressData } = useDentistProgress();
   const { nextIncompleteStep } = useVerificationProgress();
-  
+
   const progress = progressData?.data as
     | DentistVerificationProgress
     | undefined;
@@ -97,7 +97,7 @@ export function VerificationSidebar() {
         <CheckCircle2 className="h-5 w-5 bg-green-500 text-white border-2 border-green-500 rounded-full" />
       );
     }
-    if (status === "REJECTED" ) {
+    if (status === "REJECTED") {
       return <AlertCircle className="h-5 w-5 text-red-500" />;
     }
 
@@ -106,7 +106,7 @@ export function VerificationSidebar() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-gray-100 bg-white p-6">
+      <div className="rounded-lg border border-gray-100 bg-white p-6">
         <h3 className="mb-6 font-bold text-gray-900">Verification Progress</h3>
         <div className="space-y-8 relative">
           <div className="absolute left-[9px] top-2.5 bottom-2 w-0.5 bg-gray-100" />
@@ -145,7 +145,7 @@ export function VerificationSidebar() {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-white p-6">
+      <div className="rounded-lg border border-gray-100 bg-white p-6">
         <h3 className="mb-4 font-bold text-gray-900">Profile completeness</h3>
         <div className="space-y-4">
           {[

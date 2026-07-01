@@ -10,7 +10,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
   const isFullyVerified = isLicenseVerified && isOperationsVerified && isClinicalVerified;
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden">
       <div className="border-b border-gray-50 px-6 py-4">
         <h3 className="text-lg font-bold text-gray-900">Reviews</h3>
       </div>

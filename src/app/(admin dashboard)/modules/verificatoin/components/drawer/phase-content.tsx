@@ -25,7 +25,7 @@ export function Ph1Content({
           </div>
         </div>
       )}
-      <div className="rounded-xl border border-gray-100 bg-white p-4">
+      <div className="rounded-lg border border-gray-100 bg-white p-4">
         <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
           License Verification
         </h4>
@@ -52,7 +52,7 @@ export function Ph1Content({
         )}
       </div>
       {data.government_id && (
-        <div className="rounded-xl border border-gray-100 bg-white p-4">
+        <div className="rounded-lg border border-gray-100 bg-white p-4">
           <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
             Government ID
           </h4>
@@ -92,7 +92,7 @@ export function Ph2Content({
           </div>
         </div>
       )}
-      <div className="rounded-xl border border-gray-100 bg-white p-4">
+      <div className="rounded-lg border border-gray-100 bg-white p-4">
         <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
           Sterilization Evidence
         </h4>
@@ -104,7 +104,7 @@ export function Ph2Content({
         )}
       </div>
       {data.procedure_pricing && data.procedure_pricing.length > 0 && (
-        <div className="rounded-xl border border-gray-100 bg-white p-4">
+        <div className="rounded-lg border border-gray-100 bg-white p-4">
           <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
             Procedure Pricing
           </h4>
@@ -167,7 +167,7 @@ export function Ph3Content({
           </div>
         </div>
       )}
-      <div className="rounded-xl border border-gray-100 bg-white p-4">
+      <div className="rounded-lg border border-gray-100 bg-white p-4">
         <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
           Clinic Location
         </h4>

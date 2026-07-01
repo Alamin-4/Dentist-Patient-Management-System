@@ -102,7 +102,7 @@ export default function AddPricing() {
       </div>
 
       {/* Form Card */}
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="rounded-lg border border-border bg-card shadow-sm">
         {/* ─── Sterilization ─── */}
         <div className="grid grid-cols-1 gap-8 p-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -117,7 +117,7 @@ export default function AddPricing() {
               <p className="text-sm font-medium text-foreground">
                 Upload JCI Certificate
               </p>
-              <label className="relative flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-border px-5 py-5 transition-colors hover:bg-muted/40">
+              <label className="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-border px-5 py-5 transition-colors hover:bg-muted/40">
                 <input
                   type="file"
                   accept=".pdf,.png,.jpg,.jpeg"
@@ -145,7 +145,7 @@ export default function AddPricing() {
               <p className="text-sm font-medium text-foreground">
                 Start Video Walkthrough
               </p>
-              <label className="relative flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-border px-5 py-5 transition-colors hover:bg-muted/40">
+              <label className="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-border px-5 py-5 transition-colors hover:bg-muted/40">
                 <input
                   type="file"
                   accept="video/*"
@@ -291,7 +291,7 @@ export default function AddPricing() {
             <h2 className="text-base font-semibold text-foreground">
               No Surprise Guarantee
             </h2>
-            <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 text-xs font-medium leading-relaxed text-blue-700">
+            <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-xs font-medium leading-relaxed text-blue-700">
               The 15% rule means patients should not receive surprise increases
               beyond the disclosed starting price unless clearly explained and
               approved before treatment.

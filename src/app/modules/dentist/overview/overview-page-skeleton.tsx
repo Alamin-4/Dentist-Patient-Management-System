@@ -5,7 +5,7 @@ export function OverviewPageSkeleton() {
     <div className="w-full space-y-6">
       {/* Header */}
       <div>
-        <Skeleton className="h-8 w-40 rounded-xl bg-muted" />
+        <Skeleton className="h-8 w-40 rounded-lg bg-muted" />
         <Skeleton className="mt-2 h-4 w-72 rounded-full bg-muted" />
       </div>
 
@@ -14,13 +14,13 @@ export function OverviewPageSkeleton() {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="rounded-xl border border-border bg-card p-5"
+            className="rounded-lg border border-border bg-card p-5"
           >
             <div className="flex items-start justify-between gap-3">
               <Skeleton className="h-4 w-32 rounded-full bg-muted" />
-              <Skeleton className="size-10 shrink-0 rounded-xl bg-muted" />
+              <Skeleton className="size-10 shrink-0 rounded-lg bg-muted" />
             </div>
-            <Skeleton className="mt-4 h-8 w-24 rounded-xl bg-muted" />
+            <Skeleton className="mt-4 h-8 w-24 rounded-lg bg-muted" />
             <Skeleton className="mt-2 h-4 w-36 rounded-full bg-muted" />
           </div>
         ))}
@@ -29,7 +29,7 @@ export function OverviewPageSkeleton() {
       {/* Performance + Alerts */}
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         {/* Performance card */}
-        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
+        <div className="rounded-lg border border-border bg-card p-6 sm:p-8">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center">
             <Skeleton className="size-44 shrink-0 rounded-full bg-muted" />
             <div className="flex-1 space-y-4">
@@ -46,8 +46,8 @@ export function OverviewPageSkeleton() {
         </div>
 
         {/* Alerts card */}
-        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
-          <Skeleton className="h-6 w-16 rounded-xl bg-muted" />
+        <div className="rounded-lg border border-border bg-card p-6 sm:p-8">
+          <Skeleton className="h-6 w-16 rounded-lg bg-muted" />
           <div className="mt-5 space-y-4">
             {[0, 1].map((i) => (
               <div key={i} className="flex items-start gap-4 py-3">
@@ -63,9 +63,9 @@ export function OverviewPageSkeleton() {
       </div>
 
       {/* Active bookings */}
-      <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
+      <div className="rounded-lg border border-border bg-card p-6 sm:p-8">
         <div className="flex items-center justify-between">
-          <Skeleton className="h-6 w-40 rounded-xl bg-muted" />
+          <Skeleton className="h-6 w-40 rounded-lg bg-muted" />
           <Skeleton className="h-4 w-14 rounded-full bg-muted" />
         </div>
         <div className="mt-5 space-y-4">
@@ -97,11 +97,11 @@ export function OverviewPageSkeleton() {
       </div>
 
       {/* Referral code */}
-      <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
+      <div className="rounded-lg border border-border bg-card p-6 sm:p-8">
         <Skeleton className="h-4 w-32 rounded-full bg-muted" />
         <div className="mt-3 flex items-center justify-between gap-4">
-          <Skeleton className="h-10 w-56 rounded-xl bg-muted" />
-          <Skeleton className="h-10 w-28 rounded-xl bg-muted" />
+          <Skeleton className="h-10 w-56 rounded-lg bg-muted" />
+          <Skeleton className="h-10 w-28 rounded-lg bg-muted" />
         </div>
         <Skeleton className="mt-3 h-4 w-72 rounded-full bg-muted" />
       </div>

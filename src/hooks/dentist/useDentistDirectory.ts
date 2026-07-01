@@ -19,6 +19,23 @@ export function useDentistDirectoryDetail(slug: string, enabled = true) {
   });
 }
 
+// Country filter options are derived from real directory data instead of a
+// hardcoded list, so newly imported/registered countries show up automatically.
+export function useDirectoryCountries() {
+  return useQuery({
+    queryKey: ["dentistDirectoryCountries"],
+    queryFn: async () => {
+      const response = await apiClient.dentists.getDirectoryList({ limit: 500 });
+      const list: any[] = response?.data ?? [];
+      const countries = Array.from(
+        new Set(list.map((d) => d.country).filter((c): c is string => !!c)),
+      ).sort((a, b) => a.localeCompare(b));
+      return ["All Countries", ...countries];
+    },
+    staleTime: 5 * 60_000,
+  });
+}
+
 export function useClaimDentistDirectoryProfile() {
   const queryClient = useQueryClient();
 

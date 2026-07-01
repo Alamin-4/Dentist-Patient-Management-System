@@ -76,20 +76,20 @@ const PRIORITY_META: Record<
   NotificationPriority,
   { label: string; dot: string; badge: string }
 > = {
-  low:      { label: "Low",      dot: "bg-gray-300",           badge: "bg-gray-100 text-gray-500" },
-  medium:   { label: "Medium",   dot: "bg-amber-400",          badge: "bg-amber-50 text-amber-700" },
-  high:     { label: "High",     dot: "bg-orange-400",         badge: "bg-orange-50 text-orange-700" },
-  critical: { label: "Critical", dot: "bg-destructive-500",    badge: "bg-destructive-50 text-destructive-700" },
+  low: { label: "Low", dot: "bg-gray-300", badge: "bg-gray-100 text-gray-500" },
+  medium: { label: "Medium", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700" },
+  high: { label: "High", dot: "bg-orange-400", badge: "bg-orange-50 text-orange-700" },
+  critical: { label: "Critical", dot: "bg-destructive-500", badge: "bg-destructive-50 text-destructive-700" },
 };
 
 /* ─── Helpers ──────────────────────────────────────────────────────────────── */
 function relativeTime(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60_000);
-  if (mins < 1)  return "Just now";
+  if (mins < 1) return "Just now";
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24)  return `${hrs}h ago`;
+  if (hrs < 24) return `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
   if (days === 1) return "Yesterday";
   return `${days}d ago`;
@@ -139,7 +139,7 @@ function FilterDropdown<T extends string>({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 z-20 mt-1 min-w-[160px] rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+          <div className="absolute top-full left-0 z-20 mt-1 min-w-[160px] rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={() => { onChange(""); setOpen(false); }}
               className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50",
@@ -174,8 +174,8 @@ function StatCard({ icon: Icon, iconBg, iconColor, label, value, valueColor }: {
   valueColor?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", iconBg)}>
+    <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
+      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", iconBg)}>
         <Icon className={cn("h-5 w-5", iconColor)} />
       </div>
       <div>
@@ -218,7 +218,7 @@ function NotificationRow({
       </div>
 
       {/* Type icon */}
-      <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", typeMeta.iconBg)}>
+      <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", typeMeta.iconBg)}>
         <TypeIcon className={cn("h-4 w-4", typeMeta.iconColor)} />
       </div>
 
@@ -310,7 +310,7 @@ function Pagination({ page, total, pageSize, onChange }: {
   if (totalPages <= 1) return null;
 
   const from = (page - 1) * pageSize + 1;
-  const to   = Math.min(page * pageSize, total);
+  const to = Math.min(page * pageSize, total);
 
   const pages: (number | "…")[] = [];
   if (totalPages <= 5) {
@@ -382,9 +382,9 @@ export default function NotificationsPage() {
   const [page, setPage] = useState(1);
 
   /* ── Derived counts ── */
-  const unreadCount    = items.filter((n) => !n.read).length;
-  const todayCount     = items.filter((n) => new Date(n.timestamp).toDateString() === new Date("2026-05-29").toDateString()).length;
-  const criticalCount  = items.filter((n) => n.priority === "critical").length;
+  const unreadCount = items.filter((n) => !n.read).length;
+  const todayCount = items.filter((n) => new Date(n.timestamp).toDateString() === new Date("2026-05-29").toDateString()).length;
+  const criticalCount = items.filter((n) => n.priority === "critical").length;
 
   /* ── Filtered list ── */
   const filtered = useMemo(() => {
@@ -416,25 +416,25 @@ export default function NotificationsPage() {
 
   /* ── Tab counts ── */
   const tabCounts: Record<TabKey, number> = {
-    all:          items.length,
-    unread:       unreadCount,
+    all: items.length,
+    unread: unreadCount,
     verification: items.filter((n) => n.type === "verification").length,
-    flag:         items.filter((n) => n.type === "flag").length,
-    payment:      items.filter((n) => n.type === "payment").length,
-    review:       items.filter((n) => n.type === "review").length,
-    booking:      items.filter((n) => n.type === "booking").length,
-    system:       items.filter((n) => n.type === "system").length,
+    flag: items.filter((n) => n.type === "flag").length,
+    payment: items.filter((n) => n.type === "payment").length,
+    review: items.filter((n) => n.type === "review").length,
+    booking: items.filter((n) => n.type === "booking").length,
+    system: items.filter((n) => n.type === "system").length,
   };
 
   const TABS = [
-    { key: "all",          label: "All",          count: tabCounts.all },
-    { key: "unread",       label: "Unread",       count: tabCounts.unread },
+    { key: "all", label: "All", count: tabCounts.all },
+    { key: "unread", label: "Unread", count: tabCounts.unread },
     { key: "verification", label: "Verification", count: tabCounts.verification },
-    { key: "flag",         label: "Flags",        count: tabCounts.flag },
-    { key: "payment",      label: "Payments",     count: tabCounts.payment },
-    { key: "review",       label: "Reviews",      count: tabCounts.review },
-    { key: "booking",      label: "Bookings",     count: tabCounts.booking },
-    { key: "system",       label: "System",       count: tabCounts.system },
+    { key: "flag", label: "Flags", count: tabCounts.flag },
+    { key: "payment", label: "Payments", count: tabCounts.payment },
+    { key: "review", label: "Reviews", count: tabCounts.review },
+    { key: "booking", label: "Bookings", count: tabCounts.booking },
+    { key: "system", label: "System", count: tabCounts.system },
   ];
 
   /* ── Actions ── */
@@ -473,7 +473,7 @@ export default function NotificationsPage() {
           {unreadCount > 0 && (
             <button
               onClick={markAllRead}
-              className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-colors"
             >
               <CheckCheck className="h-4 w-4" />
               Mark all read
@@ -482,7 +482,7 @@ export default function NotificationsPage() {
           {items.length > 0 && (
             <button
               onClick={clearAll}
-              className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-colors"
             >
               <Trash2 className="h-4 w-4" />
               Clear all
@@ -527,7 +527,7 @@ export default function NotificationsPage() {
       </div>
 
       {/* ── Tabs + filters ── */}
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
         {/* Tabs */}
         <div className="overflow-x-auto">
           <CustomTab

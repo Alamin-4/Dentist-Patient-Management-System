@@ -96,7 +96,7 @@ export function RescheduleConsultationModal({
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#E6EEF6] bg-white p-0">
+              <div className="rounded-lg border border-[#E6EEF6] bg-white p-0">
                 <div className="px-4 py-4 md:px-5">
                   <p className="text-[16px] font-bold text-[#0F3659]">
                     {selectedDate}
@@ -108,10 +108,10 @@ export function RescheduleConsultationModal({
                     Select Time Zone
                   </label>
                   <Select value={selectedZone} onValueChange={setSelectedZone}>
-                    <SelectTrigger className="h-12 rounded-xl border-[#E5E7EB] bg-white text-[14px] text-[#1A1A2E] focus:ring-[#113254]">
+                    <SelectTrigger className="h-12 rounded-lg border-[#E5E7EB] bg-white text-[14px] text-[#1A1A2E] focus:ring-[#113254]">
                       <SelectValue placeholder="Select Time Zone" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border-[#E5E7EB]">
+                    <SelectContent className="rounded-lg border-[#E5E7EB]">
                       {TIME_ZONES.map((zone) => (
                         <SelectItem key={zone} value={zone} className="py-3">
                           {zone}
@@ -132,11 +132,10 @@ export function RescheduleConsultationModal({
                             key={slot}
                             type="button"
                             onClick={() => setSelectedSlot(slot)}
-                            className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-all ${
-                              isSelected
+                            className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-all ${isSelected
                                 ? "border-[#113254] bg-[#F1F6FB] text-[#113254]"
                                 : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#113254]/30"
-                            }`}
+                              }`}
                           >
                             {slot}
                           </button>
@@ -152,7 +151,7 @@ export function RescheduleConsultationModal({
               <button
                 type="button"
                 onClick={handleConfirm}
-                className="rounded-xl bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
+                className="rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
               >
                 Confirm Slot
               </button>
@@ -177,7 +176,7 @@ export function RescheduleConsultationModal({
                 onAddToCalendar?.();
                 handleClose();
               }}
-              className="mt-8 rounded-xl bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
+              className="mt-8 rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
             >
               Add to calendar
             </button>

@@ -131,7 +131,7 @@ export function InvestigationDrawer({
                   {dentist.flags.map((flag) => (
                     <div
                       key={flag.flag_number}
-                      className="rounded-xl border border-gray-100 bg-white overflow-hidden"
+                      className="rounded-lg border border-gray-100 bg-white overflow-hidden"
                     >
                       {/* Flag header */}
                       <div className="flex items-center gap-2 border-b border-gray-50 px-4 py-3">
@@ -221,7 +221,7 @@ export function InvestigationDrawer({
 
             {/* No flags state */}
             {dentist.flags.length === 0 && (
-              <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-8 text-center">
+              <div className="rounded-lg border border-gray-100 bg-gray-50 px-4 py-8 text-center">
                 <FileText className="mx-auto mb-2 h-8 w-8 text-gray-300" />
                 <p className="text-sm text-gray-400">No price variance flags on record.</p>
               </div>
@@ -240,7 +240,7 @@ export function InvestigationDrawer({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
                 placeholder="Add investigation notes..."
-                className="w-full resize-none rounded-xl border border-gray-200 p-3.5 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
+                className="w-full resize-none rounded-lg border border-gray-200 p-3.5 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
               />
               <div className="mt-2 flex justify-end">
                 <button
@@ -255,7 +255,7 @@ export function InvestigationDrawer({
             {/* Archived state */}
             {isRemoved && dentist.archived_date && (
               <section>
-                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 text-sm font-semibold text-[#1A1A2E]">
                       <Archive className="h-4 w-4 text-gray-400" />
@@ -281,7 +281,7 @@ export function InvestigationDrawer({
             {/* Investigation decision (Suspended only) */}
             {isSuspended && (
               <section>
-                <div className="rounded-xl border border-gray-200 p-4">
+                <div className="rounded-lg border border-gray-200 p-4">
                   <p className="mb-1 text-sm font-semibold text-[#1A1A2E]">Investigation Decision</p>
                   <p className="mb-3 text-xs text-gray-400">
                     This action cannot be undone. Review all evidence before proceeding.

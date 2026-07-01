@@ -30,7 +30,7 @@ export default function UploadDocumentModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-175 w-full p-0 border-none rounded-xl overflow-hidden bg-white shadow-2xl">
+      <DialogContent className="sm:max-w-175 w-full p-0 border-none rounded-lg overflow-hidden bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
           <DialogTitle className="text-[22px] font-bold text-[#1A1A2E]">
@@ -46,7 +46,7 @@ export default function UploadDocumentModal({
             onDrop={onDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`
-              relative flex flex-col items-center justify-center w-full py-20 border-2 border-dashed rounded-xl cursor-pointer transition-all
+              relative flex flex-col items-center justify-center w-full py-20 border-2 border-dashed rounded-lg cursor-pointer transition-all
               ${isDragging ? "border-[#113254] bg-[#F0F9FF]" : "border-[#D1D5DB] hover:border-[#113254] bg-white"}
             `}
           >
@@ -71,11 +71,11 @@ export default function UploadDocumentModal({
         <div className="flex items-center justify-between px-8 py-6 border-t border-gray-100">
           <button
             onClick={onClose}
-            className="px-14 py-3 border border-[#113254] text-[#113254] font-bold text-[16px] rounded-xl hover:bg-gray-50 transition-all"
+            className="px-14 py-3 border border-[#113254] text-[#113254] font-bold text-[16px] rounded-lg hover:bg-gray-50 transition-all"
           >
             Cancel
           </button>
-          <button className="px-10 py-3 bg-[#113254] text-white font-bold text-[16px] rounded-xl hover:bg-[#0d2844] transition-all shadow-md active:scale-95">
+          <button className="px-10 py-3 bg-[#113254] text-white font-bold text-[16px] rounded-lg hover:bg-[#0d2844] transition-all shadow-md active:scale-95">
             Add Document
           </button>
         </div>

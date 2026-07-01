@@ -59,10 +59,10 @@ export default function BookingManage() {
     return (
       <div className="space-y-6">
         <Header />
-        <div className="h-12 w-full bg-slate-100 animate-pulse rounded-xl" />
+        <div className="h-12 w-full bg-slate-100 animate-pulse rounded-lg" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-72 bg-white rounded-xl animate-pulse border border-slate-100" />
+            <div key={i} className="h-72 bg-white rounded-lg animate-pulse border border-slate-100" />
           ))}
         </div>
       </div>
@@ -72,17 +72,17 @@ export default function BookingManage() {
   const cards =
     bookings.length > 0
       ? bookings.map((b) => ({
-          id: b.id,
-          name: `${b.personalInfo.firstName} ${b.personalInfo.lastName}`,
-          email: b.personalInfo.email,
-          initials: `${b.personalInfo.firstName[0] || ""}${b.personalInfo.lastName[0] || ""}`,
-          procedure: b.procedure,
-          budget: b.budget || "$1,254",
-          status: "In Escrow",
-          dates: b.travelFrom || "12–24 Jan, 2024",
-          timelineLabel: "Timeline",
-          timelineStatus: "Patient in Travel",
-        }))
+        id: b.id,
+        name: `${b.personalInfo.firstName} ${b.personalInfo.lastName}`,
+        email: b.personalInfo.email,
+        initials: `${b.personalInfo.firstName[0] || ""}${b.personalInfo.lastName[0] || ""}`,
+        procedure: b.procedure,
+        budget: b.budget || "$1,254",
+        status: "In Escrow",
+        dates: b.travelFrom || "12–24 Jan, 2024",
+        timelineLabel: "Timeline",
+        timelineStatus: "Patient in Travel",
+      }))
       : DEMO_CARDS;
 
   return (

@@ -71,7 +71,7 @@ export default function PatientOverviewSkeleton() {
                 <div className="h-4 w-52 bg-gray-100 rounded" />
                 <div className="h-4 w-32 bg-gray-100 rounded" />
               </div>
-              <div className="h-11 w-36 bg-gray-200 rounded-xl shrink-0" />
+              <div className="h-11 w-36 bg-gray-200 rounded-lg shrink-0" />
             </div>
           </div>
         ))}

@@ -56,25 +56,25 @@ const CALENDAR_OPTIONS: {
   Icon: React.ElementType;
   iconColor: string;
 }[] = [
-  {
-    key: "google",
-    label: "Google Calendar",
-    Icon: SiGooglecalendar,
-    iconColor: "#4285F4",
-  },
-  {
-    key: "icloud",
-    label: "iCloud Calendar",
-    Icon: SiApple,
-    iconColor: "#000000",
-  },
-  {
-    key: "outlook",
-    label: "Outlook Calendar",
-    Icon: OutlookIcon,
-    iconColor: "",
-  },
-];
+    {
+      key: "google",
+      label: "Google Calendar",
+      Icon: SiGooglecalendar,
+      iconColor: "#4285F4",
+    },
+    {
+      key: "icloud",
+      label: "iCloud Calendar",
+      Icon: SiApple,
+      iconColor: "#000000",
+    },
+    {
+      key: "outlook",
+      label: "Outlook Calendar",
+      Icon: OutlookIcon,
+      iconColor: "",
+    },
+  ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -173,7 +173,7 @@ export function AddToCalendarModal({
           </div>
 
           {/* Doctor info card */}
-          <div className="flex items-center justify-between gap-4 bg-[#F9FAFB] rounded-xl px-4 py-3.5 mb-5">
+          <div className="flex items-center justify-between gap-4 bg-[#F9FAFB] rounded-lg px-4 py-3.5 mb-5">
             <div className="flex items-center gap-3 min-w-0">
               <img
                 src={appointment.avatarSrc}
@@ -214,11 +214,10 @@ export function AddToCalendarModal({
                   key={key}
                   type="button"
                   onClick={() => setSelected(key)}
-                  className={`relative flex flex-col items-center gap-2.5 rounded-xl border-2 py-4 px-2 transition-all ${
-                    isSelected
+                  className={`relative flex flex-col items-center gap-2.5 rounded-lg border-2 py-4 px-2 transition-all ${isSelected
                       ? "border-[#113254] bg-[#F0F5FA]"
                       : "border-[#E5E7EB] bg-white hover:border-[#113254]/30"
-                  }`}
+                    }`}
                 >
                   {/* Checkmark badge */}
                   {isSelected && (
@@ -242,7 +241,7 @@ export function AddToCalendarModal({
           <button
             type="button"
             onClick={handleAdd}
-            className="w-full py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-bold text-[15px] rounded-xl active:scale-95 transition-all"
+            className="w-full py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-bold text-[15px] rounded-lg active:scale-95 transition-all"
           >
             Add to Calendar
           </button>

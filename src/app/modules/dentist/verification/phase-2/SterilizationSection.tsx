@@ -42,7 +42,7 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
           <div
             onClick={() => !disabled && jciInputRef.current?.click()}
             className={cn(
-              "group flex items-center justify-between rounded-xl border border-dashed px-4 py-4 transition-all border-primary sm:px-5",
+              "group flex items-center justify-between rounded-lg border border-dashed px-4 py-4 transition-all border-primary sm:px-5",
               disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-card"
             )}
           >
@@ -85,7 +85,7 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
           <div
             onClick={() => !disabled && videoInputRef.current?.click()}
             className={cn(
-              "group flex items-center justify-between rounded-xl border border-dashed px-4 py-4 border-primary sm:px-5",
+              "group flex items-center justify-between rounded-lg border border-dashed px-4 py-4 border-primary sm:px-5",
               disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-card"
             )}
           >

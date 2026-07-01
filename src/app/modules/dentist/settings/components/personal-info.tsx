@@ -71,14 +71,14 @@ export default function PersonalInfo() {
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-[#EEF2F7] bg-white p-6 shadow-sm flex items-center justify-center h-48">
+      <div className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm flex items-center justify-center h-48">
         <div className="h-8 w-8 border-3 border-[#0F3659] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <section className="rounded-xl border border-[#EEF2F7] bg-white p-6 shadow-sm">
+    <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-[#0E3E65]">Personal Information</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">

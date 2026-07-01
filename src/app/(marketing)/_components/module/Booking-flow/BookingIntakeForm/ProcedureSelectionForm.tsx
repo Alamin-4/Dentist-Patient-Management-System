@@ -21,7 +21,7 @@ export default function ProcedureSelectionForm() {
     () => getBookingData().procedureIds,
   );
 
-  const { data: procedureOptions, isLoading } = useGlobalProcedures();
+  const { data: procedureOptions = [], isLoading } = useGlobalProcedures();
 
   const handleSelectProcedure = (id: string) => {
     const nextIds = selectedIds.includes(id)
@@ -30,8 +30,8 @@ export default function ProcedureSelectionForm() {
 
     setSelectedIds(nextIds);
     const selectedTitles = procedureOptions
-      .filter((procedure:ProcedureOption) => nextIds.includes(procedure.id))
-      .map((procedure:ProcedureOption) => procedure.name);
+      .filter((procedure: ProcedureOption) => nextIds.includes(procedure.id))
+      .map((procedure: ProcedureOption) => procedure.name);
 
     updateTreatmentDetails({
       procedure: selectedTitles.join(", "),
@@ -61,7 +61,7 @@ export default function ProcedureSelectionForm() {
               onClick={() => handleSelectProcedure(item.id)}
               className={`
                 group cursor-pointer relative flex items-center justify-between 
-                p-5 rounded-xl border-2 transition-all duration-200
+                p-5 rounded-lg border-2 transition-all duration-200
                 ${isSelected
                   ? "border-[#113254] bg-[#F8FAFC]"
                   : "border-[#F3F4F6] hover:border-[#E5E7EB] bg-white"
@@ -74,7 +74,7 @@ export default function ProcedureSelectionForm() {
                 >
                   {item.name}
                 </span>
-            
+
               </div>
 
               <div className="shrink-0">

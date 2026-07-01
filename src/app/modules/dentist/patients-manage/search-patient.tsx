@@ -61,7 +61,7 @@ export default function FilterSection({
             placeholder="Search by name, Procedure..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full h-11 pl-10 pr-4 bg-white border border-[#E2E8F0] rounded-xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-slate-400 focus:ring-0 transition-colors"
+            className="w-full h-11 pl-10 pr-4 bg-white border border-[#E2E8F0] rounded-lg text-sm text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-slate-400 focus:ring-0 transition-colors"
           />
         </div>
 
@@ -75,7 +75,7 @@ export default function FilterSection({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-48 bg-white border border-[#E2E8F0] rounded-xl shadow-md z-50"
+              className="w-48 bg-white border border-[#E2E8F0] rounded-lg shadow-md z-50"
             >
               {procedureOptions.map((option) => (
                 <DropdownMenuItem
@@ -101,7 +101,7 @@ export default function FilterSection({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-40 bg-white border border-[#E2E8F0] rounded-xl shadow-md z-50"
+              className="w-40 bg-white border border-[#E2E8F0] rounded-lg shadow-md z-50"
             >
               {statusOptions.map((option) => (
                 <DropdownMenuItem

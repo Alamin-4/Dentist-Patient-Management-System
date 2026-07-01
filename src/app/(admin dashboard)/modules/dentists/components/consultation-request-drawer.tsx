@@ -166,7 +166,7 @@ export function ConsultationRequestDrawer({
               </div>
 
               {/* Treatment plan status row */}
-              <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5">
+              <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-2.5">
                 <p className="text-sm font-semibold text-gray-700">Treatment Plan Status</p>
                 <span className="text-sm text-gray-400">
                   {treatment_plan_status ?? "Not Sent"}
@@ -174,7 +174,7 @@ export function ConsultationRequestDrawer({
               </div>
 
               {/* Schedule */}
-              <div className="rounded-xl border border-gray-100 bg-white p-4">
+              <div className="rounded-lg border border-gray-100 bg-white p-4">
                 <p className="mb-3 text-sm font-bold text-gray-700">Schedule Details</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -189,7 +189,7 @@ export function ConsultationRequestDrawer({
               </div>
 
               {/* Dental history */}
-              <div className="rounded-xl border border-gray-100 bg-white p-4">
+              <div className="rounded-lg border border-gray-100 bg-white p-4">
                 <p className="mb-3 text-sm font-bold text-gray-700">Dental History</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -221,7 +221,7 @@ export function ConsultationRequestDrawer({
                   <div className="grid grid-cols-3 gap-2">
                     {request_details.media.map((m, i) => (
                       <div key={i} className="flex flex-col gap-1">
-                        <div className="flex h-24 items-center justify-center rounded-xl border border-gray-100 bg-gray-100">
+                        <div className="flex h-24 items-center justify-center rounded-lg border border-gray-100 bg-gray-100">
                           <ImageIcon className="h-6 w-6 text-gray-300" />
                         </div>
                         <p className="text-center text-xs text-gray-400">{m.label}</p>
@@ -287,7 +287,7 @@ export function ConsultationRequestDrawer({
               </div>
 
               {/* Treatment plan status row */}
-              <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5">
+              <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-2.5">
                 <p className="text-sm font-semibold text-gray-700">Treatment Plan Status</p>
                 <span className="text-sm text-gray-400">
                   {treatment_plan_status ?? "Not Sent"}
@@ -295,7 +295,7 @@ export function ConsultationRequestDrawer({
               </div>
 
               {/* Procedure breakdown */}
-              <div className="rounded-xl border border-gray-100 bg-white">
+              <div className="rounded-lg border border-gray-100 bg-white">
                 <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                   <p className="text-sm font-semibold text-gray-700">Procedure breakdown</p>
                   <p className="text-sm font-semibold text-gray-400">Price</p>
@@ -326,7 +326,7 @@ export function ConsultationRequestDrawer({
                 <p className="mb-1.5 text-sm font-semibold text-gray-700">
                   Any other information to share?
                 </p>
-                <div className="min-h-[80px] rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-400">
+                <div className="min-h-[80px] rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-400">
                   {treatment_plan.additional_info || "Care instructions, follow-up"}
                 </div>
               </div>

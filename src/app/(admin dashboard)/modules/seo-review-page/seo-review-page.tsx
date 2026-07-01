@@ -71,7 +71,7 @@ function FilterDropdown({
         <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
       </button>
       {open && (
-        <div className="absolute left-0 top-10 z-20 min-w-44 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+        <div className="absolute left-0 top-10 z-20 min-w-44 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
           <button
             onClick={onClear}
             className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50", !value ? "font-semibold text-[#1A1A2E]" : "text-gray-500")}
@@ -99,7 +99,7 @@ function RemoveModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm:
     <>
       <div className="fixed inset-0 z-40 bg-black/30" onClick={onCancel} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
+        <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-2xl">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <Trash className="h-5 w-5 text-red-500" />
           </div>
@@ -110,13 +110,13 @@ function RemoveModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm:
           <div className="mt-6 flex gap-3">
             <button
               onClick={onCancel}
-              className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-600"
+              className="flex-1 rounded-lg bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-600"
             >
               Remove Page
             </button>
@@ -283,7 +283,7 @@ export default function SEOReviewPage() {
         <CustomStats stats={stats} />
 
         {/* Table card */}
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
           {/* Tabs */}
           <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
             <CustomTab

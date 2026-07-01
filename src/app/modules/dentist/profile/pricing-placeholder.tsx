@@ -10,7 +10,7 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
 
   if (procedures.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden">
         <div className="border-b border-gray-50 px-6 py-4">
           <h3 className="text-lg font-bold text-gray-900">Pricings</h3>
         </div>
@@ -30,7 +30,7 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
   }
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden transition-all duration-300">
+    <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden transition-all duration-300">
       <div className="border-b border-gray-50 px-6 py-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-gray-900">Procedure Pricings</h3>
         <Badge variant="secondary" className="bg-[#E8F1F8] text-[#163E5C] border-none px-3 py-1 font-semibold">
@@ -58,7 +58,7 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
                   </p>
                 )}
               </div>
-              
+
               <div className="flex items-center gap-4">
                 <span className="text-lg font-bold text-[#163E5C] flex items-center">
                   <DollarSign className="h-4.5 w-4.5 text-[#163E5C]" />

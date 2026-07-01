@@ -27,7 +27,7 @@ export default function MaterialsSection({
             Only certified, internationally recognized dental materials are used in all procedures.
           </p>
         </div>
-        <div className="text-center py-10 text-slate-500 bg-[#F8FAFC] rounded-xl border border-dashed border-slate-200">
+        <div className="text-center py-10 text-slate-500 bg-[#F8FAFC] rounded-lg border border-dashed border-slate-200">
           No material certifications have been uploaded or verified for this dentist.
         </div>
       </section>
@@ -101,7 +101,7 @@ export default function MaterialsSection({
                 {items.map((item, itemIdx) => (
                   <div
                     key={itemIdx}
-                    className="flex items-start gap-3 rounded-xl border border-slate-200 bg-[#F8FAFC] p-4"
+                    className="flex items-start gap-3 rounded-lg border border-slate-200 bg-[#F8FAFC] p-4"
                   >
                     <ShieldCheck className="size-5 text-[#4CA30D] shrink-0 mt-0.5" />
                     <div>

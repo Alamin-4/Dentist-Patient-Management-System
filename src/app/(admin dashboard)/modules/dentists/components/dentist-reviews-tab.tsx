@@ -24,9 +24,8 @@ function StarRating({ rating }: { rating: number }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`h-3.5 w-3.5 ${
-            i < rating ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"
-          }`}
+          className={`h-3.5 w-3.5 ${i < rating ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"
+            }`}
         />
       ))}
     </span>
@@ -35,7 +34,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export function DentistReviewsTab({ reviews, totalReviews }: DentistReviewsTabProps) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
       <div className="border-b border-gray-100 px-5 py-3.5">
         <p className="text-sm font-semibold text-gray-500">
           Showing {reviews.length} of {totalReviews.toLocaleString()} reviews
