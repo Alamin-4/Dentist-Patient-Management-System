@@ -14,7 +14,7 @@ interface ProcedurePricingSectionProps {
 }
 
 export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionProps) => {
-  const { control, register, setValue, watch } = useFormContext();
+  const { control, register, setValue, watch, formState: { errors } } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "procedures",
@@ -43,6 +43,9 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
           const suggestions = proceduresList.filter((p) =>
             p.name.toLowerCase().includes(typedName.toLowerCase()),
           );
+
+          // Safe typecasting for errors inside array field
+          const itemErrors = (errors.procedures as any)?.[index];
 
           return (
             <div
@@ -86,6 +89,11 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
                     ))}
                   </ul>
                 )}
+                {itemErrors?.name && (
+                  <p className="text-xs font-semibold text-destructive mt-1">
+                    {String(itemErrors.name.message)}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="inline-block text-xs font-medium text-muted-foreground">
@@ -102,6 +110,11 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
                     className="h-11 w-full rounded-lg border border-border bg-card pl-8 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                 </div>
+                {itemErrors?.price && (
+                  <p className="text-xs font-semibold text-destructive mt-1">
+                    {String(itemErrors.price.message)}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="inline-block text-xs font-medium text-muted-foreground">

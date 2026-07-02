@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import {
   useClaimDentistDirectoryProfile,
   useRequestDirectoryConsultation,
-  useSimulateStripeWebhook,
+  useCreateDirectoryCheckoutSession,
   useSendClaimOtp,
 } from "@/hooks/dentist/useDentistDirectory";
 
@@ -104,7 +104,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
   // Claim Profile Wizard State
   const claimMutation = useClaimDentistDirectoryProfile();
-  const webhookMutation = useSimulateStripeWebhook();
+  const checkoutMutation = useCreateDirectoryCheckoutSession();
   const sendClaimOtpMutation = useSendClaimOtp();
   const verifyOtpMutation = useOtpVerify();
   const resendOtpMutation = useResendOtp();
@@ -116,7 +116,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
   const [yearsOfExperience, setYearsOfExperience] = useState(5);
   const [motivation, setMotivation] = useState("");
   const [internationalPatients, setInternationalPatients] = useState(10);
-  const [selectedPlan, setSelectedPlan] = useState("1_YEAR");
+  const [selectedPlan, setSelectedPlan] = useState("6_MONTH");
+  const [claimedDirectoryId, setClaimedDirectoryId] = useState("");
 
   // Checkboxes
   const [hasSterilizationDocs, setHasSterilizationDocs] = useState(false);
@@ -124,11 +125,6 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
   const [hasMaterialsDocs, setHasMaterialsDocs] = useState(false);
   const [hasEducationCertificates, setHasEducationCertificates] = useState(false);
   const [hasGuarantees, setHasGuarantees] = useState(false);
-
-  // Card Info (Mock)
-  const [cardNumber, setCardNumber] = useState("4242 •••• •••• 4242");
-  const [cardExpiry, setCardExpiry] = useState("12/28");
-  const [cardCvc, setCardCvc] = useState("123");
 
   // Autofill email if user logged in & skip to step 3
   useEffect(() => {
@@ -217,68 +213,60 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
         toast.error("You must fulfill and agree to all quality standards to claim this profile.");
         return;
       }
-      setClaimStep(4);
+      // Submit claim form first, then go to payment plan step
+      const toastId = toast.loading("Saving your application...");
+      claimMutation.mutate(
+        {
+          slug: dentist.slug,
+          payload: {
+            yearsOfExperience: Number(yearsOfExperience),
+            motivation,
+            internationalPatients: Number(internationalPatients),
+            procedures: [dentist.specialty || "General Dentistry"],
+            hasSterilizationDocs,
+            hasBeforeAfterPhotos,
+            hasMaterialsDocs,
+            hasEducationCertificates,
+            hasGuarantees,
+          },
+        },
+        {
+          onSuccess: (res: any) => {
+            const directoryId = res?.data?.id;
+            if (directoryId) setClaimedDirectoryId(directoryId);
+            toast.success("Application saved! Please select your membership plan.", { id: toastId });
+            setClaimStep(4);
+          },
+          onError: (err: any) => {
+            const errMsg = err?.response?.data?.message || err?.message || "Failed to save application.";
+            toast.error(errMsg, { id: toastId });
+          },
+        }
+      );
     }
   };
 
-  const handleClaimAndPay = async () => {
-    const toastId = toast.loading("Processing claim registration...");
-
-    // 1. Submit claim payload to backend
-    claimMutation.mutate(
+  const handleProceedToPayment = () => {
+    const directoryId = claimedDirectoryId || dentist.id;
+    if (!directoryId) {
+      toast.error("Profile ID not found. Please try again.");
+      return;
+    }
+    const toastId = toast.loading("Creating secure checkout session...");
+    checkoutMutation.mutate(
+      { dentistDirectoryId: directoryId, membershipPlan: selectedPlan },
       {
-        slug: dentist.slug,
-        payload: {
-          email: claimEmail,
-          password: undefined,
-          yearsOfExperience: Number(yearsOfExperience),
-          motivation,
-          internationalPatients: Number(internationalPatients),
-          procedures: [dentist.specialty],
-          hasSterilizationDocs,
-          hasBeforeAfterPhotos,
-          hasMaterialsDocs,
-          hasEducationCertificates,
-          hasGuarantees,
-        },
-      },
-      {
-        onSuccess: async (claimResponse: any) => {
-          const dentistDirectoryId = claimResponse?.data?.id;
-          if (!dentistDirectoryId) {
-            toast.error("Invalid response from server. Directory ID not found.", { id: toastId });
-            return;
+        onSuccess: (res: any) => {
+          const checkoutUrl = res?.data?.url;
+          if (checkoutUrl) {
+            toast.dismiss(toastId);
+            window.location.href = checkoutUrl;
+          } else {
+            toast.error("Failed to create checkout session. Please try again.", { id: toastId });
           }
-
-          toast.loading("Simulating secure Stripe checkout completion...", { id: toastId });
-
-          // 2. Trigger simulated Stripe webhook in backend to mark as PAID & claimed
-          webhookMutation.mutate(
-            {
-              type: "checkout.session.completed",
-              data: {
-                object: {
-                  metadata: {
-                    dentistDirectoryId,
-                    membershipPlan: selectedPlan,
-                  },
-                },
-              },
-            },
-            {
-              onSuccess: () => {
-                toast.success("Profile successfully claimed & payment verified!", { id: toastId });
-                setClaimStep(5);
-              },
-              onError: (err: any) => {
-                const errMsg = err?.response?.data?.message || err?.message || "Payment simulation failed.";
-                toast.error(`Claim registered but payment failed: ${errMsg}`, { id: toastId });
-              },
-            }
-          );
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to register profile claim.";
+          const errMsg = err?.response?.data?.message || err?.message || "Payment setup failed.";
           toast.error(errMsg, { id: toastId });
         },
       }
@@ -749,93 +737,67 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
             {/* Step 4: Secure Payment Simulation */}
             {claimStep === 4 && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3 mb-2">
-                  <div
-                    onClick={() => setSelectedPlan("6_MONTH")}
-                    className={`border rounded-lg p-3 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
-                      ? "border-[#0E3E65] bg-sky-50/40 ring-1 ring-[#0E3E65]"
-                      : "border-slate-200 hover:bg-slate-50"
-                      }`}
-                  >
-                    <span className="block text-xs font-bold text-slate-500 uppercase">6 Months</span>
-                    <span className="block text-xl font-extrabold text-[#0E3E65] mt-1">$89</span>
-                  </div>
-                  <div
-                    onClick={() => setSelectedPlan("1_YEAR")}
-                    className={`border rounded-lg p-3 text-center cursor-pointer transition-all ${selectedPlan === "1_YEAR"
-                      ? "border-[#0E3E65] bg-sky-50/40 ring-1 ring-[#0E3E65]"
-                      : "border-slate-200 hover:bg-slate-50"
-                      }`}
-                  >
-                    <span className="block text-xs font-bold text-slate-500 uppercase">1 Year</span>
-                    <span className="block text-xl font-extrabold text-[#0E3E65] mt-1">$149</span>
+                <div className="space-y-3 mb-4">
+                  <p className="text-sm font-semibold text-slate-700">Choose Your Membership Plan</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div
+                      onClick={() => setSelectedPlan("6_MONTH")}
+                      className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
+                        ? "border-[#0E3E65] bg-sky-50 ring-2 ring-[#0E3E65]/20"
+                        : "border-slate-200 hover:bg-slate-50"
+                        }`}
+                    >
+                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
+                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$599</span>
+                      <span className="block text-[10px] text-slate-400 mt-1">~$99.83/mo</span>
+                    </div>
+                    <div
+                      onClick={() => setSelectedPlan("12_MONTH")}
+                      className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "12_MONTH"
+                        ? "border-amber-500 bg-amber-50 ring-2 ring-amber-400/20"
+                        : "border-slate-200 hover:bg-slate-50"
+                        }`}
+                    >
+                      <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
+                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
+                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$999</span>
+                      <span className="block text-[10px] text-slate-400 mt-1">~$83.25/mo</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Credit Card Simulation Form */}
-                <div className="rounded-lg border border-slate-200 p-4 bg-slate-50/50 space-y-3">
-                  <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                    <span>SECURE CARD PAYMENT</span>
-                    <span className="text-emerald-600 flex items-center gap-1">
-                      <ShieldCheck className="size-3.5" /> 256-bit SSL
-                    </span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label className="text-[11px] text-slate-500 uppercase">Card Number</Label>
-                    <Input
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
-                      className="bg-white border-slate-200 h-10 font-mono text-slate-700"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <Label className="text-[11px] text-slate-500 uppercase">Expiry</Label>
-                      <Input
-                        value={cardExpiry}
-                        onChange={(e) => setCardExpiry(e.target.value)}
-                        className="bg-white border-slate-200 h-10 font-mono text-slate-700"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-[11px] text-slate-500 uppercase">CVC</Label>
-                      <Input
-                        value={cardCvc}
-                        onChange={(e) => setCardCvc(e.target.value)}
-                        className="bg-white border-slate-200 h-10 font-mono text-slate-700"
-                      />
-                    </div>
-                  </div>
+                <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-start gap-2">
+                  <ShieldCheck className="size-4 shrink-0 mt-0.5 text-emerald-600" />
+                  <span>You will be redirected to <strong>Stripe's secure checkout</strong>. Your profile will be marked as <strong>Claimed</strong> automatically after payment.</span>
                 </div>
 
                 <div className="flex justify-between pt-4 border-t border-slate-100">
                   <Button
                     variant="outline"
                     onClick={() => setClaimStep(3)}
-                    disabled={claimMutation.isPending || webhookMutation.isPending}
+                    disabled={checkoutMutation.isPending}
                     className="border-slate-200 text-slate-600 hover:bg-slate-50"
                   >
                     Back
                   </Button>
                   <Button
-                    onClick={handleClaimAndPay}
-                    disabled={claimMutation.isPending || webhookMutation.isPending}
+                    onClick={handleProceedToPayment}
+                    disabled={checkoutMutation.isPending}
                     className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 shadow-md transition-colors"
                   >
-                    {claimMutation.isPending || webhookMutation.isPending ? (
+                    {checkoutMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
+                        Redirecting...
                       </>
                     ) : (
-                      `Pay $${selectedPlan === "1_YEAR" ? "149" : "89"} & Claim`
+                      `Pay ${selectedPlan === "12_MONTH" ? "$999" : "$599"} & Claim →`
                     )}
                   </Button>
                 </div>
               </div>
             )}
+
 
             {/* Step 5: Success Celebratory Screen */}
             {claimStep === 5 && (

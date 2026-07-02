@@ -25,7 +25,7 @@ export default function NavbarPublic() {
 
   const pathname = usePathname();
   const { user } = useMe();
-  console.log(user)
+  // console.log(user)
   const { mutate: logout } = useLogout();
 
   const isAuthenticated = !!user;

@@ -41,7 +41,7 @@ export function clearAllStorageData() {
     localStorage.removeItem("booking_form_data");
     localStorage.removeItem("submitted_bookings");
     localStorage.removeItem("selected_dentist");
-    console.log("All storage data cleared");
+    // console.log("All storage data cleared");
   }
 }
 

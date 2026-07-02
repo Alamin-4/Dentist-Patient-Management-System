@@ -25,9 +25,11 @@ export default function TopBar({
   return (
     <div className="w-full">
       <div className="flex flex-col gap-6 py-7">
-        <h1 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0A0A1A] md:text-[40px]">
-          Search Verified Dentists
-        </h1>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h1 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0A0A1A] md:text-[40px]">
+            Search Verified Dentists
+          </h1>
+        </div>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
           <div className="relative flex-1">

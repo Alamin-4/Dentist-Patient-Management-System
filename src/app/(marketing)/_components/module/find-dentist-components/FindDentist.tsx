@@ -3,12 +3,30 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
-import { useDentistDirectory, useDirectoryCountries } from "@/hooks/dentist/useDentistDirectory";
+import {
+    useDentistDirectory,
+    useDirectoryCountries,
+    useAddDentistToDirectory,
+} from "@/hooks/dentist/useDentistDirectory";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 
 import TopBar from "../DentistAllComponents/TopBar";
@@ -34,6 +52,59 @@ export default function FindDentistComponents() {
     const [activeDentistId, setActiveDentistId] = useState<string | null>(null);
     const [showMapFilters, setShowMapFilters] = useState(false);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+    // ── Add a Dentist state & mutation ──────────────────────────────────────
+    const router = useRouter();
+    const addDentistMutation = useAddDentistToDirectory();
+    const [isAddDentistOpen, setIsAddDentistOpen] = useState(false);
+    const [addForm, setAddForm] = useState({
+        fullName: "",
+        clinicName: "",
+        city: "",
+        country: "",
+        specialty: "",
+        phone: "",
+    });
+
+    const handleAddDentistSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!addForm.fullName.trim()) {
+            toast.error("Dentist full name is required.");
+            return;
+        }
+
+        const toastId = toast.loading("Adding dentist to directory...");
+        addDentistMutation.mutate(
+            addForm,
+            {
+                onSuccess: (res: any) => {
+                    const slug = res?.data?.slug;
+                    if (slug) {
+                        toast.success(res.message || "Dentist profile ready for claim!", { id: toastId });
+                        setIsAddDentistOpen(false);
+                        // Reset form
+                        setAddForm({
+                            fullName: "",
+                            clinicName: "",
+                            city: "",
+                            country: "",
+                            specialty: "",
+                            phone: "",
+                        });
+                        // Redirect to the newly created profile with claim dialog active
+                        router.push(`/find-dentist/${slug}?claim=true`);
+                    } else {
+                        toast.error("Failed to process dentist profile. Please try again.", { id: toastId });
+                    }
+                },
+                onError: (err: any) => {
+                    const errMsg = err?.response?.data?.message || err?.message || "Failed to add dentist profile.";
+                    toast.error(errMsg, { id: toastId });
+                },
+            }
+        );
+    };
+
 
     // ── Data fetching ──────────────────────────────────────────────────────
     const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(
@@ -205,7 +276,6 @@ export default function FindDentistComponents() {
                                     />
                                 )}
 
-                                {/* Dentist List */}
                                 <DentistList
                                     dentists={filteredDentists}
                                     isLoading={isDirLoading}
@@ -214,6 +284,7 @@ export default function FindDentistComponents() {
                                     onCompareToggle={compare.handleCompareToggle}
                                     onCardClick={setActiveDentistId}
                                     onClearFilters={handleClearAllFilters}
+                                    onAddDentistClick={() => setIsAddDentistOpen(true)}
                                 />
 
                                 {/* Pagination */}
@@ -239,6 +310,110 @@ export default function FindDentistComponents() {
                     </section>
                 </div>
             </main>
+
+            <Dialog open={isAddDentistOpen} onOpenChange={setIsAddDentistOpen}>
+                <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
+                    <DialogHeader>
+                        <DialogTitle className="text-[#0E3E65] font-bold text-xl">Add a Dentist Profile</DialogTitle>
+                        <DialogDescription className="text-slate-500">
+                            Enter details to add a dentist who isn't already in the RatedDocs database directory, then proceed to claim it.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <form onSubmit={handleAddDentistSubmit} className="space-y-4 py-2">
+                        <div className="space-y-2">
+                            <Label htmlFor="fullName" className="font-semibold text-slate-700 text-sm">Full Name *</Label>
+                            <Input
+                                id="fullName"
+                                value={addForm.fullName}
+                                onChange={(e) => setAddForm({ ...addForm, fullName: e.target.value })}
+                                placeholder="Dr. John Smith"
+                                required
+                                className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="clinicName" className="font-semibold text-slate-700 text-sm">Clinic Name</Label>
+                                <Input
+                                    id="clinicName"
+                                    value={addForm.clinicName}
+                                    onChange={(e) => setAddForm({ ...addForm, clinicName: e.target.value })}
+                                    placeholder="Bright Smile Clinic"
+                                    className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="specialty" className="font-semibold text-slate-700 text-sm">Specialty</Label>
+                                <Input
+                                    id="specialty"
+                                    value={addForm.specialty}
+                                    onChange={(e) => setAddForm({ ...addForm, specialty: e.target.value })}
+                                    placeholder="Implantology"
+                                    className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="city" className="font-semibold text-slate-700 text-sm">City</Label>
+                                <Input
+                                    id="city"
+                                    value={addForm.city}
+                                    onChange={(e) => setAddForm({ ...addForm, city: e.target.value })}
+                                    placeholder="Tijuana"
+                                    className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="country" className="font-semibold text-slate-700 text-sm">Country</Label>
+                                <Input
+                                    id="country"
+                                    value={addForm.country}
+                                    onChange={(e) => setAddForm({ ...addForm, country: e.target.value })}
+                                    placeholder="Mexico"
+                                    className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="phone" className="font-semibold text-slate-700 text-sm">Phone Number</Label>
+                            <Input
+                                id="phone"
+                                value={addForm.phone}
+                                onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                                placeholder="+1 234 567 890"
+                                className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                            />
+                        </div>
+
+                        <DialogFooter className="pt-4 border-t border-slate-100 mt-6">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsAddDentistOpen(false)}
+                                className="border-slate-200 text-slate-600 hover:bg-slate-50 h-10 text-sm"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={addDentistMutation.isPending}
+                                className="bg-[#0E3E65] hover:bg-[#002850] text-white font-bold h-10 text-sm px-6"
+                            >
+                                {addDentistMutation.isPending ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Adding...
+                                    </>
+                                ) : (
+                                    "Add & Claim Profile"
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

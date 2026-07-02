@@ -42,8 +42,8 @@ const materialsSchema = z.object({
 
 const clinicAddressSchema = z.object({
   address: z.string().min(1, "Clinic address is required"),
-  lat: z.string().min(1, "Latitude is required"),
-  lng: z.string().min(1, "Longitude is required"),
+  lat: z.string().optional(),
+  lng: z.string().optional(),
 });
 
 const phase3Schema = z.object({
@@ -165,7 +165,11 @@ export default function Phase3() {
 
   const onSubmit = (payload: Phase3Values) => {
     const formattedPayload: StepThreeI = {
-      clinic_address: payload.clinic_address,
+      clinic_address: {
+        address: payload.clinic_address.address,
+        lat: payload.clinic_address.lat || "",
+        lng: payload.clinic_address.lng || "",
+      },
       materials: payload.materials.map((m) => ({
         own_procedure: String(m.ownProcedure),
         ce_certificate: m.ceCertificate,
@@ -422,18 +426,15 @@ export default function Phase3() {
               </div>
             )}
           </div>
-          {isPending && (
-            <div className="flex justify-center items-center py-6 border-t bg-card">
-              <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
-              <span className="ml-2 text-sm text-muted-foreground">
-                Submitting Phase 3...
-              </span>
-            </div>
-          )}
+          
           <MapPickerModal
             isOpen={isMapOpen}
             onClose={() => setIsMapOpen(false)}
-            initialLocation={selectedAddress}
+            initialLocation={{
+              address: selectedAddress.address,
+              lat: selectedAddress.lat || "",
+              lng: selectedAddress.lng || "",
+            }}
             onConfirm={(location) => {
               methods.setValue("clinic_address.address", location.address, {
                 shouldValidate: true,

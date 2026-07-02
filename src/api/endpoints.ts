@@ -25,9 +25,11 @@ export const endpoints = {
     progress: "/dentists/progress",
     overview: "/dentists/overview",
     directoryList: "/dentists/directory",
+    directoryAdd: "/dentists/directory/add",
     directoryDetail: (slug: string) => `/dentists/directory/${slug}`,
     directoryClaim: (slug: string) => `/dentists/directory/${slug}/claim`,
     directorySendClaimOtp: "/dentists/directory/claim/send-otp",
+    directoryCheckoutSession: "/dentists/directory/checkout-session",
     directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
   },
   procedures: {

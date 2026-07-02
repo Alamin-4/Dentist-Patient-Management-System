@@ -99,18 +99,20 @@ export default function StepButton() {
   // If the currently viewed step is not submitted yet, it acts as a form submit button
   const buttonProps = isAlreadySubmitted
     ? {
-        type: "button" as const,
-        onClick: handleClick,
-      }
+      type: "button" as const,
+      onClick: handleClick,
+    }
     : {
-        type: "submit" as const,
-        form: `phase-${verificationStep}-verification-form`,
-      };
+      type: "submit" as const,
+      form: `phase-${verificationStep}-verification-form`,
+    };
+
 
   return (
     <div className="flex w-full justify-end px-4 sm:px-6 lg:px-8">
       <Button
         {...buttonProps}
+        // onClick={handleClick}
         size="lg"
         disabled={isSubmitting}
         className="h-12 rounded-lg px-10 font-semibold bg-[#0E3E65] text-white hover:bg-[#0E3E65]/90 disabled:opacity-50"

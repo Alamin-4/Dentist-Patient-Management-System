@@ -56,9 +56,27 @@ export function useRequestDirectoryConsultation() {
   });
 }
 
-export function useSimulateStripeWebhook() {
+export function useAddDentistToDirectory() {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: any) => apiClient.dentists.simulateStripeWebhook(payload),
+    mutationFn: (payload: {
+      fullName: string;
+      clinicName?: string;
+      city?: string;
+      country?: string;
+      specialty?: string;
+      phone?: string;
+    }) => apiClient.dentists.addDentistToDirectory(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dentistDirectoryList"] });
+    },
+  });
+}
+
+export function useCreateDirectoryCheckoutSession() {
+  return useMutation({
+    mutationFn: (payload: { dentistDirectoryId: string; membershipPlan: string }) =>
+      apiClient.dentists.createDirectoryCheckoutSession(payload),
   });
 }
 

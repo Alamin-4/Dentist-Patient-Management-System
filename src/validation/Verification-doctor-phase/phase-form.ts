@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const procedureSchema = z.object({
-  id: z.number().optional(),
+  id: z.union([z.number(), z.string()]).optional(),
   name: z.string().min(1, "Required"),
   price: z.coerce.number().min(0, "Invalid price"),
   notes: z.string().optional(),

@@ -364,7 +364,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   return {
     id: `DEN-${String(d.id).padStart(3, "0")}`,
     slug: d.slug || null,
-    name: d.full_name || "Unknown Dentist",
+    name: d.full_name,
     initials,
     avatar_color: avatarColor,
     email: d.user?.email || "—",

@@ -9,7 +9,7 @@ interface SterilizationSectionProps {
 }
 
 export const SterilizationSection = ({ disabled }: SterilizationSectionProps) => {
-  const { setValue, watch } = useFormContext();
+  const { setValue, watch, formState: { errors } } = useFormContext();
   const jciFile = watch("jciCertificate");
   const videoFile = watch("videoWalkthrough");
 
@@ -101,6 +101,11 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
               </span>
             )}
           </div>
+          {errors.jciCertificate && (
+            <p className="text-xs font-semibold text-destructive mt-2">
+              {String(errors.jciCertificate.message)}
+            </p>
+          )}
         </div>
 
         <div className="space-y-3 text-sm text-foreground">

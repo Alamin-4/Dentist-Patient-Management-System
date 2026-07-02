@@ -265,8 +265,22 @@ export const apiClient = {
       const response = await api.post(endpoints.dentists.directoryConsultation(slug), payload);
       return response.data;
     },
-    simulateStripeWebhook: async (payload: any) => {
-      const response = await api.post("/stripe/webhook", payload);
+    addDentistToDirectory: async (payload: {
+      fullName: string;
+      clinicName?: string;
+      city?: string;
+      country?: string;
+      specialty?: string;
+      phone?: string;
+    }) => {
+      const response = await api.post(endpoints.dentists.directoryAdd, payload);
+      return response.data;
+    },
+    createDirectoryCheckoutSession: async (payload: {
+      dentistDirectoryId: string;
+      membershipPlan: string;
+    }) => {
+      const response = await api.post(endpoints.dentists.directoryCheckoutSession, payload);
       return response.data;
     },
     sendClaimOtp: async (payload: { email: string; password?: string; name?: string }) => {

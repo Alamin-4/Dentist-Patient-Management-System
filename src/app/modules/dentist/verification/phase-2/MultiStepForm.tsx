@@ -96,6 +96,8 @@ export default function MultiStepForm() {
       procedures,
     };
 
+    console.log("clicked")
+
     stepTwoMutation.mutate(payload, {
       onSuccess: () => {
         setTimeout(() => {
@@ -112,6 +114,25 @@ export default function MultiStepForm() {
         toast.error(errMsg);
       },
     });
+  };
+
+  // Expose helpers on window for easy developer debugging in console
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).getFormErrors = () => methods.formState.errors;
+      (window as any).getFormValues = () => methods.getValues();
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        delete (window as any).getFormErrors;
+        delete (window as any).getFormValues;
+      }
+    };
+  }, [methods]);
+
+  const onInvalid = (errors: any) => {
+    console.warn("Validation failed for Phase 2 Form:", errors);
+    toast.error("Please fill all required fields correctly.");
   };
 
   // While waiting for admin review — show status screen only
@@ -137,20 +158,12 @@ export default function MultiStepForm() {
       <FormProvider {...methods}>
         <form
           id="phase-2-verification-form"
-          onSubmit={methods.handleSubmit(onSubmit)}
+          onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
           className="space-y-0"
         >
           <SterilizationSection disabled={formLocked} />
           <ProcedurePricingSection disabled={formLocked} />
           <GuaranteeSection disabled={formLocked} />
-          {stepTwoMutation.isPending && (
-            <div className="flex justify-center items-center py-6 border-t bg-card">
-              <Loader2 className="animate-spin h-6 w-6 text-[#0E3E65]" />
-              <span className="ml-2 text-sm text-muted-foreground">
-                Submitting Phase 2...
-              </span>
-            </div>
-          )}
         </form>
       </FormProvider>
     </div>

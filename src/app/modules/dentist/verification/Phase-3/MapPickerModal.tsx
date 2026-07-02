@@ -49,7 +49,7 @@ function MapEventsHandler({
       onMapMoveStart();
     },
     moveend() {
-      const c = map.getCenter();
+      const c = map.getCenter().wrap();
       onMapMoveEnd(c.lat, c.lng);
     },
   });

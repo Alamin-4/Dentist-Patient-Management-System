@@ -112,7 +112,7 @@ export interface AdminDentist {
         is_verified: boolean;
     };
     clinic: unknown | null;
-    full_name: string;
+    name: string;
     phone: string | null;
     specialty: string;
     bio: string | null;

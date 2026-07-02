@@ -136,6 +136,7 @@ export default function DentistDetailPage({
     : dentistId;
 
   const { dentist: apiDentist, isLoading, isError } = useAdminDentist(apiId);
+  console.log("dentist profile data", apiDentist)
   const dentist = useMemo(() => {
     if (!apiDentist) return null;
     return mapApiDentistToUIDentist(apiDentist);
@@ -302,8 +303,8 @@ export default function DentistDetailPage({
                   <Star
                     key={i}
                     className={`h-4 w-4 ${i < Math.round(dentist.rating!)
-                        ? "fill-amber-400 text-amber-400"
-                        : "fill-gray-200 text-gray-200"
+                      ? "fill-amber-400 text-amber-400"
+                      : "fill-gray-200 text-gray-200"
                       }`}
                   />
                 ))}

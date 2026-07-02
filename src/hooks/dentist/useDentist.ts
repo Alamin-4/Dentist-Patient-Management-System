@@ -185,8 +185,16 @@ export default function useDentist() {
       );
 
       // 2. Build final JSON payload matching backend submitClinicDepthSchema
-      const lat = Number(data.clinic_address?.lat);
-      const lng = Number(data.clinic_address?.lng);
+      let lat = Number(data.clinic_address?.lat);
+      let lng = Number(data.clinic_address?.lng);
+
+      if (Number.isFinite(lat)) {
+        lat = Math.max(-90, Math.min(90, lat));
+      }
+      if (Number.isFinite(lng)) {
+        lng = ((lng + 180) % 360 + 360) % 360 - 180;
+      }
+
       const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && lat !== 0 && lng !== 0;
 
       const payload = {
