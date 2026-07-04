@@ -5,7 +5,7 @@ import {
   CreditCard,
   XCircle,
 } from "lucide-react";
-import { recentActivity, type ActivityItem } from "./overview-data";
+import { type ActivityItem } from "./overview-data";
 import { cn } from "@/lib/utils";
 
 interface IconConfig {
@@ -39,7 +39,11 @@ function getIconConfig(type: ActivityItem["type"]): IconConfig {
   return configs[type];
 }
 
-export function RecentActivity() {
+interface RecentActivityProps {
+  activities?: ActivityItem[];
+}
+
+export function RecentActivity({ activities = [] }: RecentActivityProps) {
   return (
     <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       {/* Header */}
@@ -49,7 +53,10 @@ export function RecentActivity() {
 
       {/* Activity list */}
       <div className="flex flex-col divide-y divide-gray-50">
-        {recentActivity.map((item) => {
+        {activities.length === 0 && (
+          <p className="text-sm text-gray-400 text-center py-6">No recent activity</p>
+        )}
+        {activities.map((item) => {
           const { icon, bg } = getIconConfig(item.type);
           return (
             <div

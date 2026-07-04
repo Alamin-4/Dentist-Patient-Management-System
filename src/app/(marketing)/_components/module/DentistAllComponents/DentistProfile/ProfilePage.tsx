@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 
 export default function DentistProfilePage({ dentist }: { dentist: any }) {
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
-
+  console.log("show dentist from profile page:", dentist)
   const showPlaceholder = !dentist.verified && activeTab !== "overview";
 
   return (
@@ -83,7 +83,6 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
             )}
           </div>
 
-          {/* Right Column — sticky sidebar */}
           <div className="w-full lg:w-110 lg:shrink-0">
             <BookingSidebar dentist={dentist} />
           </div>

@@ -18,7 +18,7 @@ interface QueueResponseObject {
   };
 }
 
-export const PAGE_SIZE = 50;
+export const PAGE_SIZE = 10;
 
 export const API_STATUS_BY_QUEUE_STATUS: Record<QueueStatus, string> = {
   pending: "SUBMITTED",

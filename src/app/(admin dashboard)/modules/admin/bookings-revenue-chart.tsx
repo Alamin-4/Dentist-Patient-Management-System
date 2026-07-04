@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { chartData } from "./overview-data";
+import { type ChartPoint } from "./overview-data";
 import { cn } from "@/lib/utils";
 
 // ─── Chart constants ──────────────────────────────────────────────────────────
@@ -12,29 +12,6 @@ const PAD = { top: 16, right: 58, bottom: 38, left: 46 };
 const PLOT_W = VB_W - PAD.left - PAD.right; // 476
 const PLOT_H = VB_H - PAD.top - PAD.bottom; // 146
 const BASELINE_Y = PAD.top + PLOT_H; // 162
-
-// Booking Y scale: 150 → 460
-const B_MIN = 150;
-const B_MAX = 460;
-
-// Revenue Y scale: $18k → $57k
-const R_MIN = 18000;
-const R_MAX = 57000;
-
-// Y tick marks for left axis (bookings)
-const B_TICKS = [150, 200, 250, 300, 350, 400, 450];
-// Y tick marks for right axis (revenue)
-const R_TICKS = [20000, 25000, 30000, 35000, 40000, 45000, 50000, 55000];
-
-function xOf(i: number) {
-  return PAD.left + (i / (chartData.length - 1)) * PLOT_W;
-}
-function bYOf(v: number) {
-  return PAD.top + PLOT_H - ((v - B_MIN) / (B_MAX - B_MIN)) * PLOT_H;
-}
-function rYOf(v: number) {
-  return PAD.top + PLOT_H - ((v - R_MIN) / (R_MAX - R_MIN)) * PLOT_H;
-}
 
 /** Catmull-Rom → cubic bezier smooth path */
 function smoothPath(pts: [number, number][], t = 0.18): string {
@@ -67,8 +44,46 @@ type View = "booking" | "revenue" | "both";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function BookingsRevenueChart() {
+interface BookingsRevenueChartProps {
+  chartData?: ChartPoint[];
+}
+
+export function BookingsRevenueChart({ chartData = [] }: BookingsRevenueChartProps) {
   const [view, setView] = useState<View>("both");
+
+  if (!chartData || chartData.length === 0) {
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-gray-100 bg-white p-5 shadow-sm h-full min-h-[250px]">
+        <p className="text-sm text-gray-400">No chart data available</p>
+      </div>
+    );
+  }
+
+  // Compute dynamic min/max bounds based on real data
+  const maxBookings = Math.max(...chartData.map(d => d.bookings), 5);
+  const minBookings = 0;
+  
+  const maxRevenue = Math.max(...chartData.map(d => d.revenue), 500);
+  const minRevenue = 0;
+
+  function xOf(i: number) {
+    return PAD.left + (i / (chartData.length - 1)) * PLOT_W;
+  }
+  function bYOf(v: number) {
+    return PAD.top + PLOT_H - ((v - minBookings) / (maxBookings - minBookings)) * PLOT_H;
+  }
+  function rYOf(v: number) {
+    return PAD.top + PLOT_H - ((v - minRevenue) / (maxRevenue - minRevenue)) * PLOT_H;
+  }
+
+  // Generate tick marks
+  const bTicks = Array.from({ length: 5 }, (_, i) => 
+    Math.round(minBookings + (i / 4) * (maxBookings - minBookings))
+  );
+
+  const rTicks = Array.from({ length: 5 }, (_, i) => 
+    Math.round(minRevenue + (i / 4) * (maxRevenue - minRevenue))
+  );
 
   // Pre-compute point arrays
   const bookingPts = chartData.map(
@@ -168,8 +183,8 @@ export function BookingsRevenueChart() {
             </linearGradient>
           </defs>
 
-          {/* Horizontal grid lines (use booking tick values) */}
-          {B_TICKS.map((tick) => {
+          {/* Horizontal grid lines */}
+          {bTicks.map((tick) => {
             const y = bYOf(tick);
             return (
               <line
@@ -185,7 +200,7 @@ export function BookingsRevenueChart() {
           })}
 
           {/* Left Y-axis labels (Bookings) */}
-          {B_TICKS.map((tick) => (
+          {bTicks.map((tick) => (
             <text
               key={tick}
               x={PAD.left - 6}
@@ -200,7 +215,7 @@ export function BookingsRevenueChart() {
           ))}
 
           {/* Right Y-axis labels (Revenue) */}
-          {R_TICKS.map((tick) => (
+          {rTicks.map((tick) => (
             <text
               key={tick}
               x={PAD.left + PLOT_W + 6}
@@ -211,7 +226,7 @@ export function BookingsRevenueChart() {
               fill="#C9963F"
               opacity="0.7"
             >
-              {`$${tick / 1000}k`}
+              {tick >= 1000 ? `$${(tick / 1000).toFixed(1)}k` : `$${tick}`}
             </text>
           ))}
 

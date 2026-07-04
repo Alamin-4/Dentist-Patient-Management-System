@@ -29,7 +29,7 @@ export const endpoints = {
     directoryDetail: (slug: string) => `/dentists/directory/${slug}`,
     directoryClaim: (slug: string) => `/dentists/directory/${slug}/claim`,
     directorySendClaimOtp: "/dentists/directory/claim/send-otp",
-    directoryCheckoutSession: "/dentists/directory/checkout-session",
+    directoryCheckoutSession: "/stripe/create-checkout-session",
     directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
   },
   procedures: {
@@ -50,6 +50,9 @@ export const endpoints = {
     dentistProfile: (id: string | number) => `/admin/dentists/${id}`,
     dentistVerificationPhases: (id: string | number) => `/admin/dentist-verification/${id}`,
     uploadDentistDirectory: "/admin/dentist-directory/upload",
+    patients: "/admin/patients",
+    patientDetail: (id: string | number) => `/admin/patients/${id}`,
+    overview: "/admin/overview",
   },
   specialties: {
     getSpecialties: "/specialties",

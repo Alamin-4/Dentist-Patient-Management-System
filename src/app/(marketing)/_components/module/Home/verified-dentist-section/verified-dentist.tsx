@@ -41,7 +41,7 @@ export default function VerifiedDentists() {
 
   const { data: directoryResponse, isLoading } = useDentistDirectory({
     search: searchQuery || undefined,
-    specialty: procedure !== "All Procedures" ? procedure : undefined,
+    specialty: procedure && procedure !== "All Procedures" ? procedure : undefined,
     limit: 6,
   });
 
@@ -107,7 +107,7 @@ export default function VerifiedDentists() {
           <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <p className="text-[#6B7280]">
               Showing {isLoading ? "..." : dentists.length} dentist{dentists.length !== 1 && "s"} for{" "}
-              <span className="text-[#10436B] font-bold">"{procedure}"</span>
+              <span className="text-[#10436B] font-bold">"{procedure || "All Procedures"}"</span>
             </p>
 
             <div className="flex items-center gap-4">

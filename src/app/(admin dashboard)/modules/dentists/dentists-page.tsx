@@ -502,7 +502,7 @@ export default function DentistsPage() {
     isError,
   } = useAdminDentists({
     params: {
-      limit: 1000,
+      limit: 20,
     },
   });
 

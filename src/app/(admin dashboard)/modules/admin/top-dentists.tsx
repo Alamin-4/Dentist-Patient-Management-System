@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
-import { topDentists } from "./overview-data";
+import { type TopDentist } from "./overview-data";
 
-export function TopDentists() {
+interface TopDentistsProps {
+  dentists?: TopDentist[];
+}
+
+export function TopDentists({ dentists = [] }: TopDentistsProps) {
   return (
     <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       {/* Header */}
@@ -12,7 +16,10 @@ export function TopDentists() {
 
       {/* List */}
       <div className="flex flex-col divide-y divide-gray-50">
-        {topDentists.map((doc) => (
+        {dentists.length === 0 && (
+          <p className="text-sm text-gray-400 text-center py-6">No top dentists data</p>
+        )}
+        {dentists.map((doc) => (
           <div
             key={doc.id}
             className="flex items-center gap-3 py-3.5 first:pt-0 last:pb-0"

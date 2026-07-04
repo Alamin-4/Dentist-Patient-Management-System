@@ -1,10 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Upload, XCircle } from "lucide-react";
+import useDentist, { useDentistProgress } from "@/hooks/dentist/useDentist";
+import { StepTwoI } from "@/hooks/dentist/dentist.interface";
+import toast from "react-hot-toast";
 
 const procedureSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -48,28 +52,24 @@ const sterilizationItems = [
 
 export default function AddPricing() {
   const router = useRouter();
+  const { stepTwoMutation } = useDentist();
+  const { data: progressQueryData, isLoading: isProgressLoading } = useDentistProgress();
+
+  const progressData = progressQueryData?.data;
 
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    reset,
+    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      procedures: [
-        {
-          name: "Implant consultation",
-          price: "250",
-          notes: "Includes treatment plan review",
-        },
-        {
-          name: "Implant consultation",
-          price: "250",
-          notes: "Includes treatment plan review",
-        },
-      ],
+      procedures: [{ name: "Implant consultation", price: "250", notes: "" }],
       agreeToGuarantee: false,
+      signerFullName: "",
+      typedSignature: "",
     },
   });
 
@@ -78,9 +78,66 @@ export default function AddPricing() {
     name: "procedures",
   });
 
+  // Pre-fill form when data is loaded from the backend
+  useEffect(() => {
+    if (progressData) {
+      const procedures = progressData.procedures || [];
+      const ops = progressData.dentistOperations;
+
+      reset({
+        jciCertificate: ops?.jciCertificate ? new File([], "JCI Certificate") : null,
+        videoWalkthrough: ops?.walkthroughVideo ? new File([], "Video Walkthrough") : null,
+        procedures: procedures.map((p: any) => ({
+          name: p.procedureName || "",
+          price: String(p.price || ""),
+          notes: p.notes || "",
+        })),
+        signerFullName: ops?.signerName || "",
+        typedSignature: ops?.signature || "",
+        agreeToGuarantee: ops?.agreedToGuarantee || false,
+      });
+    }
+  }, [progressData, reset]);
+
   const onSubmit = (data: FormValues) => {
-    router.push("/dentist/pricing-protocols");
+    const jciFile = data.jciCertificate instanceof FileList && data.jciCertificate.length > 0
+      ? data.jciCertificate[0]
+      : data.jciCertificate instanceof File
+        ? data.jciCertificate
+        : null;
+
+    const videoFile = data.videoWalkthrough instanceof FileList && data.videoWalkthrough.length > 0
+      ? data.videoWalkthrough[0]
+      : data.videoWalkthrough instanceof File
+        ? data.videoWalkthrough
+        : null;
+
+    const payload: StepTwoI = {
+      jciCertificate: jciFile,
+      walkthroughVideo: videoFile,
+      signerName: data.signerFullName,
+      signature: data.typedSignature,
+      agreedToGuarantee: data.agreeToGuarantee,
+      procedures: data.procedures.map((p) => ({
+        procedureName: p.name,
+        price: Number(p.price),
+        notes: p.notes || "",
+      })),
+    };
+
+    stepTwoMutation.mutate(payload, {
+      onSuccess: () => {
+        toast.success("Pricing protocol saved successfully!");
+        router.push("/dentist/pricing-protocols");
+      },
+      onError: (err: any) => {
+        const errMsg = err?.response?.data?.message || "Failed to save pricing protocols. Please check files and try again.";
+        toast.error(errMsg);
+      },
+    });
   };
+
+  const isSubmitting = stepTwoMutation.isPending;
 
   const today = new Date().toLocaleDateString("en-GB");
 

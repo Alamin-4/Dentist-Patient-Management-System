@@ -100,9 +100,9 @@ export default function DentistCard({
             />
           </div>
           <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-full", statusInfo.bgColor)}>
-            <GoShieldCheck className={cn("size-4", statusInfo.icon)} />
+            {dentist.status === "VERIFIED" || dentist.status === "CLAIMED" && <GoShieldCheck className={cn("size-4", statusInfo.icon)} />}
             <span className={cn("text-[11px] font-bold uppercase tracking-wider whitespace-nowrap", statusInfo.textColor)}>
-              {statusInfo.text}
+              {dentist.status}
             </span>
           </div>
         </div>

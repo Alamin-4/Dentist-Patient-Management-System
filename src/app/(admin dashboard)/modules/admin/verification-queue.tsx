@@ -1,7 +1,12 @@
 import { cn } from "@/lib/utils";
-import { verificationQueue, verificationQueueTotal } from "./overview-data";
+import { type QueueDoctor } from "./overview-data";
 
-export function VerificationQueue() {
+interface VerificationQueueProps {
+  queue?: QueueDoctor[];
+  total?: number;
+}
+
+export function VerificationQueue({ queue = [], total = 0 }: VerificationQueueProps) {
   return (
     <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm h-full">
       {/* Header */}
@@ -10,13 +15,16 @@ export function VerificationQueue() {
           Verification Queue
         </h3>
         <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-[#1A1A2E] px-2 text-[11px] font-bold text-white">
-          {verificationQueueTotal}
+          {total}
         </span>
       </div>
 
       {/* Doctor list */}
       <div className="flex flex-col divide-y divide-gray-50">
-        {verificationQueue.map((doc) => (
+        {queue.length === 0 && (
+          <p className="text-sm text-gray-400 text-center py-6">Queue is empty</p>
+        )}
+        {queue.map((doc) => (
           <div key={doc.id} className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0">
             <div className="flex items-center gap-3">
               {/* Avatar */}
@@ -61,7 +69,7 @@ export function VerificationQueue() {
           href="/admin/verification-queue"
           className="text-[13px] font-medium text-sky-600 hover:text-sky-700 transition-colors"
         >
-          View all ({verificationQueueTotal}) →
+          View all ({total}) →
         </a>
       </div>
     </div>

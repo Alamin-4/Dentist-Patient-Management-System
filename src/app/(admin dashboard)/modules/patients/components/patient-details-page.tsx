@@ -10,6 +10,7 @@ import {
   Phone,
   Calendar,
   Clock,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomTab } from "@/app/(admin dashboard)/modules/shared/custom-tab";
@@ -17,7 +18,7 @@ import { PatientOverviewTab } from "./patient-overview-tab";
 import { PatientBookingsTab } from "./patient-bookings-tab";
 import { PatientConsultationsTab } from "./patient-consultations-tab";
 import { PatientDocumentsTab } from "./patient-documents-tab";
-import patientsData from "@/lib/patients-data";
+import { usePatientDetail } from "@/hooks/admin/patients/usePatients";
 
 type MainTab = "overview" | "bookings" | "consultations" | "documents";
 
@@ -28,12 +29,20 @@ interface PatientDetailPageProps {
 export default function PatientDetailPage({ patientId }: PatientDetailPageProps) {
   const [activeTab, setActiveTab] = useState<MainTab>("overview");
 
-  const patient = patientsData.patients.find((p) => p.id === patientId);
+  const { data: response, isLoading, isError } = usePatientDetail(patientId);
 
-  if (!patient) {
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#163E5C]" />
+      </div>
+    );
+  }
+
+  if (isError || !response?.data) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <p className="text-lg font-semibold text-gray-500">Patient not found</p>
+        <p className="text-lg font-semibold text-red-500">Patient not found</p>
         <Link
           href="/admin/patients"
           className="mt-4 text-sm text-blue-600 underline underline-offset-2"
@@ -44,6 +53,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
     );
   }
 
+  const patient = response.data;
   const { profile } = patient;
 
   const tabs = [

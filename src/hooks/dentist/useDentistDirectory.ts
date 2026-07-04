@@ -25,7 +25,7 @@ export function useDirectoryCountries() {
   return useQuery({
     queryKey: ["dentistDirectoryCountries"],
     queryFn: async () => {
-      const response = await apiClient.dentists.getDirectoryList({ limit: 500 });
+      const response = await apiClient.dentists.getDirectoryList({ limit: 20 });
       const list: any[] = response?.data ?? [];
       const countries = Array.from(
         new Set(list.map((d) => d.country).filter((c): c is string => !!c)),

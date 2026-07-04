@@ -6,7 +6,7 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-import { statCards, type StatCard } from "./overview-data";
+import { type StatCard } from "./overview-data";
 import { cn } from "@/lib/utils";
 
 function StatIcon({ icon, bg, color }: { icon: StatCard["icon"]; bg: string; color: string }) {
@@ -57,10 +57,15 @@ function StatCardItem({ card }: { card: StatCard }) {
   );
 }
 
-export function StatsCards() {
+interface StatsCardsProps {
+  stats?: StatCard[];
+}
+
+export function StatsCards({ stats }: StatsCardsProps) {
+  if (!stats) return null;
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {statCards.map((card) => (
+      {stats.map((card) => (
         <StatCardItem key={card.id} card={card} />
       ))}
     </div>

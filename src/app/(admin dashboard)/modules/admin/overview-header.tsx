@@ -1,6 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { useMe } from "@/hooks/auth/useAuth";
 
 function formatDate(d: Date): string {
   return d.toLocaleDateString("en-US", {
@@ -13,13 +14,15 @@ function formatDate(d: Date): string {
 
 export function OverviewHeader() {
   const today = formatDate(new Date());
+  const { user } = useMe();
+  const displayName = user?.name || user?.email?.split("@")[0] || "Admin";
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       {/* Left — greeting */}
       <div>
         <h1 className="text-2xl font-bold text-[#1A1A2E] tracking-tight">
-          Welcome back, Jordan
+          Welcome back, {displayName}
         </h1>
         <p className="mt-1 text-sm text-gray-500">
           Here&apos;s what&apos;s happening across the platform &mdash;{" "}

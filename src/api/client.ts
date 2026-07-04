@@ -283,6 +283,12 @@ export const apiClient = {
       const response = await api.post(endpoints.dentists.directoryCheckoutSession, payload);
       return response.data;
     },
+    confirmDirectoryPayment: async (payload: {
+      sessionId: string;
+    }) => {
+      const response = await api.post("/stripe/confirm-payment", payload);
+      return response.data;
+    },
     sendClaimOtp: async (payload: { email: string; password?: string; name?: string }) => {
       const response = await api.post(endpoints.dentists.directorySendClaimOtp, payload);
       return response.data;
@@ -416,6 +422,18 @@ export const apiClient = {
           "Content-Type": "multipart/form-data",
         },
       });
+      return response.data;
+    },
+    getPatientsList: async (params?: { status?: string; city?: string; search?: string; page?: number; limit?: number }) => {
+      const response = await api.get(endpoints.admin.patients, { params });
+      return response.data;
+    },
+    getPatientDetail: async (id: string | number) => {
+      const response = await api.get(endpoints.admin.patientDetail(id));
+      return response.data;
+    },
+    getOverview: async () => {
+      const response = await api.get(endpoints.admin.overview);
       return response.data;
     },
   },

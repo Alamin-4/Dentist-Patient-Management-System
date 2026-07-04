@@ -85,29 +85,20 @@ export default function DentistCard({
     setShowRequestConsultationModal(true);
   };
 
-  // ── Badge: what kind of account is this? ─────────────────────────────────
-  const badgeLabel = dentist.isVerified
-    ? "VERIFIED"
-    : dentist.accountType === "CLAIMED"
-      ? "CLAIMED"
-      : dentist.accountType === "REGISTERED"
-        ? "REGISTERED"
-        : "UNCLAIMED";
-
-  const badgeIconColor = dentist.isVerified
+  const badgeIconColor = dentist.status === "VERIFIED"
     ? "text-emerald-500"
-    : dentist.accountType === "CLAIMED"
+    : dentist.status === "CLAIMED"
       ? "text-amber-500"
-      : dentist.accountType === "REGISTERED"
-        ? "text-blue-500"
+      : dentist.status === "UNVERIFIED"
+        ? "text-[#505050]"
         : "text-slate-400";
 
-  const badgeTextColor = dentist.isVerified
+  const badgeTextColor = dentist.status === "VERIFIED"
     ? "text-emerald-600"
-    : dentist.accountType === "CLAIMED"
+    : dentist.status === "CLAIMED"
       ? "text-amber-600"
-      : dentist.accountType === "REGISTERED"
-        ? "text-blue-600"
+      : dentist.status === "UNVERIFIED"
+        ? "text-[#505050]"
         : "text-slate-500";
 
   // ── Rating values ─────────────────────────────────────────────────────────
@@ -118,6 +109,9 @@ export default function DentistCard({
   // ── Location display ──────────────────────────────────────────────────────
   const locationText =
     dentist.location.fullAddress ?? dentist.location.city ?? dentist.country ?? "";
+
+  // claimable condition 
+  const isClaimableProfile = dentist.accountType === "CLAIMABLE" && !dentist.isClaimed
 
   return (
     <div
@@ -155,21 +149,23 @@ export default function DentistCard({
             <div className="flex w-full flex-col items-center gap-2">
               {/* Account / verification badge */}
               <div className="flex items-center gap-1.5 text-xs font-medium">
-                <ShieldCheck className={cn("size-4", badgeIconColor)} />
+                {
+                  dentist.status === "VERIFIED" || dentist.status === "CLAIMED" && <ShieldCheck className={cn("size-4", badgeIconColor)} />
+                }
                 <span
                   className={cn(
                     "text-[11px] font-bold uppercase tracking-wider whitespace-nowrap",
                     badgeTextColor,
                   )}
                 >
-                  {badgeLabel}
+                  {dentist.status}
                 </span>
               </div>
 
               {/* RDV score */}
               <div className="flex items-center justify-center text-xs gap-2 rounded-md border border-slate-200 px-3 py-1 text-center">
                 <div className="text-[#0E3E65]">
-                  {dentist.rdvScore > 0 ? dentist.rdvScore : "—"}
+                  {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
                 </div>
                 <div className="text-[#1A1A2E]">RDV Score</div>
               </div>
@@ -269,7 +265,7 @@ export default function DentistCard({
             ) : (
               <>
                 {/* isClaimable is the single source of truth for showing "Claim Profile" */}
-                {dentist.isClaimable && (
+                {isClaimableProfile ? (
                   <Button
                     variant="secondary"
                     className="h-10 rounded-lg border border-amber-300 bg-amber-50 px-5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all"
@@ -279,13 +275,14 @@ export default function DentistCard({
                   >
                     Claim Profile
                   </Button>
+                ) : (
+                  <Button
+                    className="h-10 rounded-lg bg-[#003366] px-5 text-xs font-bold text-white shadow-sm hover:bg-[#002850] transition-all"
+                    onClick={handleRequestConsultation}
+                  >
+                    Request Consultation
+                  </Button>
                 )}
-                <Button
-                  className="h-10 rounded-lg bg-[#003366] px-5 text-xs font-bold text-white shadow-sm hover:bg-[#002850] transition-all"
-                  onClick={handleRequestConsultation}
-                >
-                  Request Consultation
-                </Button>
               </>
             )}
           </div>

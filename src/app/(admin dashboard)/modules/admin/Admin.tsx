@@ -1,3 +1,7 @@
+"use client";
+
+import { Loader2 } from "lucide-react";
+import useOverview from "@/hooks/admin/overview/useOverview";
 import { OverviewHeader } from "./overview-header";
 import { StatsCards } from "./stats-cards";
 import { BookingsRevenueChart } from "./bookings-revenue-chart";
@@ -6,28 +10,41 @@ import { TopDentists } from "./top-dentists";
 import { RecentActivity } from "./recent-activity";
 
 export default function Admin() {
+  const { data, isLoading } = useOverview();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* ── Row 1: Greeting + action buttons ────────────────────────── */}
       <OverviewHeader />
 
       {/* ── Row 2: 4 stat cards ─────────────────────────────────────── */}
-      <StatsCards />
+      <StatsCards stats={data?.stats} />
 
       {/* ── Row 3: Chart (3/5) + Verification Queue (2/5) ───────────── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
-          <BookingsRevenueChart />
+          <BookingsRevenueChart chartData={data?.chart} />
         </div>
         <div className="lg:col-span-2">
-          <VerificationQueue />
+          <VerificationQueue 
+            queue={data?.verificationQueue?.items} 
+            total={data?.verificationQueue?.total} 
+          />
         </div>
       </div>
 
       {/* ── Row 4: Top Dentists (1/2) + Recent Activity (1/2) ────────── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <TopDentists />
-        <RecentActivity />
+        <TopDentists dentists={data?.topDentists} />
+        <RecentActivity activities={data?.recentActivity} />
       </div>
     </div>
   );

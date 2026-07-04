@@ -2,11 +2,12 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ShieldCheck, MapPin, Star, FileText, Pen, Loader2, Check, AlertCircle, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,8 @@ import { useStateContext } from "@/providers/StateProvider";
 
 export default function BookingSidebar({ dentist }: { dentist: any }) {
   const { user } = useMe();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     setShowSigninModal,
     setShowSignupModal,
@@ -748,8 +751,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                         }`}
                     >
                       <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
-                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$599</span>
-                      <span className="block text-[10px] text-slate-400 mt-1">~$99.83/mo</span>
+                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$899</span>
+                      <span className="block text-[10px] text-slate-400 mt-1">~$149.83/mo</span>
                     </div>
                     <div
                       onClick={() => setSelectedPlan("12_MONTH")}
@@ -760,8 +763,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                     >
                       <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
                       <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
-                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$999</span>
-                      <span className="block text-[10px] text-slate-400 mt-1">~$83.25/mo</span>
+                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$1499</span>
+                      <span className="block text-[10px] text-slate-400 mt-1">~$124.92/mo</span>
                     </div>
                   </div>
                 </div>
@@ -791,7 +794,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                         Redirecting...
                       </>
                     ) : (
-                      `Pay ${selectedPlan === "12_MONTH" ? "$999" : "$599"} & Claim →`
+                      `Pay ${selectedPlan === "12_MONTH" ? "$1499" : "$899"} & Claim →`
                     )}
                   </Button>
                 </div>
@@ -826,13 +829,14 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
                 <div className="pt-4">
                   <Button
-                    onClick={() => {
+                    onClick={async () => {
                       setIsClaimOpen(false);
-                      setShowSigninModal(true);
+                      await queryClient.invalidateQueries({ queryKey: ["auth"] });
+                      router.push("/dentist");
                     }}
                     className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold px-8"
                   >
-                    Finish & Sign In
+                    Go to Dashboard →
                   </Button>
                 </div>
               </div>
