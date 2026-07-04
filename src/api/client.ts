@@ -507,6 +507,62 @@ export const apiClient = {
       return response.data;
     },
   },
+  consultations: {
+    getPatientConsultations: async () => {
+      const response = await api.get(endpoints.consultations.patient);
+      return response.data;
+    },
+    getDentistConsultations: async () => {
+      const response = await api.get(endpoints.consultations.dentist);
+      return response.data;
+    },
+    respond: async (id: string | number, payload: { action: "ACCEPT" | "REJECT"; responseNote?: string }) => {
+      const response = await api.post(endpoints.consultations.respond(id), payload);
+      return response.data;
+    },
+    schedule: async (id: string | number, payload: { scheduledDate: string; scheduledTime: string; timezone: string }) => {
+      const response = await api.post(endpoints.consultations.schedule(id), payload);
+      return response.data;
+    },
+    cancel: async (id: string | number, payload: { reason?: string }) => {
+      const response = await api.post(endpoints.consultations.cancel(id), payload);
+      return response.data;
+    },
+    reschedule: async (id: string | number, payload: { newDate: string; newTime: string; timezone: string }) => {
+      const response = await api.post(endpoints.consultations.reschedule(id), payload);
+      return response.data;
+    },
+    updateStatus: async (id: string | number, payload: { requestStatus: string }) => {
+      const response = await api.patch(endpoints.consultations.updateStatus(id), payload);
+      return response.data;
+    },
+    getZegoToken: async (id: string | number) => {
+      const response = await api.get(endpoints.consultations.token(id));
+      return response.data;
+    },
+  },
+  treatmentPlans: {
+    propose: async (payload: { consultationId: string; notes?: string; procedures: Array<{ name: string; price: number; notes?: string }> }) => {
+      const response = await api.post(endpoints.treatmentPlans.propose, payload);
+      return response.data;
+    },
+    getPatient: async () => {
+      const response = await api.get(endpoints.treatmentPlans.patient);
+      return response.data;
+    },
+    getDentist: async () => {
+      const response = await api.get(endpoints.treatmentPlans.dentist);
+      return response.data;
+    },
+    getById: async (id: string | number) => {
+      const response = await api.get(endpoints.treatmentPlans.byId(id));
+      return response.data;
+    },
+    decision: async (id: string | number, payload: { action: "ACCEPT" | "REJECT" }) => {
+      const response = await api.post(endpoints.treatmentPlans.decision(id), payload);
+      return response.data;
+    },
+  },
 };
 
 export const consultationBookingApi = {

@@ -1,20 +1,53 @@
 "use client";
 
 import Image from "next/image";
-import { Star, Info, CircleCheck, ShieldCheck } from "lucide-react";
+import { Star, Info, ShieldCheck } from "lucide-react";
 import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
-import { TreatmentPlan } from "./data";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { useStateContext } from "@/providers/StateProvider";
+import { TreatmentPlanItem } from "@/types";
 
 interface CardProps {
-  data: TreatmentPlan;
+  data: TreatmentPlanItem;
 }
 
 const DoctorCard = ({ data }: CardProps) => {
   const router = useRouter();
-  const { activeTab } = useStateContext();
+  const stateContext = useStateContext() as { activeTab: string } | null;
+  const activeTab = stateContext?.activeTab || "estimate";
+
+  const dentistUser = data.dentist?.user;
+  const doctorName = dentistUser ? `Dr. ${dentistUser.firstName} ${dentistUser.lastName}`.trim() : "Dentist";
+  const specialty = data.dentist?.specialty?.name || "Dentist";
+  const avatarSrc = dentistUser?.image || "/images/dentist.png";
+
+  const dentistDirectory = data.dentist?.dentistDirectory;
+  const rating = dentistDirectory?.googleRating || dentistDirectory?.doctoraliaRating || 5;
+  const reviewCount = dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
+
+  const totalEstimate = data.lineItems
+    ? data.lineItems.reduce((acc: number, item) => acc + Number(item.unitPrice), 0)
+    : 0;
+
+  const procedureName = data.lineItems?.[0]?.globalProcedure?.name || "Dental Treatment";
+
+  let estimateStatus = "pending";
+  let paymentStatus = "pending";
+
+  if (data.status === "PROPOSED") {
+    estimateStatus = "accepted";
+    paymentStatus = "pending";
+  } else if (data.status === "ACTIVE" || data.status === "COMPLETED") {
+    estimateStatus = "accepted";
+    paymentStatus = "paid";
+  } else if (data.status === "CANCELLED") {
+    estimateStatus = "rejected";
+  }
+
+  const isPaid = paymentStatus === "paid";
+  const isAccepted = estimateStatus === "accepted";
+  const slug = data.id;
 
   return (
     <motion.div
@@ -28,8 +61,8 @@ const DoctorCard = ({ data }: CardProps) => {
         <div className="flex flex-col items-center gap-2 shrink-0">
           <div className="relative w-16 lg:w-20 h-16 lg:h-20 rounded-full overflow-hidden bg-slate-100 border-2 border-slate-50">
             <Image
-              src={data.doctor.image}
-              alt={data.doctor.name}
+              src={avatarSrc}
+              alt={doctorName}
               fill
               className="object-cover"
             />
@@ -43,28 +76,28 @@ const DoctorCard = ({ data }: CardProps) => {
         {/* Middle: Doctor Info */}
         <div className="flex-1 space-y-1">
           <h2 className="text-xl md:text-2xl font-bold text-[#1A1A2E]">
-            {data.doctor.name}
+            {doctorName}
           </h2>
           <p className="text-base font-medium text-[#475569]">
-            {data.doctor.specialty}
+            {specialty}
           </p>
           <div className="flex items-center gap-1 pt-1">
             <span className="text-[#1A1A2E] font-semibold mr-1">
-              {data.doctor.rating}
+              {rating}
             </span>
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 className={cn(
                   "w-4 h-4",
-                  i < data.doctor.rating
+                  i < rating
                     ? "fill-[#FBBF24] text-[#FBBF24]"
-                    : "text-slate-200",
+                    : "text-slate-200"
                 )}
               />
             ))}
             <span className="text-slate-400 text-xs ml-1">
-              ({data.doctor.reviewCount} Ratings)
+              ({reviewCount} Ratings)
             </span>
           </div>
         </div>
@@ -73,10 +106,10 @@ const DoctorCard = ({ data }: CardProps) => {
         <div className="flex-1 space-y-1">
           <p className="text-slate-500 text-sm font-medium">Procedure</p>
           <p className="text-lg font-semibold text-[#1A1A2E]">
-            {data.procedure.name}
+            {procedureName}
           </p>
         </div>
-        {activeTab === "treatment" && data.estimate_status === "accepted" && (
+        {activeTab === "treatment" && isAccepted && (
           <div className="flex-1 space-y-1">
             <p className="text-slate-500 text-sm font-medium">Next Step</p>
             <p className="text-lg font-semibold text-[#CA8504]">
@@ -87,34 +120,26 @@ const DoctorCard = ({ data }: CardProps) => {
 
         {/* Action Area: Logic Swaps Here */}
         <div className="flex flex-col items-end gap-3 shrink-0 w-full md:w-auto">
-          {data.estimate_status === "accepted" ? (
+          {isAccepted ? (
             <div className="text-right">
               <p className="text-[#6B7280] text-sm font-medium mb-1">
                 Estimate Budget
               </p>
               <p className="lg:text-xl font-bold text-[#0E3E65]">
-                ${data.procedure.totalEstimate.toLocaleString()}
+                ${totalEstimate.toLocaleString()}
               </p>
-              {data.payment_status === "paid" && (
+              {isPaid && (
                 <p className="text-[#4CA30D] text-sm font-bold pt-2">
                   In Escrow
                 </p>
               )}
             </div>
           ) : (
-            <>
+            <div className="text-right">
               <button className="w-full md:w-auto bg-[#F79009] hover:bg-[#EA580C] text-white px-4 py-2.5 rounded-lg text-sm transition-all">
                 Estimate Pending
               </button>
-              <div className="text-right">
-                <p className="font-bold text-[#1A1A2E] text-lg tabular-nums">
-                  {data.timeline.remainingTime}
-                </p>
-                <p className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">
-                  Time remaining
-                </p>
-              </div>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -123,27 +148,27 @@ const DoctorCard = ({ data }: CardProps) => {
         <div className="flex items-center gap-3">
           <Info className="w-5 h-5 text-slate-400 shrink-0" />
           <p className="text-slate-500 text-sm leading-relaxed">
-            {data.payment_status === "paid"
+            {isPaid
               ? "Final price will be within 15% of this estimate. If it exceeds that, you can cancel for a full refund."
-              : `${data.doctor.name} is reviewing your case. Estimate expected within 24 hours.`}
+              : `${doctorName} is reviewing your case. Estimate expected within 24 hours.`}
           </p>
         </div>
-        {data.estimate_status === "accepted" && activeTab === "estimate" && (
+        {isAccepted && activeTab === "estimate" && (
           <button
             onClick={() =>
-              router.push(`/patient/bookings/review/${data.slug}`)
+              router.push(`/patient/bookings/review/${slug}`)
             }
-            className="whitespace-nowrap bg-[#0F3659] hover:bg-[#0A2640] text-white px-8 py-3 rounded-lg transition-colors"
+            className="whitespace-nowrap bg-[#0F3659] hover:bg-[#0A2640] text-white px-8 py-3 rounded-lg transition-colors cursor-pointer"
           >
             Review full plan
           </button>
         )}
-        {data.payment_status === "paid" && activeTab === "treatment" && (
+        {isPaid && activeTab === "treatment" && (
           <button
             onClick={() =>
-              router.push(`/patient/bookings/treatment/${data.slug}`)
+              router.push(`/patient/bookings/treatment/${slug}`)
             }
-            className="whitespace-nowrap bg-[#0F3659] hover:bg-[#0A2640] text-white px-8 py-3 rounded-lg transition-colors"
+            className="whitespace-nowrap bg-[#0F3659] hover:bg-[#0A2640] text-white px-8 py-3 rounded-lg transition-colors cursor-pointer"
           >
             View Details
           </button>

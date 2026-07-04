@@ -6,9 +6,11 @@ import { CalendarCheck, DollarSign, FileText, Video } from "lucide-react";
 import Link from "next/link";
 import { StatCard } from "@/app/(dashboard)/patient/_components/Module/Overview/StatsCard";
 import { ConsultationCard } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCard";
-import { consultationFlowData, treatmentPlansData, type ConsultationFlowItem } from "@/app/(dashboard)/patient/_components/Module/MyBooking/data";
 import { RescheduleConsultationModal } from "@/app/(dashboard)/patient/_components/Module/Overview/RescheduleConsultationModal";
 import DoctorCard from "@/app/(dashboard)/patient/_components/Module/MyBooking/Card";
+import { usePatientConsultations } from "@/hooks/consultation/useConsultation";
+import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
+import { ConsultationItem, TreatmentPlanItem } from "@/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,6 +37,17 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   },
 };
 
+const isToday = (dateString?: string | Date | null) => {
+  if (!dateString) return false;
+  const d = new Date(dateString);
+  const today = new Date();
+  return (
+    d.getDate() === today.getDate() &&
+    d.getMonth() === today.getMonth() &&
+    d.getFullYear() === today.getFullYear()
+  );
+};
+
 // ─── Empty state UI ───────────────────────────────────────────────────────────
 
 function EmptySlate({ tab }: { tab: Tab }) {
@@ -48,7 +61,7 @@ function EmptySlate({ tab }: { tab: Tab }) {
       <p className="text-[14px] text-[#6B7280] max-w-xs leading-relaxed mb-6">{body}</p>
       <Link
         href="/find-dentist"
-        className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95"
+        className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95 cursor-pointer"
       >
         Find a dentist
       </Link>
@@ -59,22 +72,52 @@ function EmptySlate({ tab }: { tab: Tab }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Overview() {
+  const router = useRouter();
+  const { data: consultationsResponse, isLoading: loadingConsultations } = usePatientConsultations();
+  const { data: treatmentPlansResponse, isLoading: loadingPlans } = usePatientTreatmentPlans();
+
   const [activeTab, setActiveTab] = useState<Tab>("upcoming");
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
-  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationFlowItem | null>(null);
-  const router = useRouter();
+  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationItem | null>(null);
 
-  const consultationsToShow =
-    activeTab === "upcoming"
-      ? consultationFlowData.filter((item) => item.status === "upcoming")
-      : activeTab === "active"
-        ? consultationFlowData.filter((item) => item.status === "active" || item.status === "missed")
-        : [];
+  const consultations: ConsultationItem[] = consultationsResponse?.data || [];
+  const treatmentPlans: TreatmentPlanItem[] = treatmentPlansResponse?.data || [];
 
-  const openReschedule = (consultation: ConsultationFlowItem) => {
+  const consultationsToShow = consultations.filter((item) => {
+    if (activeTab === "upcoming") {
+      return (
+        item.requestStatus === "PENDING" ||
+        item.requestStatus === "ACCEPTED" ||
+        (item.requestStatus === "SCHEDULED" && !isToday(item.scheduledDate))
+      );
+    }
+    if (activeTab === "active") {
+      return (
+        item.requestStatus === "ACTIVE" ||
+        (item.requestStatus === "SCHEDULED" && isToday(item.scheduledDate)) ||
+        item.requestStatus === "MISSED"
+      );
+    }
+    return false;
+  });
+
+  const openReschedule = (consultation: ConsultationItem) => {
     setSelectedConsultation(consultation);
     setRescheduleOpen(true);
   };
+
+  // Calculate dynamic stats
+  const escrowTotal = treatmentPlans
+    ?.filter((tp) => tp.status === "ACTIVE" || tp.status === "COMPLETED")
+    ?.reduce((acc: number, tp) => {
+      const tpTotal = tp.lineItems?.reduce((sum: number, li) => sum + Number(li.unitPrice), 0) || 0;
+      return acc + tpTotal;
+    }, 0) || 0;
+
+  const bookingsCompletedCount = consultations?.filter((c) => c.requestStatus === "COMPLETED")?.length || 0;
+  const documentsCount = consultations?.length + treatmentPlans?.length;
+
+  const isLoading = loadingConsultations || loadingPlans;
 
   return (
     <div>
@@ -84,17 +127,17 @@ export default function Overview() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           icon={<DollarSign className="w-5 h-5" />}
-          value="0"
+          value={`$${escrowTotal.toLocaleString()}`}
           label="Amount in escrow"
         />
         <StatCard
           icon={<CalendarCheck className="w-5 h-5" />}
-          value="02"
+          value={String(bookingsCompletedCount).padStart(2, "0")}
           label="Booking Completed"
         />
         <StatCard
           icon={<FileText className="w-5 h-5" />}
-          value="08"
+          value={String(documentsCount).padStart(2, "0")}
           label="Documents stored"
         />
       </div>
@@ -110,10 +153,11 @@ export default function Overview() {
               key={key}
               type="button"
               onClick={() => setActiveTab(key)}
-              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px ${activeTab === key
-                ? "text-[#113254] border-[#113254]"
-                : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
-                }`}
+              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px cursor-pointer ${
+                activeTab === key
+                  ? "text-[#113254] border-[#113254]"
+                  : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
+              }`}
             >
               {label}
             </button>
@@ -121,10 +165,14 @@ export default function Overview() {
         </div>
 
         {/* Content */}
-        {activeTab === "estimate-updates" ? (
-          treatmentPlansData.length ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#113254]"></div>
+          </div>
+        ) : activeTab === "estimate-updates" ? (
+          treatmentPlans.length ? (
             <div className="space-y-5">
-              {treatmentPlansData.map((plan) => (
+              {treatmentPlans.map((plan) => (
                 <DoctorCard key={plan.id} data={plan} />
               ))}
             </div>
@@ -138,11 +186,11 @@ export default function Overview() {
                 key={consultation.id}
                 consultation={consultation}
                 onPrimaryAction={() => {
-                  if (consultation.status === "missed") {
+                  if (consultation.requestStatus === "MISSED" || consultation.requestStatus === "ACCEPTED") {
                     openReschedule(consultation);
                     return;
                   }
-                  router.push(`/consultation/${consultation.slug}`);
+                  router.push(`/consultation/${consultation.id}`);
                 }}
               />
             ))}
@@ -158,8 +206,7 @@ export default function Overview() {
           onClose={() => setRescheduleOpen(false)}
           consultation={selectedConsultation}
           onConfirmed={() => setActiveTab("active")}
-          onAddToCalendar={() => router.push(`/consultation/${selectedConsultation.slug}`)}
-
+          onAddToCalendar={() => router.push(`/consultation/${selectedConsultation.id}`)}
         />
       ) : null}
     </div>

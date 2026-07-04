@@ -39,6 +39,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
     setShowBookingModal,
     setShowPersonalizeModal,
     setSelectedDentistId,
+    setShowRequestConsultationModal,
+    setRequestConsultationDentist,
   } = useStateContext();
   const searchParams = useSearchParams();
 
@@ -57,53 +59,12 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
   };
 
   const [isClaimOpen, setIsClaimOpen] = useState(false);
-  const [isConsultationOpen, setIsConsultationOpen] = useState(false);
-
   // Auto-open claim dialog if ?claim=true is in URL
   useEffect(() => {
     if (searchParams.get("claim") === "true") {
       setIsClaimOpen(true);
     }
   }, [searchParams]);
-
-  // Consultation Request State
-  const requestMutation = useRequestDirectoryConsultation();
-  const [patientName, setPatientName] = useState("");
-  const [patientEmail, setPatientEmail] = useState("");
-  const [consultationMessage, setConsultationMessage] = useState("");
-
-  const handleRequestConsultationSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!patientName || !patientEmail) {
-      toast.error("Please fill in name and email fields.");
-      return;
-    }
-
-    const toastId = toast.loading("Sending consultation request...");
-    requestMutation.mutate(
-      {
-        slug: dentist.slug,
-        payload: {
-          patientName,
-          patientEmail,
-          message: consultationMessage,
-        },
-      },
-      {
-        onSuccess: () => {
-          toast.success("Consultation request sent successfully!", { id: toastId });
-          setIsConsultationOpen(false);
-          setPatientName("");
-          setPatientEmail("");
-          setConsultationMessage("");
-        },
-        onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to send consultation request.";
-          toast.error(errMsg, { id: toastId });
-        },
-      }
-    );
-  };
 
   // Claim Profile Wizard State
   const claimMutation = useClaimDentistDirectoryProfile();
@@ -392,86 +353,16 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
             )}
             <Button
               className="h-11 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
-              onClick={() => setIsConsultationOpen(true)}
+              onClick={() => {
+                setRequestConsultationDentist(dentist);
+                setShowRequestConsultationModal(true);
+              }}
             >
               Request Consultation
             </Button>
           </div>
         )}
       </div>
-
-      {/* ── Consultation Request Modal ─────────────────────────────────── */}
-      <Dialog open={isConsultationOpen} onOpenChange={setIsConsultationOpen}>
-        <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
-          <DialogHeader>
-            <DialogTitle className="text-[#0E3E65] font-bold text-xl">Request a Consultation</DialogTitle>
-            <DialogDescription className="text-slate-500">
-              Dr. {dentist.name} is not yet verified on RatedDocs. We can coordinate this appointment manually for you.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleRequestConsultationSubmit} className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label htmlFor="patientName" className="font-semibold text-slate-700">Full Name</Label>
-              <Input
-                id="patientName"
-                value={patientName}
-                onChange={(e) => setPatientName(e.target.value)}
-                placeholder="Enter your full name"
-                required
-                className="border-slate-200 focus:border-[#0E3E65]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="patientEmail" className="font-semibold text-slate-700">Email Address</Label>
-              <Input
-                id="patientEmail"
-                type="email"
-                value={patientEmail}
-                onChange={(e) => setPatientEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="border-slate-200 focus:border-[#0E3E65]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="message" className="font-semibold text-slate-700">Medical Notes / Message</Label>
-              <Textarea
-                id="message"
-                value={consultationMessage}
-                onChange={(e) => setConsultationMessage(e.target.value)}
-                placeholder="Describe your dental issue or preferred appointment date..."
-                className="border-slate-200 focus:border-[#0E3E65] min-h-[80px]"
-              />
-            </div>
-
-            <DialogFooter className="pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsConsultationOpen(false)}
-                className="border-slate-200 text-slate-600 hover:bg-slate-50"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={requestMutation.isPending}
-                className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold"
-              >
-                {requestMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Request"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={isClaimOpen} onOpenChange={setIsClaimOpen}>
         <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-2xl rounded-lg overflow-hidden p-0">

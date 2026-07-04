@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
+import toast from "react-hot-toast";
 
 // Shadcn UI primitives
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
   DialogOverlay,
   DialogPortal,
 } from "@/components/ui/dialog";
+import { useProposeTreatmentPlan } from "@/hooks/treatment-plan/useTreatmentPlan";
 
 const formSchema = z.object({
   procedures: z.array(
@@ -36,33 +38,45 @@ type FormValues = z.infer<typeof formSchema>;
 export default function CreateTreatmentPlanModal({
   isOpen,
   onClose,
+  consultation,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  consultation: any;
 }) {
+  const proposePlan = useProposeTreatmentPlan();
+
   const {
     register,
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
-    defaultValues: {
-      procedures: [
-        {
-          name: "Implant consultation",
-          price: 250,
-          notes: "Includes treatment plan review",
-        },
-        {
-          name: "Implant consultation",
-          price: 250,
-          notes: "Includes treatment plan review",
-        },
-      ],
-    },
   });
+
+  React.useEffect(() => {
+    if (isOpen && consultation) {
+      const defaultProcedures = consultation.treatmentPlan?.lineItems?.map((item: any) => ({
+        name: item.globalProcedure?.name || "Procedure",
+        price: Number(item.unitPrice),
+        notes: item.notes || "",
+      })) || [
+        {
+          name: consultation.intake?.procedureNames?.[0] || "",
+          price: 0,
+          notes: "",
+        }
+      ];
+
+      reset({
+        procedures: defaultProcedures,
+        additionalInfo: consultation.treatmentPlan?.notes || "",
+      });
+    }
+  }, [isOpen, consultation, reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -74,6 +88,38 @@ export default function CreateTreatmentPlanModal({
       (acc, curr) => acc + (Number(curr.price) || 0),
       0,
     ) || 0;
+
+  const onSubmit = (data: FormValues) => {
+    if (!consultation?.id) return;
+    proposePlan.mutate(
+      {
+        consultationId: consultation.id,
+        notes: data.additionalInfo,
+        procedures: data.procedures.map((p) => ({
+          name: p.name,
+          price: Number(p.price),
+          notes: p.notes,
+        })),
+      },
+      {
+        onSuccess: () => {
+          toast.success("Treatment plan sent to patient successfully!");
+          onClose();
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || "Failed to create treatment plan.");
+        },
+      }
+    );
+  };
+
+  const patientName = consultation
+    ? `${consultation.intake?.firstName || ""} ${consultation.intake?.lastName || ""}`.trim()
+    : "Patient";
+
+  const initials = consultation
+    ? `${consultation.intake?.firstName?.[0] || ""}${consultation.intake?.lastName?.[0] || ""}`.toUpperCase()
+    : "P";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -88,7 +134,7 @@ export default function CreateTreatmentPlanModal({
           </div>
 
           <form
-            onSubmit={handleSubmit((d) => console.log(d))}
+            onSubmit={handleSubmit(onSubmit)}
             className="max-h-200 overflow-y-auto"
           >
             {/* Patient Header Section */}
@@ -98,20 +144,20 @@ export default function CreateTreatmentPlanModal({
                 <div className="flex items-center gap-4">
                   <Avatar className="h-16 w-16 bg-[#E8EEF2]">
                     <AvatarFallback className="text-[#5B7083] font-semibold text-xl">
-                      AH
+                      {initials || "P"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <div className="flex items-center gap-3">
                       <h3 className="text-2xl font-semibold text-slate-900">
-                        Jacob Smith
+                        {patientName}
                       </h3>
                       <span className="px-3 py-1 bg-[#F0F2F5] text-[#6B7280] text-[12px] rounded-full border border-slate-200">
-                        Not Sent
+                        {consultation?.treatmentPlan ? consultation.treatmentPlan.status : "Not Sent"}
                       </span>
                     </div>
                     <p className="text-slate-500 text-[16px]">
-                      Jacob.smith@sample.com
+                      {consultation?.intake?.email}
                     </p>
                   </div>
                 </div>
@@ -124,7 +170,7 @@ export default function CreateTreatmentPlanModal({
                         Treatment Procedure
                       </p>
                       <p className="text-sm font-semibold text-[#111113]">
-                        Dental Implants
+                        {consultation?.intake?.procedureNames?.[0] || "N/A"}
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -132,7 +178,7 @@ export default function CreateTreatmentPlanModal({
                         Appox Budget
                       </p>
                       <p className="text-sm font-semibold text-[#111113]">
-                        $1254
+                        {consultation?.intake?.budget || "N/A"}
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -140,7 +186,9 @@ export default function CreateTreatmentPlanModal({
                         Traveling Dates
                       </p>
                       <p className="text-sm font-semibold text-[#111113]">
-                        Wed 24 Jan, 2024
+                        {consultation?.intake?.travelFrom
+                          ? `${new Date(consultation.intake.travelFrom).toLocaleDateString()} - ${consultation.intake.travelTo ? new Date(consultation.intake.travelTo).toLocaleDateString() : ""}`
+                          : "N/A"}
                       </p>
                     </div>
                   </div>
@@ -157,18 +205,15 @@ export default function CreateTreatmentPlanModal({
                           Last Visited
                         </p>
                         <p className="text-[14px] font-bold text-slate-800">
-                          Wed 24 Jan, 2024
+                          {consultation?.intake?.lastVisit || "N/A"}
                         </p>
                       </div>
                       <div className="p-4">
                         <p className="text-[12px] text-[#6B7280] mb-1">
-                          Any existing dental conditions?
+                          Existing conditions
                         </p>
                         <p className="text-[14px] font-bold text-slate-800">
-                          Bone loss,{" "}
-                          <span className="font-normal text-slate-500">
-                            Gum Disease
-                          </span>
+                          {consultation?.intake?.conditions?.join(", ") || "None"}
                         </p>
                       </div>
                     </div>
@@ -188,7 +233,7 @@ export default function CreateTreatmentPlanModal({
                     >
                       <div className="w-full md:w-[50%] space-y-2">
                         <label className="text-sm font-medium text-[#414651] inline-block">
-                          Procedure 1
+                          Procedure {index + 1}
                         </label>
                         <Input
                           {...register(`procedures.${index}.name`)}
@@ -267,12 +312,21 @@ export default function CreateTreatmentPlanModal({
             </div>
 
             {/* Sticky Footer */}
-            <footer className="p-6 border-t border-slate-100 flex justify-end bg-white">
+            <footer className="p-6 border-t border-slate-100 flex justify-end gap-4 bg-white">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={onClose}
+                className="border border-slate-200 text-slate-500 h-14 px-8 rounded-lg font-semibold hover:bg-slate-50"
+              >
+                Skip for now
+              </Button>
               <Button
                 type="submit"
-                className="bg-[#0E3E65] hover:bg-[#082f46] cursor-pointer text-white h-14 px-8 rounded-lg font-semibold"
+                disabled={proposePlan.isPending}
+                className="bg-[#0E3E65] hover:bg-[#082f46] cursor-pointer text-white h-14 px-8 rounded-lg font-semibold disabled:opacity-50"
               >
-                Create plan and send to patient
+                {proposePlan.isPending ? "Sending..." : "Create plan and send to patient"}
               </Button>
             </footer>
           </form>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
+import toast from "react-hot-toast";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
@@ -10,12 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { ConsultationFlowItem } from "../MyBooking/data";
+import { ConsultationItem } from "@/types";
+import { useRescheduleConsultation, useScheduleConsultation } from "@/hooks/consultation/useConsultation";
 
 interface RescheduleConsultationModalProps {
   open: boolean;
   onClose: () => void;
-  consultation: ConsultationFlowItem;
+  consultation: ConsultationItem;
   onAddToCalendar?: () => void;
   onConfirmed?: () => void;
 }
@@ -47,11 +49,36 @@ export function RescheduleConsultationModal({
   const [selectedZone, setSelectedZone] = useState(TIME_ZONES[0]);
   const [selectedSlot, setSelectedSlot] = useState(TIME_SLOTS[0]);
 
-  const selectedDate = useMemo(() => {
-    return consultation.status === "missed"
-      ? "Thursday 16 April 2026"
-      : consultation.date;
-  }, [consultation.date, consultation.status]);
+  const rescheduleMutation = useRescheduleConsultation();
+  const scheduleMutation = useScheduleConsultation();
+
+  const isInitialScheduling = consultation.requestStatus === "ACCEPTED";
+  const activeMutation = isInitialScheduling ? scheduleMutation : rescheduleMutation;
+
+  const tomorrow = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d;
+  }, []);
+
+  const selectedDateReadable = useMemo(() => {
+    return tomorrow.toLocaleDateString("en-US", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, [tomorrow]);
+
+  const selectedDateIso = useMemo(() => {
+    return tomorrow.toISOString().split("T")[0];
+  }, [tomorrow]);
+
+  const dentistUser = consultation.dentist?.user;
+  const dentistDirectory = consultation.dentist?.dentistDirectory || consultation.directoryEntry;
+  const doctorName = dentistUser
+    ? `Dr. ${dentistUser.firstName} ${dentistUser.lastName}`.trim()
+    : (dentistDirectory?.name ? `Dr. ${dentistDirectory.name}` : "Dentist");
 
   const handleClose = () => {
     setPhase("choose");
@@ -59,21 +86,47 @@ export function RescheduleConsultationModal({
   };
 
   const handleConfirm = () => {
-    setPhase("success");
-    onConfirmed?.();
+    const tzCode = selectedZone.split(" ")[0]; // e.g. "EST"
+    const payload = isInitialScheduling
+      ? {
+        scheduledDate: selectedDateIso,
+        scheduledTime: selectedSlot,
+        timezone: tzCode,
+      }
+      : {
+        newDate: selectedDateIso,
+        newTime: selectedSlot,
+        timezone: tzCode,
+      };
+
+    activeMutation.mutate(
+      {
+        id: consultation.id,
+        payload: payload as any,
+      },
+      {
+        onSuccess: () => {
+          setPhase("success");
+          onConfirmed?.();
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || `Failed to ${isInitialScheduling ? "schedule" : "reschedule"} consultation`);
+        },
+      }
+    );
   };
 
   return (
     <Dialog open={open} onOpenChange={(value) => !value && handleClose()}>
       <DialogContent
-        className="w-[calc(100%-2rem)] sm:max-w-220 rounded-[28px] border-0 p-0 shadow-[0_24px_80px_rgba(15,23,42,0.2)]"
+        className="w-[calc(100%-2rem)] sm:max-w-220 rounded-[28px] border-0 p-0 shadow-[0_24px_80px_rgba(15,23,42,0.2)] bg-white"
         showCloseButton={false}
       >
         {phase === "choose" ? (
           <div>
             <div className="flex items-center justify-between border-b border-[#EEF2F6] px-5 py-4 md:px-6">
               <DialogTitle className="text-[18px] font-bold text-[#1A1A2E]">
-                Book new slot
+                {isInitialScheduling ? "Schedule Consultation" : "Book new slot"}
               </DialogTitle>
               <button
                 type="button"
@@ -90,16 +143,16 @@ export function RescheduleConsultationModal({
                   Pick an available slot
                 </p>
                 <p className="mt-1 text-[12px] text-[#6B7280]">
-                  These are Dr. {consultation.doctor.name.replace("Dr. ", "")}
-                  &apos;s available times in the next 24 hours. Choose one to
-                  rebook your consultation.
+                  {isInitialScheduling
+                    ? `Choose a preferred date and time to schedule your video consultation with ${doctorName}.`
+                    : `These are ${doctorName}'s available times in the next 24 hours. Choose one to rebook your consultation.`}
                 </p>
               </div>
 
               <div className="rounded-lg border border-[#E6EEF6] bg-white p-0">
                 <div className="px-4 py-4 md:px-5">
                   <p className="text-[16px] font-bold text-[#0F3659]">
-                    {selectedDate}
+                    {selectedDateReadable}
                   </p>
                 </div>
 
@@ -111,7 +164,7 @@ export function RescheduleConsultationModal({
                     <SelectTrigger className="h-12 rounded-lg border-[#E5E7EB] bg-white text-[14px] text-[#1A1A2E] focus:ring-[#113254]">
                       <SelectValue placeholder="Select Time Zone" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-lg border-[#E5E7EB]">
+                    <SelectContent className="rounded-lg border-[#E5E7EB] bg-white">
                       {TIME_ZONES.map((zone) => (
                         <SelectItem key={zone} value={zone} className="py-3">
                           {zone}
@@ -132,9 +185,9 @@ export function RescheduleConsultationModal({
                             key={slot}
                             type="button"
                             onClick={() => setSelectedSlot(slot)}
-                            className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-all ${isSelected
-                                ? "border-[#113254] bg-[#F1F6FB] text-[#113254]"
-                                : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#113254]/30"
+                            className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-all cursor-pointer ${isSelected
+                              ? "border-[#113254] bg-[#F1F6FB] text-[#113254]"
+                              : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#113254]/30"
                               }`}
                           >
                             {slot}
@@ -151,9 +204,10 @@ export function RescheduleConsultationModal({
               <button
                 type="button"
                 onClick={handleConfirm}
-                className="rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
+                disabled={activeMutation.isPending}
+                className="rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                Confirm Slot
+                {activeMutation.isPending ? "Confirming..." : "Confirm Slot"}
               </button>
             </div>
           </div>
@@ -163,12 +217,12 @@ export function RescheduleConsultationModal({
               <Check className="size-10 stroke-[3px]" />
             </div>
             <h3 className="mt-8 text-[28px] font-bold text-[#1A1A2E]">
-              New slot confirmed
+              {isInitialScheduling ? "Consultation scheduled" : "New slot confirmed"}
             </h3>
             <p className="mt-3 max-w-xl text-[15px] leading-7 text-[#64748B]">
-              Your consultation with {consultation.doctor.name} is rebooked for{" "}
-              {selectedDate} during {selectedSlot} in {selectedZone}. Don&apos;t
-              miss it, this is your last chance.
+              {isInitialScheduling
+                ? `Your consultation with ${doctorName} has been successfully scheduled for ${selectedDateReadable} during ${selectedSlot} in ${selectedZone}.`
+                : `Your consultation with ${doctorName} is rebooked for ${selectedDateReadable} during ${selectedSlot} in ${selectedZone}. Don't miss it, this is your last chance.`}
             </p>
             <button
               type="button"
@@ -176,7 +230,7 @@ export function RescheduleConsultationModal({
                 onAddToCalendar?.();
                 handleClose();
               }}
-              className="mt-8 rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95"
+              className="mt-8 rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95 cursor-pointer"
             >
               Add to calendar
             </button>

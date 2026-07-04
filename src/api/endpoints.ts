@@ -70,6 +70,18 @@ export const endpoints = {
     dentist: "/consultations/dentist",
     byId: (id: string | number) => `/consultations/${id}`,
     token: (id: string | number) => `/consultations/${id}/token`,
+    respond: (id: string | number) => `/consultations/${id}/respond`,
+    schedule: (id: string | number) => `/consultations/${id}/schedule`,
+    cancel: (id: string | number) => `/consultations/${id}/cancel`,
+    reschedule: (id: string | number) => `/consultations/${id}/reschedule`,
+    updateStatus: (id: string | number) => `/consultations/${id}`,
+  },
+  treatmentPlans: {
+    propose: "/treatment-plans",
+    patient: "/treatment-plans/patient",
+    dentist: "/treatment-plans/dentist",
+    byId: (id: string | number) => `/treatment-plans/${id}`,
+    decision: (id: string | number) => `/treatment-plans/${id}/decision`,
   },
   users: {
     me: "/users/me",
