@@ -323,7 +323,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="rounded-3xl bg-[#113254] bg-gradient-to-br from-[#113254] via-[#0F3659] to-[#0A223C] p-8 md:p-16 text-center text-white shadow-2xl relative overflow-hidden"
+            className="rounded-3xl bg-[#113254] bg-linear-to-br from-[#113254] via-[#0F3659] to-[#0A223C] p-8 md:p-16 text-center text-white shadow-2xl relative overflow-hidden"
           >
             <div className="absolute -top-24 -left-24 size-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
             <div className="absolute -bottom-24 -right-24 size-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
