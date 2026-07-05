@@ -45,7 +45,7 @@ export function MeetingDetails({ consultation, onBack, onReschedule }: MeetingDe
                         <h2 className="text-2xl font-bold text-slate-100">Consultation Expired</h2>
                         <p className="text-sm text-slate-400">This session's time window has passed.</p>
                     </div>
-
+                    Upcoming Consultation
                     <div className="space-y-3 rounded-xl bg-slate-800/60 p-5 border border-slate-700/50">
                         <div className="flex justify-between text-sm">
                             <span className="text-slate-400 font-medium">Dentist</span>
