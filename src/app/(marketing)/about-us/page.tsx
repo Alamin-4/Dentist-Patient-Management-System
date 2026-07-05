@@ -316,7 +316,6 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* ── CALL TO ACTION ── */}
       <section className="pb-24">
         <div className="max-w-6xl w-11/12 mx-auto">
           <motion.div
