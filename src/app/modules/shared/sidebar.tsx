@@ -20,6 +20,7 @@ import {
   Tag,
   Share2,
   X,
+  MessageSquare,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,7 @@ const patientNav: NavGroup[] = [
       },
       { icon: CalendarDays, label: "My Bookings", href: "/patient/bookings" },
       { icon: FolderOpen, label: "Document Vault", href: "/patient/documents" },
+      { icon: MessageSquare, label: "Messages", href: "/patient/messages" },
       { icon: Activity, label: "My Results", href: "/patient/results" },
       { icon: Users, label: "Referrals", href: "/patient/referrals" },
       {
@@ -80,6 +82,7 @@ const dentistNav: NavGroup[] = [
         href: "/dentist/pricing-protocols",
       },
       { icon: Video, label: "Consultations", href: "/dentist/consultations" },
+      { icon: MessageSquare, label: "Messages", href: "/dentist/messages" },
       { icon: Calendar, label: "Bookings", href: "/dentist/bookings" },
       { icon: Users, label: "Patients", href: "/dentist/patients" },
       { icon: BarChart3, label: "Results", href: "/dentist/results" },

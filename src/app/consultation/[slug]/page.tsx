@@ -41,6 +41,7 @@ export default function ConsultationMeetingPage() {
     return (
       <MeetingDetails
         consultation={consultation}
+        userId={userId!}
         onBack={() => router.back()}
       />
     );

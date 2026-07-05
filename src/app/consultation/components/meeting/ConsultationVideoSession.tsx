@@ -11,6 +11,7 @@ import { endpoints } from "@/api/endpoints";
 import { SessionHeader } from "./SessionHeader";
 import { VideoStage } from "./VideoStage";
 import { ControlToolbar } from "./ControlToolbar";
+import { ConsultationChat } from "./ConsultationChat";
 
 interface SessionProps {
     consultation: any;
@@ -25,6 +26,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
 
     const [micMuted, setMicMuted] = useState(false);
     const [cameraOff, setCameraOff] = useState(false);
+    const [showChat, setShowChat] = useState(false);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const isEndingRef = useRef(false);
 
@@ -111,25 +113,41 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
                 isLowTime={isLowTime}
             />
 
-            <div className="flex-1 min-h-0 py-4 flex flex-col justify-between relative">
-                <VideoStage
-                    remoteCameraTrack={remoteCameraTrack}
-                    localCameraTrack={localCameraTrack}
-                    cameraOff={cameraOff}
-                    otherParticipantName={otherParticipantName}
-                    otherParticipantAvatar={otherParticipantAvatar}
-                    isPatient={isPatient}
-                />
+            <div className="flex-1 min-h-0 py-4 flex gap-4 relative overflow-hidden">
+                <div className="flex-1 flex flex-col justify-between min-h-0 min-w-0">
+                    <VideoStage
+                        remoteCameraTrack={remoteCameraTrack}
+                        localCameraTrack={localCameraTrack}
+                        cameraOff={cameraOff}
+                        otherParticipantName={otherParticipantName}
+                        otherParticipantAvatar={otherParticipantAvatar}
+                        isPatient={isPatient}
+                    />
 
-                <RoomAudioRenderer />
+                    <RoomAudioRenderer />
 
-                <ControlToolbar
-                    micMuted={micMuted}
-                    cameraOff={cameraOff}
-                    onToggleMic={toggleMic}
-                    onToggleCamera={toggleCamera}
-                    onEndCall={() => handleEndCall(false)}
-                />
+                    <ControlToolbar
+                        micMuted={micMuted}
+                        cameraOff={cameraOff}
+                        showChat={showChat}
+                        onToggleMic={toggleMic}
+                        onToggleCamera={toggleCamera}
+                        onToggleChat={() => setShowChat(!showChat)}
+                        onEndCall={() => handleEndCall(false)}
+                    />
+                </div>
+
+                {showChat && (
+                    <div className="w-80 md:w-96 flex-none rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl h-full flex flex-col">
+                        <ConsultationChat
+                            consultationId={consultation.id}
+                            currentUserId={userId}
+                            recipientName={otherParticipantName}
+                            recipientAvatar={otherParticipantAvatar}
+                            onClose={() => setShowChat(false)}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -75,6 +75,7 @@ export const endpoints = {
     cancel: (id: string | number) => `/consultations/${id}/cancel`,
     reschedule: (id: string | number) => `/consultations/${id}/reschedule`,
     updateStatus: (id: string | number) => `/consultations/${id}`,
+    messages: (id: string | number) => `/consultations/${id}/messages`,
   },
   treatmentPlans: {
     propose: "/treatment-plans",

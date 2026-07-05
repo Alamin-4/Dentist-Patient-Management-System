@@ -1,7 +1,8 @@
 "use client";
 
-import { X } from "lucide-react";
+import { X, MessageSquare } from "lucide-react";
 import React from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useRespondToConsultation } from "@/hooks/consultation/useConsultation";
 
@@ -16,6 +17,7 @@ export const ConsultationDetailsSidebar = ({
   onClose,
   data,
 }: SidebarProps) => {
+  const router = useRouter();
   const respondMutation = useRespondToConsultation();
 
   if (!isOpen || !data) return null;
@@ -178,7 +180,7 @@ export const ConsultationDetailsSidebar = ({
         </div>
 
         {/* Buttons: only show Accept/Reject if consultation status is PENDING */}
-        {data.requestStatus === "PENDING" && (
+        {data.requestStatus === "PENDING" ? (
           <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
             <button
               onClick={() => handleRespond("REJECT")}
@@ -193,6 +195,16 @@ export const ConsultationDetailsSidebar = ({
               className="flex-1 h-12 rounded-lg border border-emerald-200 text-emerald-500 font-bold text-sm hover:bg-emerald-50 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {respondMutation.isPending ? "Processing..." : "Accept"}
+            </button>
+          </div>
+        ) : (
+          <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
+            <button
+              onClick={() => router.push(`/consultation/${data.id}?mode=details`)}
+              className="flex-1 h-12 rounded-lg bg-[#0A2540] text-white font-bold text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <MessageSquare className="size-4" />
+              Chat with Patient
             </button>
           </div>
         )}
