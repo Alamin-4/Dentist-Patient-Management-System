@@ -17,15 +17,47 @@ const tabs = [
   { id: "Treatment Estimate", label: "Treatment Estimate" },
 ];
 
-const isToday = (dateString?: string | Date | null) => {
-  if (!dateString) return false;
-  const d = new Date(dateString);
-  const today = new Date();
-  return (
-    d.getDate() === today.getDate() &&
-    d.getMonth() === today.getMonth() &&
-    d.getFullYear() === today.getFullYear()
-  );
+// Parse timezone string like "GMT+6 Time Zone (BST, GMT+6)" → offset in minutes
+const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
+  if (!tzStr) return 0;
+  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
+  const match = tzStr.match(regex);
+  if (match) {
+    const sign = match[1] === "-" ? -1 : 1;
+    const hours = parseInt(match[2], 10);
+    const mins = match[3] ? parseInt(match[3], 10) : 0;
+    return sign * (hours * 60 + mins);
+  }
+  if (tzStr.includes("EST")) return -5 * 60;
+  if (tzStr.includes("CST")) return -6 * 60;
+  if (tzStr.includes("MST")) return -7 * 60;
+  if (tzStr.includes("PST")) return -8 * 60;
+  if (tzStr.includes("CET")) return 1 * 60;
+  if (tzStr.includes("AEST")) return 10 * 60;
+  if (tzStr.includes("BST")) return 6 * 60;
+  return 0;
+};
+
+// True if the consultation is today in its own stored timezone
+const isToday = (item: any): boolean => {
+  if (!item?.scheduledDate) return false;
+  const offset = parseTimezoneOffsetMinutes(item.timezone);
+  const scheduledUtc = new Date(item.scheduledDate).getTime();
+  const localScheduled = new Date(scheduledUtc + offset * 60 * 1000);
+  const scheduledDay = `${localScheduled.getUTCFullYear()}-${String(localScheduled.getUTCMonth() + 1).padStart(2, "0")}-${String(localScheduled.getUTCDate()).padStart(2, "0")}`;
+  const nowLocal = new Date(Date.now() + offset * 60 * 1000);
+  const todayDay = `${nowLocal.getUTCFullYear()}-${String(nowLocal.getUTCMonth() + 1).padStart(2, "0")}-${String(nowLocal.getUTCDate()).padStart(2, "0")}`;
+  return scheduledDay === todayDay;
+};
+
+// True if now is within the 5-min-early → end-of-duration join window
+const isWithinMeetingWindow = (item: any): boolean => {
+  if (!item?.scheduledDate) return false;
+  const scheduledUtc = new Date(item.scheduledDate).getTime();
+  const duration = (item.durationMinutes || 15) * 60 * 1000;
+  const earlyMs = 5 * 60 * 1000;
+  const nowUtc = Date.now();
+  return nowUtc >= scheduledUtc - earlyMs && nowUtc <= scheduledUtc + duration;
 };
 
 export default function ConsultationPage() {
@@ -45,13 +77,14 @@ export default function ConsultationPage() {
       return (
         item.requestStatus === "PENDING" ||
         item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isToday(item.scheduledDate))
+        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item))
       );
     }
     if (activeTab === "Active") {
       return (
         item.requestStatus === "ACTIVE" ||
-        (item.requestStatus === "SCHEDULED" && isToday(item.scheduledDate))
+        item.requestStatus === "MISSED" ||
+        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item)))
       );
     }
     if (activeTab === "Treatment Estimate") {
@@ -104,7 +137,7 @@ export default function ConsultationPage() {
         </div>
       ) : (
         /* Responsive Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-6">
           {filteredConsultations.map((item: any) => (
             <ConsultationCard
               key={item.id}
@@ -115,6 +148,10 @@ export default function ConsultationPage() {
                 setIsSidebarOpen(true);
               }}
               onJoinMeeting={() => {
+                if (!isWithinMeetingWindow(item)) {
+                  router.push(`/consultation/${item.id}?mode=details`);
+                  return;
+                }
                 router.push(`/consultation/${item.id}`);
               }}
               onMarkComplete={() => handleMarkAsComplete(item)}

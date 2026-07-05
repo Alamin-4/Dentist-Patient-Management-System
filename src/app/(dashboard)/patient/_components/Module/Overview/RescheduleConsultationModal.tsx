@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { ConsultationItem } from "@/types";
 import { useRescheduleConsultation, useScheduleConsultation } from "@/hooks/consultation/useConsultation";
+import MiniCalendar from "@/app/(marketing)/schedule/_components/MiniCalendar";
 
 interface RescheduleConsultationModalProps {
   open: boolean;
@@ -23,13 +24,20 @@ interface RescheduleConsultationModalProps {
 }
 
 const TIME_ZONES = [
-  "EST (UTC -05:00)",
-  "CST (UTC -06:00)",
-  "PST (UTC -08:00)",
-  "GMT (UTC +00:00)",
+  "Eastern Time (EST, UTC-5)",
+  "Central Time (CST, UTC-6)",
+  "Mountain Time (MST, UTC-7)",
+  "Pacific Time (PST, UTC-8)",
+  "Greenwich Mean Time (GMT, UTC+0)",
+  "Central European Time (CET, UTC+1)",
+  "Mexico City Time (CST, UTC-6)",
+  "Australia Eastern (AEST, UTC+10)",
+  "GMT+6 Time Zone (BST, GMT+6)",
 ];
 
 const TIME_SLOTS = [
+  "09:40 to 09:55",
+  "10:00 to 10:15",
   "10:30 to 10:45",
   "10:45 to 11:00",
   "11:00 to 11:15",
@@ -46,7 +54,28 @@ export function RescheduleConsultationModal({
   onConfirmed,
 }: RescheduleConsultationModalProps) {
   const [phase, setPhase] = useState<"choose" | "success">("choose");
-  const [selectedZone, setSelectedZone] = useState(TIME_ZONES[0]);
+  const [selectedZone, setSelectedZone] = useState(() => {
+    try {
+      const offsetMinutes = -new Date().getTimezoneOffset();
+      const offsetHours = offsetMinutes / 60;
+      const sign = offsetHours >= 0 ? "+" : "-";
+      const absoluteHours = Math.abs(offsetHours);
+      const formattedOffset = `${sign}${absoluteHours}`;
+
+      const matched = TIME_ZONES.find((tz) => 
+        tz.includes(`UTC${formattedOffset}`) || 
+        tz.includes(`GMT${formattedOffset}`) || 
+        tz.includes(`UTC${sign}0${absoluteHours}`) || 
+        tz.includes(`GMT${sign}0${absoluteHours}`) ||
+        (offsetHours === 0 && (tz.includes("UTC+0") || tz.includes("GMT+0") || tz.includes("UTC-0") || tz.includes("GMT-0")))
+      );
+
+      if (matched) return matched;
+    } catch (e) {
+      console.error("Failed to detect timezone", e);
+    }
+    return TIME_ZONES[0];
+  });
   const [selectedSlot, setSelectedSlot] = useState(TIME_SLOTS[0]);
 
   const rescheduleMutation = useRescheduleConsultation();
@@ -55,24 +84,27 @@ export function RescheduleConsultationModal({
   const isInitialScheduling = consultation.requestStatus === "ACCEPTED";
   const activeMutation = isInitialScheduling ? scheduleMutation : rescheduleMutation;
 
-  const tomorrow = useMemo(() => {
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const d = new Date();
-    d.setDate(d.getDate() + 1);
+    d.setHours(0, 0, 0, 0);
     return d;
-  }, []);
+  });
 
   const selectedDateReadable = useMemo(() => {
-    return tomorrow.toLocaleDateString("en-US", {
+    return selectedDate.toLocaleDateString("en-US", {
       weekday: "long",
       day: "numeric",
       month: "long",
       year: "numeric",
     });
-  }, [tomorrow]);
+  }, [selectedDate]);
 
   const selectedDateIso = useMemo(() => {
-    return tomorrow.toISOString().split("T")[0];
-  }, [tomorrow]);
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDate.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }, [selectedDate]);
 
   const dentistUser = consultation.dentist?.user;
   const dentistDirectory = consultation.dentist?.dentistDirectory || consultation.directoryEntry;
@@ -86,16 +118,17 @@ export function RescheduleConsultationModal({
   };
 
   const handleConfirm = () => {
-    const tzCode = selectedZone.split(" ")[0]; // e.g. "EST"
+    const tzCode = selectedZone;
+    const startTime = selectedSlot.split(" to ")[0]; // e.g. "09:40"
     const payload = isInitialScheduling
       ? {
         scheduledDate: selectedDateIso,
-        scheduledTime: selectedSlot,
+        scheduledTime: startTime,
         timezone: tzCode,
       }
       : {
         newDate: selectedDateIso,
-        newTime: selectedSlot,
+        newTime: startTime,
         timezone: tzCode,
       };
 
@@ -150,9 +183,18 @@ export function RescheduleConsultationModal({
               </div>
 
               <div className="rounded-lg border border-[#E6EEF6] bg-white p-0">
-                <div className="px-4 py-4 md:px-5">
-                  <p className="text-[16px] font-bold text-[#0F3659]">
-                    {selectedDateReadable}
+                <div className="px-4 py-4 md:px-5 border-b border-[#E6EEF6]">
+                  <p className="text-[13px] font-semibold text-[#1A1A2E] mb-3">
+                    Select Date
+                  </p>
+                  <MiniCalendar
+                    selected={selectedDate}
+                    onSelect={(date) => {
+                      if (date) setSelectedDate(date);
+                    }}
+                  />
+                  <p className="mt-4 text-[15px] font-bold text-[#0F3659]">
+                    Selected Date: {selectedDateReadable}
                   </p>
                 </div>
 

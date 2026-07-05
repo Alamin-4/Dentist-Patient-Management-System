@@ -104,3 +104,45 @@ export const cityOptions = [
   "Del Valle",
   "Napoles",
 ];
+
+export function mapApiDentist(d: any): Dentist {
+  if (!d) return d;
+  const google: number | null = d.googleRating ?? null;
+  const doctoralia: number | null = d.doctoraliaRating ?? null;
+  const combined: number | null =
+    google != null && doctoralia != null
+      ? (google + doctoralia) / 2
+      : google ?? doctoralia ?? null;
+
+  const accountType: Dentist['accountType'] =
+    d.isClaimable === false
+      ? 'REGISTERED'
+      : d.status === 'CLAIMED' || d.status === 'VERIFIED'
+        ? 'CLAIMED'
+        : 'CLAIMABLE';
+
+  const hasCoords = typeof d.latitude === "number" && typeof d.longitude === "number";
+
+  return {
+    ...d,
+    coords: hasCoords ? { lat: d.latitude, lng: d.longitude } : undefined,
+    rating: {
+      google,
+      googleReviewCount: d.googleReviewCount ?? null,
+      doctoralia,
+      doctoraliaReviewCount: d.doctoraliaReviewCount ?? null,
+      combined,
+    },
+    location: {
+      city: d.city ?? null,
+      country: d.country ?? '',
+      fullAddress: d.fullAddress ?? null,
+      googleMapsUrl: d.googleMapsUrl ?? null,
+    },
+    accountType,
+    isClaimed: d.status === 'CLAIMED' || d.status === 'VERIFIED',
+    isVerified: d.status === 'VERIFIED',
+    surpriseGuarantee: d.surpriseGuarantee ?? false,
+    verificationPhase: d.verificationPhase ?? null,
+  };
+}

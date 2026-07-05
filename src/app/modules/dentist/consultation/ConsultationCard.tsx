@@ -60,15 +60,14 @@ export const ConsultationCard = ({
               Treatment Plan Status
             </span>
             <span
-              className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
-                treatmentPlanStatus === "Not Sent"
-                  ? "bg-slate-100 text-[#777779]"
-                  : treatmentPlanStatus === "Rejected"
+              className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${treatmentPlanStatus === "Not Sent"
+                ? "bg-slate-100 text-[#777779]"
+                : treatmentPlanStatus === "Rejected"
                   ? "bg-red-50 text-red-500"
                   : treatmentPlanStatus === "Accepted"
-                  ? "bg-emerald-50 text-emerald-500"
-                  : "bg-orange-50 text-orange-500"
-              }`}
+                    ? "bg-emerald-50 text-emerald-500"
+                    : "bg-orange-50 text-orange-500"
+                }`}
             >
               {treatmentPlanStatus}
             </span>
@@ -105,7 +104,7 @@ export const ConsultationCard = ({
           View Details
         </button>
 
-        {type === "Active" && (
+        {["SCHEDULED", "ACTIVE", "COMPLETED"].includes(data.requestStatus) && (
           <div className="flex gap-2 flex-1">
             <button
               onClick={onJoinMeeting}

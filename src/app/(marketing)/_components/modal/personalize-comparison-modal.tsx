@@ -63,6 +63,7 @@ const COUNTRIES = [
   "South Africa",
   "New Zealand",
   "Netherlands",
+  "Bangladesh",
 ];
 
 const GENDERS = ["Male", "Female", "Non-binary", "Prefer not to say"];
@@ -81,7 +82,6 @@ const TREATMENTS = [
   "General Checkup",
 ];
 
-// ─── Internal helpers ─────────────────────────────────────────────────────────
 
 function FieldLabel({
   children,

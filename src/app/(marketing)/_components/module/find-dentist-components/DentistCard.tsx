@@ -124,11 +124,12 @@ export default function DentistCard({
       )}
     >
       {isCompareMode && (
-        <div className="absolute left-3 top-3 z-20">
+        <div className="absolute left-3 top-3 z-20" onClick={(e) => e.stopPropagation()}>
           <Checkbox
             checked={isSelectedForCompare}
             onCheckedChange={onCompareToggle}
-            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#10436B]"
+            disabled={isClaimableProfile}
+            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#10436B] disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
       )}

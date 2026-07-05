@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle2, Video } from "lucide-react";
-import { getDentistsFromStorage } from "@/lib/storage/dentistData";
-import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { apiClient } from "@/api/client";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,16 +41,34 @@ export default function SuccessContent() {
 
   const [dentists, setDentists] = useState<Dentist[]>([]);
   const [selections, setSelections] = useState<StoredSelection[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const all = getDentistsFromStorage();
-    const ids = dentistIdsParam
-      ? dentistIdsParam.split(",").map((s) => s.trim())
-      : [];
-    const found = ids.length
-      ? all.filter((d) => ids.includes(d.id))
-      : all.slice(0, 2);
-    setDentists(found.length ? found : all.slice(0, 2));
+    const fetchDentists = async () => {
+      try {
+        setIsLoading(true);
+        const ids = dentistIdsParam
+          ? dentistIdsParam.split(",").map((s) => s.trim())
+          : [];
+
+        if (ids.length > 0) {
+          const res = await apiClient.dentists.getDirectoryList({ ids });
+          const mapped = (res?.data ?? []).map(mapApiDentist);
+          setDentists(mapped);
+        } else {
+          // Fallback if no IDs are passed
+          const res = await apiClient.dentists.getDirectoryList({ limit: 2 });
+          const mapped = (res?.data ?? []).map(mapApiDentist);
+          setDentists(mapped);
+        }
+      } catch (error) {
+        console.error("Error fetching success dentists:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDentists();
 
     // Read appointment data from sessionStorage
     try {
@@ -60,6 +78,17 @@ export default function SuccessContent() {
       // sessionStorage unavailable — leave empty, render with fallback
     }
   }, [dentistIdsParam]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
+        <div className="w-full max-w-lg bg-white rounded-3xl shadow px-8 py-20 flex flex-col items-center justify-center gap-3">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#113254]"></div>
+          <p className="text-[#6B7280] font-medium text-sm animate-pulse">Loading booking details...</p>
+        </div>
+      </div>
+    );
+  }
 
   const getSelection = (dentistId: string): StoredSelection | undefined =>
     selections.find((s) => s.dentistId === dentistId);

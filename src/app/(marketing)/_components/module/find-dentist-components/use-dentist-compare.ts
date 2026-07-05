@@ -14,6 +14,10 @@ export const useDentistCompare = () => {
     }, []);
 
     const handleCompareToggle = useCallback((dentist: Dentist) => {
+        const isClaimedOrRegistered =
+            dentist.isClaimed || dentist.accountType === 'REGISTERED' || dentist.status === 'CLAIMED' || dentist.status === 'VERIFIED';
+        if (!isClaimedOrRegistered) return;
+
         setCompareList((prev) => {
             const exists = prev.some((item) => item.id === dentist.id);
             if (exists) return prev.filter((item) => item.id !== dentist.id);

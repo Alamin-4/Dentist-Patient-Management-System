@@ -75,10 +75,10 @@ export function useUpdateConsultationStatus() {
   });
 }
 
-export function useZegoToken(id: string | number, enabled = false) {
+export function useLiveKitToken(id: string | number, enabled = false) {
   return useQuery({
-    queryKey: ["zegoToken", id],
-    queryFn: () => apiClient.consultations.getZegoToken(id),
+    queryKey: ["livekitToken", id],
+    queryFn: () => apiClient.consultations.getLiveKitToken(id),
     enabled: enabled && !!id,
   });
 }

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
+import { useRouter } from "next/navigation";
 import {
   getBookingData,
   getBookingDraft,
@@ -25,6 +26,7 @@ import { consultationBookingApi } from "@/api/client";
 const TOTAL_STEPS = 6;
 
 export default function IntakeModal() {
+  const router = useRouter();
   const [step, setStep] = useState(() => getBookingDraft().currentStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -33,6 +35,9 @@ export default function IntakeModal() {
     setShowCompareModal,
     setCompareModalPurpose,
     setSchedule,
+    dentistsToCompare,
+    selectedDentistId,
+    compareModalPurpose,
   } = useStateContext();
 
   const progress = (step / TOTAL_STEPS) * 100;
@@ -210,9 +215,29 @@ export default function IntakeModal() {
       updateBookingData({ currentStep: TOTAL_STEPS });
       toast.success("Your consultation details are saved.");
       setShowBookingModal(null);
-      setCompareModalPurpose("postBooking");
-      setSchedule(true);
-      setShowCompareModal(true);
+
+      if (compareModalPurpose === "compare" && selectedDentistId) {
+        const draft = getBookingDraft();
+        const params = new URLSearchParams();
+        params.set("dentistIds", selectedDentistId);
+        if (draft.consultationId) {
+          params.set("consultationId", String(draft.consultationId));
+        }
+        router.push(`/schedule?${params.toString()}`);
+      } else if (dentistsToCompare && dentistsToCompare.length > 0) {
+        const q = dentistsToCompare.map(d => d.id).join(",");
+        const draft = getBookingDraft();
+        const params = new URLSearchParams();
+        params.set("dentistIds", q);
+        if (draft.consultationId) {
+          params.set("consultationId", String(draft.consultationId));
+        }
+        router.push(`/schedule?${params.toString()}`);
+      } else {
+        setCompareModalPurpose("postBooking");
+        setSchedule(true);
+        setShowCompareModal(true);
+      }
     } catch (error) {
       // toast.error(getApiErrorMessage(error));
     } finally {

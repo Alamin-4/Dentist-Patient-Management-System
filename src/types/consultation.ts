@@ -124,4 +124,5 @@ export interface TreatmentPlanItem {
   lineItems?: TreatmentLineItem[];
   dentist?: DentistItem;
   consultation?: ConsultationItem;
+  treatmentBooking?: any;
 }

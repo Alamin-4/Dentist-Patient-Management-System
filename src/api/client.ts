@@ -536,7 +536,7 @@ export const apiClient = {
       const response = await api.patch(endpoints.consultations.updateStatus(id), payload);
       return response.data;
     },
-    getZegoToken: async (id: string | number) => {
+    getLiveKitToken: async (id: string | number) => {
       const response = await api.get(endpoints.consultations.token(id));
       return response.data;
     },
@@ -681,7 +681,7 @@ export const consultationBookingApi = {
     const scheduleSelections = payload.dentists.map((item) => {
       const dentistIdStr = String(item.dentist);
       const matchingSelection = draft.scheduleSelections.find(
-        (sel) => String(sel.dentistId) === dentistIdStr
+        (sel) => String(sel.dentistId) === dentistIdStr || String(sel.backendDentistId) === dentistIdStr
       );
       const timezone = matchingSelection?.timezone || "UTC";
 

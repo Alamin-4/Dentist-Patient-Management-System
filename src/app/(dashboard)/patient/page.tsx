@@ -37,15 +37,54 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   },
 };
 
-const isToday = (dateString?: string | Date | null) => {
-  if (!dateString) return false;
-  const d = new Date(dateString);
-  const today = new Date();
-  return (
-    d.getDate() === today.getDate() &&
-    d.getMonth() === today.getMonth() &&
-    d.getFullYear() === today.getFullYear()
-  );
+// Parse a timezone string like "GMT+6 Time Zone (BST, GMT+6)" into offset minutes
+const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
+  if (!tzStr) return 0;
+  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
+  const match = tzStr.match(regex);
+  if (match) {
+    const sign = match[1] === "-" ? -1 : 1;
+    const hours = parseInt(match[2], 10);
+    const minutes = match[3] ? parseInt(match[3], 10) : 0;
+    return sign * (hours * 60 + minutes);
+  }
+  if (tzStr.includes("EST")) return -5 * 60;
+  if (tzStr.includes("CST")) return -6 * 60;
+  if (tzStr.includes("MST")) return -7 * 60;
+  if (tzStr.includes("PST")) return -8 * 60;
+  if (tzStr.includes("CET")) return 1 * 60;
+  if (tzStr.includes("AEST")) return 10 * 60;
+  if (tzStr.includes("BST")) return 6 * 60;
+  return 0;
+};
+
+// Returns true if current moment is within the meeting window:
+// from 5 minutes before scheduledDate until (scheduledDate + durationMinutes)
+const isWithinMeetingWindow = (consultation: ConsultationItem): boolean => {
+  if (!consultation.scheduledDate) return false;
+  const scheduledUtc = new Date(consultation.scheduledDate).getTime();
+  const duration = (consultation.durationMinutes || 15) * 60 * 1000;
+  const earlyMs = 5 * 60 * 1000;
+  const nowUtc = Date.now();
+  return nowUtc >= scheduledUtc - earlyMs && nowUtc <= scheduledUtc + duration;
+};
+
+// Returns true if the scheduled date (in the consultation's stored timezone) is today
+const isToday = (consultation: ConsultationItem): boolean => {
+  if (!consultation.scheduledDate) return false;
+  const offsetMinutes = parseTimezoneOffsetMinutes(consultation.timezone);
+  const scheduledUtc = new Date(consultation.scheduledDate).getTime();
+  // Shift the UTC timestamp by the consultation timezone offset to get local time
+  const localMs = scheduledUtc + offsetMinutes * 60 * 1000;
+  const localDate = new Date(localMs);
+  const scheduledLocalDateStr = `${localDate.getUTCFullYear()}-${String(localDate.getUTCMonth() + 1).padStart(2, "0")}-${String(localDate.getUTCDate()).padStart(2, "0")}`;
+
+  // Get today in the same timezone
+  const nowUtc = Date.now();
+  const nowLocal = new Date(nowUtc + offsetMinutes * 60 * 1000);
+  const todayStr = `${nowLocal.getUTCFullYear()}-${String(nowLocal.getUTCMonth() + 1).padStart(2, "0")}-${String(nowLocal.getUTCDate()).padStart(2, "0")}`;
+
+  return scheduledLocalDateStr === todayStr;
 };
 
 // ─── Empty state UI ───────────────────────────────────────────────────────────
@@ -82,20 +121,23 @@ export default function Overview() {
 
   const consultations: ConsultationItem[] = consultationsResponse?.data || [];
   const treatmentPlans: TreatmentPlanItem[] = treatmentPlansResponse?.data || [];
+  const proposedTreatmentPlans = treatmentPlans.filter((plan) => plan.status === "PROPOSED");
 
   const consultationsToShow = consultations.filter((item) => {
     if (activeTab === "upcoming") {
       return (
         item.requestStatus === "PENDING" ||
         item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isToday(item.scheduledDate))
+        // SCHEDULED and NOT today in its own timezone AND not within the live window
+        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item))
       );
     }
     if (activeTab === "active") {
       return (
         item.requestStatus === "ACTIVE" ||
-        (item.requestStatus === "SCHEDULED" && isToday(item.scheduledDate)) ||
-        item.requestStatus === "MISSED"
+        item.requestStatus === "MISSED" ||
+        // SCHEDULED and either today in its timezone OR within the live join window
+        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item)))
       );
     }
     return false;
@@ -153,11 +195,10 @@ export default function Overview() {
               key={key}
               type="button"
               onClick={() => setActiveTab(key)}
-              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px cursor-pointer ${
-                activeTab === key
-                  ? "text-[#113254] border-[#113254]"
-                  : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
-              }`}
+              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px cursor-pointer ${activeTab === key
+                ? "text-[#113254] border-[#113254]"
+                : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
+                }`}
             >
               {label}
             </button>
@@ -170,9 +211,9 @@ export default function Overview() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#113254]"></div>
           </div>
         ) : activeTab === "estimate-updates" ? (
-          treatmentPlans.length ? (
+          proposedTreatmentPlans.length ? (
             <div className="space-y-5">
-              {treatmentPlans.map((plan) => (
+              {proposedTreatmentPlans.map((plan) => (
                 <DoctorCard key={plan.id} data={plan} />
               ))}
             </div>
@@ -190,6 +231,15 @@ export default function Overview() {
                     openReschedule(consultation);
                     return;
                   }
+
+                  if (
+                    (consultation.requestStatus === "SCHEDULED" || consultation.requestStatus === "ACTIVE") &&
+                    !isWithinMeetingWindow(consultation)
+                  ) {
+                    router.push(`/consultation/${consultation.id}?mode=details`);
+                    return;
+                  }
+                  // Within 5-min early buffer or during meeting → go to meeting page (lobby or room)
                   router.push(`/consultation/${consultation.id}`);
                 }}
               />

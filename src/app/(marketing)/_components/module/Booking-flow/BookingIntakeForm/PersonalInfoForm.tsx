@@ -14,6 +14,7 @@ const COUNTRIES = [
   "France",
   "Spain",
   "Brazil",
+  "Bangladesh",
   "Other",
 ];
 

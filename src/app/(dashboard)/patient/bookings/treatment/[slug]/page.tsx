@@ -14,11 +14,9 @@ import {
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  inProgressBookingsData,
-  type InProgressBooking,
-  type TimelineStep,
-} from "../../../_components/Module/MyBooking/data";
+import { useTreatmentPlanById } from "@/hooks/treatment-plan/useTreatmentPlan";
+import { mapPlanToBooking } from "../../../_components/Module/MyBooking/MyBooking";
+import { InProgressBooking, TimelineStep } from "../../../_components/Module/MyBooking/data";
 import ClinicLocationModal from "../../../_components/Module/MyBooking/Modal/ClinicLocationModal";
 import { ConfirmReleaseModal } from "../../../_components/Module/MyBooking/Modal/ApproveModal";
 import { LeaveReviewModal } from "../../../_components/Module/MyBooking/Modal/LeaveReviewModal";
@@ -29,15 +27,10 @@ export default function TreatmentDetailsPage() {
   const { slug } = useParams();
   const router = useRouter();
 
-  const booking: InProgressBooking =
-    inProgressBookingsData.find((b) => b.slug === slug) ??
-    inProgressBookingsData[0];
-
-  const finalPlan = booking.finalPlan;
-  const isWithinLeeway = finalPlan?.isWithinLeeway ?? true;
+  const { data: treatmentPlanResponse, isLoading } = useTreatmentPlanById(slug as string);
 
   const [isApproved, setIsApproved] = useState(false);
-  const [estimatePlanOpen, setEstimatePlanOpen] = useState(!finalPlan);
+  const [estimatePlanOpen, setEstimatePlanOpen] = useState(true);
   const [finalPlanOpen, setFinalPlanOpen] = useState(true);
   const [journeyOpen, setJourneyOpen] = useState(true);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
@@ -46,6 +39,33 @@ export default function TreatmentDetailsPage() {
   const [noSurpriseRejectModalOpen, setNoSurpriseRejectModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-40">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#0F3659]"></div>
+      </div>
+    );
+  }
+
+  const plan = treatmentPlanResponse?.data;
+  if (!plan) {
+    return (
+      <div className="text-center py-20 bg-white border border-slate-100 rounded-lg shadow-sm">
+        <p className="text-red-500 font-medium">Treatment booking not found.</p>
+        <button
+          onClick={() => router.push("/patient")}
+          className="mt-4 px-6 py-2 bg-[#0F3659] text-white rounded-lg text-sm"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const booking: InProgressBooking = mapPlanToBooking(plan);
+  const finalPlan = booking.finalPlan;
+  const isWithinLeeway = finalPlan?.isWithinLeeway ?? true;
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(booking.paymentCode);

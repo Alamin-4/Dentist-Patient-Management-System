@@ -351,15 +351,17 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                 Claim Profile
               </Button>
             )}
-            <Button
-              className="h-11 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
-              onClick={() => {
-                setRequestConsultationDentist(dentist);
-                setShowRequestConsultationModal(true);
-              }}
-            >
-              Request Consultation
-            </Button>
+            {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
+              <Button
+                className="h-11 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
+                onClick={() => {
+                  setRequestConsultationDentist(dentist);
+                  setShowRequestConsultationModal(true);
+                }}
+              >
+                Request Consultation
+              </Button>
+            )}
           </div>
         )}
       </div>

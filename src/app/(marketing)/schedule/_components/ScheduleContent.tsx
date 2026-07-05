@@ -1,14 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle2, Video } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import toast from "react-hot-toast";
-import { getDentistsFromStorage } from "@/lib/storage/dentistData";
 import { useStateContext } from "@/providers/StateProvider";
-import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 import DentistScheduleCard, {
   type DentistSelection,
 } from "./DentistScheduleCard";
@@ -18,8 +17,9 @@ import {
   saveBookingDraft,
   type BookingDraft,
 } from "@/lib/storage/bookingService";
-import { consultationBookingApi } from "@/api/client";
+import { apiClient, consultationBookingApi } from "@/api/client";
 import { normalizeApiError } from "@/api/error-handler";
+import { getDefaultTimezone } from "./TimezoneSelector";
 
 const STORED_KEY = "schedule_selections";
 
@@ -32,34 +32,7 @@ const formatDate = (date: Date) =>
   });
 
 function makeSelection(dentistId: string): DentistSelection {
-  return { dentistId, date: null, timeSlot: "", timezone: "" };
-}
-
-function makeScheduleState(dentistIdsParam: string) {
-  const all = getDentistsFromStorage();
-  const draft = getBookingDraft();
-  const ids = dentistIdsParam
-    ? dentistIdsParam.split(",").map((s) => s.trim())
-    : draft.selectedDentistIds;
-  const found = ids.length
-    ? all.filter((d) => ids.includes(d.id))
-    : all.slice(0, 2);
-  const dentists = found.length ? found : all.slice(0, 2);
-  const selections = dentists.map((dentist) => {
-    const saved = draft.scheduleSelections.find(
-      (selection) => selection.dentistId === dentist.id,
-    );
-    return saved
-      ? {
-        dentistId: dentist.id,
-        date: saved.date ? new Date(saved.date) : null,
-        timeSlot: saved.timeSlot,
-        timezone: saved.timezone,
-      }
-      : makeSelection(dentist.id);
-  });
-
-  return { dentists, selections };
+  return { dentistId, date: null, timeSlot: "", timezone: getDefaultTimezone() };
 }
 
 function getDraftBackendDentistId(
@@ -86,16 +59,55 @@ export default function ScheduleContent() {
   const dentistIdsParam = searchParams.get("dentistIds") ?? "";
   const consultationIdParam = searchParams.get("consultationId");
 
-  const initialScheduleState = useMemo(
-    () => makeScheduleState(dentistIdsParam),
-    [dentistIdsParam],
-  );
-  const dentists = initialScheduleState.dentists;
-  const [selections, setSelections] = useState<DentistSelection[]>(
-    () => initialScheduleState.selections,
-  );
+  const [dentists, setDentists] = useState<Dentist[]>([]);
+  const [selections, setSelections] = useState<DentistSelection[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+
+  useEffect(() => {
+    const fetchScheduleData = async () => {
+      try {
+        setIsLoading(true);
+        const draft = getBookingDraft();
+        const ids = dentistIdsParam
+          ? dentistIdsParam.split(",").map((s) => s.trim())
+          : draft.selectedDentistIds;
+
+        let loadedDentists: Dentist[] = [];
+        if (ids.length > 0) {
+          const res = await apiClient.dentists.getDirectoryList({ ids });
+          loadedDentists = (res?.data ?? []).map(mapApiDentist);
+        } else {
+          const res = await apiClient.dentists.getDirectoryList({ verified: "true", limit: 2 });
+          loadedDentists = (res?.data ?? []).map(mapApiDentist);
+        }
+
+        setDentists(loadedDentists);
+
+        const nextSelections = loadedDentists.map((dentist) => {
+          const saved = draft.scheduleSelections.find(
+            (selection) => selection.dentistId === dentist.id,
+          );
+          return saved
+            ? {
+              dentistId: dentist.id,
+              date: saved.date ? new Date(saved.date) : null,
+              timeSlot: saved.timeSlot,
+              timezone: saved.timezone || getDefaultTimezone(),
+            }
+            : makeSelection(dentist.id);
+        });
+        setSelections(nextSelections);
+      } catch (error) {
+        console.error("Error loading schedule data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchScheduleData();
+  }, [dentistIdsParam]);
 
   const updateSelection = useCallback(
     (dentistId: string, updates: Partial<Omit<DentistSelection, "dentistId">>) => {
@@ -127,11 +139,25 @@ export default function ScheduleContent() {
     [dentists],
   );
 
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 bg-[#F9FAFB]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#113254]"></div>
+        <p className="text-[#6B7280] font-medium text-sm animate-pulse">Loading schedule details...</p>
+      </div>
+    );
+  }
+
   const getBackendDentistId = (dentist: Dentist, index: number) => {
     return getDraftBackendDentistId(getBookingDraft(), dentist, index);
   };
 
-  const formatApiDate = (date: Date) => date.toISOString().split("T")[0];
+  const formatApiDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const formatApiTime = (slot: string) => {
     const start = slot.split(" to ")[0] || slot;

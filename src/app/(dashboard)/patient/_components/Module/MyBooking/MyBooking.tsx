@@ -1,11 +1,148 @@
-"use client";
+"use client"
 
 import { useState } from "react";
 import ToggleButton from "@/app/(dashboard)/patient/_components/Module/MyBooking/ToggleButton/ToggleButton";
-import { inProgressBookingsData, type InProgressBooking } from "./data";
 import InProgressBookingCard from "./InProgressBookingCard";
 import InProgressBookingCardSkeleton from "./InProgressBookingCardSkeleton";
 import { CalendarOff } from "lucide-react";
+import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
+import { TreatmentPlanItem } from "@/types";
+
+// ─── Mapper Helper ────────────────────────────────────────────────────────────
+
+export function mapPlanToBooking(plan: TreatmentPlanItem): any {
+  const dentistUser = plan.dentist?.user;
+  const doctorName = dentistUser ? `Dr. ${dentistUser.firstName} ${dentistUser.lastName}`.trim() : "Dentist";
+  const specialty = plan.dentist?.specialty?.name || "Dentist";
+  const avatarSrc = dentistUser?.image || "/images/dentist.png";
+
+  const dentistDirectory = plan.dentist?.dentistDirectory;
+  const rating = dentistDirectory?.googleRating || dentistDirectory?.doctoraliaRating || 5;
+  const reviewCount = dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
+
+  const totalEstimate = plan.lineItems
+    ? plan.lineItems.reduce((acc: number, item: any) => acc + Number(item.unitPrice) * (item.quantity || 1), 0)
+    : 0;
+
+  const procedureName = plan.lineItems?.[0]?.globalProcedure?.name || "Dental Treatment";
+
+  // Format scheduledDate
+  const scheduledDate = plan.consultation?.scheduledDate
+    ? new Date(plan.consultation.scheduledDate).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }) + " · " + (plan.consultation.scheduledTime || "")
+    : "Not Scheduled";
+
+  const bookingStatusMap: Record<string, string> = {
+    ACTIVE: "in_progress",
+    COMPLETED: "completed",
+    CANCELLED: "rejected",
+  };
+
+  const bookingStatus = bookingStatusMap[plan.status] || "in_progress";
+
+  const paymentStatusMap: Record<string, string> = {
+    PENDING: "pending",
+    IN_ESCROW: "in_escrow",
+    PAID: "paid",
+    REFUNDED: "refunded",
+  };
+
+  const paymentStatus = paymentStatusMap[plan.treatmentBooking?.paymentStatus || ""] || "in_escrow";
+
+  // Build progress steps based on treatmentBooking status
+  // PENDING_PAYMENT, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
+  const tbStatus = plan.treatmentBooking?.status || "PENDING_PAYMENT";
+  const progressSteps = [
+    { label: "Payment Confirmed", completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED" },
+    { label: "Travel destination", completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED" },
+    { label: "Day 1 arrival, CBCT examination", completed: tbStatus === "CONFIRMED" || tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" },
+    { label: "Final Treatment Plan Confirm", completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" },
+    { label: "Treatment Done", completed: tbStatus === "COMPLETED" },
+  ];
+
+  const breakdown = plan.lineItems?.map((item: any) => ({
+    label: item.globalProcedure?.name || "Procedure",
+    price: Number(item.unitPrice),
+  })) || [];
+
+  const timeline = [
+    {
+      title: "Payment Confirmed",
+      description: `$${totalEstimate.toLocaleString()} held in escrow`,
+      completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED",
+    },
+    {
+      title: "Travel destination",
+      description: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}`,
+      completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED",
+      link: { label: "View map location" },
+    },
+    {
+      title: "Day 1 arrival, CBCT examination",
+      description: "Show arrival code at clinic",
+      completed: tbStatus === "CONFIRMED" || tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED",
+    },
+    {
+      title: "Final Treatment Plan Confirm",
+      description: "Dr submit final price you confirm via sms",
+      completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED",
+    },
+    {
+      title: "Treatment Done",
+      description: "Review to the doctor",
+      completed: tbStatus === "COMPLETED",
+    },
+  ];
+
+  return {
+    id: plan.id,
+    slug: plan.id, // slug is the ID of the treatment plan
+    bookingStatus,
+    doctor: {
+      name: doctorName,
+      specialty,
+      image: avatarSrc,
+      rating,
+      reviewCount,
+      rdvScore: plan.dentist?.dentistVerificationProgress?.rvdScore || 95,
+      isVerified: plan.dentist?.dentistVerificationProgress?.isLicenseVerified || true,
+    },
+    procedure: procedureName,
+    appointmentDate: scheduledDate,
+    estimateBudget: totalEstimate,
+    paymentStatus,
+    progressSteps,
+    infoMessage: "Review your treatment details, including arrival date and any updates, to confirm next steps.",
+    treatmentPlan: {
+      breakdown,
+      totalEstimate,
+      leewayPercent: 15,
+    },
+    timeline,
+    clinicLocation: {
+      address: dentistDirectory?.fullAddress || "123 Smile Avenue, Suite 202, Mexico City, Mexico 01010",
+      city: dentistDirectory?.city || "Mexico City",
+      country: dentistDirectory?.country || "Mexico",
+      lat: Number(dentistDirectory?.latitude) || 19.4326,
+      lng: Number(dentistDirectory?.longitude) || -99.1332,
+    },
+    arrivalCode: plan.treatmentBooking?.arrivalCode || "7623",
+    paymentCode: plan.treatmentBooking?.paymentCode || "5263",
+    finalPlan: {
+      breakdown,
+      finalTotal: totalEstimate,
+      isWithinLeeway: true,
+    },
+    journeyCompleted: {
+      finalAmount: totalEstimate,
+      treatmentDuration: "Completed",
+      location: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}`,
+    },
+  };
+}
 
 const TABS = [
   { key: "in-progress", label: "In progress" },
@@ -15,10 +152,17 @@ const TABS = [
 
 export default function MyBooking() {
   const [activeTab, setActiveTab] = useState("in-progress");
-  const [isLoading] = useState(false);
+  const { data: treatmentPlansResponse, isLoading } = usePatientTreatmentPlans();
 
-  const byStatus = (status: InProgressBooking["bookingStatus"]) =>
-    inProgressBookingsData.filter((b) => b.bookingStatus === status);
+  const treatmentPlans = treatmentPlansResponse?.data || [];
+
+  // Filter: only show plans that are bookings (status: ACTIVE, COMPLETED, CANCELLED)
+  const bookings = treatmentPlans
+    .filter((plan: TreatmentPlanItem) => plan.status === "ACTIVE" || plan.status === "COMPLETED" || plan.status === "CANCELLED")
+    .map(mapPlanToBooking);
+
+  const byStatus = (status: "in_progress" | "completed" | "rejected") =>
+    bookings.filter((b: any) => b.bookingStatus === status);
 
   const inProgress = byStatus("in_progress");
   const completed = byStatus("completed");
@@ -63,7 +207,7 @@ export default function MyBooking() {
         ) : currentList.length === 0 ? (
           <EmptyState {...emptyMessages[activeTab]} />
         ) : (
-          currentList.map((booking) => (
+          currentList.map((booking: any) => (
             <InProgressBookingCard key={booking.id} booking={booking} />
           ))
         )}

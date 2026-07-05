@@ -73,13 +73,17 @@ export async function middleware(request: NextRequest) {
 
   // 1. Admin Portal Protection
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    // if (!user) {
-    //   // Direct unauthenticated users to the admin login page
-    //   const url = new URL("/admin-login", request.url);
-    //   return NextResponse.redirect(url);
-    // }
+    if (!user) {
+      const url = new URL("/unauthorized", request.url);
+      return NextResponse.rewrite(url);
+    }
     if (userRole !== "ADMIN" && userRole !== "SUPER_ADMIN") {
-      // Rewrite unauthorized users to the error page, keeping URL in the address bar
+      if (userRole === "DENTIST") {
+        return NextResponse.redirect(new URL("/dentist", request.url));
+      }
+      if (userRole === "PATIENT") {
+        return NextResponse.redirect(new URL("/patient", request.url));
+      }
       const url = new URL("/unauthorized", request.url);
       return NextResponse.rewrite(url);
     }
@@ -87,7 +91,17 @@ export async function middleware(request: NextRequest) {
 
   // 2. Dentist Portal Protection
   if (pathname === "/dentist" || pathname.startsWith("/dentist/")) {
-    if (!user || userRole !== "DENTIST") {
+    if (!user) {
+      const url = new URL("/unauthorized", request.url);
+      return NextResponse.rewrite(url);
+    }
+    if (userRole !== "DENTIST") {
+      if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+      if (userRole === "PATIENT") {
+        return NextResponse.redirect(new URL("/patient", request.url));
+      }
       const url = new URL("/unauthorized", request.url);
       return NextResponse.rewrite(url);
     }
@@ -95,7 +109,17 @@ export async function middleware(request: NextRequest) {
 
   // 3. Patient Portal Protection
   if (pathname === "/patient" || pathname.startsWith("/patient/")) {
-    if (!user || userRole !== "PATIENT") {
+    if (!user) {
+      const url = new URL("/unauthorized", request.url);
+      return NextResponse.rewrite(url);
+    }
+    if (userRole !== "PATIENT") {
+      if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+      if (userRole === "DENTIST") {
+        return NextResponse.redirect(new URL("/dentist", request.url));
+      }
       const url = new URL("/unauthorized", request.url);
       return NextResponse.rewrite(url);
     }

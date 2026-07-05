@@ -12,6 +12,20 @@ interface ConsultationCardProps {
   onReschedule?: () => void;
 }
 
+const isToday = (dateString?: string | Date | null) => {
+  if (!dateString) return false;
+  const dStr = typeof dateString === "string" ? dateString : new Date(dateString).toISOString();
+  const datePart = dStr.split("T")[0]; // "YYYY-MM-DD"
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+
+  return datePart === todayStr;
+};
+
 export function ConsultationCard({
   consultation,
   onPrimaryAction,
@@ -32,8 +46,8 @@ export function ConsultationCard({
   const reviewCount = dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
   const rdvScore = consultation.dentist?.dentistVerificationProgress?.rvdScore || 100;
 
-  const procedure = consultation.intake?.procedureNames?.[0] || "Dental Consultation";
-  const estimateBudget = consultation.intake?.budget || "N/A";
+  const procedure = consultation?.intake?.procedureNames?.[0] || "Dental Consultation";
+  const estimateBudget = consultation?.intake?.budget || "N/A";
   const timezone = consultation.timezone || "UTC";
 
   const dateStr = consultation.scheduledDate ? new Date(consultation.scheduledDate).toLocaleDateString() : "Not Scheduled";
@@ -70,6 +84,8 @@ export function ConsultationCard({
     primaryActionLabel = "Schedule Slot";
   } else if (isPending) {
     primaryActionLabel = "Awaiting Approval";
+  } else if (consultation.requestStatus === "SCHEDULED" && !isToday(consultation.scheduledDate)) {
+    primaryActionLabel = "View Details";
   }
 
   return (
@@ -172,11 +188,10 @@ export function ConsultationCard({
               type="button"
               onClick={onPrimaryAction}
               disabled={isPending}
-              className={`w-full rounded-lg px-6 py-3 text-[14px] font-bold text-white transition-all sm:w-auto cursor-pointer ${
-                isPending
-                  ? "bg-slate-300 text-slate-500 cursor-not-allowed opacity-60"
-                  : "bg-[#113254] hover:bg-[#0d2844] active:scale-95"
-              }`}
+              className={`w-full rounded-lg px-6 py-3 text-[14px] font-bold text-white transition-all sm:w-auto cursor-pointer ${isPending
+                ? "bg-slate-300 text-slate-500 cursor-not-allowed opacity-60"
+                : "bg-[#113254] hover:bg-[#0d2844] active:scale-95"
+                }`}
             >
               {primaryActionLabel}
             </button>
