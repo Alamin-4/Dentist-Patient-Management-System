@@ -4,6 +4,8 @@ import "./globals.css";
 import { StateProvider } from "@/providers/StateProvider";
 import TanstackProvider from "@/providers/query-provider";
 import { Toaster } from "react-hot-toast";
+import { CSPostHogProvider } from "@/providers/posthog-provider";
+
 
 
 const inter = Inter({
@@ -44,13 +46,15 @@ export default function RootLayout({
       className={`${inter.variable} ${jakartaSans.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <StateProvider>
-          <TanstackProvider>{children}
+        <CSPostHogProvider>
+          <StateProvider>
+            <TanstackProvider>{children}
 
 
-            <Toaster position="top-right" />
-          </TanstackProvider>
-        </StateProvider>
+              <Toaster position="top-right" />
+            </TanstackProvider>
+          </StateProvider>
+        </CSPostHogProvider>
       </body>
     </html>
   );
