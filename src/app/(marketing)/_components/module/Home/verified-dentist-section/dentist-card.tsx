@@ -37,7 +37,7 @@ export default function DentistCard({
   onSelect,
 }: DentistCardProps) {
   const getStatusInfo = () => {
-    if (dentist.verified === "VERIFIED") {
+    if (dentist.verified === "VERIFIED" || dentist.status === "VERIFIED") {
       return {
         icon: "text-emerald-500",
         text: "VERIFIED",
@@ -66,8 +66,8 @@ export default function DentistCard({
   return (
     <div
       className={cn(
-        "group relative rounded-xl p-5 sm:p-6 flex flex-col transition-all duration-300 border border-[#CEE0F4] hover:shadow-md bg-white",
-        isSelected ? "border-[#10436B] bg-slate-50/20" : "",
+        "group relative rounded-xl p-4 sm:p-6 flex flex-col transition-all duration-300 border border-[#CEE0F4] hover:shadow-md bg-white",
+        isSelected ? "border-[#10436B] bg-slate-50/20 ring-1 ring-[#10436B]/20" : "",
         isCompareMode && "pl-10 sm:pl-12"
       )}
     >
@@ -89,109 +89,120 @@ export default function DentistCard({
       )}
 
       {/* Main Content */}
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 w-full justify-between">
-        {/* Left: Avatar + Status */}
-        <div className="relative flex flex-col items-center gap-3 shrink-0">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50">
-            <img
-              src={dentist.image || `/images/man-avatar.png`}
-              className="w-full h-full object-cover"
-              alt={dentist.name}
-            />
+      <div className="flex flex-col gap-4 w-full">
+
+        {/* Top Section: Avatar, Info, Price (Horizontal on all devices) */}
+        <div className="flex items-start gap-3 sm:gap-4">
+
+          {/* Left: Avatar + Status */}
+          <div className="relative flex flex-col items-center gap-2 shrink-0">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50">
+              <img
+                src={dentist.image || `/images/man-avatar.png`}
+                className="w-full h-full object-cover"
+                alt={dentist.name}
+              />
+            </div>
+            <div className={cn("flex items-center gap-1 px-1.5 py-0.5 rounded-full", statusInfo.bgColor)}>
+              {/* Fixed Logic Bug: properly checks if status is not UNCLAIMED */}
+              {statusInfo.text !== "UNCLAIMED" && (
+                <GoShieldCheck className={cn("size-3 sm:size-4", statusInfo.icon)} />
+              )}
+              <span className={cn("text-[9px] sm:text-[11px] font-bold uppercase tracking-wider whitespace-nowrap", statusInfo.textColor)}>
+                {statusInfo.text}
+              </span>
+            </div>
+            {dentist.rdvScore > 0 && (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-linear-to-r from-[#10436B]/10 to-[#10436B]/5 rounded-lg">
+                <Award size={12} className="text-[#10436B]" />
+                <span className="text-[10px] sm:text-xs font-bold text-[#10436B]">
+                  RVD: {dentist.rdvScore}
+                </span>
+              </div>
+            )}
           </div>
-          <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-full", statusInfo.bgColor)}>
-            {dentist.status === "VERIFIED" || dentist.status === "CLAIMED" && <GoShieldCheck className={cn("size-4", statusInfo.icon)} />}
-            <span className={cn("text-[11px] font-bold uppercase tracking-wider whitespace-nowrap", statusInfo.textColor)}>
-              {dentist.status}
-            </span>
+
+          {/* Center: Info (Always left-aligned for professional look) */}
+          <div className="flex-1 min-w-0 text-left">
+            <h4 className="font-bold text-[#1A1A2E] text-base sm:text-lg mb-0.5 truncate">
+              {dentist.name}
+            </h4>
+            <p className="text-[#10436B] text-xs sm:text-sm font-semibold mb-2 truncate">
+              {dentist.specialty}
+            </p>
+
+            {/* Rating */}
+            <div className="flex items-center gap-1 flex-wrap text-xs sm:text-sm mb-2">
+              <span className="text-[#10436B] font-bold">{dentist.rating?.toFixed(1) || "0.0"}</span>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={12}
+                    fill={i < Math.floor(dentist.rating || 0) ? "#E3A32A" : "none"}
+                    className={i < Math.floor(dentist.rating || 0) ? "text-[#E3A32A]" : "text-slate-200"}
+                  />
+                ))}
+              </div>
+              <span className="text-gray-400 font-medium ml-1">
+                ({dentist.reviewCount || 0})
+              </span>
+            </div>
+
+            {/* Location */}
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mb-1">
+              <MapPin size={12} className="text-gray-400 shrink-0" />
+              <span className="truncate">
+                {dentist.city && dentist.country
+                  ? `${dentist.city}, ${dentist.country}`
+                  : dentist.location || "Location not specified"}
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Price */}
+          <div className="text-right shrink-0">
+            <p className="text-[#6B7280] text-[10px] sm:text-xs font-medium">Starting from</p>
+            <p className="text-[#0E3E65] font-extrabold text-lg sm:text-xl lg:text-2xl mt-0.5">
+              ${dentist.price ? dentist.price.toLocaleString() : "0"}
+            </p>
+            <p className="text-[9px] sm:text-[10px] text-gray-400">Estimate</p>
           </div>
         </div>
 
-        {/* Center: Info */}
-        <div className="flex-1 min-w-0 mt-2 sm:mt-0 text-center sm:text-left">
-          {/* Name */}
-          <h4 className="font-bold text-[#1A1A2E] lg:text-lg mb-1 truncate">
-            {dentist.name}
-          </h4>
+        {/* Bottom Section: RVD, Experience, Procedures (Separated by a subtle divider) */}
+        <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {/* RVD Score Badge (Fixed invalid bg-linear-to-r class) */}
 
-          {/* Specialty */}
-          <p className="text-[#10436B] text-sm sm:text-base font-semibold mb-3">
-            {dentist.specialty}
-          </p>
 
-          {/* Rating */}
-          <div className="flex items-center justify-center sm:justify-start gap-1 flex-wrap text-sm mb-3">
-            <span className="text-[#10436B] font-bold">{dentist.rating?.toFixed(1) || "0.0"}</span>
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={14}
-                  fill={i < Math.floor(dentist.rating || 0) ? "#E3A32A" : "none"}
-                  className={i < Math.floor(dentist.rating || 0) ? "text-[#E3A32A]" : "text-slate-200"}
-                />
-              ))}
-            </div>
-            <span className="text-gray-400 font-medium ml-1">
-              ({dentist.reviewCount || 0} Ratings)
-            </span>
+            {/* Experience */}
+            {dentist.experience > 0 && (
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600">
+                <Award size={12} className="text-gray-400 shrink-0" />
+                <span>{dentist.experience} yrs exp</span>
+              </div>
+            )}
           </div>
-
-          {/* RVD Score Badge */}
-          {dentist.rdvScore > 0 && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-[#10436B]/10 to-[#10436B]/5 rounded-lg mb-3">
-              <Award size={14} className="text-[#10436B]" />
-              <span className="text-xs font-bold text-[#10436B]">
-                RVD Score: {dentist.rdvScore}
-              </span>
-            </div>
-          )}
-
-          {/* Location */}
-          <div className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-gray-600 mb-2">
-            <MapPin size={14} className="text-gray-400 shrink-0" />
-            <span className="truncate">
-              {dentist.city && dentist.country
-                ? `${dentist.city}, ${dentist.country}`
-                : dentist.location || "Location not specified"}
-            </span>
-          </div>
-
-          {/* Experience */}
-          {dentist.experience > 0 && (
-            <div className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-gray-600 mb-2">
-              <Award size={14} className="text-gray-400 shrink-0" />
-              <span>{dentist.experience} years experience</span>
-            </div>
-          )}
 
           {/* Procedures */}
           {dentist.procedures && dentist.procedures.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">
+            <div className="flex flex-wrap gap-1.5">
               {dentist.procedures.slice(0, 3).map((proc: string, idx: number) => (
                 <span
                   key={idx}
-                  className="px-2.5 py-1 bg-[#F4F9FD] text-[#10436B] text-xs font-semibold rounded-md"
+                  className="px-2 py-0.5 bg-[#F4F9FD] text-[#10436B] text-[10px] sm:text-xs font-semibold rounded-md"
                 >
                   {proc}
                 </span>
               ))}
               {dentist.procedures.length > 3 && (
-                <span className="px-2.5 py-1 bg-gray-100 text-gray-500 text-xs font-semibold rounded-md">
-                  +{dentist.procedures.length - 3} more
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] sm:text-xs font-semibold rounded-md">
+                  +{dentist.procedures.length - 3}
                 </span>
               )}
             </div>
           )}
-        </div>
-
-        {/* Right: Price */}
-        <div className="text-center sm:text-right shrink-0 mt-3 sm:mt-0">
-          <p className="text-[#6B7280] text-xs sm:text-sm font-medium">Starting from</p>
-          <p className="text-[#0E3E65] font-extrabold text-lg lg:text-2xl mt-1">
-            ${dentist.price ? dentist.price.toLocaleString() : "0"}
-          </p>
-          <p className="text-[10px] text-gray-400">Estimate</p>
         </div>
       </div>
     </div>

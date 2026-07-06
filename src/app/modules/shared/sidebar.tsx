@@ -45,7 +45,7 @@ const patientNav: NavGroup[] = [
       {
         icon: Search,
         label: "Find Verified Dentist",
-        href: "/patient/find-dentist",
+        href: "/patient/find-dentists",
       },
       { icon: CalendarDays, label: "My Bookings", href: "/patient/bookings" },
       { icon: FolderOpen, label: "Document Vault", href: "/patient/documents" },
@@ -99,7 +99,7 @@ export function Sidebar() {
   const { close } = useSidebar();
 
   const isVerificationPath = pathname === "/dentist/verification";
-  
+
   if (isVerificationPath) {
     return null;
   }

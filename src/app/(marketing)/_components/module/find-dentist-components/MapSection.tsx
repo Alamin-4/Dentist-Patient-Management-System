@@ -1,4 +1,4 @@
-// modules/find-dentist/components/MapSection.tsx
+// modules/find-dentists/components/MapSection.tsx
 
 "use client";
 

@@ -19,7 +19,7 @@ export default function ClaimSuccessPage() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     const sessionId = searchParams.get("session_id");
     const confirmPaymentAndRefresh = async () => {
       if (!sessionId) {
@@ -90,7 +90,7 @@ export default function ClaimSuccessPage() {
               </Button>
               <Button
                 variant="link"
-                onClick={() => router.push("/find-dentist")}
+                onClick={() => router.push("/find-dentists")}
                 className="text-slate-500 hover:text-[#0E3E65] text-xs font-medium"
               >
                 Back to Dentist Directory
@@ -158,7 +158,7 @@ export default function ClaimSuccessPage() {
             </Button>
             <Button
               variant="link"
-              onClick={() => router.push("/find-dentist")}
+              onClick={() => router.push("/find-dentists")}
               className="text-slate-500 hover:text-[#0E3E65] text-xs font-medium"
             >
               Back to Dentist Directory

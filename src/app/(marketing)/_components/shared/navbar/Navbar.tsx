@@ -15,7 +15,7 @@ import MobileMenu from "./Navbar/MobileMenu";
 
 const navConfig = [
   { label: "Home", href: "/" },
-  { label: "Find a Dentist", href: "/find-dentist" },
+  { label: "Find a Dentist", href: "/find-dentists" },
   { label: "About us", href: "/about-us" },
 ];
 

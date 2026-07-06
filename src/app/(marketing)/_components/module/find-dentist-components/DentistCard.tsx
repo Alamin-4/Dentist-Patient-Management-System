@@ -20,6 +20,7 @@ type DentistCardProps = {
   isSelectedForCompare?: boolean;
   onCompareToggle?: () => void;
   onPrimaryAction?: () => void;
+  onViewOnMap?: (dentist: Dentist) => void;
 };
 
 // ── Verification phase dots: 3 phases (License → Operations → Clinic) ────────
@@ -54,6 +55,7 @@ export default function DentistCard({
   isSelectedForCompare = false,
   onCompareToggle,
   onPrimaryAction,
+  onViewOnMap,
 }: DentistCardProps) {
   const router = useRouter();
   const { user } = useMe();
@@ -221,6 +223,18 @@ export default function DentistCard({
                 <span className="block truncate text-[14px] text-[#6B7280]">
                   {locationText || "Location not specified"}
                 </span>
+                {dentist.coords && onViewOnMap && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewOnMap(dentist);
+                    }}
+                    className="text-[12px] font-semibold text-[#0E3E65] underline decoration-dotted hover:text-[#002850] shrink-0 ml-1 cursor-pointer"
+                  >
+                    (View on Map)
+                  </button>
+                )}
               </div>
             </div>
 
@@ -251,7 +265,7 @@ export default function DentistCard({
             <Button
               variant="outline"
               className="h-10 rounded-lg border-[#003366] px-5 text-xs font-bold text-[#003366] hover:bg-slate-50 transition-all"
-              onClick={() => router.push(`/find-dentist/${dentist.slug}`)}
+              onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
             >
               View Profile
             </Button>
@@ -271,7 +285,7 @@ export default function DentistCard({
                     variant="secondary"
                     className="h-10 rounded-lg border border-amber-300 bg-amber-50 px-5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all"
                     onClick={() =>
-                      router.push(`/find-dentist/${dentist.slug}?claim=true`)
+                      router.push(`/find-dentists/${dentist.slug}?claim=true`)
                     }
                   >
                     Claim Profile

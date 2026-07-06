@@ -101,7 +101,6 @@ export default function TopBar({
                 variant="outline"
                 onClick={() => {
                   onViewModeChange("list");
-                  if (showMapFilters) onToggleMapFilters();
                 }}
                 className="flex h-14 items-center rounded-lg border border-slate-200 bg-[#0E3E65]/3 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10"
               >

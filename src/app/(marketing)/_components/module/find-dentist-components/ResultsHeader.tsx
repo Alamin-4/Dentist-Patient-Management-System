@@ -1,4 +1,4 @@
-// modules/find-dentist/components/ResultsHeader.tsx
+// modules/find-dentists/components/ResultsHeader.tsx
 
 "use client";
 
@@ -34,7 +34,7 @@ export default function ResultsHeader({
         }`;
 
     return (
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex gap-3 flex-row sm:items-center justify-between">
             <h2 className="text-xs font-medium leading-5 text-slate-500">
                 {isLoading ? (
                     <span className="inline-block h-4 w-48 animate-pulse rounded bg-slate-200" />

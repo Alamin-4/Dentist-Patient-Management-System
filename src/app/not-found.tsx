@@ -2,14 +2,10 @@
 
 import Link from "next/link";
 import { ArrowLeft, Search } from "lucide-react";
-import Navbar from "@/app/(marketing)/_components/shared/navbar/Navbar";
-import Footer from "@/app/(marketing)/_components/shared/footer/footer";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
-
       <main className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16 sm:py-24">
         {/* Background blobs */}
         <div className="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-pink-100/70 blur-3xl" />
@@ -93,7 +89,7 @@ export default function NotFound() {
           </button>
 
           <Link
-            href="/find-dentist"
+            href="/find-dentists"
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#10436B] px-7 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#0d3558] active:scale-[0.97] sm:w-auto"
           >
             <Search className="size-4" />
@@ -107,8 +103,6 @@ export default function NotFound() {
           RatedDocs — Find Verified Dental Professionals
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

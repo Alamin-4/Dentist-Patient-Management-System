@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation"; // ✅ Import router
+import { useRouter } from "next/navigation";
 import { Search, Stethoscope, DollarSign, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
@@ -41,15 +41,13 @@ export default function SearchBar() {
       params.append("price[max]", maxPrice.toString());
     }
 
-    // ✅ Redirect to /find-dentist with params
-    router.push(`/find-dentist?${params.toString()}`);
+    router.push(`/find-dentists?${params.toString()}`);
   };
 
   return (
-    <div className="relative flex w-full flex-col items-center gap-2 rounded-md border border-blue-50 bg-[#F4F9FD] p-2 shadow-sm md:flex-row md:gap-0">
+    <div className="relative flex w-full flex-row *:flex-1 lg:flex-col gap-2 rounded-md border border-blue-50 bg-[#F4F9FD] p-2 shadow-sm flex-wrap xl:flex-row md:gap-0">
 
-      {/* Procedure Dropdown */}
-      <div className="relative w-full md:w-1/2" ref={dropdownRef}>
+      <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex w-full items-center gap-3 px-5 py-3 transition-all hover:bg-white/50 md:rounded-l-full md:border-r md:border-gray-200"
@@ -93,8 +91,7 @@ export default function SearchBar() {
         )}
       </div>
 
-      {/* Budget Range */}
-      <div className="flex w-full items-center gap-3 px-5 py-3 md:w-1/3">
+      <div className="flex items-center gap-3 px-5 py-3">
         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E3A32A]/15 text-[#E3A32A]">
           <DollarSign size={14} strokeWidth={3} />
         </div>
@@ -117,10 +114,9 @@ export default function SearchBar() {
         </div>
       </div>
 
-      {/* Search Button */}
       <button
         onClick={handleSearch}
-        className="group flex w-full items-center justify-center gap-2 rounded-md bg-[#10436B] py-3.5 text-sm font-bold text-white transition-all active:scale-95 md:w-auto md:px-8 hover:bg-[#0D3658] hover:shadow-lg"
+        className="group flex w-full items-center justify-center gap-2 rounded-md bg-[#10436B] py-3.5 px-6 text-sm font-bold text-white transition-all active:scale-95 md:w-auto md:px-8 hover:bg-[#0D3658] hover:shadow-lg"
       >
         <Search size={18} className="transition-transform group-hover:scale-110" />
         <span className="truncate">Find a Dentist</span>

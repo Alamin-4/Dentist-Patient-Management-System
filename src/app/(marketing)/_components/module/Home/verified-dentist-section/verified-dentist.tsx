@@ -201,7 +201,7 @@ export default function VerifiedDentists() {
           </div>
 
           <div className="mt-12 text-center">
-            <Link href={"/find-dentist"} className="text-[#10436B] font-bold text-sm hover:underline decoration-2 underline-offset-4">
+            <Link href={"/find-dentists"} className="text-[#10436B] font-bold text-sm hover:underline decoration-2 underline-offset-4">
               View all specialties
             </Link>
           </div>

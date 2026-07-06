@@ -99,7 +99,7 @@ function EmptySlate({ tab }: { tab: Tab }) {
       <p className="text-[17px] font-bold text-[#1A1A2E] mb-2">{title}</p>
       <p className="text-[14px] text-[#6B7280] max-w-xs leading-relaxed mb-6">{body}</p>
       <Link
-        href="/find-dentist"
+        href="/find-dentists"
         className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95 cursor-pointer"
       >
         Find a dentist

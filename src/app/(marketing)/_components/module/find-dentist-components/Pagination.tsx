@@ -1,4 +1,4 @@
-// modules/find-dentist/components/Pagination.tsx
+// modules/find-dentists/components/Pagination.tsx
 
 "use client";
 

@@ -336,14 +336,14 @@ export default function AboutUs() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/dentists"
+                href="/find-dentists"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 text-[14px] font-bold text-[#113254] transition-all hover:bg-slate-100 active:scale-95 shadow-md"
               >
                 Find a Verified Dentist
               </Link>
 
               <Link
-                href="/auth/register?role=dentist"
+                href="/register-doctor?role=dentist"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-[14px] font-bold text-white transition-all hover:bg-white/10 active:scale-95"
               >
                 Are you a Dentist? Join RatedDocs

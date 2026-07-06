@@ -1,6 +1,5 @@
-// modules/find-dentist/hooks/use-dentist-filters.ts
-
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { DEFAULT_FILTERS, DEFAULT_PRICE_RANGE, DEBOUNCE_DELAYS } from "./constants";
 import { cityOptions, countryOptions, procedureOptions } from "../DentistAllComponents/types"; // ✅ Import করুন
 
@@ -18,19 +17,85 @@ export interface FilterState {
 }
 
 export const useDentistFilters = () => {
-    const [query, setQuery] = useState("");
-    const [debouncedQuery, setDebouncedQuery] = useState("");
-    const [city, setCity] = useState<string>(DEFAULT_FILTERS.city);
-    const [country, setCountry] = useState<string>(DEFAULT_FILTERS.country);
-    const [procedure, setProcedure] = useState<string>(DEFAULT_FILTERS.procedure);
-    const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
-    const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
-    const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // Read initial values from URL search params
+    const initialQuery = searchParams.get("search") || "";
+    const initialCity = searchParams.get("city") || DEFAULT_FILTERS.city;
+    const initialCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
+    const initialProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
+    
+    const initialMinPrice = searchParams.get("price[min]") 
+        ? Number(searchParams.get("price[min]")) 
+        : DEFAULT_PRICE_RANGE[0];
+    const initialMaxPrice = searchParams.get("price[max]") 
+        ? Number(searchParams.get("price[max]")) 
+        : DEFAULT_PRICE_RANGE[1];
+        
+    const initialVerified = searchParams.get("verified") === "true";
+    const initialPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+
+    const [query, setQuery] = useState(initialQuery);
+    const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+    const [city, setCity] = useState<string>(initialCity);
+    const [country, setCountry] = useState<string>(initialCountry);
+    const [procedure, setProcedure] = useState<string>(initialProcedure);
+    const [priceRange, setPriceRange] = useState<[number, number]>([initialMinPrice, initialMaxPrice]);
+    const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>([initialMinPrice, initialMaxPrice]);
+    const [showVerifiedOnly, setShowVerifiedOnly] = useState(initialVerified);
     const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
     const [selectedScoreRanges, setSelectedScoreRanges] = useState<string[]>([]);
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
     const [selectedAvailabilityDate, setSelectedAvailabilityDate] = useState<string | null>(null);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(initialPage);
+
+    // Sync from URL search params back to state (for external changes, e.g. navbar search)
+    useEffect(() => {
+        const urlSearch = searchParams.get("search") || "";
+        const urlCity = searchParams.get("city") || DEFAULT_FILTERS.city;
+        const urlCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
+        const urlProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
+        const urlMinPrice = searchParams.get("price[min]") ? Number(searchParams.get("price[min]")) : DEFAULT_PRICE_RANGE[0];
+        const urlMaxPrice = searchParams.get("price[max]") ? Number(searchParams.get("price[max]")) : DEFAULT_PRICE_RANGE[1];
+        const urlVerified = searchParams.get("verified") === "true";
+        const urlPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+
+        if (urlSearch !== query) {
+            setQuery(urlSearch);
+            setDebouncedQuery(urlSearch);
+        }
+        if (urlCity !== city) setCity(urlCity);
+        if (urlCountry !== country) setCountry(urlCountry);
+        if (urlProcedure !== procedure) setProcedure(urlProcedure);
+        if (urlMinPrice !== priceRange[0] || urlMaxPrice !== priceRange[1]) {
+            setPriceRange([urlMinPrice, urlMaxPrice]);
+            setDebouncedPrice([urlMinPrice, urlMaxPrice]);
+        }
+        if (urlVerified !== showVerifiedOnly) setShowVerifiedOnly(urlVerified);
+        if (urlPage !== page) setPage(urlPage);
+    }, [searchParams]);
+
+    // Sync state changes to URL search params
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (debouncedQuery) params.set("search", debouncedQuery);
+        if (city !== DEFAULT_FILTERS.city) params.set("city", city);
+        if (country !== DEFAULT_FILTERS.country) params.set("country", country);
+        if (procedure !== DEFAULT_FILTERS.procedure) params.set("procedure", procedure);
+        if (priceRange[0] > 0 || priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
+            params.set("price[min]", priceRange[0].toString());
+            params.set("price[max]", priceRange[1].toString());
+        }
+        if (showVerifiedOnly) params.set("verified", "true");
+        if (page > 1) params.set("page", page.toString());
+
+        const queryStr = params.toString();
+        const nextUrl = queryStr ? `${pathname}?${queryStr}` : pathname;
+        
+        router.replace(nextUrl, { scroll: false });
+    }, [debouncedQuery, city, country, procedure, priceRange, showVerifiedOnly, page, router, pathname]);
 
     // Debounce search query
     useEffect(() => {
@@ -111,6 +176,8 @@ export const useDentistFilters = () => {
         setSelectedAvailabilityDate(null);
         setShowVerifiedOnly(false);
         setPage(1);
+        
+        router.replace(pathname, { scroll: false });
     };
 
     // ✅ Shared props for filter components - এখানে available options যোগ করুন

@@ -1,4 +1,4 @@
-// modules/find-dentist/components/EmptyState.tsx
+// modules/find-dentists/components/EmptyState.tsx
 
 "use client";
 

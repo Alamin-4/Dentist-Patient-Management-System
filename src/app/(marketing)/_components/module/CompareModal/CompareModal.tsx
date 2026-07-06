@@ -265,8 +265,8 @@ export default function CompareModal() {
                 label="PATIENT RATING"
                 colCount={colCount}
                 values={dentists.map((d) => {
-                  const ratingVal = d.rating.combined ?? d.rating.google ?? d.rating.doctoralia ?? 0;
-                  const reviewCount = d.rating.googleReviewCount ?? d.rating.doctoraliaReviewCount ?? 0;
+                  const ratingVal = d?.rating?.combined ?? d?.rating?.google ?? d?.rating?.doctoralia ?? 0;
+                  const reviewCount = d?.rating?.googleReviewCount ?? d?.rating?.doctoraliaReviewCount ?? 0;
                   if (ratingVal === 0 && reviewCount === 0) {
                     return <span key={d.id} className="text-muted-foreground text-sm">No ratings yet</span>;
                   }

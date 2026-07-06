@@ -148,7 +148,7 @@ function readLegacyDraft(): Partial<BookingDraft> | null {
   if (!canUseStorage()) return null;
 
   try {
-    const legacy = localStorage.getItem(LEGACY_BOOKING_STORAGE_KEY);
+    const legacy = sessionStorage.getItem(LEGACY_BOOKING_STORAGE_KEY);
     if (!legacy) return null;
 
     const data = JSON.parse(legacy) as Partial<BookingFormData>;
@@ -175,7 +175,7 @@ export function getBookingDraft(): BookingDraft {
   if (!canUseStorage()) return INITIAL_BOOKING_DRAFT;
 
   try {
-    const stored = localStorage.getItem(BOOKING_DRAFT_KEY);
+    const stored = sessionStorage.getItem(BOOKING_DRAFT_KEY);
     if (stored) return normalizeDraft(JSON.parse(stored));
 
     const legacy = readLegacyDraft();
@@ -201,7 +201,7 @@ export function saveBookingDraft(updates: Partial<BookingDraft>): BookingDraft {
   });
 
   if (canUseStorage()) {
-    localStorage.setItem(BOOKING_DRAFT_KEY, JSON.stringify(updated));
+    sessionStorage.setItem(BOOKING_DRAFT_KEY, JSON.stringify(updated));
   }
 
   return updated;
@@ -210,7 +210,7 @@ export function saveBookingDraft(updates: Partial<BookingDraft>): BookingDraft {
 export function initializeBookingData() {
   if (!canUseStorage()) return;
 
-  const existing = localStorage.getItem(BOOKING_DRAFT_KEY);
+  const existing = sessionStorage.getItem(BOOKING_DRAFT_KEY);
   if (!existing) {
     const legacy = readLegacyDraft();
     saveBookingDraft(legacy ?? INITIAL_BOOKING_DRAFT);
@@ -309,9 +309,9 @@ export function clearBookingData() {
   xrayFile = null;
 
   if (canUseStorage()) {
-    localStorage.removeItem(BOOKING_DRAFT_KEY);
-    localStorage.removeItem(LEGACY_BOOKING_STORAGE_KEY);
-    localStorage.removeItem(LEGACY_SELECTED_DENTIST_KEY);
+    sessionStorage.removeItem(BOOKING_DRAFT_KEY);
+    sessionStorage.removeItem(LEGACY_BOOKING_STORAGE_KEY);
+    sessionStorage.removeItem(LEGACY_SELECTED_DENTIST_KEY);
   }
 }
 
@@ -340,10 +340,10 @@ export function submitBooking(dentistId: string): SubmittedBooking {
   };
 
   if (canUseStorage()) {
-    const existing = localStorage.getItem(LEGACY_BOOKINGS_KEY);
+    const existing = sessionStorage.getItem(LEGACY_BOOKINGS_KEY);
     const bookings: SubmittedBooking[] = existing ? JSON.parse(existing) : [];
     bookings.push(booking);
-    localStorage.setItem(LEGACY_BOOKINGS_KEY, JSON.stringify(bookings));
+    sessionStorage.setItem(LEGACY_BOOKINGS_KEY, JSON.stringify(bookings));
   }
 
   clearBookingData();
@@ -354,7 +354,7 @@ export function getSubmittedBookings(): SubmittedBooking[] {
   if (!canUseStorage()) return [];
 
   try {
-    const data = localStorage.getItem(LEGACY_BOOKINGS_KEY);
+    const data = sessionStorage.getItem(LEGACY_BOOKINGS_KEY);
     return data ? JSON.parse(data) : [];
   } catch {
     return [];

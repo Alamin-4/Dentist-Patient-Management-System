@@ -1,8 +1,8 @@
-// modules/find-dentist/components/FindDentist.tsx
+// modules/find-dentists/components/FindDentist.tsx
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -52,6 +52,21 @@ export default function FindDentistComponents() {
     const [activeDentistId, setActiveDentistId] = useState<string | null>(null);
     const [showMapFilters, setShowMapFilters] = useState(false);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1280); // xl breakpoint is 1280px
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const handleViewOnMap = (dentist: Dentist) => {
+        setActiveDentistId(dentist.id);
+        setViewMode("map");
+    };
 
     // ── Add a Dentist state & mutation ──────────────────────────────────────
     const router = useRouter();
@@ -92,7 +107,7 @@ export default function FindDentistComponents() {
                             phone: "",
                         });
                         // Redirect to the newly created profile with claim dialog active
-                        router.push(`/find-dentist/${slug}?claim=true`);
+                        router.push(`/find-dentists/${slug}?claim=true`);
                     } else {
                         toast.error("Failed to process dentist profile. Please try again.", { id: toastId });
                     }
@@ -285,6 +300,7 @@ export default function FindDentistComponents() {
                                     onCardClick={setActiveDentistId}
                                     onClearFilters={handleClearAllFilters}
                                     onAddDentistClick={() => setIsAddDentistOpen(true)}
+                                    onViewOnMap={handleViewOnMap}
                                 />
 
                                 {/* Pagination */}
@@ -297,8 +313,8 @@ export default function FindDentistComponents() {
                                 )}
                             </div>
 
-                            {/* Map View */}
-                            {viewMode === "map" && (
+                            {/* Map View (Desktop Only) */}
+                            {!isMobile && viewMode === "map" && (
                                 <MapSection
                                     dentists={filteredDentists}
                                     activeDentistId={activeDentistId}
@@ -414,6 +430,38 @@ export default function FindDentistComponents() {
                     </form>
                 </DialogContent>
             </Dialog>
+
+            {/* Mobile Map Dialog Popup */}
+            {isMobile && (
+                <Dialog
+                    open={viewMode === "map"}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setViewMode("list");
+                            setActiveDentistId(null);
+                        }
+                    }}
+                >
+                    <DialogContent className="max-w-[95vw] w-full h-[85vh] p-0 overflow-hidden bg-white border border-slate-200 shadow-2xl rounded-xl flex flex-col">
+                        <DialogHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between space-y-0 shrink-0">
+                            <div>
+                                <DialogTitle className="text-[#0E3E65] font-bold text-lg">Dentist Locations Map</DialogTitle>
+                                <DialogDescription className="text-slate-500 text-xs mt-0.5">
+                                    Showing {filteredDentists.filter(d => d.coords).length} of {filteredDentists.length} dentists
+                                </DialogDescription>
+                            </div>
+                        </DialogHeader>
+                        <div className="flex-1 w-full h-full min-h-0 relative">
+                            <MapSection
+                                dentists={filteredDentists}
+                                activeDentistId={activeDentistId}
+                                onMarkerClick={(dentist) => setActiveDentistId(dentist.id)}
+                                onCloseCard={() => setActiveDentistId(null)}
+                            />
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
         </div>
     );
 }

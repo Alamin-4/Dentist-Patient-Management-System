@@ -1,4 +1,4 @@
-// modules/find-dentist/constants.ts
+// modules/find-dentists/constants.ts
 
 export const PAGE_SIZE = 20;
 

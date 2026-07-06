@@ -1,4 +1,4 @@
-// modules/find-dentist/components/DentistList.tsx
+// modules/find-dentists/components/DentistList.tsx
 
 "use client";
 
@@ -16,6 +16,7 @@ interface DentistListProps {
     onCardClick: (dentistId: string) => void;
     onClearFilters: () => void;
     onAddDentistClick: () => void;
+    onViewOnMap?: (dentist: Dentist) => void;
 }
 
 export default function DentistList({
@@ -27,6 +28,7 @@ export default function DentistList({
     onCardClick,
     onClearFilters,
     onAddDentistClick,
+    onViewOnMap,
 }: DentistListProps) {
     if (isLoading) {
         return (
@@ -52,6 +54,7 @@ export default function DentistList({
                     isSelectedForCompare={compareList.some((item) => item.id === dentist.id)}
                     onCompareToggle={() => onCompareToggle(dentist)}
                     onPrimaryAction={() => onCardClick(dentist.id)}
+                    onViewOnMap={onViewOnMap}
                 />
             ))}
         </div>

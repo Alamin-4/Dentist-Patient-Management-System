@@ -1,4 +1,4 @@
-// modules/find-dentist/hooks/use-dentist-compare.ts
+// modules/find-dentists/hooks/use-dentist-compare.ts
 
 import { useState, useCallback } from "react";
 import { Dentist } from "../DentistAllComponents/types";
