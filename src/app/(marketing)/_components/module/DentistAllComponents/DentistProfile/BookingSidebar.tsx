@@ -727,7 +727,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                       await queryClient.invalidateQueries({ queryKey: ["auth"] });
                       router.push("/dentist");
                     }}
-                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold px-8"
+                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold px-8 cursor-pointer"
                   >
                     Go to Dashboard →
                   </Button>

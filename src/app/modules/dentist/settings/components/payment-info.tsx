@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, Link } from "lucide-react";
+import { CreditCard, Pencil } from "lucide-react";
 
 interface CardInfo {
   brand: string;
@@ -16,12 +16,26 @@ interface PaymentInfoProps {
 
 export default function PaymentInfo({ connected = true, card = null }: PaymentInfoProps) {
   const [isConnected, setIsConnected] = useState(connected);
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
-      <div className="flex items-start justify-between">
-        <h2 className="text-lg font-semibold text-[#0E3E65]">Payment Information</h2>
-        <div className="text-sm text-[#475569]">Stripe Connect</div>
+      <div className="flex items-center justify-between border-b border-[#EEF2F7] pb-4 mb-4">
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[#0E3E65]">Payment Information</h2>
+          <span className="text-xs text-[#475569] bg-slate-100 px-2 py-0.5 rounded-full font-medium">Stripe Connect</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsEditing(!isEditing)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
+            ? "text-red-500 hover:bg-red-50 border-red-200"
+            : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
+            }`}
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          {isEditing ? "Cancel" : "Edit"}
+        </button>
       </div>
 
       <div className="mt-4 space-y-4">
@@ -29,8 +43,9 @@ export default function PaymentInfo({ connected = true, card = null }: PaymentIn
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <p className="text-sm text-[#6B7280]">No payment method connected.</p>
             <button
-              onClick={() => setIsConnected(true)}
-              className="ml-auto rounded-md bg-[#0F3659] px-4 py-2 text-sm font-semibold text-white"
+              onClick={() => isConnected && setIsConnected(true)}
+              disabled={!isEditing}
+              className="ml-auto rounded-md bg-[#0F3659] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               Connect Stripe
             </button>
@@ -48,8 +63,18 @@ export default function PaymentInfo({ connected = true, card = null }: PaymentIn
             </div>
 
             <div className="ml-auto flex items-center gap-3">
-              <button className="rounded-md border border-slate-200 px-3 py-2 text-sm">Replace</button>
-              <button className="rounded-md bg-[#0F3659] px-3 py-2 text-sm font-semibold text-white">Manage</button>
+              <button
+                disabled={!isEditing}
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                Replace
+              </button>
+              <button
+                disabled={!isEditing}
+                className="rounded-md bg-[#0F3659] px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:bg-[#0a2640] transition-colors"
+              >
+                Manage
+              </button>
             </div>
           </div>
         )}

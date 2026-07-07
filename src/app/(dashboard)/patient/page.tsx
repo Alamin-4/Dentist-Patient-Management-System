@@ -11,6 +11,8 @@ import DoctorCard from "@/app/(dashboard)/patient/_components/Module/MyBooking/C
 import { usePatientConsultations } from "@/hooks/consultation/useConsultation";
 import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
 import { ConsultationItem, TreatmentPlanItem } from "@/types";
+import { ConsultationCardSkeleton } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCardSkeleton";
+import { DoctorCardSkeleton } from "@/app/(dashboard)/patient/_components/Module/Overview/DoctorCardSkeleton";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -171,16 +173,19 @@ export default function Overview() {
           icon={<DollarSign className="w-5 h-5" />}
           value={`$${escrowTotal.toLocaleString()}`}
           label="Amount in escrow"
+          isLoading={isLoading}
         />
         <StatCard
           icon={<CalendarCheck className="w-5 h-5" />}
           value={String(bookingsCompletedCount).padStart(2, "0")}
           label="Booking Completed"
+          isLoading={isLoading}
         />
         <StatCard
           icon={<FileText className="w-5 h-5" />}
           value={String(documentsCount).padStart(2, "0")}
           label="Documents stored"
+          isLoading={isLoading}
         />
       </div>
 
@@ -207,8 +212,18 @@ export default function Overview() {
 
         {/* Content */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#113254]"></div>
+          <div className="space-y-5">
+            {activeTab === "estimate-updates" ? (
+              <>
+                <DoctorCardSkeleton />
+                <DoctorCardSkeleton />
+              </>
+            ) : (
+              <>
+                <ConsultationCardSkeleton />
+                <ConsultationCardSkeleton />
+              </>
+            )}
           </div>
         ) : activeTab === "estimate-updates" ? (
           proposedTreatmentPlans.length ? (

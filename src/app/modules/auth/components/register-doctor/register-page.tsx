@@ -6,13 +6,18 @@ import Image from "next/image";
 import { CreateAccountForm } from "./create-account";
 import { useState } from "react";
 import { VerifyOtpForm } from "./verify-otp-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProfessionalDetailsForm } from "./professional-details-form";
 import { ProfileSuccessState } from "./ProfileSuccessRate";
 
 export default function RegisterPageComponent() {
-  const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">("create-account");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dentistParam = searchParams.get("dentist");
+
+  const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">(
+    dentistParam === "professional-info" ? "professional-info" : "create-account"
+  );
   const registerEmail =
     typeof window !== "undefined"
       ? localStorage.getItem("registerEmail")

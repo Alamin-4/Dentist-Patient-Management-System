@@ -72,7 +72,7 @@ export default function ProfileSettingsPage() {
       </h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Navigation */}
+
         <div className="w-full lg:w-[320px] bg-white rounded-lg border border-slate-100 p-8 flex flex-col items-center">
           <div className="relative group mb-4">
             <div className="size-24 rounded-full overflow-hidden border-2 border-slate-50 relative bg-slate-100">
@@ -115,8 +115,8 @@ export default function ProfileSettingsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-4 px-6 py-4 rounded-lg font-bold transition-all text-left cursor-pointer ${activeTab === tab.id
-                    ? "bg-[#F1F5F9] text-[#0F3659] border border-slate-100"
-                    : "text-slate-400 hover:text-slate-600"
+                  ? "bg-[#F1F5F9] text-[#0F3659] border border-slate-100"
+                  : "text-slate-400 hover:text-slate-600"
                   }`}
               >
                 <tab.icon

@@ -87,7 +87,6 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
     );
   }
 
-
   const onSubmit = async (data: OtpFormData) => {
     if (typeof window === "undefined") return;
 
