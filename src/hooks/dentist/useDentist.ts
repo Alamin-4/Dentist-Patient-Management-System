@@ -83,6 +83,25 @@ export function useDentistProgress() {
   });
 }
 
+export function useDentistPatients() {
+  return useQuery({
+    queryKey: ["dentistPatients"],
+    queryFn: () => apiClient.dentists.getPatients(),
+    retry: false,
+    staleTime: 1000 * 60 * 2,
+  });
+}
+
+export function useDentistPatientDetail(id: string) {
+  return useQuery({
+    queryKey: ["dentistPatientDetail", id],
+    queryFn: () => apiClient.dentists.getPatientDetail(id),
+    enabled: !!id,
+    retry: false,
+    staleTime: 1000 * 60 * 2,
+  });
+}
+
 export function useDentistOverview() {
   return useQuery({
     queryKey: ["dentistOverviewData"],

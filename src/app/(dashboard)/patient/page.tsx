@@ -227,7 +227,7 @@ export default function Overview() {
           </div>
         ) : activeTab === "estimate-updates" ? (
           proposedTreatmentPlans.length ? (
-            <div className="space-y-5">
+            <div className="space-y-5 animate-fade-in">
               {proposedTreatmentPlans.map((plan) => (
                 <DoctorCard key={plan.id} data={plan} />
               ))}
@@ -236,7 +236,7 @@ export default function Overview() {
             <EmptySlate tab={activeTab} />
           )
         ) : consultationsToShow.length ? (
-          <div className="space-y-5">
+          <div className="space-y-5 animate-fade-in">
             {consultationsToShow.map((consultation) => (
               <ConsultationCard
                 key={consultation.id}
