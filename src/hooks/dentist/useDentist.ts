@@ -134,10 +134,15 @@ export default function useDentist() {
     queryClient.invalidateQueries({ queryKey: ["stepTwoCheck"] });
     queryClient.invalidateQueries({ queryKey: ["stepThreeCheck"] });
     queryClient.invalidateQueries({ queryKey: ["dentist_procedures"] });
+    queryClient.invalidateQueries({ queryKey: ["dentist_profile"] });
   };
 
   const professionalDetailsMutation = useMutation({
     mutationFn: (data: ProfessionalDetailsI) => apiClient.dentists.professionalDetails(data),
+    onSuccess: () => {
+      queryClient.resetQueries({ queryKey: ["dentist_profile"] });
+      invalidateVerification();
+    },
   });
 
   const stepOneMutation = useMutation({
