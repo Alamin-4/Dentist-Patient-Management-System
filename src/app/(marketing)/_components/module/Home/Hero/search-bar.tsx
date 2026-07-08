@@ -5,16 +5,17 @@ import { useRouter } from "next/navigation";
 import { Search, Stethoscope, DollarSign, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
+import { proceduresLists } from "@/lib/location-data";
 
 export default function SearchBar() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProcedure, setSelectedProcedure] = useState("");
-  const [budget, setBudget] = useState({ min: "0", max: "1800" });
+  const [budget, setBudget] = useState({ min: "", max: "" });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { data: procedures = [], isLoading: proceduresLoading } = useGlobalProcedures(search);
+  const { data: procedures = proceduresLists, isLoading: proceduresLoading } = useGlobalProcedures(search);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -33,11 +34,13 @@ export default function SearchBar() {
       params.append("procedure", selectedProcedure);
     }
 
-    const minPrice = Number(budget.min);
-    const maxPrice = Number(budget.max);
+    const minPrice = Math.max(50, budget.min ? Number(budget.min) : 50);
+    const maxPrice = budget.max ? Number(budget.max) : undefined;
 
-    if (!isNaN(minPrice) && !isNaN(maxPrice) && (minPrice > 0 || maxPrice < 1800)) {
+    if (!isNaN(minPrice) && minPrice > 0) {
       params.append("price[min]", minPrice.toString());
+    }
+    if (maxPrice !== undefined && !isNaN(maxPrice) && maxPrice > 0) {
       params.append("price[max]", maxPrice.toString());
     }
 
@@ -97,19 +100,29 @@ export default function SearchBar() {
         </div>
         <div className="flex flex-1 items-center gap-2">
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Min"
-            value={budget.min === "0" ? "" : budget.min}
+            value={budget.min}
             className="w-16 bg-transparent text-sm font-semibold text-[#10436B] outline-none placeholder:text-gray-300"
-            onChange={(e) => setBudget({ ...budget, min: e.target.value || "0" })}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              setBudget({ ...budget, min: val });
+            }}
           />
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">to</span>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Max"
-            value={budget.max === "1800" ? "" : budget.max}
+            value={budget.max}
             className="w-16 bg-transparent text-sm font-semibold text-[#10436B] outline-none placeholder:text-gray-300"
-            onChange={(e) => setBudget({ ...budget, max: e.target.value || "1800" })}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              setBudget({ ...budget, max: val });
+            }}
           />
         </div>
       </div>

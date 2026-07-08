@@ -3,14 +3,10 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, Star } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import SearchableDropdown from "@/components/ui/SearchableDropdown";
+import { getCountries, getCities, type CSCCountry, type CSCCity } from "@/lib/countryApi";
+import { DEFAULT_PRICE_RANGE } from "../../find-dentist-components/constants";
 
 export interface FilterSidebarProps {
   procedure: string;
@@ -87,7 +83,7 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string,
       </button>
       {/* Smooth height animation trick */}
       <div className={cn("grid transition-all duration-200 ease-out", isOpen ? "grid-rows-[1fr] opacity-100 mt-3" : "grid-rows-[0fr] opacity-0")}>
-        <div className="overflow-hidden">
+        <div className={cn(isOpen ? "overflow-visible" : "overflow-hidden")}>
           {children}
         </div>
       </div>
@@ -111,8 +107,91 @@ export default function FilterSidebar({
   const [calendarMonth, setCalendarMonth] = React.useState(() => new Date());
   const calendarCells = React.useMemo(() => buildCalendar(calendarMonth), [calendarMonth]);
 
-  const minPrice = 0;
-  const maxPrice = 1800;
+  const [countriesList, setCountriesList] = React.useState<CSCCountry[]>([]);
+  const [citiesList, setCitiesList] = React.useState<CSCCity[]>([]);
+
+  // Load countries on mount
+  React.useEffect(() => {
+    async function loadCountries() {
+      const list = await getCountries();
+      setCountriesList(list);
+    }
+    loadCountries();
+  }, []);
+
+  // Fetch cities when country changes
+  React.useEffect(() => {
+    if (!country || country === "All Countries") {
+      setCitiesList([]);
+      return;
+    }
+    async function loadCities() {
+      const countryObj = countriesList.find(
+        (c) => c.name.toLowerCase() === country.toLowerCase()
+      );
+      if (countryObj) {
+        const list = await getCities(countryObj.iso2);
+        setCitiesList(list);
+      } else {
+        setCitiesList([]);
+      }
+    }
+    if (countriesList.length > 0) {
+      loadCities();
+    }
+  }, [country, countriesList]);
+
+  const [localMin, setLocalMin] = React.useState("");
+  const [localMax, setLocalMax] = React.useState("");
+
+  React.useEffect(() => {
+    setLocalMin(priceRange[0] === DEFAULT_PRICE_RANGE[0] ? "" : priceRange[0].toString());
+  }, [priceRange[0]]);
+
+  React.useEffect(() => {
+    setLocalMax(priceRange[1] === DEFAULT_PRICE_RANGE[1] ? "" : priceRange[1].toString());
+  }, [priceRange[1]]);
+
+  const handleMinBlur = () => {
+    if (localMin === "") {
+      onPriceRangeChange([DEFAULT_PRICE_RANGE[0], priceRange[1]]);
+      return;
+    }
+    let val = Number(localMin.replace(/\D/g, ""));
+    if (isNaN(val) || val < DEFAULT_PRICE_RANGE[0]) {
+      val = DEFAULT_PRICE_RANGE[0];
+    }
+    if (val >= priceRange[1]) {
+      val = priceRange[1] - 10;
+    }
+    setLocalMin(val === DEFAULT_PRICE_RANGE[0] ? "" : val.toString());
+    onPriceRangeChange([val, priceRange[1]]);
+  };
+
+  const handleMaxBlur = () => {
+    if (localMax === "") {
+      onPriceRangeChange([priceRange[0], DEFAULT_PRICE_RANGE[1]]);
+      return;
+    }
+    let val = Number(localMax.replace(/\D/g, ""));
+    if (isNaN(val) || val === DEFAULT_PRICE_RANGE[1]) {
+      val = DEFAULT_PRICE_RANGE[1];
+    }
+    if (val <= priceRange[0]) {
+      val = priceRange[0] + 10;
+    }
+    setLocalMax(val === DEFAULT_PRICE_RANGE[1] ? "" : val.toString());
+    onPriceRangeChange([priceRange[0], val]);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur();
+    }
+  };
+
+  const minPrice = DEFAULT_PRICE_RANGE[0];
+  const maxPrice = Math.max(DEFAULT_PRICE_RANGE[1], priceRange[1]);
   const lowerPercent = ((priceRange[0] - minPrice) / (maxPrice - minPrice)) * 100;
   const upperPercent = ((priceRange[1] - minPrice) / (maxPrice - minPrice)) * 100;
 
@@ -146,44 +225,39 @@ export default function FilterSidebar({
 
         {/* Procedure Type */}
         <FilterSection title="Procedure Type">
-          <Select value={procedure} onValueChange={onProcedureChange}>
-            <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all hover:border-slate-300 focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366]">
-              <SelectValue placeholder="All Procedures" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableProcedures.map((item) => (
-                <SelectItem key={item} value={item}>{item}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableDropdown
+            value={procedure}
+            onChange={onProcedureChange}
+            options={availableProcedures}
+            placeholder="All Procedures"
+            clearValue="All Procedures"
+          />
         </FilterSection>
 
         {/* Country */}
         <FilterSection title="Country">
-          <Select value={country} onValueChange={onCountryChange}>
-            <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all hover:border-slate-300 focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366]">
-              <SelectValue placeholder="Select Country" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableCountries.map((item) => (
-                <SelectItem key={item} value={item}>{item}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableDropdown
+            value={country}
+            onChange={(val) => {
+              onCountryChange(val);
+              onCityChange("All Cities"); // Reset city to All Cities when country changes
+            }}
+            options={["All Countries", ...countriesList.map((c) => c.name)]}
+            placeholder="Select Country"
+            clearValue="All Countries"
+          />
         </FilterSection>
 
         {/* City */}
         <FilterSection title="City">
-          <Select value={city} onValueChange={onCityChange}>
-            <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all hover:border-slate-300 focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366]">
-              <SelectValue placeholder="Select City" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableCities.map((item) => (
-                <SelectItem key={item} value={item}>{item}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableDropdown
+            disabled={!country || country === "All Countries"}
+            value={city}
+            onChange={onCityChange}
+            options={["All Cities", ...citiesList.map((c) => c.name)]}
+            placeholder="Select City"
+            clearValue="All Cities"
+          />
         </FilterSection>
 
         {/* Price Range (Fixed Dual Slider) */}
@@ -226,12 +300,39 @@ export default function FilterSidebar({
             />
           </div>
 
-          <div className="mt-5 flex gap-3">
-            <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 text-center text-[14px] font-bold text-slate-700">
-              ${priceRange[0]}
+          <div className="mt-5 flex gap-3 items-center">
+            {/* Min Input Box */}
+            <div className="flex flex-1 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 focus-within:border-[#003366] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#003366]/10 transition-all">
+              <span className="text-slate-400 text-sm font-semibold select-none">$</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={localMin}
+                onChange={(e) => setLocalMin(e.target.value.replace(/\D/g, ""))}
+                onBlur={handleMinBlur}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-transparent text-left text-[14px] font-bold text-slate-700 outline-none"
+                placeholder="Min"
+              />
             </div>
-            <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 text-center text-[14px] font-bold text-slate-700">
-              {priceRange[1] >= maxPrice ? "Any" : `$${priceRange[1]}`}
+
+            <span className="text-xs font-semibold text-slate-400 uppercase select-none">to</span>
+
+            {/* Max Input Box */}
+            <div className="flex flex-1 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 focus-within:border-[#003366] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#003366]/10 transition-all">
+              <span className="text-slate-400 text-sm font-semibold select-none">$</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={localMax}
+                onChange={(e) => setLocalMax(e.target.value.replace(/\D/g, ""))}
+                onBlur={handleMaxBlur}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-transparent text-left text-[14px] font-bold text-slate-700 outline-none"
+                placeholder="Max"
+              />
             </div>
           </div>
         </FilterSection>

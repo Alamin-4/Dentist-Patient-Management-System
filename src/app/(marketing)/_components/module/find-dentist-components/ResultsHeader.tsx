@@ -4,6 +4,8 @@
 
 import CompareToggle from "./CompareToggle";
 
+import { DEFAULT_PRICE_RANGE } from "./constants";
+
 interface ResultsHeaderProps {
     totalCount: number;
     city: string;
@@ -30,8 +32,18 @@ export default function ResultsHeader({
                 ? ` in ${country}`
                 : "";
 
-    const priceText = `$${priceRange[0]} – $${priceRange[1] >= 1800 ? "1,800+" : priceRange[1].toLocaleString()
-        }`;
+    const showPrice = priceRange[0] > DEFAULT_PRICE_RANGE[0] || priceRange[1] < DEFAULT_PRICE_RANGE[1];
+
+    let priceText = "";
+    if (showPrice) {
+        if (priceRange[0] > DEFAULT_PRICE_RANGE[0] && priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
+            priceText = ` | $${priceRange[0]} – $${priceRange[1].toLocaleString()}`;
+        } else if (priceRange[0] > DEFAULT_PRICE_RANGE[0]) {
+            priceText = ` | Over $${priceRange[0]}`;
+        } else if (priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
+            priceText = ` | Under $${priceRange[1].toLocaleString()}`;
+        }
+    }
 
     return (
         <div className="mb-4 flex gap-3 flex-row sm:items-center justify-between">
@@ -41,7 +53,7 @@ export default function ResultsHeader({
                 ) : (
                     <>
                         <span className="font-semibold text-slate-700">{totalCount}</span>{" "}
-                        Dentists Found{locationText} | {priceText}
+                        Dentists Found{locationText}{priceText}
                     </>
                 )}
             </h2>

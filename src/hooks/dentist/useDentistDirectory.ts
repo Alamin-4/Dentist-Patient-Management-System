@@ -25,14 +25,46 @@ export function useDirectoryCountries() {
   return useQuery({
     queryKey: ["dentistDirectoryCountries"],
     queryFn: async () => {
-      const response = await apiClient.dentists.getDirectoryList({ limit: 20 });
-      const list: any[] = response?.data ?? [];
-      const countries = Array.from(
-        new Set(list.map((d) => d.country).filter((c): c is string => !!c)),
-      ).sort((a, b) => a.localeCompare(b));
-      return ["All Countries", ...countries];
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        if (!response.ok) throw new Error("Failed to fetch from REST Countries API");
+        const list: any[] = await response.json();
+        const countries = list
+          .map((c) => c.name?.common)
+          .filter((c): c is string => !!c)
+          .sort((a, b) => a.localeCompare(b));
+        return ["All Countries", ...countries];
+      } catch (error) {
+        // Quietly fallback to prevent red TypeError stack trace in console when offline/blocked
+        return [
+          "All Countries",
+          "Albania",
+          "Argentina",
+          "Australia",
+          "Brazil",
+          "Canada",
+          "Colombia",
+          "Costa Rica",
+          "Croatia",
+          "Dominican Republic",
+          "France",
+          "Germany",
+          "Hungary",
+          "India",
+          "Mexico",
+          "Philippines",
+          "Poland",
+          "Spain",
+          "Thailand",
+          "Turkey",
+          "United Arab Emirates",
+          "United Kingdom",
+          "United States",
+          "Vietnam",
+        ];
+      }
     },
-    staleTime: 5 * 60_000,
+    staleTime: 24 * 60 * 60 * 1000, // Cache for 24 hours
   });
 }
 

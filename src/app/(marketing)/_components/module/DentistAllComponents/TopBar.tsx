@@ -2,6 +2,7 @@
 
 import { Search, SlidersHorizontal, List, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type TopBarProps = {
   query: string;
@@ -25,10 +26,16 @@ export default function TopBar({
   return (
     <div className="w-full">
       <div className="flex flex-col gap-6 py-7">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0A0A1A] md:text-[40px]">
             Search Verified Dentists
           </h1>
+          <Link
+            href="/register-doctor"
+            className="inline-flex h-12 items-center justify-center rounded-lg bg-[#0E3E65] px-6 text-[14px] font-semibold text-white transition-all hover:bg-[#002850] active:scale-95 shadow-sm shrink-0"
+          >
+            Add a Provider
+          </Link>
         </div>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
@@ -66,9 +73,8 @@ export default function TopBar({
                 type="button"
                 variant="outline"
                 onClick={onToggleMapFilters}
-                className={`hidden h-14 items-center rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10 lg:flex ${
-                  showMapFilters ? "bg-[#0E3E65]/10" : "bg-[#0E3E65]/3"
-                }`}
+                className={`hidden h-14 items-center rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10 lg:flex ${showMapFilters ? "bg-[#0E3E65]/10" : "bg-[#0E3E65]/3"
+                  }`}
               >
                 Filters
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
@@ -83,9 +89,8 @@ export default function TopBar({
                 type="button"
                 variant="outline"
                 onClick={onOpenMobileFilters}
-                className={`flex h-14 items-center rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10 lg:hidden ${
-                  showMapFilters ? "bg-[#0E3E65]/10" : "bg-[#0E3E65]/3"
-                }`}
+                className={`flex h-14 items-center rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-[#0E3E65]/10 lg:hidden ${showMapFilters ? "bg-[#0E3E65]/10" : "bg-[#0E3E65]/3"
+                  }`}
               >
                 Filters
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">

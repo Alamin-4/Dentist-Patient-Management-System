@@ -16,9 +16,11 @@ import FilterSheet from "./FilterSheet";
 import TopBar from "./TopBar";
 import CompareStickyBar from "./CompareStickyBar";
 
-import { Dentist, cityOptions, countryOptions, procedureOptions } from "./types";
+import { Dentist, cityOptions, countryOptions } from "./types";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory, useDirectoryCountries } from "@/hooks/dentist/useDentistDirectory";
+import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
+import { DEFAULT_PRICE_RANGE } from "../find-dentist-components/constants";
 
 const DentistMap = dynamic(() => import("./Map/DentistMap"), { ssr: false });
 
@@ -100,8 +102,8 @@ export default function FindDentist() {
   const [city, setCity] = useState("All Cities");
   const [country, setCountry] = useState("All Countries");
   const [procedure, setProcedure] = useState("All Procedures");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1800]);
-  const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>([0, 1800]);
+  const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
+  const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedScoreRanges, setSelectedScoreRanges] = useState<string[]>([]);
@@ -161,7 +163,7 @@ export default function FindDentist() {
     if (city !== "All Cities") params.city = city;
     if (country !== "All Countries") params.country = country;
     if (procedure !== "All Procedures") params.procedure = procedure;
-    if (debouncedPrice[0] > 0 || debouncedPrice[1] < 1800) {
+    if (debouncedPrice[0] > DEFAULT_PRICE_RANGE[0] || debouncedPrice[1] < DEFAULT_PRICE_RANGE[1]) {
       params["price[min]"] = debouncedPrice[0];
       params["price[max]"] = debouncedPrice[1];
     }
@@ -176,6 +178,14 @@ export default function FindDentist() {
 
   const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(serverParams);
   const { data: dynamicCountryOptions } = useDirectoryCountries();
+  const { data: globalProcedures } = useGlobalProcedures();
+
+  const procedureOptions = useMemo(() => {
+    if (!globalProcedures) return ["All Procedures"];
+    const list = Array.isArray(globalProcedures) ? globalProcedures : (globalProcedures as any).data || [];
+    const names = list.map((p: any) => p.name).filter((name: string) => !!name);
+    return ["All Procedures", ...names];
+  }, [globalProcedures]);
 
   // ── Map flat API response → Dentist shape with nested rating/location ──────
   const apiDentists = useMemo<Dentist[]>(() => {
@@ -264,8 +274,8 @@ export default function FindDentist() {
     setCountry("All Countries");
     setCity("All Cities");
     setProcedure("All Procedures");
-    setPriceRange([0, 1800]);
-    setDebouncedPrice([0, 1800]);
+    setPriceRange(DEFAULT_PRICE_RANGE);
+    setDebouncedPrice(DEFAULT_PRICE_RANGE);
     setSelectedRatings([]);
     setSelectedScoreRanges([]);
     setSelectedLanguages([]);
@@ -392,13 +402,26 @@ export default function FindDentist() {
                           {totalCount}
                         </span>{" "}
                         Dentists Found
-                        {city !== "All Cities"
-                          ? ` in ${city}`
-                          : country !== "All Countries"
-                            ? ` in ${country}`
-                            : ""}
-                        {" "} | ${debouncedPrice[0]} – $
-                        {debouncedPrice[1] >= 1800 ? "1,800+" : debouncedPrice[1].toLocaleString()}
+                        {(() => {
+                          const locationText = city !== "All Cities"
+                            ? ` in ${city}`
+                            : country !== "All Countries"
+                              ? ` in ${country}`
+                              : "";
+
+                          const showPrice = debouncedPrice[0] > DEFAULT_PRICE_RANGE[0] || debouncedPrice[1] < DEFAULT_PRICE_RANGE[1];
+                          let priceText = "";
+                          if (showPrice) {
+                            if (debouncedPrice[0] > DEFAULT_PRICE_RANGE[0] && debouncedPrice[1] < DEFAULT_PRICE_RANGE[1]) {
+                              priceText = ` | $${debouncedPrice[0]} – $${debouncedPrice[1].toLocaleString()}`;
+                            } else if (debouncedPrice[0] > DEFAULT_PRICE_RANGE[0]) {
+                              priceText = ` | Over $${debouncedPrice[0]}`;
+                            } else if (debouncedPrice[1] < DEFAULT_PRICE_RANGE[1]) {
+                              priceText = ` | Under $${debouncedPrice[1].toLocaleString()}`;
+                            }
+                          }
+                          return `${locationText}${priceText}`;
+                        })()}
                       </>
                     )}
                   </h2>

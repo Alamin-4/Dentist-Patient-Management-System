@@ -116,7 +116,7 @@ export default function DentistCard({
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-linear-to-r from-[#10436B]/10 to-[#10436B]/5 rounded-lg">
                 <Award size={12} className="text-[#10436B]" />
                 <span className="text-[10px] sm:text-xs font-bold text-[#10436B]">
-                  RVD: {dentist.rdvScore}
+                  RDV: {dentist.rdvScore}
                 </span>
               </div>
             )}
@@ -170,10 +170,10 @@ export default function DentistCard({
           </div>
         </div>
 
-        {/* Bottom Section: RVD, Experience, Procedures (Separated by a subtle divider) */}
+        {/* Bottom Section: RDV, Experience, Procedures (Separated by a subtle divider) */}
         <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {/* RVD Score Badge (Fixed invalid bg-linear-to-r class) */}
+            {/* RDV Score Badge (Fixed invalid bg-linear-to-r class) */}
 
 
             {/* Experience */}

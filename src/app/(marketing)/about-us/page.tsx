@@ -118,7 +118,7 @@ export default function AboutUs() {
       </section>
 
       {/* ── MISSION & VISION ── */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 ">
         <div className="max-w-6xl w-11/12 mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <motion.div
@@ -191,15 +191,15 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* ── THE RVD VERIFICATION SYSTEM ── */}
+      {/* ── THE RDV VERIFICATION SYSTEM ── */}
       <section className="py-20 md:py-24 bg-white border-y border-[#EEF2F6]">
         <div className="max-w-6xl w-11/12 mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-[28px] md:text-[36px] font-black text-[#113254]">
-              The RatedDocs Verification Depth (RVD) Score
+              The RatedDocs Verified Score
             </h2>
             <p className="text-[14px] md:text-[15px] text-[#6B7280] mt-3 leading-relaxed">
-              We don&apos;t rely on unverified online reviews. Instead, our proprietary verification system calculates an RVD score (out of 100) based on three independent clinical audits.
+              We don&apos;t rely on unverified online reviews. Instead, our proprietary verification system calculates an RDV score (out of 100) based on three independent clinical audits.
             </p>
           </div>
 
@@ -216,21 +216,18 @@ export default function AboutUs() {
                 title: "License Verification",
                 desc: "Rigorous verification of the dentist&apos;s registration authority, registration number, and board-certified dental license credentials.",
                 icon: FileCheck,
-                badge: "30% of RVD Score"
               },
               {
                 phase: "Phase 2",
                 title: "Operations Verification",
                 desc: "Verification of sterilization protocols, JCI accreditation certificates, walkthrough clinic videos, and binding guarantees.",
                 icon: Activity,
-                badge: "40% of RVD Score"
               },
               {
                 phase: "Phase 3",
                 title: "Clinic Depth Verification",
                 desc: "Auditing material brands, clinical invoices, continuing education (CE) certificates, and standard protocol documentation.",
                 icon: Award,
-                badge: "30% of RVD Score"
               }
             ].map((step, idx) => (
               <motion.div
@@ -243,9 +240,7 @@ export default function AboutUs() {
                     <span className="text-[12px] font-bold text-[#113254]/60 uppercase tracking-widest">
                       {step.phase}
                     </span>
-                    <span className="inline-block px-2.5 py-1 rounded-full bg-[#EBF4FF] text-[#113254] font-bold text-[11px]">
-                      {step.badge}
-                    </span>
+
                   </div>
                   <div className="size-12 rounded-xl bg-white border border-[#E6EEF6] flex items-center justify-center mb-6 text-[#113254] shadow-sm">
                     <step.icon className="size-6" />
@@ -260,7 +255,7 @@ export default function AboutUs() {
       </section>
 
       {/* ── CORE VALUES ── */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 ">
         <div className="max-w-6xl w-11/12 mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <motion.div
@@ -331,7 +326,7 @@ export default function AboutUs() {
               Ready to schedule your verified consultation?
             </h2>
             <p className="text-[14px] md:text-[16px] text-white/80 max-w-xl mx-auto mb-10 leading-relaxed">
-              Find verified dentists, compare qualifications and RVD scores, and securely book a direct video consultation today.
+              Find verified dentists, compare qualifications and RDV scores, and securely book a direct video consultation today.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

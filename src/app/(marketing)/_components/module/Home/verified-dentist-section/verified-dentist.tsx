@@ -90,7 +90,7 @@ export default function VerifiedDentists() {
 
 
   return (
-    <section className="py-20">
+    <section className="py-12">
       <div className="max-w-400 w-11/12 mx-auto mb-10 text-center lg:text-left">
         <h2 className="text-4xl font-black text-[#10436B]">
           Verified Dentists

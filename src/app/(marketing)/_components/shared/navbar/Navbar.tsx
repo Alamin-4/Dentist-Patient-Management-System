@@ -30,11 +30,18 @@ export default function NavbarPublic() {
 
   const isAuthenticated = !!user;
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-md py-4 lg:py-6">
       <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center">
+        <Link href="/" onClick={handleLogoClick} className="flex shrink-0 items-center">
           <Image
             src="/logos/mainlogo.png"
             alt="Website logo"

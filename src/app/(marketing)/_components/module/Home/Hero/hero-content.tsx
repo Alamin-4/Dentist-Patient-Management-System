@@ -5,10 +5,10 @@ export default function HeroContent() {
     <div className="flex flex-col gap-6">
       <div className="space-y-4 max-w-xl">
         <h1 className="text-2xl md:text-3xl pr-5 leading-[150%] lg:text-[44px] font-extrabold tracking-tight text-[#1A1A2E]">
-          Compare Verified Dentists. Know the Cost.
+          Compare Verified International Dentists
         </h1>
         <p className="max-w-120 text-lg leading-relaxed text-gray-500">
-          Find top rated dentists with transparent pricing. Book confidently today
+          Know the cost. Find top-rated dentists with transparent pricing. Book confidently today.
         </p>
       </div>
 

@@ -14,6 +14,7 @@ import {
     useDirectoryCountries,
     useAddDentistToDirectory,
 } from "@/hooks/dentist/useDentistDirectory";
+import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import {
@@ -126,6 +127,14 @@ export default function FindDentistComponents() {
         filters.serverParams,
     );
     const { data: countryOptions } = useDirectoryCountries();
+    const { data: globalProcedures } = useGlobalProcedures();
+
+    const procedureOptions = useMemo(() => {
+        if (!globalProcedures) return ["All Procedures"];
+        const list = Array.isArray(globalProcedures) ? globalProcedures : (globalProcedures as any).data || [];
+        const names = list.map((p: any) => p.name).filter((name: string) => !!name);
+        return ["All Procedures", ...names];
+    }, [globalProcedures]);
 
     // ── Map API response to Dentist shape ──────────────────────────────────
     const apiDentists = useMemo<Dentist[]>(() => {
@@ -237,6 +246,7 @@ export default function FindDentistComponents() {
                 onClose={() => setIsMobileFilterOpen(false)}
                 {...filters.sharedFilterProps}
                 availableCountries={countryOptions ?? filters.sharedFilterProps.availableCountries}
+                availableProcedures={procedureOptions}
             />
 
             {/* Main Content */}
@@ -254,6 +264,7 @@ export default function FindDentistComponents() {
                                 <FilterSidebar
                                     {...filters.sharedFilterProps}
                                     availableCountries={countryOptions ?? filters.sharedFilterProps.availableCountries}
+                                    availableProcedures={procedureOptions}
                                 />
                             </motion.aside>
                         )}

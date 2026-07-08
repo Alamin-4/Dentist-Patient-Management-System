@@ -27,35 +27,8 @@ function SearchInputContent({
     useEffect(() => {
         // Pre-populate search query from URL search params if available
         const urlSearch = searchParams.get("search") || "";
-        const minPrice = searchParams.get("price[min]");
-        const maxPrice = searchParams.get("price[max]");
-
-        let displayValue = urlSearch;
-
-        if (minPrice && maxPrice) {
-            const minNum = Number(minPrice);
-            const maxNum = Number(maxPrice);
-            if (minNum > 0 || maxNum < 1800) {
-                displayValue = `${urlSearch} ${minNum} to ${maxNum}`.trim();
-            }
-        } else if (maxPrice) {
-            const maxNum = Number(maxPrice);
-            if (maxNum < 1800) {
-                displayValue = `${urlSearch} under ${maxNum}`.trim();
-            }
-        } else if (minPrice) {
-            const minNum = Number(minPrice);
-            if (minNum > 0) {
-                displayValue = `${urlSearch} over ${minNum}`.trim();
-            }
-        }
-
-        if (displayValue) {
-            setLocalValue(displayValue);
-            propOnChange(urlSearch);
-        } else if (!urlSearch && !minPrice && !maxPrice && localValue !== "") {
-            setLocalValue("");
-        }
+        setLocalValue(urlSearch);
+        propOnChange(urlSearch);
     }, [searchParams]);
 
     // Keep local value synced with prop values if they change externally

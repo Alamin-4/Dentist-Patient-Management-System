@@ -5,6 +5,7 @@ import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { ChevronDown, Stethoscope, Check } from "lucide-react";
 import Link from "next/link";
+import { proceduresLists } from "@/lib/location-data";
 
 export default function Sidebar({
   active,
@@ -13,7 +14,7 @@ export default function Sidebar({
   active: string;
   onChange: (val: string) => void;
 }) {
-  const { data: globalProcedures, isLoading } = useGlobalProcedures();
+  const { data: globalProcedures = proceduresLists, isLoading } = useGlobalProcedures();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
