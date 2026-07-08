@@ -80,3 +80,102 @@ export const locationData = {
     }
   }
 } as const;
+
+
+export const proceduresLists = [
+  {
+    id: 1,
+    name: "Veneers",
+    slug: "veneers",
+  },
+  {
+    id: 2,
+    name: "Dental Implants",
+    slug: "dental-implants",
+  },
+  {
+    id: 3,
+    name: "Root Canal Treatment",
+    slug: "root-canal-treatment",
+  },
+  {
+    id: 4,
+    name: "Teeth Whitening",
+    slug: "teeth-whitening",
+  },
+  {
+    id: 5,
+    name: "Crowns & Bridges",
+    slug: "crowns-bridges",
+  },
+  {
+    id: 6,
+    name: "Orthodontics (Braces)",
+    slug: "orthodontics-braces",
+  },
+  {
+    id: 7,
+    name: "Extractions",
+    slug: "extractions",
+  },
+  {
+    id: 8,
+    name: "Dental X-Rays",
+    slug: "dental-x-rays",
+  },
+  {
+    id: 9,
+    name: "Implant Supported Dentures",
+    slug: "implant-supported-dentures",
+  },
+  {
+    id: 10,
+    name: "Invisalign",
+    slug: "invisalign",
+  },
+  {
+    id: 11,
+    name: "Sedation Dentistry",
+    slug: "sedation-dentistry",
+  },
+  {
+    id: 12,
+    name: "TMJ Treatment",
+    slug: "tmj-treatment",
+  },
+  {
+    id: 13,
+    name: "Dental Sealants",
+    slug: "dental-sealants",
+  },
+  {
+    id: 14,
+    name: "Dental Fillings",
+    slug: "dental-fillings",
+  },
+  {
+    id: 15,
+    name: "Dental Bridges",
+    slug: "dental-bridges",
+  },
+  {
+    id: 16,
+    name: "Dental Crowns",
+    slug: "dental-crowns",
+  },
+  {
+    id: 17,
+    name: "Periodontal Treatment",
+    slug: "periodontal-treatment",
+  },
+  {
+    id: 18,
+    name: "Pediatric Dentistry",
+    slug: "pediatric-dentistry",
+  },
+  {
+    id: 19,
+    name: "Gum Disease Treatment",
+    slug: "gum-disease-treatment",
+  },
+];

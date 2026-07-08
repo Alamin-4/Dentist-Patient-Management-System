@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { DEFAULT_FILTERS, DEFAULT_PRICE_RANGE, DEBOUNCE_DELAYS } from "./constants";
-import { cityOptions, countryOptions, procedureOptions } from "../DentistAllComponents/types"; // ✅ Import করুন
+import { cityOptions, countryOptions } from "../DentistAllComponents/types"; // ✅ Import করুন
+import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 
 export interface FilterState {
     query: string;
@@ -20,6 +21,15 @@ export const useDentistFilters = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
+
+    const { data: globalProcedures } = useGlobalProcedures();
+
+    const procedureOptions = useMemo(() => {
+        if (!globalProcedures) return ["All Procedures"];
+        const list = Array.isArray(globalProcedures) ? globalProcedures : (globalProcedures as any).data || [];
+        const names = list.map((p: any) => p.name).filter((name: string) => !!name);
+        return ["All Procedures", ...names];
+    }, [globalProcedures]);
 
     // Read initial values from URL search params
     const initialQuery = searchParams.get("search") || "";
@@ -84,7 +94,7 @@ export const useDentistFilters = () => {
         if (city !== DEFAULT_FILTERS.city) params.set("city", city);
         if (country !== DEFAULT_FILTERS.country) params.set("country", country);
         if (procedure !== DEFAULT_FILTERS.procedure) params.set("procedure", procedure);
-        if (priceRange[0] > 0 || priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
+        if (priceRange[0] > DEFAULT_PRICE_RANGE[0] || priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
             params.set("price[min]", priceRange[0].toString());
             params.set("price[max]", priceRange[1].toString());
         }
@@ -136,7 +146,7 @@ export const useDentistFilters = () => {
         if (city !== DEFAULT_FILTERS.city) params.city = city;
         if (country !== DEFAULT_FILTERS.country) params.country = country;
         if (procedure !== DEFAULT_FILTERS.procedure) params.procedure = procedure;
-        if (debouncedPrice[0] > 0 || debouncedPrice[1] < DEFAULT_PRICE_RANGE[1]) {
+        if (debouncedPrice[0] > DEFAULT_PRICE_RANGE[0] || debouncedPrice[1] < DEFAULT_PRICE_RANGE[1]) {
             params["price[min]"] = debouncedPrice[0];
             params["price[max]"] = debouncedPrice[1];
         }

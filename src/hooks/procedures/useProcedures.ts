@@ -29,7 +29,7 @@ export function useGlobalProcedures(search?: string) {
       const res = await apiClient.procedures.getGlobal(search);
       return res?.data ?? res ?? [];
     },
-    staleTime: 10 * 60_000, // 10 min — global catalog changes infrequently
+    staleTime: 5 * 1000, // 5 seconds — fresh enough for QA and active updates
     gcTime: 20 * 60_000,
     retry: 1,
   });
