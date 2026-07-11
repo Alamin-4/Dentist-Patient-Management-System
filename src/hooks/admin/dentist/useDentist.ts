@@ -164,17 +164,21 @@ export interface UseAdminDentistOptions {
   enabled?: boolean;
 }
 
+/** Returns the full verification phase data for a single dentist.
+ *  Uses GET /admin/dentist-verification/:id which returns license_step,
+ *  operation_step, clinical_step and user_profile in a single call.
+ */
 export function useAdminDentist(id: string, options: UseAdminDentistOptions = {}) {
   const query = useQuery({
     queryKey: ["admin", "dentist", id],
-    queryFn: () => adminApi.getDentistProfile<AdminDentist>(id),
+    queryFn: () => adminApi.getDentistVerificationPhases(id),
     enabled: !!id && options.enabled !== false,
     staleTime: 30_000,
   });
 
   return {
     ...query,
-    dentist: query.data?.data,
+    dentist: query.data?.data ?? null,
     isLoadingDentist: query.isLoading,
     isErrorDentist: query.isError,
   };

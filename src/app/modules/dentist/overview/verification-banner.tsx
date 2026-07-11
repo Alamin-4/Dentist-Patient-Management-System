@@ -43,7 +43,7 @@ export function VerificationBanner() {
     if (fallbackStatus && fallbackStatus !== "PENDING") return fallbackStatus;
     if (!step) return "PENDING";
     if (step.status) return step.status;
-    return step.completed ? "VERIFIED" : "PENDING";
+    return step.completed ? "APPROVED" : "PENDING";
   };
 
   const step1Status = getStepStatus(licenseStep, progress?.step_one_status);
@@ -73,31 +73,31 @@ export function VerificationBanner() {
     switch (status) {
       case VerificationStatus.APPROVED:
         return {
-          icon: <CheckCircle2 className="h-6 w-6 text-green-500" />,
+          icon: <CheckCircle2 className="h-6 w-6 text-green-500 shrink-0" />,
           label: "Verified",
           labelClass:
-            "text-green-600 bg-green-50 border-green-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
+            "text-green-600 bg-green-50 border-green-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border shrink-0",
         };
       case VerificationStatus.SUBMITTED:
         return {
-          icon: <Clock className="h-6 w-6 text-yellow-500 animate-pulse" />,
+          icon: <Clock className="h-6 w-6 text-yellow-500 animate-pulse shrink-0" />,
           label: "In Review",
           labelClass:
-            "text-yellow-600 bg-yellow-50 border-yellow-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
+            "text-yellow-600 bg-yellow-50 border-yellow-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border shrink-0",
         };
       case VerificationStatus.REJECTED:
         return {
-          icon: <AlertCircle className="h-6 w-6 text-red-500" />,
+          icon: <AlertCircle className="h-6 w-6 text-red-500 shrink-0" />,
           label: "Rejected",
           labelClass:
-            "text-red-600 bg-red-50 border-red-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
+            "text-red-600 bg-red-50 border-red-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border shrink-0",
         };
       default:
         return {
-          icon: <Circle className="h-6 w-6 text-gray-300" />,
+          icon: <Circle className="h-6 w-6 text-gray-300 shrink-0" />,
           label: "Pending",
           labelClass:
-            "text-gray-500 bg-gray-50 border-gray-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border",
+            "text-gray-500 bg-gray-50 border-gray-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border shrink-0",
         };
     }
   };
@@ -107,18 +107,54 @@ export function VerificationBanner() {
       title: "Phase 1 — License Verification",
       subtitle: "~5 min · RDV +30%",
       status: step1Status,
+      note: progress?.step_one_note || licenseStep?.note,
+      phaseParam: "license-verify",
     },
     {
       title: "Phase 2 — Operations",
       subtitle: "~20–30 min · RDV +40%",
       status: step2Status,
+      note: progress?.step_two_note || operationalStep?.note,
+      phaseParam: "operations-verify",
     },
     {
       title: "Phase 3 — Clinical depth",
       subtitle: "Async · RDV +30%",
       status: step3Status,
+      note: progress?.step_three_note || clinicalStep?.note,
+      phaseParam: "clinic-depth-verify",
     },
   ];
+
+  // Resolve target verification step and button texts
+  let targetPhaseParam = "license-verify";
+  let buttonText = "Start Verification";
+  let isTargetRejected = false;
+
+  if (step1Status !== VerificationStatus.APPROVED && step1Status !== VerificationStatus.SUBMITTED) {
+    targetPhaseParam = "license-verify";
+    isTargetRejected = step1Status === VerificationStatus.REJECTED;
+    buttonText = isTargetRejected ? "Verify Again — Phase 1" : "Start Verification";
+  } else if (step2Status !== VerificationStatus.APPROVED && step2Status !== VerificationStatus.SUBMITTED) {
+    targetPhaseParam = "operations-verify";
+    isTargetRejected = step2Status === VerificationStatus.REJECTED;
+    buttonText = isTargetRejected ? "Verify Again — Phase 2" : "Continue Phase 2";
+  } else if (step3Status !== VerificationStatus.APPROVED && step3Status !== VerificationStatus.SUBMITTED) {
+    targetPhaseParam = "clinic-depth-verify";
+    isTargetRejected = step3Status === VerificationStatus.REJECTED;
+    buttonText = isTargetRejected ? "Verify Again — Phase 3" : "Continue Phase 3";
+  } else {
+    if (step3Status === VerificationStatus.SUBMITTED) {
+      buttonText = "In Review";
+    } else {
+      buttonText = "Verification Complete";
+    }
+  }
+
+  const isAllApprovedOrSubmitted =
+    (step1Status === VerificationStatus.APPROVED || step1Status === VerificationStatus.SUBMITTED) &&
+    (step2Status === VerificationStatus.APPROVED || step2Status === VerificationStatus.SUBMITTED) &&
+    (step3Status === VerificationStatus.APPROVED || step3Status === VerificationStatus.SUBMITTED);
 
   return (
     <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm">
@@ -168,30 +204,38 @@ export function VerificationBanner() {
         </p>
 
         <div className="mt-8 w-full">
-          <div className="w-fit mx-auto space-y-6">
+          <div className="w-full max-w-md mx-auto space-y-6">
             {phases.map((p, i) => {
               const { icon, label, labelClass } = renderStepStatus(p.status);
               return (
-                <div key={p.title} className="flex items-center gap-4">
-                  <div className="relative flex h-8 w-8 flex-col items-center justify-center">
-                    {icon}
-                    {i < phases.length - 1 && (
-                      <div className="absolute top-8 left-1/2 -translate-x-1/2 h-6 w-px bg-border" />
-                    )}
-                  </div>
+                <div key={p.title} className="flex flex-col gap-2">
+                  <div className="flex items-center gap-4">
+                    <div className="relative flex h-8 w-8 flex-col items-center justify-center shrink-0">
+                      {icon}
+                      {i < phases.length - 1 && (
+                        <div className="absolute top-8 left-1/2 -translate-x-1/2 h-8 w-px bg-border" />
+                      )}
+                    </div>
 
-                  <div className="flex-1 text-left">
-                    <p className="text-sm font-semibold text-foreground">
-                      {p.title}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {p.subtitle}
-                    </p>
-                  </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-sm font-semibold text-foreground">
+                        {p.title}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {p.subtitle}
+                      </p>
+                    </div>
 
-                  <div hidden={label === "Pending"}>
-                    <span className={labelClass}>{label}</span>
+                    <div hidden={label === "Pending"}>
+                      <span className={labelClass}>{label}</span>
+                    </div>
                   </div>
+                  {p.status === VerificationStatus.REJECTED && p.note && (
+                    <div className="ml-12 rounded-md bg-red-50 border border-red-100 p-3 text-left">
+                      <p className="text-xs font-semibold text-red-800">Rejection Reason:</p>
+                      <p className="mt-0.5 text-xs text-red-700">{p.note}</p>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -200,22 +244,13 @@ export function VerificationBanner() {
           <div className="mt-8">
             <Button
               size="lg"
-              className="w-full h-14 rounded-lg bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer"
+              disabled={isAllApprovedOrSubmitted}
+              className="w-full h-14 rounded-lg bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
               onClick={() => {
-                if (step2Status === VerificationStatus.SUBMITTED || step2Status === VerificationStatus.APPROVED) {
-                  router.push("/dentist/verification?phase=clinic-depth-verify");
-                } else if (step1Status === VerificationStatus.SUBMITTED || step1Status === VerificationStatus.APPROVED) {
-                  router.push("/dentist/verification?phase=operations-verify");
-                } else {
-                  router.push("/dentist/verification?phase=license-verify");
-                }
+                router.push(`/dentist/verification?phase=${targetPhaseParam}`);
               }}
             >
-              {step2Status === VerificationStatus.SUBMITTED || step2Status === VerificationStatus.APPROVED
-                ? "Continue Phase 3"
-                : step1Status === VerificationStatus.SUBMITTED || step1Status === VerificationStatus.APPROVED
-                  ? "Continue Phase 2"
-                  : "Start Verification"}
+              {buttonText}
             </Button>
           </div>
         </div>

@@ -4,6 +4,7 @@ export interface VerificationProgressStep {
   phase?: VerificationPhase | string;
   completed?: boolean;
   status?: string | null;
+  note?: string | null;
 }
 
 export interface DentistVerificationProgress {
@@ -14,6 +15,9 @@ export interface DentistVerificationProgress {
   step_one_status?: string | null;
   step_two_status?: string | null;
   step_three_status?: string | null;
+  step_one_note?: string | null;
+  step_two_note?: string | null;
+  step_three_note?: string | null;
   is_verified?: boolean;
   verification_phase?: string | null;
   progress_percentage?: number | null;

@@ -7,6 +7,7 @@ export type StepStatus = "PENDING" | "SUBMITTED" | "APPROVED" | "REJECTED";
 export interface StepCheckResponse {
     submitted: boolean;
     status: StepStatus | null;
+    note?: string | null;
     data?: Record<string, unknown>;
 }
 
@@ -66,6 +67,10 @@ export default function useVerificationProgress() {
     const step2Status = checkPhotoVerifyProgress.data?.status ?? "PENDING";
     const step3Status = checkIdVerifyProgress.data?.status ?? "PENDING";
 
+    const step1Note = checkLicenseVerifyProgress.data?.note ?? null;
+    const step2Note = checkPhotoVerifyProgress.data?.note ?? null;
+    const step3Note = checkIdVerifyProgress.data?.note ?? null;
+
     // A step counts as "submitted" for badge/display purposes when SUBMITTED or APPROVED
     const submittedByStep: Record<VerificationPhaseStep, boolean> = {
         1: step1Status === "SUBMITTED" || step1Status === "APPROVED",
@@ -100,6 +105,9 @@ export default function useVerificationProgress() {
         step1Status,
         step2Status,
         step3Status,
+        step1Note,
+        step2Note,
+        step3Note,
         submittedByStep,
         nextIncompleteStep,
         rdvScore,

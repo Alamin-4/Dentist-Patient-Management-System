@@ -176,7 +176,7 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
     queue_status: qStatus,
     dentist_name: item.dentist?.full_name || "Unknown Dentist",
     specialty: item.dentist?.specialty || "DENTIST",
-    location: [item.license_step?.city, item.license_step?.country].filter(Boolean).join(", "),
+    location: [item.license_step?.city, item.license_step?.country].filter(Boolean).join(", ") || item.clinical_step?.clinic_address || "",
     submitted_ago: getRelativeTime(item.license_step?.created_at || item.dentist?.created_at) || undefined,
     rdv_score: item.dentist?.rdv_score || 0,
 
