@@ -91,12 +91,17 @@ function FileAttachment({
 }
 
 function PhaseBadge({ status }: { status: string }) {
+  const normalizedStatus = (status || "").toLowerCase();
   const map: Record<string, { label: string; className: string }> = {
     complete: {
       label: "Complete",
       className: "bg-emerald-50 text-emerald-600 border border-emerald-200",
     },
     completed: {
+      label: "Complete",
+      className: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+    },
+    approved: {
       label: "Complete",
       className: "bg-emerald-50 text-emerald-600 border border-emerald-200",
     },
@@ -108,7 +113,11 @@ function PhaseBadge({ status }: { status: string }) {
       label: "Pending Review",
       className: "bg-amber-50 text-amber-600 border border-amber-200",
     },
-    SUBMITTED: {
+    submitted: {
+      label: "Pending Review",
+      className: "bg-amber-50 text-amber-600 border border-amber-200",
+    },
+    submit: {
       label: "Pending Review",
       className: "bg-amber-50 text-amber-600 border border-amber-200",
     },
@@ -125,7 +134,7 @@ function PhaseBadge({ status }: { status: string }) {
       className: "bg-blue-50 text-blue-600 border border-blue-200",
     },
   };
-  const badge = map[status] ?? {
+  const badge = map[normalizedStatus] ?? {
     label: status,
     className: "bg-gray-100 text-gray-500",
   };
