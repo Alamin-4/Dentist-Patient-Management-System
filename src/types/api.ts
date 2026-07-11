@@ -15,6 +15,11 @@ export interface LoginPayload {
     password?: string;
 }
 
+export interface ResetPasswordPayload {
+    token: string;
+    password?: string;
+}
+
 // Patient Interfaces
 export interface PersonalizeDataPayload {
     firstName: string;
