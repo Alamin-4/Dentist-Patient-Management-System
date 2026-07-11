@@ -28,6 +28,7 @@ import {
 } from "@/hooks/dentist/useDentistDirectory";
 
 import { useStateContext } from "@/providers/StateProvider";
+import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 
 export default function BookingSidebar({ dentist }: { dentist: any }) {
   const { user } = useMe();
@@ -41,11 +42,30 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
     setSelectedDentistId,
     setShowRequestConsultationModal,
     setRequestConsultationDentist,
+    setBookingMode,
   } = useStateContext();
   const searchParams = useSearchParams();
 
   const handleBookConsultation = () => {
     setSelectedDentistId(dentist.id);
+    setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
+    setBookingMode("book");
+    if (user) {
+      const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
+      if (hasProfileDetails) {
+        setShowBookingModal("startBooking");
+      } else {
+        setShowPersonalizeModal(true);
+      }
+    } else {
+      setShowSignupModal(true);
+    }
+  };
+
+  const handleRequestConsultation = () => {
+    setSelectedDentistId(dentist.id);
+    setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
+    setBookingMode("request");
     if (user) {
       const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
       if (hasProfileDetails) {
@@ -354,10 +374,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
             {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
               <Button
                 className="h-11 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
-                onClick={() => {
-                  setRequestConsultationDentist(dentist);
-                  setShowRequestConsultationModal(true);
-                }}
+                onClick={handleRequestConsultation}
               >
                 Request Consultation
               </Button>

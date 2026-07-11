@@ -31,8 +31,9 @@ export interface VerificationDentist extends Omit<License, "id" | "dentist" | "v
       file_name: string;
       file_size: string;
       verified_note: string;
+      href?: string;
     };
-    selfie?: { file_name: string; ai_match_score: number; confidence: string };
+    selfie?: { file_name: string; ai_match_score: number; confidence: string; href?: string };
   };
   ph2_data?: {
     rejection_reason?: string;
@@ -63,6 +64,7 @@ export interface VerificationDentist extends Omit<License, "id" | "dentist" | "v
         missing: boolean;
         missing_label?: string;
         missing_note?: string;
+        href?: string;
       }[];
     }[];
   };

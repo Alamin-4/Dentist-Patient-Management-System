@@ -103,18 +103,16 @@ export default function DentistCard({
         ? "text-[#505050]"
         : "text-slate-500";
 
-  // ── Rating values ─────────────────────────────────────────────────────────
+
   const ratingValue = dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
   const reviewCount =
     dentist.rating.googleReviewCount ?? dentist.rating.doctoraliaReviewCount ?? 0;
 
-  // ── Location display ──────────────────────────────────────────────────────
+
   const locationText =
     dentist.location.fullAddress ?? dentist.location.city ?? dentist.country ?? "";
 
-  // claimable condition 
   const isClaimableProfile = dentist.accountType === "CLAIMABLE" && !dentist.isClaimed
-
   return (
     <div
       onClick={onPrimaryAction}
@@ -153,7 +151,7 @@ export default function DentistCard({
               {/* Account / verification badge */}
               <div className="flex items-center gap-1.5 text-xs font-medium">
                 {
-                  dentist.status === "VERIFIED" || dentist.status === "CLAIMED" && <ShieldCheck className={cn("size-4", badgeIconColor)} />
+                  (dentist.status === "VERIFIED" || dentist.status === "CLAIMED") && <ShieldCheck className={cn("size-4", badgeIconColor)} />
                 }
                 <span
                   className={cn(

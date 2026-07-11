@@ -8,6 +8,7 @@ export interface DataSlice {
     dentistsToCompare: Dentist[];
     searchQuery: string;
     isNewestFirst: boolean;
+    bookingMode: "book" | "request";
 
     setSelectedDentistId: (id: string | null) => void;
     setSchedule: (schedule: boolean) => void;
@@ -15,6 +16,7 @@ export interface DataSlice {
     setDentistsToCompare: (dentists: Dentist[] | ((prev: Dentist[]) => Dentist[])) => void;
     setSearchQuery: (query: string) => void;
     setIsNewestFirst: (isNewest: boolean | ((prev: boolean) => boolean)) => void;
+    setBookingMode: (mode: "book" | "request") => void;
 }
 
 export const createDataSlice: StateCreator<DataSlice> = (set) => ({
@@ -24,6 +26,7 @@ export const createDataSlice: StateCreator<DataSlice> = (set) => ({
     dentistsToCompare: [],
     searchQuery: "",
     isNewestFirst: true,
+    bookingMode: "book",
 
     setSelectedDentistId: (id) => set({ selectedDentistId: id }),
     setSchedule: (schedule) => set({ schedule }),
@@ -35,4 +38,5 @@ export const createDataSlice: StateCreator<DataSlice> = (set) => ({
     setIsNewestFirst: (isNewestOrFn) => set((state) => ({
         isNewestFirst: typeof isNewestOrFn === "function" ? isNewestOrFn(state.isNewestFirst) : isNewestOrFn
     })),
+    setBookingMode: (mode) => set({ bookingMode: mode }),
 });

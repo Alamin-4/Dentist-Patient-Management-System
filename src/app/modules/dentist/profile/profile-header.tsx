@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { DentistProfileData } from "./profile.types";
 
 interface ProfileHeaderProps {
-  dentist: any;
+  dentist?: DentistProfileData | null;
   rdvScore: number;
 }
 
@@ -26,7 +27,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
   const isFullyVerified = isLicenseVerified && isOperationsVerified && isClinicalVerified;
   const isSearchable = isFullyVerified;
 
-  const hasSubmittedAny = !!(dentist?.dentistLicense || dentist?.dentistOperationsVerifications?.length > 0 || dentist?.dentistClinicDepthVerification);
+  const hasSubmittedAny = !!(dentist?.dentistLicense || (dentist?.dentistOperationsVerifications?.length ?? 0) > 0 || dentist?.dentistClinicDepthVerification);
 
   let verificationBadgeLabel = "UNVERIFIED";
   let verificationBadgeClass = "bg-red-50 text-red-500 border-none px-3 py-1 font-semibold";

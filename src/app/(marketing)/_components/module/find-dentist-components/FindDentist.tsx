@@ -442,7 +442,6 @@ export default function FindDentistComponents() {
                 </DialogContent>
             </Dialog>
 
-            {/* Mobile Map Dialog Popup */}
             {isMobile && (
                 <Dialog
                     open={viewMode === "map"}
@@ -453,7 +452,7 @@ export default function FindDentistComponents() {
                         }
                     }}
                 >
-                    <DialogContent className="max-w-[95vw] w-full h-[85vh] p-0 overflow-hidden bg-white border border-slate-200 shadow-2xl rounded-xl flex flex-col">
+                    <DialogContent className="max-w-full sm:max-w-7xl w-11/12 h-[85vh] p-0 overflow-hidden bg-white border border-slate-200 shadow-2xl rounded-xl flex flex-col">
                         <DialogHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between space-y-0 shrink-0">
                             <div>
                                 <DialogTitle className="text-[#0E3E65] font-bold text-lg">Dentist Locations Map</DialogTitle>
