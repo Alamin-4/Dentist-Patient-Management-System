@@ -9,6 +9,8 @@ export const endpoints = {
     googleLogin: "/auth/login/google",
     getSession: "/auth/current-user-session",
     logout: "/auth/logout",
+    forgotPassword: "/auth/forgot-password",
+    resetPassword: "/auth/reset-password",
   },
   patients: {
     register: "/auth/register/patient",

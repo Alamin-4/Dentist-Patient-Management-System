@@ -12,6 +12,7 @@ import type { Dentist } from "../DentistAllComponents/types";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
+import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 
 type DentistCardProps = {
   dentist: Dentist;
@@ -64,12 +65,13 @@ export default function DentistCard({
     setShowBookingModal,
     setShowPersonalizeModal,
     setShowSignupModal,
-    setRequestConsultationDentist,
-    setShowRequestConsultationModal,
+    setBookingMode,
   } = useStateContext();
 
   const handleBookConsultation = () => {
     setSelectedDentistId(dentist.id);
+    setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
+    setBookingMode("book");
     if (user) {
       const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
       if (hasProfileDetails) {
@@ -83,8 +85,19 @@ export default function DentistCard({
   };
 
   const handleRequestConsultation = () => {
-    setRequestConsultationDentist(dentist as any);
-    setShowRequestConsultationModal(true);
+    setSelectedDentistId(dentist.id);
+    setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
+    setBookingMode("request");
+    if (user) {
+      const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
+      if (hasProfileDetails) {
+        setShowBookingModal("startBooking");
+      } else {
+        setShowPersonalizeModal(true);
+      }
+    } else {
+      setShowSignupModal(true);
+    }
   };
 
   const badgeIconColor = dentist.status === "VERIFIED"
