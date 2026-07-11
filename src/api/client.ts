@@ -141,6 +141,7 @@ export const apiClient = {
         data: {
           submitted: isSubmitted,
           status: data?.step_one_status || "PENDING",
+          note: data?.step_one_note || null,
           data: data?.dentistLicense || {
             country: "Bangladesh",
             city: "Dhaka",
@@ -160,6 +161,7 @@ export const apiClient = {
         data: {
           submitted: isSubmitted,
           status: data?.step_two_status || "PENDING",
+          note: data?.step_two_note || null,
           data: {
             jci_certificate: data?.dentistOperations?.jciCertificate || null,
             walkthrough_video: data?.dentistOperations?.walkthroughVideo || null,
@@ -185,6 +187,7 @@ export const apiClient = {
         data: {
           submitted: isSubmitted,
           status: data?.step_three_status || "PENDING",
+          note: data?.step_three_note || null,
           data: {
             materials: [],
             clinic_address: data?.prefilled_clinic_address || ""

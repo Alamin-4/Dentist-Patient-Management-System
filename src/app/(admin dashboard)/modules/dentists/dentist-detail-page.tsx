@@ -22,7 +22,7 @@ import { DentistOverviewTab } from "./components/dentist-overview-tab";
 import { DentistBookingsTab } from "./components/dentist-bookings-tab";
 import { DentistConsultationsTab } from "./components/dentist-consultations-tab";
 import { DentistReviewsTab } from "./components/dentist-reviews-tab";
-import { mapApiDentistToUIDentist, type Dentist } from "./dentists-page";
+import { mapApiDentistToUIDentist, type Dentist } from "./utils/dentist-types";
 import { useAdminDentist } from "@/hooks/admin/dentist/useDentist";
 
 type MainTab =

@@ -61,7 +61,7 @@ export default function Phase3() {
   const dentistProcedures =
     (dentistProcedureList?.data as any)?.data || [];
   const updatePhase = useUpdateVerificationPhase();
-  const { checkIdVerifyProgress, step3Status } = useVerificationProgress();
+  const { checkIdVerifyProgress, step3Status, step3Note } = useVerificationProgress();
 
   const [isMapOpen, setIsMapOpen] = useState(false);
 
@@ -245,6 +245,7 @@ export default function Phase3() {
         <VerificationStatusScreen
           status="REJECTED"
           phaseName="Clinical Excellence"
+          rejectionNote={step3Note || undefined}
         />
       )}
       <FormProvider {...methods}>
