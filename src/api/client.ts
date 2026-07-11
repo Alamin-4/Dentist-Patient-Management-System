@@ -249,6 +249,14 @@ export const apiClient = {
       const response = await api.get(endpoints.dentists.profile);
       return response.data;
     },
+    getPatients: async () => {
+      const response = await api.get(endpoints.dentists.patients);
+      return response.data;
+    },
+    getPatientDetail: async (id: string | number) => {
+      const response = await api.get(endpoints.dentists.patientDetail(id));
+      return response.data;
+    },
     getDirectoryList: async (params?: Record<string, any>) => {
       const response = await api.get(endpoints.dentists.directoryList, { params });
       return response.data;
@@ -696,6 +704,16 @@ export const consultationBookingApi = {
     const response = await api.post(endpoints.consultations.confirm, {
       intakeId: String(payload.consultation_id),
       scheduleSelections,
+    });
+    return response.data;
+  },
+  confirmRequest: async (payload: {
+    consultation_id: string | number;
+    dentistIds: string[];
+  }) => {
+    const response = await api.post(endpoints.consultations.confirmRequest, {
+      intakeId: String(payload.consultation_id),
+      dentistIds: payload.dentistIds.map(String),
     });
     return response.data;
   },

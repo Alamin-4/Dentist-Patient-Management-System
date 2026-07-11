@@ -140,6 +140,12 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
           );
         })}
 
+        {errors.procedures && !Array.isArray(errors.procedures) && (
+          <p className="text-xs font-semibold text-destructive mt-1">
+            {String((errors.procedures as any).message || "Add at least one procedure")}
+          </p>
+        )}
+
         {!disabled && (
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button

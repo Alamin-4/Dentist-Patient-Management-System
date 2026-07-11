@@ -67,6 +67,8 @@ interface StateContextType {
   setShowRequestConsultationModal: (show: boolean) => void;
   requestConsultationDentist: Dentist | null;
   setRequestConsultationDentist: (dentist: Dentist | null) => void;
+  bookingMode: "book" | "request";
+  setBookingMode: (mode: "book" | "request") => void;
 }
 
 export const StateContext = createContext<StateContextType | undefined>(
@@ -323,6 +325,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setSearchQuery: store.setSearchQuery,
     isNewestFirst: store.isNewestFirst,
     setIsNewestFirst: store.setIsNewestFirst,
+    bookingMode: store.bookingMode,
+    setBookingMode: store.setBookingMode,
   };
 
   return (

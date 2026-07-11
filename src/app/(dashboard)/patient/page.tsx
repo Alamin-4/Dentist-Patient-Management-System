@@ -11,6 +11,8 @@ import DoctorCard from "@/app/(dashboard)/patient/_components/Module/MyBooking/C
 import { usePatientConsultations } from "@/hooks/consultation/useConsultation";
 import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
 import { ConsultationItem, TreatmentPlanItem } from "@/types";
+import { ConsultationCardSkeleton } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCardSkeleton";
+import { DoctorCardSkeleton } from "@/app/(dashboard)/patient/_components/Module/Overview/DoctorCardSkeleton";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -159,7 +161,9 @@ export default function Overview() {
   const bookingsCompletedCount = consultations?.filter((c) => c.requestStatus === "COMPLETED")?.length || 0;
   const documentsCount = consultations?.length + treatmentPlans?.length;
 
-  const isLoading = loadingConsultations || loadingPlans;
+  // Stats need both to be ready; consultation list only needs consultations
+  const isStatsLoading = loadingConsultations || loadingPlans;
+  const isConsultationsLoading = loadingConsultations;
 
   return (
     <div>
@@ -171,16 +175,19 @@ export default function Overview() {
           icon={<DollarSign className="w-5 h-5" />}
           value={`$${escrowTotal.toLocaleString()}`}
           label="Amount in escrow"
+          isLoading={isStatsLoading}
         />
         <StatCard
           icon={<CalendarCheck className="w-5 h-5" />}
           value={String(bookingsCompletedCount).padStart(2, "0")}
           label="Booking Completed"
+          isLoading={isStatsLoading}
         />
         <StatCard
           icon={<FileText className="w-5 h-5" />}
           value={String(documentsCount).padStart(2, "0")}
           label="Documents stored"
+          isLoading={isStatsLoading}
         />
       </div>
 
@@ -206,13 +213,23 @@ export default function Overview() {
         </div>
 
         {/* Content */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#113254]"></div>
+        {isConsultationsLoading ? (
+          <div className="space-y-5">
+            {activeTab === "estimate-updates" ? (
+              <>
+                <DoctorCardSkeleton />
+                <DoctorCardSkeleton />
+              </>
+            ) : (
+              <>
+                <ConsultationCardSkeleton />
+                <ConsultationCardSkeleton />
+              </>
+            )}
           </div>
         ) : activeTab === "estimate-updates" ? (
           proposedTreatmentPlans.length ? (
-            <div className="space-y-5">
+            <div className="space-y-5 animate-fade-in">
               {proposedTreatmentPlans.map((plan) => (
                 <DoctorCard key={plan.id} data={plan} />
               ))}
@@ -221,7 +238,7 @@ export default function Overview() {
             <EmptySlate tab={activeTab} />
           )
         ) : consultationsToShow.length ? (
-          <div className="space-y-5">
+          <div className="space-y-5 animate-fade-in">
             {consultationsToShow.map((consultation) => (
               <ConsultationCard
                 key={consultation.id}

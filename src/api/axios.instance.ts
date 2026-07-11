@@ -1,5 +1,7 @@
 import axios from "axios";
 import { normalizeApiError } from "./error-handler";
+import posthog from "posthog-js";
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -55,6 +57,11 @@ api.interceptors.request.use(
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      const sessionId = posthog.get_session_id();
+      if (sessionId) {
+        config.headers["x-posthog-session-id"] = sessionId;
       }
     }
     return config;

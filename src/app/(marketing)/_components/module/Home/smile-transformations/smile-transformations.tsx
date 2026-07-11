@@ -80,30 +80,28 @@ export default function SmileTransformations() {
                 key={study.id}
                 className="bg-white rounded-lg overflow-hidden border border-gray-200 flex flex-col group transition-shadow duration-300 hover:shadow-sm"
               >
-                {/* Image Frame Container */}
+
                 <div className="relative w-full aspect-4/3 bg-gray-100 overflow-hidden">
-                  {/* Verified Badge */}
+
                   <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-sm text-black text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
                     <CheckCircle2 className="size-3.5 text-[#1570EF] fill-[#EFF8FF]" />
                     {study.patientType}
                   </div>
 
-                  {/* Split Before/After Screen Showcase */}
                   <div className="absolute inset-0 flex">
-                    <div className="relative w-full h-full border-r border-white/20">
+                    <div className="relative w-full h-full border-r border-white/20 aspect-video">
                       <Image
                         src={study.image}
                         alt={`${study.title} Before`}
                         fill
                         sizes="(max-width: 768px) 50vw, 33vw"
-                        className="object-cover object-center"
+                        className="object-cover aspect-video object-center"
                         priority
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Card Context Metrics Details */}
                 <div className="p-5 flex-1 flex flex-col justify-between bg-white text-[#101828]">
                   <div className="space-y-1">
                     <h3 className="text-lg font-bold text-[#101828] tracking-tight">

@@ -5,16 +5,20 @@ import { useRouter } from "next/navigation";
 import CustomTabs from "../../shared/custom-tabs/custom-tabs";
 import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-page-header";
 import SearchPatient from "./search-patient";
-import PatientCardsSection from "./patient-card";
+import PatientCardsSection, { PatientCardsSkeleton } from "./patient-card";
 import PatientDetailsDrawer from "./patient-details-drawer";
 import { splitPatientRecords, type PatientRecord } from "./patients-data";
+import { useDentistPatients } from "@/hooks/dentist/useDentist";
 
 interface PatientManageProps {
-  patients: PatientRecord[];
+  patients?: PatientRecord[];
 }
 
-export default function PatientManage({ patients }: PatientManageProps) {
+export default function PatientManage({ patients: patientsProp }: PatientManageProps) {
   const router = useRouter();
+  const { data: apiResponse, isLoading, isError } = useDentistPatients();
+  const patients: PatientRecord[] = patientsProp || (apiResponse?.data as PatientRecord[]) || [];
+
   const [activeTab, setActiveTab] = useState<"consultations" | "bookings">(
     "consultations",
   );
@@ -121,11 +125,19 @@ export default function PatientManage({ patients }: PatientManageProps) {
         onStatusSelect={setSelectedStatus}
       />
 
-      <PatientCardsSection
-        patients={visiblePatients}
-        mode={activeTab}
-        onViewDetails={handleViewDetails}
-      />
+      {isLoading ? (
+        <PatientCardsSkeleton />
+      ) : isError ? (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">
+          Failed to load patient records. Please check your connection and try again.
+        </div>
+      ) : (
+        <PatientCardsSection
+          patients={visiblePatients}
+          mode={activeTab}
+          onViewDetails={handleViewDetails}
+        />
+      )}
 
       <PatientDetailsDrawer
         patient={selectedPatient}

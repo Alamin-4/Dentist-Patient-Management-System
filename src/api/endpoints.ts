@@ -31,6 +31,8 @@ export const endpoints = {
     directorySendClaimOtp: "/dentists/directory/claim/send-otp",
     directoryCheckoutSession: "/stripe/create-checkout-session",
     directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
+    patients: "/dentists/patients",
+    patientDetail: (id: string | number) => `/dentists/patients/${id}`,
   },
   procedures: {
     dentist: "/procedures/dentist",
@@ -66,6 +68,7 @@ export const endpoints = {
     intake: "/consultations/intake",
     updateIntake: (id: string | number) => `/consultations/intake/${id}`,
     confirm: "/consultations/confirm",
+    confirmRequest: "/consultations/confirm-request",
     patient: "/consultations/patient",
     dentist: "/consultations/dentist",
     byId: (id: string | number) => `/consultations/${id}`,

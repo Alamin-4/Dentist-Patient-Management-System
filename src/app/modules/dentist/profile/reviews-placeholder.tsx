@@ -1,5 +1,7 @@
+import { DentistProfileData } from "./profile.types";
+
 interface ReviewsPlaceholderProps {
-  dentist: any;
+  dentist?: DentistProfileData | null;
 }
 
 export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {

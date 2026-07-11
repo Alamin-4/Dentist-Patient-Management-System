@@ -15,50 +15,20 @@ interface SearchInputProps {
 function SearchInputContent({
     value: propValue,
     onChange: propOnChange,
-    placeholder = "Search by procedure and budget",
+    placeholder = "Search by dentist name or specialty",
     variant = "desktop",
 }: SearchInputProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Manage local input state for smooth typing
     const [localValue, setLocalValue] = useState(propValue || "");
 
     useEffect(() => {
-        // Pre-populate search query from URL search params if available
         const urlSearch = searchParams.get("search") || "";
-        const minPrice = searchParams.get("price[min]");
-        const maxPrice = searchParams.get("price[max]");
-
-        let displayValue = urlSearch;
-
-        if (minPrice && maxPrice) {
-            const minNum = Number(minPrice);
-            const maxNum = Number(maxPrice);
-            if (minNum > 0 || maxNum < 1800) {
-                displayValue = `${urlSearch} ${minNum} to ${maxNum}`.trim();
-            }
-        } else if (maxPrice) {
-            const maxNum = Number(maxPrice);
-            if (maxNum < 1800) {
-                displayValue = `${urlSearch} under ${maxNum}`.trim();
-            }
-        } else if (minPrice) {
-            const minNum = Number(minPrice);
-            if (minNum > 0) {
-                displayValue = `${urlSearch} over ${minNum}`.trim();
-            }
-        }
-
-        if (displayValue) {
-            setLocalValue(displayValue);
-            propOnChange(urlSearch);
-        } else if (!urlSearch && !minPrice && !maxPrice && localValue !== "") {
-            setLocalValue("");
-        }
+        setLocalValue(urlSearch);
+        propOnChange(urlSearch);
     }, [searchParams]);
 
-    // Keep local value synced with prop values if they change externally
     useEffect(() => {
         setLocalValue(propValue || "");
     }, [propValue]);
@@ -67,58 +37,7 @@ function SearchInputContent({
         if (e) e.preventDefault();
 
         const params = new URLSearchParams();
-        let textQuery = localValue.trim();
-
-        // 1. Check for ranges: "XXX to YYY", "XXX - YYY", "between XXX and YYY"
-        const rangeRegex = /(?:between\s+)?\$?(\d+)\s*(?:to|-|and)\s*\$?(\d+)/i;
-        const rangeMatch = textQuery.match(rangeRegex);
-
-        if (rangeMatch) {
-            const min = parseInt(rangeMatch[1], 10);
-            const max = parseInt(rangeMatch[2], 10);
-            if (!isNaN(min) && !isNaN(max)) {
-                params.set("price[min]", min.toString());
-                params.set("price[max]", max.toString());
-                textQuery = textQuery.replace(rangeMatch[0], "").replace(/\b(?:between|budget|price)\b/gi, "");
-            }
-        } else {
-            // 2. Check for single numbers with optional qualifiers like "under", "max", "less than", "up to", "budget", "price"
-            const singleRegex = /(?:under|max|less\s+than|up\s+to|budget|price|\$)\s*\$?(\d+)/i;
-            const singleMatch = textQuery.match(singleRegex);
-
-            if (singleMatch) {
-                const val = parseInt(singleMatch[1], 10);
-                if (!isNaN(val)) {
-                    params.set("price[max]", val.toString());
-                    textQuery = textQuery.replace(singleMatch[0], "").replace(/\b(?:under|max|less\s+than|up\s+to|budget|price|\$)\b/gi, "");
-                }
-            } else {
-                // 3. Check for trailing number: e.g. "Implants 800"
-                const trailingRegex = /\s+\$?(\d+)$/;
-                const trailingMatch = textQuery.match(trailingRegex);
-                if (trailingMatch) {
-                    const val = parseInt(trailingMatch[1], 10);
-                    if (!isNaN(val)) {
-                        params.set("price[max]", val.toString());
-                        textQuery = textQuery.replace(trailingRegex, "");
-                    }
-                } else {
-                    // 4. Check if it's just a raw number
-                    const rawNumberRegex = /^\$?(\d+)$/;
-                    const rawMatch = textQuery.match(rawNumberRegex);
-                    if (rawMatch) {
-                        const val = parseInt(rawMatch[1], 10);
-                        if (!isNaN(val)) {
-                            params.set("price[max]", val.toString());
-                            textQuery = "";
-                        }
-                    }
-                }
-            }
-        }
-
-        // Clean up extra spaces in the remaining text query
-        textQuery = textQuery.replace(/\s+/g, " ").trim();
+        const textQuery = localValue.trim();
 
         propOnChange(textQuery);
 

@@ -140,8 +140,11 @@ export async function middleware(request: NextRequest) {
       }
     }
     if (pathname === "/register-doctor" && userRole === "DENTIST") {
-      const url = new URL("/dentist/profile", request.url);
-      return NextResponse.redirect(url);
+      const dentistStep = request.nextUrl.searchParams.get("dentist");
+      if (dentistStep !== "professional-info") {
+        const url = new URL("/dentist/profile", request.url);
+        return NextResponse.redirect(url);
+      }
     }
   }
 

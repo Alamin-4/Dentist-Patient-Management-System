@@ -3,14 +3,9 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, Star } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import SearchableDropdown from "@/components/ui/SearchableDropdown";
+import { getCountries, getCities, type CSCCountry, type CSCCity } from "@/lib/countryApi";
 
 export interface FilterSidebarProps {
   procedure: string;
@@ -87,7 +82,7 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string,
       </button>
       {/* Smooth height animation trick */}
       <div className={cn("grid transition-all duration-200 ease-out", isOpen ? "grid-rows-[1fr] opacity-100 mt-3" : "grid-rows-[0fr] opacity-0")}>
-        <div className="overflow-hidden">
+        <div className={cn(isOpen ? "overflow-visible" : "overflow-hidden")}>
           {children}
         </div>
       </div>
@@ -111,10 +106,41 @@ export default function FilterSidebar({
   const [calendarMonth, setCalendarMonth] = React.useState(() => new Date());
   const calendarCells = React.useMemo(() => buildCalendar(calendarMonth), [calendarMonth]);
 
-  const minPrice = 0;
-  const maxPrice = 1800;
-  const lowerPercent = ((priceRange[0] - minPrice) / (maxPrice - minPrice)) * 100;
-  const upperPercent = ((priceRange[1] - minPrice) / (maxPrice - minPrice)) * 100;
+  const [countriesList, setCountriesList] = React.useState<CSCCountry[]>([]);
+  const [citiesList, setCitiesList] = React.useState<CSCCity[]>([]);
+
+  // Load countries on mount
+  React.useEffect(() => {
+    async function loadCountries() {
+      const list = await getCountries();
+      setCountriesList(list);
+    }
+    loadCountries();
+  }, []);
+
+  // Fetch cities when country changes
+  React.useEffect(() => {
+    if (!country || country === "All Countries") {
+      setCitiesList([]);
+      return;
+    }
+    async function loadCities() {
+      const countryObj = countriesList.find(
+        (c) => c.name.toLowerCase() === country.toLowerCase()
+      );
+      if (countryObj) {
+        const list = await getCities(countryObj.iso2);
+        setCitiesList(list);
+      } else {
+        setCitiesList([]);
+      }
+    }
+    if (countriesList.length > 0) {
+      loadCities();
+    }
+  }, [country, countriesList]);
+
+
 
   return (
     <aside className="flex w-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:min-h-[calc(100vh-8rem)] lg:sticky lg:top-8">
@@ -144,96 +170,30 @@ export default function FilterSidebar({
         )}
       >
 
-        {/* Procedure Type */}
-        <FilterSection title="Procedure Type">
-          <Select value={procedure} onValueChange={onProcedureChange}>
-            <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all hover:border-slate-300 focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366]">
-              <SelectValue placeholder="All Procedures" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableProcedures.map((item) => (
-                <SelectItem key={item} value={item}>{item}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </FilterSection>
-
         {/* Country */}
         <FilterSection title="Country">
-          <Select value={country} onValueChange={onCountryChange}>
-            <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all hover:border-slate-300 focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366]">
-              <SelectValue placeholder="Select Country" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableCountries.map((item) => (
-                <SelectItem key={item} value={item}>{item}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableDropdown
+            value={country}
+            onChange={(val) => {
+              onCountryChange(val);
+              onCityChange("All Cities"); // Reset city to All Cities when country changes
+            }}
+            options={["All Countries", ...countriesList.map((c) => c.name)]}
+            placeholder="Select Country"
+            clearValue="All Countries"
+          />
         </FilterSection>
 
         {/* City */}
         <FilterSection title="City">
-          <Select value={city} onValueChange={onCityChange}>
-            <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all hover:border-slate-300 focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366]">
-              <SelectValue placeholder="Select City" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableCities.map((item) => (
-                <SelectItem key={item} value={item}>{item}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </FilterSection>
-
-        {/* Price Range (Fixed Dual Slider) */}
-        <FilterSection title="Price Range (USD)">
-          <div className="relative w-full h-6 mt-4 mb-2">
-            {/* Track Background */}
-            <div className="absolute top-1/2 -translate-y-1/2 h-1.5 w-full rounded-full bg-slate-200">
-              <div
-                className="absolute h-full rounded-full bg-[#003366]"
-                style={{ left: `${lowerPercent}%`, right: `${100 - upperPercent}%` }}
-              />
-            </div>
-
-            {/* Min Slider */}
-            <input
-              type="range"
-              min={minPrice}
-              max={maxPrice}
-              step={10}
-              value={priceRange[0]}
-              onChange={(e) => {
-                const val = Math.min(Number(e.target.value), priceRange[1] - 10); // Prevents crossing
-                onPriceRangeChange([val, priceRange[1]]);
-              }}
-              className="absolute w-full h-6 appearance-none bg-transparent pointer-events-none z-10 [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#003366] [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125 [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#003366] [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
-            />
-
-            {/* Max Slider */}
-            <input
-              type="range"
-              min={minPrice}
-              max={maxPrice}
-              step={10}
-              value={priceRange[1]}
-              onChange={(e) => {
-                const val = Math.max(Number(e.target.value), priceRange[0] + 10); // Prevents crossing
-                onPriceRangeChange([priceRange[0], val]);
-              }}
-              className="absolute w-full h-6 appearance-none bg-transparent pointer-events-none z-20 [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#003366] [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125 [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#003366] [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
-            />
-          </div>
-
-          <div className="mt-5 flex gap-3">
-            <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 text-center text-[14px] font-bold text-slate-700">
-              ${priceRange[0]}
-            </div>
-            <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 text-center text-[14px] font-bold text-slate-700">
-              {priceRange[1] >= maxPrice ? "Any" : `$${priceRange[1]}`}
-            </div>
-          </div>
+          <SearchableDropdown
+            disabled={!country || country === "All Countries"}
+            value={city}
+            onChange={onCityChange}
+            options={["All Cities", ...citiesList.map((c) => c.name)]}
+            placeholder="Select City"
+            clearValue="All Cities"
+          />
         </FilterSection>
 
         {/* RDV Score */}

@@ -1,7 +1,8 @@
 import { Mail, Phone, MapPin, Briefcase, PencilLine } from "lucide-react";
+import { DentistProfileData } from "./profile.types";
 
 interface BasicDetailsCardProps {
-  dentist: any;
+  dentist?: DentistProfileData | null;
 }
 
 export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {

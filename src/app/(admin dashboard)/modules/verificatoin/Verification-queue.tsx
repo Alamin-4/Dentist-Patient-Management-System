@@ -140,7 +140,6 @@ export default function VerificationQueue() {
         isApproved: true,
         note: "Approved by Admin",
       });
-      setDrawerOpen(false);
       setActiveDentistId(null);
     } catch (e: any) {
       alert(e.message || "Failed to approve verification phase");
@@ -308,7 +307,6 @@ export default function VerificationQueue() {
         dentist={selectedDentist}
         open={drawerOpen}
         onClose={() => {
-          setDrawerOpen(false);
           setActiveDentistId(null);
         }}
         onApprove={handleApprove}

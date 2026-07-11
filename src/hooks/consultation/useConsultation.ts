@@ -5,6 +5,8 @@ export function usePatientConsultations() {
   return useQuery({
     queryKey: ["patientConsultations"],
     queryFn: () => apiClient.consultations.getPatientConsultations(),
+    staleTime: 30_000,   // 30 seconds — reuse cache on quick revisits
+    retry: 1,            // only retry once instead of the default 3
   });
 }
 

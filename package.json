@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "bunx next dev",
+    "build": "bunx next build",
+    "start": "bunx next start",
     "lint": "eslint"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "lucide-react": "^1.14.0",
     "motion": "^12.38.0",
     "next": "16.2.4",
+    "posthog-js": "^1.139.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",

@@ -111,7 +111,7 @@ export default function PatientCardsSection({
     );
   }
   return (
-    <section className="space-y-3 sm:space-y-4" aria-label="Patient bookings">
+    <section className="space-y-3 sm:space-y-4 animate-fade-in" aria-label="Patient bookings">
       {patients.map((patient) => (
         <PatientCard
           key={patient.id}
@@ -121,5 +121,48 @@ export default function PatientCardsSection({
         />
       ))}
     </section>
+  );
+}
+
+export function PatientCardsSkeleton() {
+  return (
+    <div className="space-y-3 sm:space-y-4">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="w-full rounded-lg border border-border bg-card p-4 shadow-sm animate-pulse sm:p-5"
+        >
+          <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,0.9fr)_auto] lg:items-center lg:gap-6">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="size-12 shrink-0 rounded-full bg-gray-200 sm:size-14" />
+              <div className="min-w-0 flex-1 space-y-2 py-1">
+                <div className="h-4 w-32 rounded bg-gray-200" />
+                <div className="h-3.5 w-40 rounded bg-gray-100" />
+                <div className="h-3 w-24 rounded bg-gray-100" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="h-3 w-16 rounded bg-gray-100" />
+              <div className="h-4 w-28 rounded bg-gray-200" />
+            </div>
+
+            <div className="space-y-2">
+              <div className="h-3 w-20 rounded bg-gray-100" />
+              <div className="h-6.5 w-24 rounded-full bg-gray-200" />
+            </div>
+
+            <div className="space-y-2">
+              <div className="h-3 w-12 rounded bg-gray-100" />
+              <div className="h-4 w-16 rounded bg-gray-200" />
+            </div>
+
+            <div className="lg:justify-self-end">
+              <div className="h-10 w-full rounded-lg bg-gray-200 sm:w-28" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

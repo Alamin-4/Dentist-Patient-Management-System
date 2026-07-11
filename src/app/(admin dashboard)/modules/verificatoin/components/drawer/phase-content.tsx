@@ -6,9 +6,11 @@ import { SpecialtySection } from "./specialty-section";
 export function Ph1Content({
   data,
   licenseFile,
+  onPreview,
 }: {
   data: NonNullable<VerificationDentist["ph1_data"]>;
   licenseFile?: string;
+  onPreview?: (href: string, title: string) => void;
 }) {
   return (
     <div className="space-y-4">
@@ -47,7 +49,7 @@ export function Ph1Content({
         </div>
         {licenseFile && (
           <div className="mt-4">
-            <FileRow fileName="License document" fileSize="" href={licenseFile} />
+            <FileRow fileName="License document" fileSize="" href={licenseFile} onPreview={onPreview} />
           </div>
         )}
       </div>
@@ -59,11 +61,40 @@ export function Ph1Content({
           <FileRow
             fileName={data.government_id.file_name}
             fileSize={data.government_id.file_size}
+            href={data.government_id.href}
+            onPreview={onPreview}
           />
           <p className="mt-2 flex items-center gap-1 text-xs text-emerald-600">
             <CheckCircle2 className="h-3 w-3" />{" "}
             {data.government_id.verified_note}
           </p>
+        </div>
+      )}
+      {data.selfie && (
+        <div className="rounded-lg border border-gray-100 bg-white p-4">
+          <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+            Professional Headshot / Selfie
+          </h4>
+          <div className="flex gap-4 items-center">
+            {data.selfie.href && (
+              <div className="relative size-16 shrink-0 overflow-hidden rounded-lg border border-gray-200">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={data.selfie.href}
+                  alt="Selfie"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <FileRow
+                fileName={data.selfie.file_name}
+                fileSize={`AI Match Score: ${data.selfie.confidence}`}
+                href={data.selfie.href}
+                onPreview={onPreview}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -73,9 +104,11 @@ export function Ph1Content({
 export function Ph2Content({
   data,
   isRejected,
+  onPreview,
 }: {
   data: NonNullable<VerificationDentist["ph2_data"]>;
   isRejected?: boolean;
+  onPreview?: (href: string, title: string) => void;
 }) {
   return (
     <div className="space-y-4">
@@ -96,12 +129,24 @@ export function Ph2Content({
         <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
           Sterilization Evidence
         </h4>
-        {data.sterilization_evidence?.video_walkthrough && (
-          <FileRow
-            fileName={data.sterilization_evidence.video_walkthrough.file_name}
-            fileSize={data.sterilization_evidence.video_walkthrough.file_size}
-          />
-        )}
+        <div className="space-y-3">
+          {data.sterilization_evidence?.video_walkthrough && (
+            <FileRow
+              fileName={data.sterilization_evidence.video_walkthrough.file_name}
+              fileSize={data.sterilization_evidence.video_walkthrough.file_size}
+              href={data.sterilization_evidence.video_walkthrough.href}
+              onPreview={onPreview}
+            />
+          )}
+          {data.sterilization_evidence?.jci_certificate && (
+            <FileRow
+              fileName={data.sterilization_evidence.jci_certificate.file_name}
+              fileSize={data.sterilization_evidence.jci_certificate.file_size}
+              href={data.sterilization_evidence.jci_certificate.href}
+              onPreview={onPreview}
+            />
+          )}
+        </div>
       </div>
       {data.procedure_pricing && data.procedure_pricing.length > 0 && (
         <div className="rounded-lg border border-gray-100 bg-white p-4">
@@ -148,9 +193,11 @@ export function Ph2Content({
 export function Ph3Content({
   data,
   isRejected,
+  onPreview,
 }: {
   data: NonNullable<VerificationDentist["ph3_data"]>;
   isRejected?: boolean;
+  onPreview?: (href: string, title: string) => void;
 }) {
   return (
     <div className="space-y-4">
@@ -180,6 +227,7 @@ export function Ph3Content({
         <SpecialtySection
           key={`${specialty.name}-${index}`}
           specialty={specialty}
+          onPreview={onPreview}
         />
       ))}
     </div>

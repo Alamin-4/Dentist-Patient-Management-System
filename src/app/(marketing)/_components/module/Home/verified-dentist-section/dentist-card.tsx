@@ -104,25 +104,23 @@ export default function DentistCard({
               />
             </div>
             <div className={cn("flex items-center gap-1 px-1.5 py-0.5 rounded-full", statusInfo.bgColor)}>
-              {/* Fixed Logic Bug: properly checks if status is not UNCLAIMED */}
               {statusInfo.text !== "UNCLAIMED" && (
                 <GoShieldCheck className={cn("size-3 sm:size-4", statusInfo.icon)} />
               )}
               <span className={cn("text-[9px] sm:text-[11px] font-bold uppercase tracking-wider whitespace-nowrap", statusInfo.textColor)}>
-                {statusInfo.text}
+                {dentist.status}
               </span>
             </div>
             {dentist.rdvScore > 0 && (
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-linear-to-r from-[#10436B]/10 to-[#10436B]/5 rounded-lg">
                 <Award size={12} className="text-[#10436B]" />
                 <span className="text-[10px] sm:text-xs font-bold text-[#10436B]">
-                  RVD: {dentist.rdvScore}
+                  RDV: {dentist.rdvScore}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Center: Info (Always left-aligned for professional look) */}
           <div className="flex-1 min-w-0 text-left">
             <h4 className="font-bold text-[#1A1A2E] text-base sm:text-lg mb-0.5 truncate">
               {dentist.name}
@@ -170,10 +168,10 @@ export default function DentistCard({
           </div>
         </div>
 
-        {/* Bottom Section: RVD, Experience, Procedures (Separated by a subtle divider) */}
+        {/* Bottom Section: RDV, Experience, Procedures (Separated by a subtle divider) */}
         <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {/* RVD Score Badge (Fixed invalid bg-linear-to-r class) */}
+            {/* RDV Score Badge (Fixed invalid bg-linear-to-r class) */}
 
 
             {/* Experience */}

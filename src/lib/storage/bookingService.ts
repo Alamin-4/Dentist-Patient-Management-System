@@ -34,6 +34,7 @@ export interface BookingDraft {
     additionalInfo: string;
   };
   xrayNotes: string;
+  bookingMode?: 'book' | 'request';
 }
 
 export interface BookingFormData extends BookingDraft {
@@ -81,6 +82,7 @@ const INITIAL_BOOKING_DRAFT: BookingDraft = {
     additionalInfo: "",
   },
   xrayNotes: "",
+  bookingMode: "book",
 };
 
 let frontSmileFile: File | null = null;
@@ -141,6 +143,7 @@ function normalizeDraft(value: unknown): BookingDraft {
       ...INITIAL_BOOKING_DRAFT.dentalHistory,
       ...(record.dentalHistory ?? {}),
     },
+    bookingMode: record.bookingMode === 'request' ? 'request' : 'book',
   };
 }
 

@@ -7,6 +7,7 @@ import type { PhaseKey, VerificationDentist } from "../types";
 import { PHASE_TABS } from "./drawer/constants";
 import { PhaseTabIcon } from "./drawer/phase-tab-icon";
 import { Ph1Content, Ph2Content, Ph3Content } from "./drawer/phase-content";
+import { DocumentPreviewModal } from "./drawer/document-preview-modal";
 
 interface CustomDrawerProps {
   dentist: VerificationDentist | null;
@@ -33,6 +34,12 @@ export function CustomDrawer({
     dentistId: string;
     phase: PhaseKey;
   } | null>(null);
+
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
+
+  const handlePreview = (url: string, name: string) => {
+    setPreviewFile({ url, name });
+  };
 
   const defaultPhase = useMemo<PhaseKey>(() => {
     if (!dentist) return "ph1";
@@ -188,13 +195,13 @@ export function CustomDrawer({
 
         <div className="flex-1 overflow-y-auto p-5">
           {activePhase === "ph1" && dentist.ph1_data && (
-            <Ph1Content data={dentist.ph1_data} licenseFile={dentist.file} />
+            <Ph1Content data={dentist.ph1_data} licenseFile={dentist.file} onPreview={handlePreview} />
           )}
           {activePhase === "ph2" && dentist.ph2_data && (
-            <Ph2Content data={dentist.ph2_data} isRejected={isRejectedPhase} />
+            <Ph2Content data={dentist.ph2_data} isRejected={isRejectedPhase} onPreview={handlePreview} />
           )}
           {activePhase === "ph3" && dentist.ph3_data && (
-            <Ph3Content data={dentist.ph3_data} isRejected={isRejectedPhase} />
+            <Ph3Content data={dentist.ph3_data} isRejected={isRejectedPhase} onPreview={handlePreview} />
           )}
 
           {!drawerDetails.hasActivePhaseData && (
@@ -240,6 +247,15 @@ export function CustomDrawer({
           </div>
         )}
       </div>
+
+      {previewFile && (
+        <DocumentPreviewModal
+          isOpen={!!previewFile}
+          onClose={() => setPreviewFile(null)}
+          url={previewFile.url}
+          name={previewFile.name}
+        />
+      )}
     </>
   );
 }
