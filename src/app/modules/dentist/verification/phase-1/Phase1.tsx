@@ -46,7 +46,7 @@ export default function Phase1() {
   const [submittedLicence, setSubmittedLicence] =
     useState<SubmittedLicence | null>(null);
 
-  const { checkLicenseVerifyProgress, step1Status } = useVerificationProgress();
+  const { checkLicenseVerifyProgress, step1Status, step1Note } = useVerificationProgress();
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [submissionAttempted, setSubmissionAttempted] = useState(false);
@@ -187,6 +187,7 @@ export default function Phase1() {
         <VerificationStatusScreen
           status="REJECTED"
           phaseName="License Verification"
+          rejectionNote={step1Note || undefined}
         />
       )}
 

@@ -22,7 +22,7 @@ import { VerificationStatusScreen } from "../VerificationStatusScreen";
 export default function MultiStepForm() {
   const router = useRouter();
   const { stepTwoMutation } = useDentist();
-  const { checkPhotoVerifyProgress, step2Status } = useVerificationProgress();
+  const { checkPhotoVerifyProgress, step2Status, step2Note } = useVerificationProgress();
 
   const progressData = checkPhotoVerifyProgress?.data;
   // Pre-fill form whenever there is server data (submitted, approved, or rejected resubmission)
@@ -153,6 +153,7 @@ export default function MultiStepForm() {
         <VerificationStatusScreen
           status="REJECTED"
           phaseName="Operations Verification"
+          rejectionNote={step2Note || undefined}
         />
       )}
       <FormProvider {...methods}>

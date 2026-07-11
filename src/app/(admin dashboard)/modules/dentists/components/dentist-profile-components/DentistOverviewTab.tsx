@@ -3,12 +3,10 @@
 import { FileText, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface DentistOverviewTabProps {
-    dentistId: string;
-    verification: any;
-    apiData: any; // Raw API response
+    apiData: any; // Raw API response from GET /admin/dentist-verification/:id
 }
 
-export function DentistOverviewTab({ dentistId, verification, apiData }: DentistOverviewTabProps) {
+export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
     const { license_step, operation_step, clinical_step } = apiData || {};
 
     return (
