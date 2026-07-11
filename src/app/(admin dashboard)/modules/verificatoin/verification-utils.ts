@@ -167,7 +167,14 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
     status: item.license_step?.status || "SUBMITTED",
     is_verified: item.license_step?.is_verified || false,
     verified_at: item.license_step?.verified_at || null,
-    reviewer_notes: item.license_step?.reviewer_notes || "",
+    reviewer_notes:
+      lVer === "REJECTED"
+        ? (item.license_step?.reviewer_notes || "")
+        : oVer === "REJECTED"
+        ? (item.operation_step?.reviewer_notes || "")
+        : cVer === "REJECTED"
+        ? (item.clinical_step?.reviewer_notes || "")
+        : (item.license_step?.reviewer_notes || ""),
     dentist: String(item.dentist?.id || item.dentist || ""),
     verification: String(item.id || ""),
     registration_authority: item.license_step?.registration_authority || "",
