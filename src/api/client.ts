@@ -707,4 +707,14 @@ export const consultationBookingApi = {
     });
     return response.data;
   },
+  confirmRequest: async (payload: {
+    consultation_id: string | number;
+    dentistIds: string[];
+  }) => {
+    const response = await api.post(endpoints.consultations.confirmRequest, {
+      intakeId: String(payload.consultation_id),
+      dentistIds: payload.dentistIds.map(String),
+    });
+    return response.data;
+  },
 };

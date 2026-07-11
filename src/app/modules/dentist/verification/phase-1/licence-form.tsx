@@ -45,6 +45,8 @@ export default function LicenceForm({
     },
   });
 
+  const { formState: { errors } } = form;
+
   const selectedCountry = form.watch("country");
 
   // Load countries on mount
@@ -115,6 +117,11 @@ export default function LicenceForm({
               />
             )}
           />
+          {errors.country && (
+            <p className="text-xs text-red-500 font-semibold mt-1">
+              {errors.country.message}
+            </p>
+          )}
         </div>
 
         {/* City Select */}
@@ -134,6 +141,11 @@ export default function LicenceForm({
               />
             )}
           />
+          {errors.city && (
+            <p className="text-xs text-red-500 font-semibold mt-1">
+              {errors.city.message}
+            </p>
+          )}
         </div>
 
         {/* Registration Authority (Manual Input) */}
@@ -147,6 +159,11 @@ export default function LicenceForm({
             {...form.register("authority")}
             className="h-14 rounded-lg border-border bg-card px-4 py-0"
           />
+          {errors.authority && (
+            <p className="text-xs text-red-500 font-semibold mt-1">
+              {errors.authority.message}
+            </p>
+          )}
         </div>
 
         {/* Registration Number */}
@@ -160,6 +177,11 @@ export default function LicenceForm({
             className="h-14 rounded-lg border-border bg-card px-4 py-0"
             placeholder="Enter Reg No"
           />
+          {errors.regNo && (
+            <p className="text-xs text-red-500 font-semibold mt-1">
+              {errors.regNo.message}
+            </p>
+          )}
         </div>
       </div>
 

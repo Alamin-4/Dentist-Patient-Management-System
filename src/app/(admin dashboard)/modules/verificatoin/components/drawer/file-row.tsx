@@ -5,9 +5,10 @@ interface FileRowProps {
   fileName: string;
   fileSize: string;
   href?: string;
+  onPreview?: (href: string, title: string) => void;
 }
 
-export function FileRow({ fileName, fileSize, href }: FileRowProps) {
+export function FileRow({ fileName, fileSize, href, onPreview }: FileRowProps) {
   const isVideo = fileName.endsWith(".mp4") || fileName.endsWith(".mov");
 
   return (
@@ -32,14 +33,24 @@ export function FileRow({ fileName, fileSize, href }: FileRowProps) {
           <p className="text-xs text-gray-400">{fileSize}</p>
         </div>
       </div>
-      <a
-        href={href}
-        target={href ? "_blank" : undefined}
-        rel={href ? "noreferrer" : undefined}
-        className="flex shrink-0 items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
-      >
-        View <ArrowUpRight className="h-3 w-3" />
-      </a>
+      {href && onPreview ? (
+        <button
+          type="button"
+          onClick={() => onPreview(href, fileName)}
+          className="flex shrink-0 items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+        >
+          View <ArrowUpRight className="h-3 w-3" />
+        </button>
+      ) : (
+        <a
+          href={href}
+          target={href ? "_blank" : undefined}
+          rel={href ? "noreferrer" : undefined}
+          className="flex shrink-0 items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+        >
+          View <ArrowUpRight className="h-3 w-3" />
+        </a>
+      )}
     </div>
   );
 }

@@ -18,6 +18,7 @@ interface MatchProps {
   onReject?: () => void;
   onFileSelect?: (file: File) => void;
   existingFileUrl?: string;
+  error?: string;
 }
 
 export function VerificationResult({
@@ -29,6 +30,7 @@ export function VerificationResult({
   onReject,
   onFileSelect,
   existingFileUrl,
+  error,
 }: MatchProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -167,6 +169,11 @@ export function VerificationResult({
             </button>
           )}
         </div>
+      )}
+      {error && (
+        <p className="text-xs text-red-500 font-semibold mt-2">
+          {error}
+        </p>
       )}
     </>
   );

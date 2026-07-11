@@ -49,6 +49,7 @@ export default function Phase1() {
   const { checkLicenseVerifyProgress, step1Status } = useVerificationProgress();
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
+  const [submissionAttempted, setSubmissionAttempted] = useState(false);
 
   const [verificationStatus, setVerificationStatus] = useState<
     "IDLE" | "VERIFYING" | "SUCCESS" | "FAILED"
@@ -115,6 +116,7 @@ export default function Phase1() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmissionAttempted(true);
 
     if (isFormLocked) {
       setVerificationStep(2);
@@ -224,6 +226,7 @@ export default function Phase1() {
                   (progressData?.data as LicenseProgressData | undefined)
                     ?.licenseDocument
                 }
+                error={submissionAttempted && !licenseFile && !((progressData?.data as LicenseProgressData | undefined)?.licenseDocument) ? "Registration Certificate is required." : undefined}
               />
             )}
           </div>
@@ -247,6 +250,11 @@ export default function Phase1() {
                     ?.professional_headshot
                 }
               />
+              {submissionAttempted && !hasHeadshot && (
+                <p className="text-xs font-semibold text-destructive mt-1">
+                  Professional headshot is required to continue.
+                </p>
+              )}
               <p
                 className={cn(
                   "text-xs",

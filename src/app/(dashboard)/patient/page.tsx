@@ -161,7 +161,9 @@ export default function Overview() {
   const bookingsCompletedCount = consultations?.filter((c) => c.requestStatus === "COMPLETED")?.length || 0;
   const documentsCount = consultations?.length + treatmentPlans?.length;
 
-  const isLoading = loadingConsultations || loadingPlans;
+  // Stats need both to be ready; consultation list only needs consultations
+  const isStatsLoading = loadingConsultations || loadingPlans;
+  const isConsultationsLoading = loadingConsultations;
 
   return (
     <div>
@@ -173,19 +175,19 @@ export default function Overview() {
           icon={<DollarSign className="w-5 h-5" />}
           value={`$${escrowTotal.toLocaleString()}`}
           label="Amount in escrow"
-          isLoading={isLoading}
+          isLoading={isStatsLoading}
         />
         <StatCard
           icon={<CalendarCheck className="w-5 h-5" />}
           value={String(bookingsCompletedCount).padStart(2, "0")}
           label="Booking Completed"
-          isLoading={isLoading}
+          isLoading={isStatsLoading}
         />
         <StatCard
           icon={<FileText className="w-5 h-5" />}
           value={String(documentsCount).padStart(2, "0")}
           label="Documents stored"
-          isLoading={isLoading}
+          isLoading={isStatsLoading}
         />
       </div>
 
@@ -211,7 +213,7 @@ export default function Overview() {
         </div>
 
         {/* Content */}
-        {isLoading ? (
+        {isConsultationsLoading ? (
           <div className="space-y-5">
             {activeTab === "estimate-updates" ? (
               <>

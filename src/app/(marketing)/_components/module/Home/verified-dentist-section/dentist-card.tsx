@@ -104,12 +104,11 @@ export default function DentistCard({
               />
             </div>
             <div className={cn("flex items-center gap-1 px-1.5 py-0.5 rounded-full", statusInfo.bgColor)}>
-              {/* Fixed Logic Bug: properly checks if status is not UNCLAIMED */}
               {statusInfo.text !== "UNCLAIMED" && (
                 <GoShieldCheck className={cn("size-3 sm:size-4", statusInfo.icon)} />
               )}
               <span className={cn("text-[9px] sm:text-[11px] font-bold uppercase tracking-wider whitespace-nowrap", statusInfo.textColor)}>
-                {statusInfo.text}
+                {dentist.status}
               </span>
             </div>
             {dentist.rdvScore > 0 && (
@@ -122,7 +121,6 @@ export default function DentistCard({
             )}
           </div>
 
-          {/* Center: Info (Always left-aligned for professional look) */}
           <div className="flex-1 min-w-0 text-left">
             <h4 className="font-bold text-[#1A1A2E] text-base sm:text-lg mb-0.5 truncate">
               {dentist.name}

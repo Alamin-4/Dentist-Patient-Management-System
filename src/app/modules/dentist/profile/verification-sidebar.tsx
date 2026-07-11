@@ -26,37 +26,15 @@ export function VerificationSidebar() {
   const { data: progressData } = useDentistProgress();
   const { nextIncompleteStep } = useVerificationProgress();
 
-  const progress = progressData?.data as
-    | DentistVerificationProgress
-    | undefined;
-  const stepsData = progress?.steps || [];
-
-  const licenseStep = getStepByPhase(stepsData, "LICENSE");
-  const operationalStep = getStepByPhase(stepsData, "OPERATIONAL");
-  const clinicalStep = getStepByPhase(stepsData, "CLINICAL");
-
-  const getStepStatus = (
-    step: VerificationProgressStep | undefined,
-    fallbackStatus?: string | null,
-  ) => {
-    if (fallbackStatus && fallbackStatus !== "PENDING") return fallbackStatus;
-    if (!step) return "PENDING";
-    if (step.status) return step.status;
-    return step.completed ? "APPROVED" : "PENDING";
-  };
-
-  const step1Status = getStepStatus(licenseStep, progress?.step_one_status);
-  const step2Status = getStepStatus(operationalStep, progress?.step_two_status);
-  const step3Status = getStepStatus(clinicalStep, progress?.step_three_status);
-  const step1Done = licenseStep
-    ? licenseStep.completed
-    : progress?.is_step_one_completed || step1Status === "APPROVED";
-  const step2Done = operationalStep
-    ? operationalStep.completed
-    : progress?.is_step_two_completed || step2Status === "APPROVED";
-  const step3Done = clinicalStep
-    ? clinicalStep.completed
-    : progress?.is_step_three_completed || step3Status === "APPROVED";
+  const progress = progressData?.data as any; // Temporary any, we'll map directly from the response
+  
+  const step1Status = progress?.step_one_status || "PENDING";
+  const step2Status = progress?.step_two_status || "PENDING";
+  const step3Status = progress?.step_three_status || "PENDING";
+  
+  const step1Done = progress?.is_step_one_completed || false;
+  const step2Done = progress?.is_step_two_completed || false;
+  const step3Done = progress?.is_step_three_completed || false;
 
   const steps = [
     {

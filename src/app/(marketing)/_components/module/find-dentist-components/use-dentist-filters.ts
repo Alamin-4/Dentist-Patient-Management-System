@@ -66,9 +66,6 @@ export const useDentistFilters = () => {
         const urlSearch = searchParams.get("search") || "";
         const urlCity = searchParams.get("city") || DEFAULT_FILTERS.city;
         const urlCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
-        const urlProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
-        const urlMinPrice = searchParams.get("price[min]") ? Number(searchParams.get("price[min]")) : DEFAULT_PRICE_RANGE[0];
-        const urlMaxPrice = searchParams.get("price[max]") ? Number(searchParams.get("price[max]")) : DEFAULT_PRICE_RANGE[1];
         const urlVerified = searchParams.get("verified") === "true";
         const urlPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
 
@@ -78,11 +75,6 @@ export const useDentistFilters = () => {
         }
         if (urlCity !== city) setCity(urlCity);
         if (urlCountry !== country) setCountry(urlCountry);
-        if (urlProcedure !== procedure) setProcedure(urlProcedure);
-        if (urlMinPrice !== priceRange[0] || urlMaxPrice !== priceRange[1]) {
-            setPriceRange([urlMinPrice, urlMaxPrice]);
-            setDebouncedPrice([urlMinPrice, urlMaxPrice]);
-        }
         if (urlVerified !== showVerifiedOnly) setShowVerifiedOnly(urlVerified);
         if (urlPage !== page) setPage(urlPage);
     }, [searchParams]);
@@ -93,11 +85,6 @@ export const useDentistFilters = () => {
         if (debouncedQuery) params.set("search", debouncedQuery);
         if (city !== DEFAULT_FILTERS.city) params.set("city", city);
         if (country !== DEFAULT_FILTERS.country) params.set("country", country);
-        if (procedure !== DEFAULT_FILTERS.procedure) params.set("procedure", procedure);
-        if (priceRange[0] > DEFAULT_PRICE_RANGE[0] || priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
-            params.set("price[min]", priceRange[0].toString());
-            params.set("price[max]", priceRange[1].toString());
-        }
         if (showVerifiedOnly) params.set("verified", "true");
         if (page > 1) params.set("page", page.toString());
 
@@ -105,7 +92,7 @@ export const useDentistFilters = () => {
         const nextUrl = queryStr ? `${pathname}?${queryStr}` : pathname;
         
         router.replace(nextUrl, { scroll: false });
-    }, [debouncedQuery, city, country, procedure, priceRange, showVerifiedOnly, page, router, pathname]);
+    }, [debouncedQuery, city, country, showVerifiedOnly, page, router, pathname]);
 
     // Debounce search query
     useEffect(() => {
@@ -125,7 +112,7 @@ export const useDentistFilters = () => {
     // Reset page on filter change
     useEffect(() => {
         setPage(1);
-    }, [city, country, procedure, showVerifiedOnly, selectedScoreRanges, selectedRatings]);
+    }, [city, country, showVerifiedOnly, selectedScoreRanges, selectedRatings]);
 
     // Derived numeric params
     const rdvScoreMin = useMemo(() => {
@@ -145,16 +132,11 @@ export const useDentistFilters = () => {
         if (debouncedQuery) params.search = debouncedQuery;
         if (city !== DEFAULT_FILTERS.city) params.city = city;
         if (country !== DEFAULT_FILTERS.country) params.country = country;
-        if (procedure !== DEFAULT_FILTERS.procedure) params.procedure = procedure;
-        if (debouncedPrice[0] > DEFAULT_PRICE_RANGE[0] || debouncedPrice[1] < DEFAULT_PRICE_RANGE[1]) {
-            params["price[min]"] = debouncedPrice[0];
-            params["price[max]"] = debouncedPrice[1];
-        }
         if (showVerifiedOnly) params.verified = "true";
         if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
         if (ratingMin !== undefined) params.ratingMin = ratingMin;
         return params;
-    }, [page, debouncedQuery, city, country, procedure, debouncedPrice, showVerifiedOnly, rdvScoreMin, ratingMin]);
+    }, [page, debouncedQuery, city, country, showVerifiedOnly, rdvScoreMin, ratingMin]);
 
     // Toggle helpers
     const toggleRating = (rating: number) =>

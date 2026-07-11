@@ -68,6 +68,7 @@ export const endpoints = {
     intake: "/consultations/intake",
     updateIntake: (id: string | number) => `/consultations/intake/${id}`,
     confirm: "/consultations/confirm",
+    confirmRequest: "/consultations/confirm-request",
     patient: "/consultations/patient",
     dentist: "/consultations/dentist",
     byId: (id: string | number) => `/consultations/${id}`,

@@ -6,7 +6,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import SearchableDropdown from "@/components/ui/SearchableDropdown";
 import { getCountries, getCities, type CSCCountry, type CSCCity } from "@/lib/countryApi";
-import { DEFAULT_PRICE_RANGE } from "../../find-dentist-components/constants";
 
 export interface FilterSidebarProps {
   procedure: string;
@@ -141,59 +140,7 @@ export default function FilterSidebar({
     }
   }, [country, countriesList]);
 
-  const [localMin, setLocalMin] = React.useState("");
-  const [localMax, setLocalMax] = React.useState("");
 
-  React.useEffect(() => {
-    setLocalMin(priceRange[0] === DEFAULT_PRICE_RANGE[0] ? "" : priceRange[0].toString());
-  }, [priceRange[0]]);
-
-  React.useEffect(() => {
-    setLocalMax(priceRange[1] === DEFAULT_PRICE_RANGE[1] ? "" : priceRange[1].toString());
-  }, [priceRange[1]]);
-
-  const handleMinBlur = () => {
-    if (localMin === "") {
-      onPriceRangeChange([DEFAULT_PRICE_RANGE[0], priceRange[1]]);
-      return;
-    }
-    let val = Number(localMin.replace(/\D/g, ""));
-    if (isNaN(val) || val < DEFAULT_PRICE_RANGE[0]) {
-      val = DEFAULT_PRICE_RANGE[0];
-    }
-    if (val >= priceRange[1]) {
-      val = priceRange[1] - 10;
-    }
-    setLocalMin(val === DEFAULT_PRICE_RANGE[0] ? "" : val.toString());
-    onPriceRangeChange([val, priceRange[1]]);
-  };
-
-  const handleMaxBlur = () => {
-    if (localMax === "") {
-      onPriceRangeChange([priceRange[0], DEFAULT_PRICE_RANGE[1]]);
-      return;
-    }
-    let val = Number(localMax.replace(/\D/g, ""));
-    if (isNaN(val) || val === DEFAULT_PRICE_RANGE[1]) {
-      val = DEFAULT_PRICE_RANGE[1];
-    }
-    if (val <= priceRange[0]) {
-      val = priceRange[0] + 10;
-    }
-    setLocalMax(val === DEFAULT_PRICE_RANGE[1] ? "" : val.toString());
-    onPriceRangeChange([priceRange[0], val]);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.currentTarget.blur();
-    }
-  };
-
-  const minPrice = DEFAULT_PRICE_RANGE[0];
-  const maxPrice = Math.max(DEFAULT_PRICE_RANGE[1], priceRange[1]);
-  const lowerPercent = ((priceRange[0] - minPrice) / (maxPrice - minPrice)) * 100;
-  const upperPercent = ((priceRange[1] - minPrice) / (maxPrice - minPrice)) * 100;
 
   return (
     <aside className="flex w-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:min-h-[calc(100vh-8rem)] lg:sticky lg:top-8">
@@ -223,17 +170,6 @@ export default function FilterSidebar({
         )}
       >
 
-        {/* Procedure Type */}
-        <FilterSection title="Procedure Type">
-          <SearchableDropdown
-            value={procedure}
-            onChange={onProcedureChange}
-            options={availableProcedures}
-            placeholder="All Procedures"
-            clearValue="All Procedures"
-          />
-        </FilterSection>
-
         {/* Country */}
         <FilterSection title="Country">
           <SearchableDropdown
@@ -258,83 +194,6 @@ export default function FilterSidebar({
             placeholder="Select City"
             clearValue="All Cities"
           />
-        </FilterSection>
-
-        {/* Price Range (Fixed Dual Slider) */}
-        <FilterSection title="Price Range (USD)">
-          <div className="relative w-full h-6 mt-4 mb-2">
-            {/* Track Background */}
-            <div className="absolute top-1/2 -translate-y-1/2 h-1.5 w-full rounded-full bg-slate-200">
-              <div
-                className="absolute h-full rounded-full bg-[#003366]"
-                style={{ left: `${lowerPercent}%`, right: `${100 - upperPercent}%` }}
-              />
-            </div>
-
-            {/* Min Slider */}
-            <input
-              type="range"
-              min={minPrice}
-              max={maxPrice}
-              step={10}
-              value={priceRange[0]}
-              onChange={(e) => {
-                const val = Math.min(Number(e.target.value), priceRange[1] - 10); // Prevents crossing
-                onPriceRangeChange([val, priceRange[1]]);
-              }}
-              className="absolute w-full h-6 appearance-none bg-transparent pointer-events-none z-10 [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#003366] [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125 [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#003366] [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
-            />
-
-            {/* Max Slider */}
-            <input
-              type="range"
-              min={minPrice}
-              max={maxPrice}
-              step={10}
-              value={priceRange[1]}
-              onChange={(e) => {
-                const val = Math.max(Number(e.target.value), priceRange[0] + 10); // Prevents crossing
-                onPriceRangeChange([priceRange[0], val]);
-              }}
-              className="absolute w-full h-6 appearance-none bg-transparent pointer-events-none z-20 [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#003366] [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125 [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#003366] [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
-            />
-          </div>
-
-          <div className="mt-5 flex gap-3 items-center">
-            {/* Min Input Box */}
-            <div className="flex flex-1 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 focus-within:border-[#003366] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#003366]/10 transition-all">
-              <span className="text-slate-400 text-sm font-semibold select-none">$</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={localMin}
-                onChange={(e) => setLocalMin(e.target.value.replace(/\D/g, ""))}
-                onBlur={handleMinBlur}
-                onKeyDown={handleKeyDown}
-                className="w-full bg-transparent text-left text-[14px] font-bold text-slate-700 outline-none"
-                placeholder="Min"
-              />
-            </div>
-
-            <span className="text-xs font-semibold text-slate-400 uppercase select-none">to</span>
-
-            {/* Max Input Box */}
-            <div className="flex flex-1 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 focus-within:border-[#003366] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#003366]/10 transition-all">
-              <span className="text-slate-400 text-sm font-semibold select-none">$</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={localMax}
-                onChange={(e) => setLocalMax(e.target.value.replace(/\D/g, ""))}
-                onBlur={handleMaxBlur}
-                onKeyDown={handleKeyDown}
-                className="w-full bg-transparent text-left text-[14px] font-bold text-slate-700 outline-none"
-                placeholder="Max"
-              />
-            </div>
-          </div>
         </FilterSection>
 
         {/* RDV Score */}

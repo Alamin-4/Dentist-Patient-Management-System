@@ -1,8 +1,9 @@
 import { Lock, DollarSign, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { DentistProfileData } from "./profile.types";
 
 interface PricingPlaceholderProps {
-  dentist: any;
+  dentist?: DentistProfileData | null;
 }
 
 export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {

@@ -20,6 +20,7 @@ import TreatmentDetailsForm from "./BookingIntakeForm/TreatmentDetailsForm";
 import DentalHistoryForm from "./BookingIntakeForm/DentalHistoryForm";
 import PhotoUploadForm from "./BookingIntakeForm/PhotoUploadForm";
 import XRayUploadForm from "./BookingIntakeForm/XRayUploadForm";
+import RequestSuccessModal from "./BookingIntakeForm/RequestSuccessModal";
 import { Loader2 } from "lucide-react";
 import { consultationBookingApi } from "@/api/client";
 
@@ -29,6 +30,7 @@ export default function IntakeModal() {
   const router = useRouter();
   const [step, setStep] = useState(() => getBookingDraft().currentStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const {
     showBookingModal,
     setShowBookingModal,
@@ -38,6 +40,7 @@ export default function IntakeModal() {
     dentistsToCompare,
     selectedDentistId,
     compareModalPurpose,
+    bookingMode,
   } = useStateContext();
 
   const progress = (step / TOTAL_STEPS) * 100;
@@ -213,6 +216,30 @@ export default function IntakeModal() {
       }
 
       updateBookingData({ currentStep: TOTAL_STEPS });
+
+      if (bookingMode === "request") {
+        const draft = getBookingDraft();
+        const intakeId = draft.consultationId;
+        const dentistIds = draft.selectedBackendDentistIds.length > 0
+          ? draft.selectedBackendDentistIds
+          : draft.selectedDentistIds;
+
+        if (!intakeId || dentistIds.length === 0) {
+          toast.error("Intake ID or Dentist selection is missing.");
+          return;
+        }
+
+        await consultationBookingApi.confirmRequest({
+          consultation_id: intakeId,
+          dentistIds,
+        });
+
+        toast.success("Your consultation request was submitted.");
+        setShowBookingModal(null);
+        setShowSuccessModal(true);
+        return;
+      }
+
       toast.success("Your consultation details are saved.");
       setShowBookingModal(null);
 
@@ -239,7 +266,8 @@ export default function IntakeModal() {
         setShowCompareModal(true);
       }
     } catch (error) {
-      // toast.error(getApiErrorMessage(error));
+      console.error("Error submitting intake step:", error);
+      toast.error("Failed to submit consultation details. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -253,65 +281,78 @@ export default function IntakeModal() {
     setShowBookingModal(null);
   };
 
+  const handleGoToBookings = () => {
+    setShowSuccessModal(false);
+    router.push("/patient/bookings");
+  };
+
   return (
-    <Dialog open={showBookingModal === "book"} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white">
-        {/* Header */}
-        <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">
-          <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
-            Book Consultation
-          </DialogTitle>
-        </div>
+    <>
+      <Dialog open={showBookingModal === "book"} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white">
+          {/* Header */}
+          <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">
+            <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
+              {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
+            </DialogTitle>
+          </div>
 
-        <div className="p-8">
-          {/* Progress bar */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex-1 h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#113254] rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+          <div className="p-8">
+            {/* Progress bar */}
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex-1 h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#113254] rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <span className="text-[#6B7280] font-medium text-[14px] whitespace-nowrap">
+                Step {step} of {TOTAL_STEPS}
+              </span>
             </div>
-            <span className="text-[#6B7280] font-medium text-[14px] whitespace-nowrap">
-              Step {step} of {TOTAL_STEPS}
-            </span>
-          </div>
 
-          {/* Step content */}
-          <div>
-            {step === 1 && <PersonalInfoForm />}
-            {step === 2 && <ProcedureSelectionForm />}
-            {step === 3 && <TreatmentDetailsForm />}
-            {step === 4 && <DentalHistoryForm />}
-            {step === 5 && <PhotoUploadForm />}
-            {step === 6 && <XRayUploadForm />}
-          </div>
+            {/* Step content */}
+            <div>
+              {step === 1 && <PersonalInfoForm />}
+              {step === 2 && <ProcedureSelectionForm />}
+              {step === 3 && <TreatmentDetailsForm />}
+              {step === 4 && <DentalHistoryForm />}
+              {step === 5 && <PhotoUploadForm />}
+              {step === 6 && <XRayUploadForm />}
+            </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between mt-10 pt-6 border-t border-[#F3F4F6]">
-            {step > 1 ? (
+            {/* Navigation */}
+            <div className="flex justify-between mt-10 pt-6 border-t border-[#F3F4F6]">
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="px-8 py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] font-semibold text-[16px] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all"
+                >
+                  Back
+                </button>
+              ) : (
+                <div />
+              )}
               <button
                 type="button"
-                onClick={handleBack}
-                className="px-8 py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] font-semibold text-[16px] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all"
+                onClick={handleNext}
+                disabled={isSubmitting}
+                className="inline-flex items-center justify-center gap-2 px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Back
+                {isSubmitting && <Loader2 className="size-5 animate-spin" />}
+                {step === TOTAL_STEPS
+                  ? bookingMode === "request"
+                    ? "Submit Consultation Request"
+                    : "Submit and Get Estimates"
+                  : "Continue"}
               </button>
-            ) : (
-              <div />
-            )}
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSubmitting && <Loader2 className="size-5 animate-spin" />}
-              {step === TOTAL_STEPS ? "Submit and Get Estimates" : "Continue"}
-            </button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <RequestSuccessModal open={showSuccessModal} onClose={handleGoToBookings} />
+    </>
   );
 }

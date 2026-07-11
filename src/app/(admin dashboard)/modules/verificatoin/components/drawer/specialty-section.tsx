@@ -9,9 +9,10 @@ interface SpecialtySectionProps {
   specialty: NonNullable<
     NonNullable<VerificationDentist["ph3_data"]>["specialties"]
   >[number];
+  onPreview?: (href: string, title: string) => void;
 }
 
-function SpecialtySectionComponent({ specialty }: SpecialtySectionProps) {
+function SpecialtySectionComponent({ specialty, onPreview }: SpecialtySectionProps) {
   const [open, setOpen] = useState(specialty.status !== "complete");
   const isComplete = specialty.status === "complete";
   const hasMissing = specialty.status === "missing";
@@ -62,6 +63,8 @@ function SpecialtySectionComponent({ specialty }: SpecialtySectionProps) {
                 <FileRow
                   fileName={doc.file_name ?? "Document"}
                   fileSize={doc.file_size ?? ""}
+                  href={doc.href}
+                  onPreview={onPreview}
                 />
               )}
             </div>

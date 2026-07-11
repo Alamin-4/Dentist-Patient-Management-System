@@ -408,6 +408,11 @@ export default function Phase3() {
 
             {!isFormLocked && (
               <div className="p-6">
+                {methods.formState.errors?.materials && !Array.isArray(methods.formState.errors.materials) && (
+                  <p className="text-xs font-semibold text-red-500 mb-3">
+                    {String((methods.formState.errors.materials as any).message || "Add at least one procedure")}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={() =>

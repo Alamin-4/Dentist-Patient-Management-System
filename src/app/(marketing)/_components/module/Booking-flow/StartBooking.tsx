@@ -14,7 +14,7 @@ const CHECKLIST = [
 
 export default function StartBookingModal() {
   const [agreed, setAgreed] = useState(false);
-  const { setShowBookingModal, showBookingModal } = useStateContext();
+  const { setShowBookingModal, showBookingModal, bookingMode } = useStateContext();
 
   return (
     <Dialog
@@ -24,7 +24,7 @@ export default function StartBookingModal() {
       <DialogContent className="sm:max-w-190 w-full p-0 border-none rounded-lg overflow-hidden bg-white">
         <div className="px-8 py-6 border-b border-[#F3F4F6]">
           <DialogTitle className="text-[24px] font-bold text-[#1A1A2E]">
-            Book Consultation
+            {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
           </DialogTitle>
         </div>
 
@@ -81,7 +81,7 @@ export default function StartBookingModal() {
               disabled={!agreed}
               className="px-10 py-4 rounded-lg text-white font-semibold text-[16px] transition-all bg-[#113254] hover:bg-[#0d2844] active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Continue to Booking
+              {bookingMode === "request" ? "Continue to Request" : "Continue to Booking"}
             </button>
           </div>
         </div>
