@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import { IRegisterDentist, IRegisterPatient } from "./auth.validation";
-import { LoginPayload } from "@/types/api";
+import { LoginPayload, ResetPasswordPayload } from "@/types/api";
 
 const hasSessionCookie = (): boolean => {
     if (typeof document === 'undefined') return false;
@@ -131,6 +131,22 @@ export function useResendOtp() {
     return useMutation({
         mutationFn: async (payload: { email: string }) => {
             return await apiClient.auth.resendOtp(payload);
+        },
+    });
+}
+
+export function useForgotPassword() {
+    return useMutation({
+        mutationFn: async (payload: { email: string }) => {
+            return await apiClient.auth.forgotPassword(payload);
+        },
+    });
+}
+
+export function useResetPassword() {
+    return useMutation({
+        mutationFn: async (payload: ResetPasswordPayload) => {
+            return await apiClient.auth.resetPassword(payload);
         },
     });
 }

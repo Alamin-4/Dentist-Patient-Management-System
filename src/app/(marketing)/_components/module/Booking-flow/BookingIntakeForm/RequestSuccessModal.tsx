@@ -30,7 +30,7 @@ export default function RequestSuccessModal({ open, onClose }: RequestSuccessMod
             onClick={onClose}
             className="px-8 py-3.5 bg-[#0E3E65] hover:bg-[#0A2640] text-white font-bold text-[15px] rounded-lg active:scale-95 transition-all"
           >
-            Go to My Bookings
+            Go to Consultation
           </button>
         </div>
       </DialogContent>

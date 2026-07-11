@@ -283,7 +283,7 @@ export default function IntakeModal() {
 
   const handleGoToBookings = () => {
     setShowSuccessModal(false);
-    router.push("/patient/bookings");
+    router.push("/patient");
   };
 
   return (

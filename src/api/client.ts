@@ -1,7 +1,7 @@
 import { IRegisterDentist, IRegisterPatient } from "../hooks/auth/auth.validation";
 import { api } from "./axios.instance";
 import { endpoints } from "./endpoints";
-import { ClinicDepthSubmitPayload, CreateProcedurePayload, LicenseCheckPayload, LoginPayload, PatientRegisterPayload, PersonalizeDataPayload, ProfessionalDataPayload, UpdateWeightsPayload, VerifyActionPayload, VerifyOtpPayload } from "@/types/api";
+import { ClinicDepthSubmitPayload, CreateProcedurePayload, LicenseCheckPayload, LoginPayload, PatientRegisterPayload, PersonalizeDataPayload, ProfessionalDataPayload, ResetPasswordPayload, UpdateWeightsPayload, VerifyActionPayload, VerifyOtpPayload } from "@/types/api";
 import { getBookingDraft } from "@/lib/storage/bookingService";
 
 export type { CreateProcedurePayload };
@@ -65,6 +65,14 @@ export const apiClient = {
     },
     logout: async () => {
       const response = await api.post(endpoints.auth.logout);
+      return response.data;
+    },
+    forgotPassword: async (payload: { email: string }) => {
+      const response = await api.post(endpoints.auth.forgotPassword, payload);
+      return response.data;
+    },
+    resetPassword: async (payload: ResetPasswordPayload) => {
+      const response = await api.post(endpoints.auth.resetPassword, payload);
       return response.data;
     },
   },
