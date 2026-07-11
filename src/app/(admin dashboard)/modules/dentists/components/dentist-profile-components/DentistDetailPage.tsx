@@ -31,17 +31,33 @@ function getAvatarMeta(name: string): { initials: string; color: string } {
     return { initials, color: COLORS[Math.abs(hash) % COLORS.length] };
 }
 
-// Verification phase status → simple label + colour
 function VerificationStatus({ label, status, short }: { label: string; status: string; short: string }) {
     const done = ["APPROVED", "approved", "complete", "completed"].includes(status);
+    const isRejected = ["REJECTED", "rejected"].includes(status);
+    const isPending = ["SUBMITTED", "submitted", "PENDING", "pending", "in_review", "SUBMIT", "submit"].includes(status);
+
+    let textColor = "text-gray-400";
+    let textLabel = "Not started";
+
+    if (done) {
+        textColor = "text-emerald-600";
+        textLabel = "Complete";
+    } else if (isRejected) {
+        textColor = "text-red-600 bg-red-50 px-2 py-0.5 rounded";
+        textLabel = "Rejected";
+    } else if (isPending) {
+        textColor = "text-amber-600";
+        textLabel = "Pending";
+    }
+
     return (
         <div className="flex items-center justify-between py-1.5">
             <div className="flex items-center gap-2">
                 <span className="flex h-6 w-8 items-center justify-center rounded-md bg-gray-100 text-xs font-bold text-gray-500">{short}</span>
                 <span className="text-sm text-gray-600">{label}</span>
             </div>
-            <span className={cn("text-xs font-semibold", done ? "text-emerald-600" : "text-amber-500")}>
-                {done ? "Complete" : ["SUBMITTED", "PENDING", "in_review"].includes(status) ? "Pending" : status === "REJECTED" ? "Rejected" : "Not started"}
+            <span className={cn("text-xs font-semibold", textColor)}>
+                {textLabel}
             </span>
         </div>
     );
