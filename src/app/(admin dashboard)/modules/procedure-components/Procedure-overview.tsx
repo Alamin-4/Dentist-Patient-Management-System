@@ -11,6 +11,7 @@ import {
 import { useSpecialties } from "@/hooks/admin/specialty/useSpecialty";
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "../Specialty-components/ConfirmDialog";
+import { getErrorMessage } from "@/lib/getErrorMessage";
 
 // Extend Procedure type to match backend returned shape
 type ExtendedProcedure = {
@@ -62,7 +63,7 @@ export default function ProcedureOverview() {
         e.target.value = "";
       },
       onError: (err: any) => {
-        const errMsg = err?.response?.data?.message || err?.message || "Failed to upload procedures";
+        const errMsg = getErrorMessage(err, "Failed to upload procedures");
         toast.error(errMsg);
         e.target.value = "";
       },
@@ -90,7 +91,7 @@ export default function ProcedureOverview() {
           setNewSpecialtyId("");
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to create procedure";
+          const errMsg = getErrorMessage(err, "Failed to create procedure");
           toast.error(errMsg);
         },
       }
@@ -154,7 +155,7 @@ export default function ProcedureOverview() {
         setDeleteTarget(null);
       },
       onError: (err: any) => {
-        const errMsg = err?.response?.data?.message || err?.message || "Failed to delete procedure";
+        const errMsg = getErrorMessage(err, "Failed to delete procedure");
         toast.error(errMsg);
         setDeleteTarget(null);
       },
@@ -174,7 +175,7 @@ export default function ProcedureOverview() {
         setIsBulkDeleteOpen(false);
       },
       onError: (err: any) => {
-        const errMsg = err?.response?.data?.message || err?.message || "Failed to delete procedures";
+        const errMsg = getErrorMessage(err, "Failed to delete procedures");
         toast.error(errMsg);
         setIsBulkDeleteOpen(false);
       },

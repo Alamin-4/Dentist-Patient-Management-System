@@ -1,17 +1,24 @@
 import { IRegisterDentist, IRegisterPatient } from "../hooks/auth/auth.validation";
 import { api } from "./axios.instance";
 import { endpoints } from "./endpoints";
-import { ClinicDepthSubmitPayload, CreateProcedurePayload, LicenseCheckPayload, LoginPayload, PatientRegisterPayload, PersonalizeDataPayload, ProfessionalDataPayload, ResetPasswordPayload, UpdateWeightsPayload, VerifyActionPayload, VerifyOtpPayload } from "@/types/api";
+import { ClinicDepthSubmitPayload, CreateProcedurePayload, LicenseCheckPayload, LoginPayload, PatientRegisterPayload, PersonalizeDataPayload, ProfessionalDataPayload, ResetPasswordPayload, UpdateWeightsPayload, VerifyActionPayload, VerifyOtpPayload, ClaimProfilePayload, AddUserPayload, DirectoryConsultationPayload } from "@/types/api";
 import { getBookingDraft } from "@/lib/storage/bookingService";
 
 export type { CreateProcedurePayload };
 
-export interface ApiResponse<T = any> {
+export interface PaginationMeta {
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+}
+
+export interface ApiResponse<T = unknown> {
   statusCode?: number;
   success?: boolean;
   message?: string;
   data: T;
-  meta?: any;
+  meta?: PaginationMeta;
 }
 
 
@@ -204,7 +211,7 @@ export const apiClient = {
       };
     },
     updateVerificationPhase: async (payload: { verification_phase: string }) => {
-      return { success: true, data: null };
+      throw new Error("updateVerificationPhase endpoint not yet implemented");
     },
     global_procedure_list: async () => {
       const response = await api.get(endpoints.procedures.global);
@@ -276,11 +283,11 @@ export const apiClient = {
       const response = await api.get(endpoints.dentists.directoryDetail(slug));
       return response.data;
     },
-    claimDirectoryProfile: async (slug: string, payload: any) => {
+    claimDirectoryProfile: async (slug: string, payload: ClaimProfilePayload) => {
       const response = await api.post(endpoints.dentists.directoryClaim(slug), payload);
       return response.data;
     },
-    requestDirectoryConsultation: async (slug: string, payload: any) => {
+    requestDirectoryConsultation: async (slug: string, payload: DirectoryConsultationPayload) => {
       const response = await api.post(endpoints.dentists.directoryConsultation(slug), payload);
       return response.data;
     },
@@ -305,7 +312,7 @@ export const apiClient = {
     confirmDirectoryPayment: async (payload: {
       sessionId: string;
     }) => {
-      const response = await api.post("/stripe/confirm-payment", payload);
+      const response = await api.post(endpoints.stripe.confirmPayment, payload);
       return response.data;
     },
     sendClaimOtp: async (payload: { email: string; password?: string; name?: string }) => {
@@ -429,8 +436,8 @@ export const apiClient = {
       const response = await api.post(endpoints.admin.verificationWeights, payload);
       return response.data;
     },
-    addUser: async (payload: any) => {
-      const response = await api.post("/admin/users", payload);
+    addUser: async (payload: AddUserPayload) => {
+      const response = await api.post(endpoints.admin.addUser, payload);
       return response.data;
     },
     uploadDentistDirectory: async (file: File) => {

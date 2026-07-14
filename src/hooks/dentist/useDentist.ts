@@ -76,7 +76,6 @@ export function useDentistProgress() {
   return useQuery({
     queryKey: ["dentistVerificationProgress"],
     queryFn: () => apiClient.dentists.getProgress(),
-    // enabled: typeof window !== "undefined" && hasSessionCookie(),
     retry: false,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 5,
@@ -260,7 +259,6 @@ export default function useDentist() {
   const dentistProcedureList = useQuery({
     queryKey: ["dentist_procedures"],
     queryFn: () => apiClient.dentists.dentistProcedureList(),
-    // enabled: typeof window !== "undefined" && hasSessionCookie(),
   });
 
   const dentistProfile = useQuery({

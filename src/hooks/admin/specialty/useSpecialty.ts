@@ -1,7 +1,6 @@
 import { apiClient } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-// Optional: Define a base type for your data to get better TypeScript autocomplete
 export type Specialty = {
     id: string | number;
     name: string;
@@ -16,12 +15,11 @@ export type Specialty = {
  */
 export const useSpecialties = (search?: string) => {
     return useQuery<Specialty[]>({
-        queryKey: ['specialties', { search }],
+        queryKey: ['specialties', search],
         queryFn: async () => {
             const res = await apiClient.specialties.getSpecialties(search);
             return res?.data ?? res ?? [];
         },
-        // Keeps data fresh for 5 minutes (adjust as needed)
         staleTime: 1000 * 60 * 5,
     });
 };
@@ -36,7 +34,6 @@ export const useSpecialtyBySlug = (slug: string) => {
             const res = await apiClient.specialties.getBySlug(slug);
             return res?.data ?? res;
         },
-        // Only run the query if a slug is actually provided
         enabled: !!slug,
     });
 };
@@ -51,7 +48,6 @@ export const useCreateSpecialty = () => {
         mutationFn: (payload: { name: string; description?: string }) =>
             apiClient.specialties.create(payload),
         onSuccess: () => {
-            // Invalidate the list query to trigger a refetch and show the new item
             queryClient.invalidateQueries({ queryKey: ['specialties'] });
         },
     });
@@ -64,11 +60,9 @@ export const useUpdateSpecialty = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        // We pass both id and payload to the mutation function
         mutationFn: ({ id, payload }: { id: string | number; payload: { name?: string; description?: string } }) =>
             apiClient.specialties.update(id, payload),
         onSuccess: () => {
-            // Invalidate both the list and the specific detail queries
             queryClient.invalidateQueries({ queryKey: ['specialties'] });
         },
     });

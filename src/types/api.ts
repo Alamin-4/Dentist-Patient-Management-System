@@ -78,3 +78,24 @@ export interface UpdateWeightsPayload {
     operationsWeight: number;
     clinicDepthWeight: number;
 }
+
+export interface ClaimProfilePayload {
+  motivation?: string;
+  procedures?: string[];
+  yearsOfExperience?: number;
+}
+
+export interface AddUserPayload {
+  email: string;
+  role: "ADMIN" | "DENTIST" | "PATIENT";
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface DirectoryConsultationPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  message?: string;
+}

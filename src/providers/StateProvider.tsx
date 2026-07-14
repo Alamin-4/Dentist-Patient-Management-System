@@ -8,17 +8,13 @@ import { initializeBookingData } from "@/lib/storage/bookingService";
 import type { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 import type { AppModalType } from "@/store/slices/uiSlice";
 
-
 // Re-export store hooks for direct access
 export { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 export { useDataStoreForVerification } from "@/lib/hooks/verification-store-hooks";
 export { useUiStoreForVerification } from "@/lib/hooks/verification-store-hooks";
 
-export type kolSteps =
-  | "Basic Info"
-  | "Bio & Languages"
-  | "Contact"
-  | "Media & Notes";
+import type { kolSteps } from "@/store/slices/uiSlice";
+export type { kolSteps };
 
 export type dentistBookingTabs = "In Progress" | "Completed" | "Rejected";
 
@@ -262,6 +258,21 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [store]);
 
+  // Listen for auth:session-expired custom event to navigate router-friendly
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleSessionExpired = (e: Event) => {
+      const customEvent = e as CustomEvent<{ redirectTo: string }>;
+      const redirectTo = customEvent.detail?.redirectTo || "/?session_token_required=true";
+      router.push(redirectTo);
+    };
+
+    window.addEventListener("auth:session-expired", handleSessionExpired as EventListener);
+    return () => {
+      window.removeEventListener("auth:session-expired", handleSessionExpired as EventListener);
+    };
+  }, [router]);
+
   const [showRequestConsultationModal, setShowRequestConsultationModal] = useState(false);
   const [requestConsultationDentist, setRequestConsultationDentist] = useState<Dentist | null>(null);
 
@@ -298,17 +309,10 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
           ? "book"
           : null,
     setShowBookingModal: (modal) => {
-      if (modal === "startBooking") {
-        setUrlModal("startBooking");
-      } else if (modal === "book") {
-        setUrlModal("booking");
-      } else {
-        setUrlModal(null);
-      }
+      if (modal === "startBooking") setUrlModal("startBooking");
+      else if (modal === "book") setUrlModal("booking");
+      else setUrlModal(null);
     },
-
-    compareModalPurpose: store.compareModalPurpose,
-    setCompareModalPurpose: store.setCompareModalPurpose,
     selectedDentistId: store.selectedDentistId,
     setSelectedDentistId: store.setSelectedDentistId,
     schedule: store.schedule,
@@ -317,16 +321,18 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setActiveTab: store.setActiveTab,
     dentistsToCompare: store.dentistsToCompare,
     setDentistsToCompare: store.setDentistsToCompare,
+    compareModalPurpose: store.compareModalPurpose,
+    setCompareModalPurpose: store.setCompareModalPurpose,
+    bookingMode: store.bookingMode,
+    setBookingMode: store.setBookingMode,
     kolModalOpen: store.kolModalOpen,
-    setKolModalOpen: (open) => setUrlModal(open ? "kol" : null),
+    setKolModalOpen: store.setKolModalOpen,
     addKolStep: store.addKolStep,
     setAddKolStep: store.setAddKolStep,
     searchQuery: store.searchQuery,
     setSearchQuery: store.setSearchQuery,
     isNewestFirst: store.isNewestFirst,
     setIsNewestFirst: store.setIsNewestFirst,
-    bookingMode: store.bookingMode,
-    setBookingMode: store.setBookingMode,
   };
 
   return (
@@ -342,7 +348,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useStateContext = () => {
   const context = useContext(StateContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useStateContext must be used within a StateProvider");
   }
   return context;

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { normalizeApiError } from "./error-handler";
 import posthog from "posthog-js";
-
+import { getCookie, deleteCookie } from "cookies-next";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -15,28 +15,24 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  // ✅ ADD THIS: Custom params serializer for nested objects
   paramsSerializer: (params) => {
     const searchParams = new URLSearchParams();
     
     Object.entries(params || {}).forEach(([key, value]) => {
       if (value === undefined || value === null) return;
       
-      // Handle nested objects like { price: { min: 100, max: 500 } }
       if (typeof value === 'object' && !Array.isArray(value)) {
         Object.entries(value).forEach(([subKey, subValue]) => {
           if (subValue !== undefined && subValue !== null) {
             searchParams.append(`${key}[${subKey}]`, String(subValue));
           }
         });
-      } 
-      // Handle arrays
+      }
       else if (Array.isArray(value)) {
-        value.forEach((item) => {
-          searchParams.append(`${key}[]`, String(item));
+        value.forEach((val) => {
+          searchParams.append(key, String(val));
         });
-      } 
-      // Handle primitives
+      }
       else {
         searchParams.append(key, String(value));
       }
@@ -46,14 +42,10 @@ export const api = axios.create({
   },
 });
 
-
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("accessToken="))
-        ?.split("=")[1];
+      const token = getCookie("accessToken");
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -84,8 +76,8 @@ api.interceptors.response.use(
     ) {
       if (typeof window !== "undefined") {
         // Clear local session cookies
-        document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-        document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        deleteCookie("accessToken", { path: "/" });
+        deleteCookie("better-auth.session_token", { path: "/" });
 
         const pathname = window.location.pathname;
 
@@ -96,7 +88,11 @@ api.interceptors.response.use(
           pathname.startsWith("/dentist") ||
           pathname.startsWith("/patient")
         ) {
-          window.location.href = "/?session_token_required=true";
+          window.dispatchEvent(
+            new CustomEvent("auth:session-expired", {
+              detail: { redirectTo: "/?session_token_required=true" },
+            })
+          );
         }
       }
     }

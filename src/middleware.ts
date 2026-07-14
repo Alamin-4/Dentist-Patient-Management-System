@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { UserRole } from "@/types/constants";
 
 // Helper to decode JWT token payload in Next.js Edge Runtime
 function decodeJwt(token: string) {
@@ -77,11 +78,11 @@ export async function middleware(request: NextRequest) {
       const url = new URL("/unauthorized", request.url);
       return NextResponse.rewrite(url);
     }
-    if (userRole !== "ADMIN" && userRole !== "SUPER_ADMIN") {
-      if (userRole === "DENTIST") {
+    if (userRole !== UserRole.ADMIN && userRole !== UserRole.SUPER_ADMIN) {
+      if (userRole === UserRole.DENTIST) {
         return NextResponse.redirect(new URL("/dentist", request.url));
       }
-      if (userRole === "PATIENT") {
+      if (userRole === UserRole.PATIENT) {
         return NextResponse.redirect(new URL("/patient", request.url));
       }
       const url = new URL("/unauthorized", request.url);
@@ -95,11 +96,11 @@ export async function middleware(request: NextRequest) {
       const url = new URL("/unauthorized", request.url);
       return NextResponse.rewrite(url);
     }
-    if (userRole !== "DENTIST") {
-      if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+    if (userRole !== UserRole.DENTIST) {
+      if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
-      if (userRole === "PATIENT") {
+      if (userRole === UserRole.PATIENT) {
         return NextResponse.redirect(new URL("/patient", request.url));
       }
       const url = new URL("/unauthorized", request.url);
@@ -113,11 +114,11 @@ export async function middleware(request: NextRequest) {
       const url = new URL("/unauthorized", request.url);
       return NextResponse.rewrite(url);
     }
-    if (userRole !== "PATIENT") {
-      if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+    if (userRole !== UserRole.PATIENT) {
+      if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
-      if (userRole === "DENTIST") {
+      if (userRole === UserRole.DENTIST) {
         return NextResponse.redirect(new URL("/dentist", request.url));
       }
       const url = new URL("/unauthorized", request.url);
@@ -128,18 +129,18 @@ export async function middleware(request: NextRequest) {
   // 4. Redirect Authenticated Users Away From Guest / Auth Pages
   if (user && userRole) {
     if (pathname === "/admin-login") {
-      if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+      if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
         const url = new URL("/admin", request.url);
         return NextResponse.redirect(url);
-      } else if (userRole === "DENTIST") {
+      } else if (userRole === UserRole.DENTIST) {
         const url = new URL("/dentist", request.url);
         return NextResponse.redirect(url);
-      } else if (userRole === "PATIENT") {
+      } else if (userRole === UserRole.PATIENT) {
         const url = new URL("/patient", request.url);
         return NextResponse.redirect(url);
       }
     }
-    if (pathname === "/register-doctor" && userRole === "DENTIST") {
+    if (pathname === "/register-doctor" && userRole === UserRole.DENTIST) {
       const dentistStep = request.nextUrl.searchParams.get("dentist");
       if (dentistStep !== "professional-info") {
         const url = new URL("/dentist/profile", request.url);

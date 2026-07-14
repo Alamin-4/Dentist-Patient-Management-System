@@ -57,6 +57,7 @@ export const endpoints = {
     patients: "/admin/patients",
     patientDetail: (id: string | number) => `/admin/patients/${id}`,
     overview: "/admin/overview",
+    addUser: "/admin/users",
   },
   specialties: {
     getSpecialties: "/specialties",
@@ -95,5 +96,8 @@ export const endpoints = {
     updateDentistProfile: "/users/profile/dentist",
     updateAdminProfile: "/users/profile/admin",
     changePassword: "/users/change-password",
+  },
+  stripe: {
+    confirmPayment: "/stripe/confirm-payment",
   },
 } as const;

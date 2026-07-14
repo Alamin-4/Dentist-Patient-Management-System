@@ -1,19 +1,17 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Search, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { Specialty, useDeleteSpecialty, useSpecialties, useUploadSpecialties, useBulkDeleteSpecialties, useCreateSpecialty, useUpdateSpecialty } from "@/hooks/admin/specialty/useSpecialty";
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { getErrorMessage } from "@/lib/getErrorMessage";
 
 type ExtendedSpecialty = Specialty & {
     createdAt?: string;
 };
 
 export default function SpecialtyOverview() {
-    const router = useRouter();
-
     const [search, setSearch] = useState("");
     const [dateFilter, setDateFilter] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -49,7 +47,7 @@ export default function SpecialtyOverview() {
                 e.target.value = "";
             },
             onError: (err: any) => {
-                const errMsg = err?.response?.data?.message || err?.message || "Failed to upload specialties";
+                const errMsg = getErrorMessage(err, "Failed to upload specialties");
                 toast.error(errMsg);
                 e.target.value = "";
             }
@@ -70,7 +68,7 @@ export default function SpecialtyOverview() {
                 setNewDescription("");
             },
             onError: (err: any) => {
-                const errMsg = err?.response?.data?.message || err?.message || "Failed to create specialty";
+                const errMsg = getErrorMessage(err, "Failed to create specialty");
                 toast.error(errMsg);
             }
         });
@@ -103,7 +101,7 @@ export default function SpecialtyOverview() {
                     setEditTarget(null);
                 },
                 onError: (err: any) => {
-                    const errMsg = err?.response?.data?.message || err?.message || "Failed to update specialty";
+                    const errMsg = getErrorMessage(err, "Failed to update specialty");
                     toast.error(errMsg);
                 },
             }
@@ -174,7 +172,7 @@ export default function SpecialtyOverview() {
                 setDeleteTarget(null);
             },
             onError: (err: any) => {
-                const errMsg = err?.response?.data?.message || err?.message || "Failed to delete specialty";
+                const errMsg = getErrorMessage(err, "Failed to delete specialty");
                 toast.error(errMsg);
                 setDeleteTarget(null);
             }
@@ -194,7 +192,7 @@ export default function SpecialtyOverview() {
                 setIsBulkDeleteOpen(false);
             },
             onError: (err: any) => {
-                const errMsg = err?.response?.data?.message || err?.message || "Failed to delete specialties";
+                const errMsg = getErrorMessage(err, "Failed to delete specialties");
                 toast.error(errMsg);
                 setIsBulkDeleteOpen(false);
             }
