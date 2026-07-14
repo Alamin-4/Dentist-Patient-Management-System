@@ -77,15 +77,26 @@ api.interceptors.response.use(
   async (error) => {
     const apiError = normalizeApiError(error);
 
-    if (apiError.statusCode === 401 && !error.config?.url?.includes("/auth/")) {
+    if (
+      apiError.statusCode === 401 &&
+      !error.config?.url?.includes("/auth/login") &&
+      !error.config?.url?.includes("/auth/register")
+    ) {
       if (typeof window !== "undefined") {
+        // Clear local session cookies
+        document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
         const pathname = window.location.pathname;
 
-        // Route admins to /admin-login, and patients/dentists to the home page sign-in modal
-        if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-          // window.location.href = "/admin-login";
+        // Route admins, dentists, or patients to the home page sign-in
+        if (
+          pathname === "/admin" ||
+          pathname.startsWith("/admin/") ||
+          pathname.startsWith("/dentist") ||
+          pathname.startsWith("/patient")
+        ) {
           window.location.href = "/?session_token_required=true";
-
         }
       }
     }
