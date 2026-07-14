@@ -1,4 +1,4 @@
-import ConsultationPage from "../../../modules/dentist/consultation/ConsultationPage";
+import ConsultationPage from "@/app/modules/dentist/consultation/ConsultationPage";
 
 export default function ConsultationManage() {
   return (

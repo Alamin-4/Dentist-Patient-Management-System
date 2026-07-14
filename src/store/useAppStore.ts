@@ -1,16 +1,28 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware"; // প্রোডাকশন ডিবাগিং সহজ করার জন্য
+import { create, StateCreator } from "zustand";
+import { devtools, persist } from "zustand/middleware";
 import { createVerificationSlice, VerificationSlice } from "./slices/verificationSlice";
 import { createUISlice, UISlice } from "./slices/uiSlice";
 import { createDataSlice, DataSlice } from "./slices/dataSlice";
 
-// কম্বাইন্ড স্টোর ইন্টারফেস
+// Combined store interface
 type AppStoreState = VerificationSlice & UISlice & DataSlice;
 
+const storeCreator = (...a: Parameters<StateCreator<AppStoreState>>) => ({
+  ...createVerificationSlice(...a),
+  ...createUISlice(...a),
+  ...createDataSlice(...a),
+});
+
 export const useAppStore = create<AppStoreState>()(
-    devtools((...a) => ({
-        ...createVerificationSlice(...a),
-        ...createUISlice(...a),
-        ...createDataSlice(...a),
-    }))
+  persist(
+    process.env.NODE_ENV === "development"
+      ? devtools(storeCreator, { name: "AppStore" })
+      : storeCreator,
+    {
+      name: "app-store",
+      partialize: (state) => ({
+        verificationStep: state.verificationStep,
+      }),
+    }
+  )
 );

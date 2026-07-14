@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { VerificationSteps } from "../../../modules/dentist/verification/verification-steps";
-import StepButton from "../../../modules/dentist/verification/StepButton";
+import { VerificationSteps } from "@/app/modules/dentist/verification/verification-steps";
+import StepButton from "@/app/modules/dentist/verification/StepButton";
 import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import type { VerificationPhaseStep } from "@/hooks/dentist/useStepProgress";

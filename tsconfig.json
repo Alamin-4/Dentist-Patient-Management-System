@@ -19,7 +19,23 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/api": ["./src/core/api"],
+      "@/api/*": ["./src/core/api/*"],
+      "@/config": ["./src/core/config"],
+      "@/config/*": ["./src/core/config/*"],
+      "@/lib": ["./src/core/lib"],
+      "@/lib/*": ["./src/core/lib/*"],
+      "@/providers": ["./src/core/providers"],
+      "@/providers/*": ["./src/core/providers/*"],
+      "@/hooks": ["./src/core/hooks"],
+      "@/hooks/*": ["./src/core/hooks/*"],
+      "@/types": ["./src/core/types"],
+      "@/types/*": ["./src/core/types/*"],
+      "@/app/modules": ["./src/features"],
+      "@/app/modules/*": ["./src/features/*"],
+      "@/app/(admin-dashboard)/modules": ["./src/features/admin"],
+      "@/app/(admin-dashboard)/modules/*": ["./src/features/admin/*"]
     }
   },
   "include": [

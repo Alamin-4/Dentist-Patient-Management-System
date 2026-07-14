@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import useDentist from "@/hooks/dentist/useDentist";
+import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 import { Loader2 } from "lucide-react";
 
 export default function DentistDashboardLayout({
@@ -10,7 +10,7 @@ export default function DentistDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { dentistProfile } = useDentist();
+  const dentistProfile = useDentistProfileQuery();
   const router = useRouter();
 
   useEffect(() => {

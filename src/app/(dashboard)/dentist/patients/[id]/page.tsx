@@ -3,7 +3,7 @@
 import { use } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import PatientDetails from "../../../../modules/dentist/patients-manage/patient-details-page";
+import PatientDetails from "@/app/modules/dentist/patients-manage/patient-details-page";
 import { useDentistPatientDetail } from "@/hooks/dentist/useDentist";
 
 interface PatientDetailsPageProps {
