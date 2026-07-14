@@ -472,7 +472,7 @@ export const apiClient = {
       return response.data;
     },
     update: async (id: string | number, payload: { name?: string; description?: string }) => {
-      const response = await api.patch(endpoints.specialties.getSpecialties, payload);
+      const response = await api.patch(`${endpoints.specialties.getSpecialties}/${id}`, payload);
       return response.data;
     },
     delete: async (ids: Array<string | number>) => {

@@ -10,12 +10,20 @@ import { proceduresLists } from "@/lib/location-data";
 export default function SearchBar() {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProcedure, setSelectedProcedure] = useState("");
   const [budget, setBudget] = useState({ min: "", max: "" });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { data: procedures = proceduresLists, isLoading: proceduresLoading } = useGlobalProcedures(search);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  const { data: procedures = proceduresLists, isLoading: proceduresLoading } = useGlobalProcedures(debouncedSearch);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,23 +80,44 @@ export default function SearchBar() {
 
         {isOpen && (
           <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-lg border border-gray-100 bg-white p-2 shadow animate-in fade-in zoom-in duration-150 max-h-60 overflow-y-auto">
+            <div className="sticky top-0 bg-white pb-2 pt-1 px-1">
+              <input
+                type="text"
+                placeholder="Search procedure..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-md border border-gray-200 px-3 py-1.5 text-xs outline-none focus:border-[#10436B] focus:ring-1 focus:ring-[#10436B] text-slate-700 font-medium"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
             {proceduresLoading ? (
               <div className="px-4 py-3 text-sm text-gray-500">Loading...</div>
             ) : procedures?.length === 0 ? (
               <div className="px-4 py-3 text-sm text-gray-500">No procedures found</div>
             ) : (
-              procedures?.map((p: { name: string, slug: string }) => (
+              <>
                 <button
-                  key={p.slug}
                   onClick={() => {
-                    setSelectedProcedure(p.name);
+                    setSelectedProcedure("");
                     setIsOpen(false);
                   }}
-                  className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-[#10436B] transition-colors"
+                  className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-[#10436B] transition-colors font-medium border-b border-gray-50"
                 >
-                  {p.name}
+                  All Procedures
                 </button>
-              ))
+                {procedures?.map((p: { name: string, slug: string }) => (
+                  <button
+                    key={p.slug}
+                    onClick={() => {
+                      setSelectedProcedure(p.name);
+                      setIsOpen(false);
+                    }}
+                    className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-[#10436B] transition-colors"
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </>
             )}
           </div>
         )}

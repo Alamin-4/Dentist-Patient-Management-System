@@ -170,6 +170,17 @@ export default function FilterSidebar({
         )}
       >
 
+        {/* Procedure */}
+        <FilterSection title="Procedure">
+          <SearchableDropdown
+            value={procedure}
+            onChange={onProcedureChange}
+            options={availableProcedures}
+            placeholder="Select Procedure"
+            clearValue="All Procedures"
+          />
+        </FilterSection>
+
         {/* Country */}
         <FilterSection title="Country">
           <SearchableDropdown
