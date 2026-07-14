@@ -66,6 +66,7 @@ export const useDentistFilters = () => {
         const urlSearch = searchParams.get("search") || "";
         const urlCity = searchParams.get("city") || DEFAULT_FILTERS.city;
         const urlCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
+        const urlProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
         const urlVerified = searchParams.get("verified") === "true";
         const urlPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
 
@@ -75,6 +76,7 @@ export const useDentistFilters = () => {
         }
         if (urlCity !== city) setCity(urlCity);
         if (urlCountry !== country) setCountry(urlCountry);
+        if (urlProcedure !== procedure) setProcedure(urlProcedure);
         if (urlVerified !== showVerifiedOnly) setShowVerifiedOnly(urlVerified);
         if (urlPage !== page) setPage(urlPage);
     }, [searchParams]);
@@ -85,6 +87,7 @@ export const useDentistFilters = () => {
         if (debouncedQuery) params.set("search", debouncedQuery);
         if (city !== DEFAULT_FILTERS.city) params.set("city", city);
         if (country !== DEFAULT_FILTERS.country) params.set("country", country);
+        if (procedure !== DEFAULT_FILTERS.procedure) params.set("procedure", procedure);
         if (showVerifiedOnly) params.set("verified", "true");
         if (page > 1) params.set("page", page.toString());
 
@@ -92,7 +95,7 @@ export const useDentistFilters = () => {
         const nextUrl = queryStr ? `${pathname}?${queryStr}` : pathname;
         
         router.replace(nextUrl, { scroll: false });
-    }, [debouncedQuery, city, country, showVerifiedOnly, page, router, pathname]);
+    }, [debouncedQuery, city, country, procedure, showVerifiedOnly, page, router, pathname]);
 
     // Debounce search query
     useEffect(() => {
@@ -112,7 +115,7 @@ export const useDentistFilters = () => {
     // Reset page on filter change
     useEffect(() => {
         setPage(1);
-    }, [city, country, showVerifiedOnly, selectedScoreRanges, selectedRatings]);
+    }, [city, country, procedure, showVerifiedOnly, selectedScoreRanges, selectedRatings]);
 
     // Derived numeric params
     const rdvScoreMin = useMemo(() => {
@@ -132,11 +135,12 @@ export const useDentistFilters = () => {
         if (debouncedQuery) params.search = debouncedQuery;
         if (city !== DEFAULT_FILTERS.city) params.city = city;
         if (country !== DEFAULT_FILTERS.country) params.country = country;
+        if (procedure !== DEFAULT_FILTERS.procedure) params.procedure = procedure;
         if (showVerifiedOnly) params.verified = "true";
         if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
         if (ratingMin !== undefined) params.ratingMin = ratingMin;
         return params;
-    }, [page, debouncedQuery, city, country, showVerifiedOnly, rdvScoreMin, ratingMin]);
+    }, [page, debouncedQuery, city, country, procedure, showVerifiedOnly, rdvScoreMin, ratingMin]);
 
     // Toggle helpers
     const toggleRating = (rating: number) =>

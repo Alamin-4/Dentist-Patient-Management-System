@@ -156,11 +156,17 @@ export function useLogout() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async () => {
-            return await apiClient.auth.logout();
+            try {
+                return await apiClient.auth.logout();
+            } catch (error) {
+                console.warn("Logout API call failed, clearing local session anyway.", error);
+            }
         },
-        onSuccess: () => {
-            queryClient.clear();
+        onSettled: () => {
             if (typeof window !== "undefined") {
+                document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                queryClient.clear();
                 window.location.href = "/";
             }
         },

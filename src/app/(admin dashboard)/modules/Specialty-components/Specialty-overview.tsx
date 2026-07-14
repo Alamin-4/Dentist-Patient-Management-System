@@ -3,12 +3,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, Upload, X } from "lucide-react";
-// Note: Ensure useCreateSpecialty is exported from your hook file
-import { Specialty, useDeleteSpecialty, useSpecialties, useUploadSpecialties, useBulkDeleteSpecialties, useCreateSpecialty } from "@/hooks/admin/specialty/useSpecialty";
+import { Specialty, useDeleteSpecialty, useSpecialties, useUploadSpecialties, useBulkDeleteSpecialties, useCreateSpecialty, useUpdateSpecialty } from "@/hooks/admin/specialty/useSpecialty";
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "./ConfirmDialog";
 
-// Extend the Specialty type to include a date field for filtering and stats
 type ExtendedSpecialty = Specialty & {
     createdAt?: string;
 };
@@ -16,28 +14,30 @@ type ExtendedSpecialty = Specialty & {
 export default function SpecialtyOverview() {
     const router = useRouter();
 
-    // States for filtering and pagination
     const [search, setSearch] = useState("");
-    const [dateFilter, setDateFilter] = useState(""); // Format: YYYY-MM
+    const [dateFilter, setDateFilter] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Selection & Delete States
     const [selectedIds, setSelectedIds] = useState<Array<string | number>>([]);
     const [deleteTarget, setDeleteTarget] = useState<string | number | null>(null);
     const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
-    // ── Add Modal States ──
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newName, setNewName] = useState("");
     const [newDescription, setNewDescription] = useState("");
 
-    // Fetch data using your hook
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editTarget, setEditTarget] = useState<Specialty | null>(null);
+    const [editName, setEditName] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+
     const { data: specialties = [], isLoading } = useSpecialties(search);
     const deleteMutation = useDeleteSpecialty();
     const uploadMutation = useUploadSpecialties();
     const bulkDeleteMutation = useBulkDeleteSpecialties();
-    const createMutation = useCreateSpecialty(); // Ensure this exists in your hook
+    const createMutation = useCreateSpecialty();
+    const updateMutation = useUpdateSpecialty();
 
     const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -74,6 +74,40 @@ export default function SpecialtyOverview() {
                 toast.error(errMsg);
             }
         });
+    };
+
+    const handleEditClick = (s: Specialty, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setEditTarget(s);
+        setEditName(s.name);
+        setEditDescription(s.description || "");
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editTarget) return;
+
+        updateMutation.mutate(
+            {
+                id: editTarget.id,
+                payload: {
+                    name: editName,
+                    description: editDescription,
+                },
+            },
+            {
+                onSuccess: (res: any) => {
+                    toast.success(res?.message || "Specialty updated successfully!");
+                    setIsEditModalOpen(false);
+                    setEditTarget(null);
+                },
+                onError: (err: any) => {
+                    const errMsg = err?.response?.data?.message || err?.message || "Failed to update specialty";
+                    toast.error(errMsg);
+                },
+            }
+        );
     };
 
     // 1. Filter by Date (Client-side)
@@ -314,8 +348,7 @@ export default function SpecialtyOverview() {
                                 paginatedData.map((s: ExtendedSpecialty) => (
                                     <tr
                                         key={s.id}
-                                        onClick={() => router.push(`/admin/specialties/${s.slug}`)}
-                                        className={`cursor-pointer transition-colors hover:bg-gray-50/80 ${selectedIds.includes(s.id) ? 'bg-blue-50/30' : ''}`}
+                                        className={`transition-colors hover:bg-gray-50/80 ${selectedIds.includes(s.id) ? 'bg-blue-50/30' : ''}`}
                                     >
                                         {/* Checkbox */}
                                         <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -350,7 +383,7 @@ export default function SpecialtyOverview() {
                                         <td className="px-4 py-3.5">
                                             <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                                 <button
-                                                    onClick={() => router.push(`/admin/specialties/${s.slug}/edit`)}
+                                                    onClick={(e) => handleEditClick(s, e)}
                                                     className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
                                                     title="Edit"
                                                 >
@@ -485,6 +518,74 @@ export default function SpecialtyOverview() {
                                     className="inline-flex h-10 items-center rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white transition-colors hover:bg-[#2A2A3E] disabled:opacity-50"
                                 >
                                     {createMutation.isPending ? "Creating..." : "Create"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Edit Specialty Modal ─────────────────────────────────── */}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+                        onClick={() => setIsEditModalOpen(false)}
+                    />
+                    <div className="relative z-10 w-full max-w-md rounded-lg border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <h3 className="text-lg font-semibold text-[#1A1A2E]">Edit Specialty</h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditModalOpen(false)}
+                                className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleEditSubmit} className="mt-4 flex flex-col gap-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                    Specialty Name
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="e.g. Cardiology"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                    className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                    Description (Optional)
+                                </label>
+                                <textarea
+                                    placeholder="Brief description of the specialty..."
+                                    value={editDescription}
+                                    onChange={(e) => setEditDescription(e.target.value)}
+                                    rows={3}
+                                    className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] resize-none"
+                                />
+                            </div>
+
+                            <div className="mt-2 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    disabled={updateMutation.isPending}
+                                    className="inline-flex h-10 items-center rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={updateMutation.isPending}
+                                    className="inline-flex h-10 items-center rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white transition-colors hover:bg-[#2A2A3E] disabled:opacity-50"
+                                >
+                                    {updateMutation.isPending ? "Saving..." : "Save Changes"}
                                 </button>
                             </div>
                         </form>
