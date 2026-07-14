@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 interface SearchInputProps {
     value: string;
@@ -20,18 +20,25 @@ function SearchInputContent({
 }: SearchInputProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const pathname = usePathname();
 
     const [localValue, setLocalValue] = useState(propValue || "");
 
     useEffect(() => {
+        if (pathname === "/find-dentists") {
+            return;
+        }
         const urlSearch = searchParams.get("search") || "";
         setLocalValue(urlSearch);
         propOnChange(urlSearch);
-    }, [searchParams]);
+    }, [searchParams, pathname]);
 
     useEffect(() => {
+        if (pathname === "/find-dentists") {
+            return;
+        }
         setLocalValue(propValue || "");
-    }, [propValue]);
+    }, [propValue, pathname]);
 
     const handleSearchSubmit = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
