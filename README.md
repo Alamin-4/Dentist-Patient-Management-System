@@ -59,7 +59,7 @@ src/
 │   ├── (dashboard)/        # Role-based secure dashboards
 │   │   ├── patient/        # Patient Dashboard
 │   │   └── dentist/        # Dentist Dashboard
-│   └── (admin dashboard)/  # Admin Dashboard & modules
+│   └── (admin-dashboard)/  # Admin Dashboard & modules
 ├── app/modules/            # Modular feature components split by domain
 │   ├── auth/               # Login & Registration sub-components
 │   ├── admin/              # Admin pages (Anti-collusion, KOL management, Settings)

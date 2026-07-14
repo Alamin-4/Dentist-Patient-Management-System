@@ -1,5 +1,5 @@
 
-import RegisterPageComponent from "../../modules/auth/components/register-doctor/register-page";
+import RegisterPageComponent from "@/app/modules/auth/components/register-doctor/register-page";
 
 export default function RegisterPage() {
   return (

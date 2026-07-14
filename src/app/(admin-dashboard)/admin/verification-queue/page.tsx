@@ -1,4 +1,4 @@
-import VerificationQueue from "@/app/(admin dashboard)/modules/verificatoin/Verification-queue";
+import VerificationQueue from "@/app/(admin-dashboard)/modules/verification/Verification-queue";
 
 export default function VerificationQueuePage() {
   return <VerificationQueue />;

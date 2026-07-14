@@ -1,4 +1,4 @@
-import SpecialtyOverview from "../../modules/Specialty-components/Specialty-overview"
+import SpecialtyOverview from "@/app/(admin-dashboard)/modules/Specialty-components/Specialty-overview"
 
 function SpecialtyManage() {
     return (

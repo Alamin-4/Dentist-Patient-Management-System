@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { UserRole } from "@/types/constants";
+import { env } from "@/config/env";
 
 // Helper to decode JWT token payload in Next.js Edge Runtime
 function decodeJwt(token: string) {
@@ -49,7 +50,7 @@ export async function middleware(request: NextRequest) {
   // Better-Auth session cookie. So we trigger the fallback on sessionToken alone too.
   if (!user && (sessionToken || accessToken)) {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const baseUrl = env.NEXT_PUBLIC_API_BASE_URL;
 
       // CRITICAL: We forward User-Agent and IP headers to avoid triggering the backend
       // session fingerprint mismatch security check which deletes the user's session!

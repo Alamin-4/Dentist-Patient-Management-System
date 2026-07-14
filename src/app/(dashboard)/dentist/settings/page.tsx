@@ -1,4 +1,4 @@
-import ProfileAndSettings from "../../../modules/dentist/settings/Profile-and-settings";
+import ProfileAndSettings from "@/app/modules/dentist/settings/Profile-and-settings";
 
 export default function SettingsManage() {
   return (

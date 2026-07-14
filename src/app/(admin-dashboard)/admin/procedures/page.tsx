@@ -1,4 +1,4 @@
-import ProcedureOverview from "../../modules/procedure-components/Procedure-overview"
+import ProcedureOverview from "@/app/(admin-dashboard)/modules/procedure-components/Procedure-overview"
 
 function ProcedureManage() {
     return (

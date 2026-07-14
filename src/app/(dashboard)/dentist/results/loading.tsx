@@ -1,4 +1,4 @@
-import ResultCardSkeleton from "../../../modules/dentist/results/Result-card-skeleton";
+import ResultCardSkeleton from "@/app/modules/dentist/results/Result-card-skeleton";
 
 export default function ResultsLoading() {
   return (

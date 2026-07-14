@@ -69,6 +69,7 @@ export default function SearchableDropdown({
         !containerRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        setSearchQuery("");
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -77,21 +78,16 @@ export default function SearchableDropdown({
     };
   }, []);
 
-  // Reset search when opening/closing
-  React.useEffect(() => {
-    if (!isOpen) {
-      setSearchQuery("");
-    }
-  }, [isOpen]);
-
   const handleSelect = (val: string) => {
     onChange(val);
     setIsOpen(false);
+    setSearchQuery("");
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onChange(clearValue);
+    setSearchQuery("");
   };
 
   const showClear = value && value !== clearValue && !disabled && allowClear;
@@ -105,7 +101,12 @@ export default function SearchableDropdown({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() =>
+          setIsOpen((prev) => {
+            if (prev) setSearchQuery("");
+            return !prev;
+          })
+        }
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60",
           isOpen && "border-[#003366] ring-2 ring-[#003366]/10",

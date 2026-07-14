@@ -1,4 +1,4 @@
-import PatientDetailPage from "@/app/(admin dashboard)/modules/patients/components/patient-details-page";
+import PatientDetailPage from "@/app/(admin-dashboard)/modules/patients/components/patient-details-page";
 
 interface Props {
   params: Promise<{ id: string }>;

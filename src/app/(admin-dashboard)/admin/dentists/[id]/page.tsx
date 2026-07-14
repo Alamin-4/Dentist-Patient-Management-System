@@ -1,5 +1,5 @@
-import DentistDetailPageComponent from "@/app/(admin dashboard)/modules/dentists/components/dentist-profile-components/DentistDetailPage";
-import DentistDetailPage from "@/app/(admin dashboard)/modules/dentists/dentist-detail-page";
+import DentistDetailPageComponent from "@/app/(admin-dashboard)/modules/dentists/components/dentist-profile-components/DentistDetailPage";
+import DentistDetailPage from "@/app/(admin-dashboard)/modules/dentists/dentist-detail-page";
 
 interface PageProps {
   params: Promise<{ id: string }>;

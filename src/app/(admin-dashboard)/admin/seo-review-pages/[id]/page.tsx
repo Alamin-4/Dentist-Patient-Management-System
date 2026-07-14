@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import SEOPageDetail from "@/app/(admin dashboard)/modules/seo-review-page/components/seo-page-detail";
+import SEOPageDetail from "@/app/(admin-dashboard)/modules/seo-review-page/components/seo-page-detail";
 import seoPagesData from "@/lib/seo-pages-data";
 
 interface Props {

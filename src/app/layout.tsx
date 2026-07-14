@@ -45,7 +45,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jakartaSans.variable} h-full antialiased`}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col">
         <CSPostHogProvider>
           <StateProvider>
             <TanstackProvider>{children}
