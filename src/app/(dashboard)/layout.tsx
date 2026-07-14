@@ -1,7 +1,7 @@
 import IntakeModal from "@/app/(marketing)/_components/module/Booking-flow/Book";
-import { Navbar } from "../modules/shared/navbar";
-import { Sidebar } from "../modules/shared/sidebar";
-import { MobileSidebarDrawer } from "../modules/shared/mobile-sidebar-drawer";
+import { Navbar } from "@/app/modules/shared/navbar";
+import { Sidebar } from "@/app/modules/shared/sidebar";
+import { MobileSidebarDrawer } from "@/app/modules/shared/mobile-sidebar-drawer";
 import StartBookingModal from "@/app/(marketing)/_components/module/Booking-flow/StartBooking";
 import CompareModal from "@/app/(marketing)/_components/module/CompareModal/CompareModal";
 import { SidebarProvider } from "@/context/sidebar-context";

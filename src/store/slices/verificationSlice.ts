@@ -25,11 +25,6 @@ export const createVerificationSlice: StateCreator<VerificationSlice> = (set) =>
     setVerificationStep: (stepOrFn) => set((state) => {
         const next = typeof stepOrFn === "function" ? stepOrFn(state.verificationStep) : stepOrFn;
         if (next < 1 || next > 3) return {};
-
-        // LocalStorage সিঙ্ক (পেজ রিফ্রেশ প্রটেকশন)
-        if (typeof window !== "undefined") {
-            localStorage.setItem("dentist_verification_step", String(next));
-        }
         return { verificationStep: next };
     }),
 
@@ -43,9 +38,6 @@ export const createVerificationSlice: StateCreator<VerificationSlice> = (set) =>
         const current = state.verificationStep;
         if (current >= 3) return {};
 
-        if (typeof window !== "undefined") {
-            localStorage.setItem("dentist_verification_step", String(current + 1));
-        }
         return {
             verificationCompletedStep: current,
             verificationStep: current + 1,
@@ -56,9 +48,6 @@ export const createVerificationSlice: StateCreator<VerificationSlice> = (set) =>
         const current = state.verificationStep;
         if (current <= 1) return {};
 
-        if (typeof window !== "undefined") {
-            localStorage.setItem("dentist_verification_step", String(current - 1));
-        }
         return { verificationStep: current - 1 };
     }),
 });
