@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarCheck, DollarSign, FileText, Video } from "lucide-react";
 import Link from "next/link";
-import { StatCard } from "@/app/(dashboard)/patient/_components/Module/Overview/StatsCard";
-import { ConsultationCard } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCard";
-import { RescheduleConsultationModal } from "@/app/(dashboard)/patient/_components/Module/Overview/RescheduleConsultationModal";
-import DoctorCard from "@/app/(dashboard)/patient/_components/Module/MyBooking/Card";
+import { StatCard } from "@/app/modules/patient/Overview/StatsCard";
+import { ConsultationCard } from "@/app/modules/patient/Overview/ConsultationCard";
+import { RescheduleConsultationModal } from "@/app/modules/patient/Overview/RescheduleConsultationModal";
+import DoctorCard from "@/app/modules/patient/MyBooking/Card";
 import { usePatientConsultations } from "@/hooks/consultation/useConsultation";
 import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
 import { ConsultationItem, TreatmentPlanItem } from "@/types";
-import { ConsultationCardSkeleton } from "@/app/(dashboard)/patient/_components/Module/Overview/ConsultationCardSkeleton";
-import { DoctorCardSkeleton } from "@/app/(dashboard)/patient/_components/Module/Overview/DoctorCardSkeleton";
+import { ConsultationCardSkeleton } from "@/app/modules/patient/Overview/ConsultationCardSkeleton";
+import { DoctorCardSkeleton } from "@/app/modules/patient/Overview/DoctorCardSkeleton";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -89,8 +89,6 @@ const isToday = (consultation: ConsultationItem): boolean => {
   return scheduledLocalDateStr === todayStr;
 };
 
-// ─── Empty state UI ───────────────────────────────────────────────────────────
-
 function EmptySlate({ tab }: { tab: Tab }) {
   const { title, body } = EMPTY_STATE[tab];
   return (
@@ -110,8 +108,6 @@ function EmptySlate({ tab }: { tab: Tab }) {
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function Overview() {
   const router = useRouter();
   const { data: consultationsResponse, isLoading: loadingConsultations } = usePatientConsultations();
@@ -130,7 +126,6 @@ export default function Overview() {
       return (
         item.requestStatus === "PENDING" ||
         item.requestStatus === "ACCEPTED" ||
-        // SCHEDULED and NOT today in its own timezone AND not within the live window
         (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item))
       );
     }
@@ -138,7 +133,6 @@ export default function Overview() {
       return (
         item.requestStatus === "ACTIVE" ||
         item.requestStatus === "MISSED" ||
-        // SCHEDULED and either today in its timezone OR within the live join window
         (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item)))
       );
     }
@@ -150,7 +144,6 @@ export default function Overview() {
     setRescheduleOpen(true);
   };
 
-  // Calculate dynamic stats
   const escrowTotal = treatmentPlans
     ?.filter((tp) => tp.status === "ACTIVE" || tp.status === "COMPLETED")
     ?.reduce((acc: number, tp) => {
@@ -161,7 +154,6 @@ export default function Overview() {
   const bookingsCompletedCount = consultations?.filter((c) => c.requestStatus === "COMPLETED")?.length || 0;
   const documentsCount = consultations?.length + treatmentPlans?.length;
 
-  // Stats need both to be ready; consultation list only needs consultations
   const isStatsLoading = loadingConsultations || loadingPlans;
   const isConsultationsLoading = loadingConsultations;
 
@@ -169,7 +161,6 @@ export default function Overview() {
     <div>
       <h1 className="text-2xl font-bold text-[#1A1A2E] mb-8">Overview</h1>
 
-      {/* Stats grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           icon={<DollarSign className="w-5 h-5" />}
@@ -228,39 +219,89 @@ export default function Overview() {
             )}
           </div>
         ) : activeTab === "estimate-updates" ? (
-          proposedTreatmentPlans.length ? (
-            <div className="space-y-5 animate-fade-in">
-              {proposedTreatmentPlans.map((plan) => (
-                <DoctorCard key={plan.id} data={plan} />
-              ))}
-            </div>
-          ) : (
-            <EmptySlate tab={activeTab} />
-          )
+          (() => {
+            const completedConsultations = consultations.filter((item) => item.requestStatus === "COMPLETED");
+
+            // Filter to show only the latest completed consultation per dentist
+            const uniqueCompletedConsultations: ConsultationItem[] = [];
+            const seenDentists = new Set<string>();
+            const sortedCompleted = [...completedConsultations].sort((a, b) => {
+              const dateA = a.scheduledDate ? new Date(a.scheduledDate).getTime() : 0;
+              const dateB = b.scheduledDate ? new Date(b.scheduledDate).getTime() : 0;
+              return dateB - dateA;
+            });
+
+            for (const item of sortedCompleted) {
+              const dentistKey = item.dentistId || item.directoryEntryId;
+              if (dentistKey) {
+                if (!seenDentists.has(dentistKey)) {
+                  seenDentists.add(dentistKey);
+                  uniqueCompletedConsultations.push(item);
+                }
+              } else {
+                uniqueCompletedConsultations.push(item);
+              }
+            }
+
+            return (proposedTreatmentPlans.length || uniqueCompletedConsultations.length) ? (
+              <div className="space-y-5 animate-fade-in">
+                {uniqueCompletedConsultations.map((consultation) => {
+                  const completedCount = consultations.filter(
+                    (c) =>
+                      c.requestStatus === "COMPLETED" &&
+                      (c.dentistId === consultation.dentistId || c.directoryEntryId === consultation.directoryEntryId)
+                  ).length;
+                  return (
+                    <ConsultationCard
+                      key={consultation.id}
+                      consultation={consultation}
+                      completedCount={completedCount}
+                      onPrimaryAction={() => {
+                        openReschedule(consultation);
+                      }}
+                    />
+                  );
+                })}
+                {proposedTreatmentPlans.map((plan) => (
+                  <DoctorCard key={plan.id} data={plan} />
+                ))}
+              </div>
+            ) : (
+              <EmptySlate tab={activeTab} />
+            );
+          })()
         ) : consultationsToShow.length ? (
           <div className="space-y-5 animate-fade-in">
-            {consultationsToShow.map((consultation) => (
-              <ConsultationCard
-                key={consultation.id}
-                consultation={consultation}
-                onPrimaryAction={() => {
-                  if (consultation.requestStatus === "MISSED" || consultation.requestStatus === "ACCEPTED") {
-                    openReschedule(consultation);
-                    return;
-                  }
+            {consultationsToShow.map((consultation) => {
+              const completedCount = consultations.filter(
+                (c) =>
+                  c.requestStatus === "COMPLETED" &&
+                  (c.dentistId === consultation.dentistId || c.directoryEntryId === consultation.directoryEntryId)
+              ).length;
+              return (
+                <ConsultationCard
+                  key={consultation.id}
+                  consultation={consultation}
+                  completedCount={completedCount}
+                  onPrimaryAction={() => {
+                    if (consultation.requestStatus === "MISSED" || consultation.requestStatus === "ACCEPTED") {
+                      openReschedule(consultation);
+                      return;
+                    }
 
-                  if (
-                    (consultation.requestStatus === "SCHEDULED" || consultation.requestStatus === "ACTIVE") &&
-                    !isWithinMeetingWindow(consultation)
-                  ) {
-                    router.push(`/consultation/${consultation.id}?mode=details`);
-                    return;
-                  }
-                  // Within 5-min early buffer or during meeting → go to meeting page (lobby or room)
-                  router.push(`/consultation/${consultation.id}`);
-                }}
-              />
-            ))}
+                    if (
+                      (consultation.requestStatus === "SCHEDULED" || consultation.requestStatus === "ACTIVE") &&
+                      !isWithinMeetingWindow(consultation)
+                    ) {
+                      router.push(`/consultation/${consultation.id}?mode=details`);
+                      return;
+                    }
+                    // Within 5-min early buffer or during meeting → go to meeting page (lobby or room)
+                    router.push(`/consultation/${consultation.id}`);
+                  }}
+                />
+              );
+            })}
           </div>
         ) : (
           <EmptySlate tab={activeTab} />

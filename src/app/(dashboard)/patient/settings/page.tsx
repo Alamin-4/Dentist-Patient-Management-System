@@ -1,4 +1,4 @@
-import ProfileSettingsPage from "../_components/Module/Settings/ProfileAndSetting";
+import ProfileSettingsPage from "@/app/modules/patient/Settings/ProfileAndSetting";
 
 export default function ProfileAndSettingsPage() {
   return (

@@ -34,7 +34,7 @@ export default function TopBar({
             href="/register-doctor"
             className="inline-flex h-12 items-center justify-center rounded-lg bg-[#0E3E65] px-6 text-[14px] font-semibold text-white transition-all hover:bg-[#002850] active:scale-95 shadow-sm shrink-0"
           >
-            Add a Provider
+            Join as a Dentist
           </Link>
         </div>
 

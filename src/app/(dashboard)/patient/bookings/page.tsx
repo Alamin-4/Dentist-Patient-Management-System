@@ -1,4 +1,4 @@
-import MyBooking from "../_components/Module/MyBooking/MyBooking";
+import MyBooking from "@/app/modules/patient/MyBooking/MyBooking";
 
 export default function page() {
   return (

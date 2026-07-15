@@ -100,4 +100,14 @@ export const endpoints = {
   stripe: {
     confirmPayment: "/stripe/confirm-payment",
   },
+  treatmentBookings: {
+    base: "/treatment-bookings",
+    byId: (id: string) => `/treatment-bookings/${id}`,
+    verifyArrival: (id: string) => `/treatment-bookings/${id}/verify-arrival`,
+    submitFinalPlan: (id: string) => `/treatment-bookings/${id}/final-plan`,
+    respondFinalPlan: (id: string) => `/treatment-bookings/${id}/respond-final-plan`,
+    verifyPayment: (id: string) => `/treatment-bookings/${id}/verify-payment`,
+    submitReview: (id: string) => `/treatment-bookings/${id}/submit-review`,
+    createEscrowSession: "/stripe/create-escrow-session",
+  },
 } as const;

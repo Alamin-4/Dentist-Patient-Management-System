@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, Video } from "lucide-react";
 import Image from "next/image";
 import { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
-import { DentistSelection } from "./DentistScheduleCard";
+import { DentistSelection, formatSlotToAmPm } from "./DentistScheduleCard";
 
 interface ScheduleSuccessModalProps {
   open: boolean;
@@ -78,7 +78,7 @@ export default function ScheduleSuccessModal({
                     </p>
                     <p className="text-[12px] text-[#9CA3AF] flex items-center justify-end gap-1 mt-0.5">
                       {sel?.timeSlot
-                        ? `${sel.timeSlot} ${sel.timezone ? "· " + sel.timezone.split(" ")[0] : ""}`.trim()
+                        ? `${formatSlotToAmPm(sel.timeSlot)} ${sel.timezone ? "· " + sel.timezone.split(" ")[0] : ""}`.trim()
                         : ""}
                       {" · "}
                       <Video className="size-3.5 inline" /> 15-min video call

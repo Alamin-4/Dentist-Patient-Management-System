@@ -16,6 +16,12 @@ import { Textarea } from "@/components/ui/textarea";
 interface ReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSubmit?: (payload: {
+    ratingCommunication: number;
+    ratingValueForMoney: number;
+    ratingFollowThrough: number;
+    comments: string;
+  }) => void;
   doctor: {
     name: string;
     specialty: string;
@@ -29,6 +35,7 @@ interface ReviewModalProps {
 export function LeaveReviewModal({
   isOpen,
   onClose,
+  onSubmit,
   doctor,
 }: ReviewModalProps) {
   const [ratings, setRatings] = useState({
@@ -36,12 +43,23 @@ export function LeaveReviewModal({
     value: 5,
     followThrough: 5,
   });
+  const [comments, setComments] = useState("");
 
   const categories = [
     { id: "communication", label: "Communication" },
     { id: "value", label: "Value for money" },
     { id: "followThrough", label: "Follow through" },
   ];
+
+  const handleSubmit = () => {
+    onSubmit?.({
+      ratingCommunication: ratings.communication,
+      ratingValueForMoney: ratings.value,
+      ratingFollowThrough: ratings.followThrough,
+      comments,
+    });
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -130,6 +148,8 @@ export function LeaveReviewModal({
           <div className="space-y-3">
             <p className="text-lg font-semibold text-[#1A1A2E]">Write Review</p>
             <Textarea
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
               placeholder="Share your experience with this vendor..."
               className="min-h-40 rounded-lg border-slate-200 p-4 text-base resize-none focus-visible:ring-[#0F3659]"
             />
@@ -146,7 +166,7 @@ export function LeaveReviewModal({
             Cancel
           </Button>
           <Button
-            onClick={onClose}
+            onClick={handleSubmit}
             className="flex-1 h-14 rounded-lg cursor-pointer bg-[#0F3659] font-bold text-white hover:bg-[#0a2640]"
           >
             Submit Review

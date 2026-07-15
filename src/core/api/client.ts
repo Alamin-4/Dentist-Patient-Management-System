@@ -571,6 +571,57 @@ export const apiClient = {
       return response.data;
     },
   },
+  treatmentBookings: {
+    list: async (statusFilter?: string) => {
+      const response = await api.get(endpoints.treatmentBookings.base, {
+        params: statusFilter ? { status: statusFilter } : undefined,
+      });
+      return response.data;
+    },
+    getById: async (id: string) => {
+      const response = await api.get(endpoints.treatmentBookings.byId(id));
+      return response.data;
+    },
+    verifyArrival: async (id: string, arrivalCode: string) => {
+      const response = await api.post(endpoints.treatmentBookings.verifyArrival(id), { arrivalCode });
+      return response.data;
+    },
+    submitFinalPlan: async (
+      id: string,
+      payload: {
+        procedures: Array<{ name: string; price: number; notes?: string }>;
+        notes?: string;
+      }
+    ) => {
+      const response = await api.post(endpoints.treatmentBookings.submitFinalPlan(id), payload);
+      return response.data;
+    },
+    respondFinalPlan: async (id: string, payload: { action: "APPROVE" | "REJECT"; reason?: string }) => {
+      const response = await api.post(endpoints.treatmentBookings.respondFinalPlan(id), payload);
+      return response.data;
+    },
+    verifyPayment: async (id: string, paymentCode: string) => {
+      const response = await api.post(endpoints.treatmentBookings.verifyPayment(id), { paymentCode });
+      return response.data;
+    },
+    submitReview: async (
+      id: string,
+      payload: {
+        ratingCommunication: number;
+        ratingValueForMoney: number;
+        ratingFollowThrough: number;
+        comments: string;
+        afterPhotoUrl?: string;
+      }
+    ) => {
+      const response = await api.post(endpoints.treatmentBookings.submitReview(id), payload);
+      return response.data;
+    },
+    createEscrowSession: async (bookingId: string) => {
+      const response = await api.post(endpoints.treatmentBookings.createEscrowSession, { bookingId });
+      return response.data;
+    },
+  },
 };
 
 export const consultationBookingApi = {

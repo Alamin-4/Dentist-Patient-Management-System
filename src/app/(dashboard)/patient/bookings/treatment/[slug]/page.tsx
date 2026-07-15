@@ -15,13 +15,18 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTreatmentPlanById } from "@/hooks/treatment-plan/useTreatmentPlan";
-import { mapPlanToBooking } from "../../../_components/Module/MyBooking/MyBooking";
-import { InProgressBooking, TimelineStep } from "../../../_components/Module/MyBooking/data";
-import ClinicLocationModal from "../../../_components/Module/MyBooking/Modal/ClinicLocationModal";
-import { ConfirmReleaseModal } from "../../../_components/Module/MyBooking/Modal/ApproveModal";
-import { LeaveReviewModal } from "../../../_components/Module/MyBooking/Modal/LeaveReviewModal";
-import { RejectPlanModal } from "../../../_components/Module/MyBooking/Modal/RejectModal";
-import { NoSurpriseRejectModal } from "../../../_components/Module/MyBooking/Modal/NoSurpriseRejectModal";
+import { mapPlanToBooking } from "@/app/modules/patient/MyBooking/MyBooking";
+import { InProgressBooking } from "@/app/modules/patient/MyBooking/data";
+import ClinicLocationModal from "@/app/modules/patient/MyBooking/Modal/ClinicLocationModal";
+import { ConfirmReleaseModal } from "@/app/modules/patient/MyBooking/Modal/ApproveModal";
+import { LeaveReviewModal } from "@/app/modules/patient/MyBooking/Modal/LeaveReviewModal";
+import { RejectPlanModal } from "@/app/modules/patient/MyBooking/Modal/RejectModal";
+import { NoSurpriseRejectModal } from "@/app/modules/patient/MyBooking/Modal/NoSurpriseRejectModal";
+import {
+  useCreateEscrowSession,
+  useRespondFinalPlan,
+  useSubmitReview,
+} from "@/hooks/treatment-booking/useTreatmentBooking";
 
 export default function TreatmentDetailsPage() {
   const { slug } = useParams();
@@ -29,7 +34,6 @@ export default function TreatmentDetailsPage() {
 
   const { data: treatmentPlanResponse, isLoading } = useTreatmentPlanById(slug as string);
 
-  const [isApproved, setIsApproved] = useState(false);
   const [estimatePlanOpen, setEstimatePlanOpen] = useState(true);
   const [finalPlanOpen, setFinalPlanOpen] = useState(true);
   const [journeyOpen, setJourneyOpen] = useState(true);
@@ -39,6 +43,10 @@ export default function TreatmentDetailsPage() {
   const [noSurpriseRejectModalOpen, setNoSurpriseRejectModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+
+  const createEscrowSessionMutation = useCreateEscrowSession();
+  const respondFinalPlanMutation = useRespondFinalPlan();
+  const submitReviewMutation = useSubmitReview();
 
   if (isLoading) {
     return (
@@ -63,14 +71,68 @@ export default function TreatmentDetailsPage() {
     );
   }
 
-  const booking: InProgressBooking = mapPlanToBooking(plan);
+  const booking: InProgressBooking & { treatmentBookingId?: string } = mapPlanToBooking(plan);
   const finalPlan = booking.finalPlan;
   const isWithinLeeway = finalPlan?.isWithinLeeway ?? true;
+  const isApproved = booking.isApproved;
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(booking.paymentCode);
     setCodeCopied(true);
     setTimeout(() => setCodeCopied(false), 2000);
+  };
+
+  const handlePayDeposit = () => {
+    if (booking.treatmentBookingId) {
+      createEscrowSessionMutation.mutate(booking.treatmentBookingId);
+    }
+  };
+
+  const handleApprovePlan = () => {
+    if (booking.treatmentBookingId) {
+      respondFinalPlanMutation.mutate({
+        id: booking.treatmentBookingId,
+        payload: { action: "APPROVE" },
+      }, {
+        onSuccess: () => {
+          setApproveModalOpen(true);
+        }
+      });
+    }
+  };
+
+  const handleRejectPlanConfirm = (reason: string) => {
+    if (booking.treatmentBookingId) {
+      respondFinalPlanMutation.mutate({
+        id: booking.treatmentBookingId,
+        payload: { action: "REJECT", reason },
+      });
+      setRejectModalOpen(false);
+    }
+  };
+
+  const handleNoSurpriseRejectConfirm = (reason: string) => {
+    if (booking.treatmentBookingId) {
+      respondFinalPlanMutation.mutate({
+        id: booking.treatmentBookingId,
+        payload: { action: "REJECT", reason },
+      });
+      setNoSurpriseRejectModalOpen(false);
+    }
+  };
+
+  const handleReviewSubmit = (reviewData: any) => {
+    if (booking.treatmentBookingId) {
+      submitReviewMutation.mutate({
+        id: booking.treatmentBookingId,
+        payload: {
+          ratingCommunication: reviewData.ratingCommunication,
+          ratingValueForMoney: reviewData.ratingValueForMoney,
+          ratingFollowThrough: reviewData.ratingFollowThrough,
+          comments: reviewData.comments,
+        },
+      });
+    }
   };
 
   return (
@@ -92,17 +154,18 @@ export default function TreatmentDetailsPage() {
       <RejectPlanModal
         isOpen={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        onConfirm={() => setRejectModalOpen(false)}
+        onConfirm={handleRejectPlanConfirm}
         totalEstimate={booking.treatmentPlan.totalEstimate}
       />
       <NoSurpriseRejectModal
         isOpen={noSurpriseRejectModalOpen}
         onClose={() => setNoSurpriseRejectModalOpen(false)}
-        onConfirm={() => setNoSurpriseRejectModalOpen(false)}
+        onConfirm={handleNoSurpriseRejectConfirm}
       />
       <LeaveReviewModal
         isOpen={reviewModalOpen}
         onClose={() => setReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
         doctor={{
           name: booking.doctor.name,
           specialty: booking.doctor.specialty,
@@ -191,8 +254,10 @@ export default function TreatmentDetailsPage() {
             <p className="text-xl font-bold text-[#0E3E65]">
               ${booking.estimateBudget.toLocaleString()}
             </p>
-            {isApproved ? (
+            {booking.paymentStatus === "paid" ? (
               <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
+            ) : booking.paymentStatus === "pending" ? (
+              <p className="text-xs font-bold text-red-500 mt-0.5">Payment Required</p>
             ) : (
               <p className="text-xs font-bold text-[#CA8504] mt-0.5">In Escrow</p>
             )}
@@ -352,8 +417,8 @@ export default function TreatmentDetailsPage() {
             </div>
           </div>
 
-          {/* Payment Code (visible when approved) */}
-          {isApproved && (
+          {/* Payment Code (visible when approved but not yet fully completed/paid) */}
+          {isApproved && booking.paymentCode && plan.treatmentBooking?.status !== "COMPLETED" && (
             <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
               <p className="text-sm font-bold text-[#1A1A2E] mb-3">Payment Code</p>
               <div className="flex items-center justify-between">
@@ -369,7 +434,7 @@ export default function TreatmentDetailsPage() {
                 </button>
               </div>
               <p className="text-xs text-slate-500 mt-3">
-                {codeCopied ? "Copied!" : `Show this to Dr. Alex on for release Amount`}
+                {codeCopied ? "Copied!" : `Show this to ${booking.doctor.name} to complete payment`}
               </p>
             </div>
           )}
@@ -384,37 +449,48 @@ export default function TreatmentDetailsPage() {
           </button>
 
           <div className="flex items-center gap-3">
-            {isApproved ? (
+            {booking.paymentStatus === "pending" ? (
+              <button
+                onClick={handlePayDeposit}
+                disabled={createEscrowSessionMutation.isPending}
+                className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {createEscrowSessionMutation.isPending ? "Loading Stripe..." : "Pay Escrow Deposit"}
+              </button>
+            ) : isApproved ? (
               <>
                 <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
                   View Document
                 </button>
-                <button
-                  onClick={() => setReviewModalOpen(true)}
-                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  Review Doctor
-                </button>
+                {plan.treatmentBooking?.status === "COMPLETED" && !plan.treatmentBooking?.metadata?.review && (
+                  <button
+                    onClick={() => setReviewModalOpen(true)}
+                    disabled={submitReviewMutation.isPending}
+                    className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    Review Doctor
+                  </button>
+                )}
               </>
             ) : (
               <>
-                {isWithinLeeway && finalPlan && (
-                  <button
-                    onClick={() => setRejectModalOpen(true)}
-                    className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
-                  >
-                    Reject Plan
-                  </button>
+                {finalPlan && (
+                  <>
+                    <button
+                      onClick={() => setRejectModalOpen(true)}
+                      className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                      Reject Plan
+                    </button>
+                    <button
+                      onClick={handleApprovePlan}
+                      disabled={respondFinalPlanMutation.isPending}
+                      className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      {respondFinalPlanMutation.isPending ? "Approving..." : "Approve"}
+                    </button>
+                  </>
                 )}
-                <button
-                  onClick={() => {
-                    setIsApproved(true);
-                    setApproveModalOpen(true);
-                  }}
-                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  Approve
-                </button>
               </>
             )}
           </div>
@@ -448,29 +524,18 @@ function PlanTable({
         </span>
       </div>
       <div className="divide-y divide-slate-50">
-        {breakdown.map((item, idx) => (
-          <div key={idx} className="flex justify-between px-4 py-3.5 text-sm">
-            <span className="text-slate-500">{item.label}</span>
-            <span className="text-[#1E293B] font-medium">
-              {typeof item.price === "number"
-                ? `$${item.price.toLocaleString()}`
-                : item.price}
+        {breakdown.map((row, i) => (
+          <div key={i} className="flex justify-between px-4 py-3 text-sm text-[#334155] bg-white">
+            <span className="font-normal text-xs">{row.label}</span>
+            <span className="font-semibold text-xs">
+              {typeof row.price === "number" ? `$${row.price.toLocaleString()}` : row.price}
             </span>
           </div>
         ))}
-        <div className="flex justify-between px-4 py-4 border-t border-slate-100">
-          <span
-            className={cn(
-              "font-bold",
-              isFinal ? "text-[#0F3659]" : "text-[#0F3659]"
-            )}
-          >
-            {totalLabel}
-          </span>
-          <span className="text-[#0F3659] font-bold text-lg">
-            ${total.toLocaleString()}
-          </span>
-        </div>
+      </div>
+      <div className="flex justify-between bg-slate-50 px-4 py-3.5 border-t border-slate-100">
+        <span className="font-bold text-[#0E3E65] text-sm">{totalLabel}</span>
+        <span className="font-bold text-[#0E3E65] text-sm">${total.toLocaleString()}</span>
       </div>
     </div>
   );
@@ -490,49 +555,51 @@ function TimelineStepItem({
   isLast,
   onViewMap,
 }: {
-  step: TimelineStep;
+  step: any;
   isLast: boolean;
   onViewMap?: () => void;
 }) {
   return (
-    <div className="flex gap-3 min-h-16">
+    <div className="flex gap-4">
       <div className="flex flex-col items-center">
         <div
           className={cn(
-            "size-5 rounded-full border-2 flex items-center justify-center z-10 shrink-0",
+            "size-5.5 rounded-full flex items-center justify-center shrink-0 border",
             step.completed
-              ? "bg-[#0F3659] border-[#0F3659]"
-              : "bg-white border-slate-300"
+              ? "bg-[#0E3E65] border-[#0E3E65] text-white"
+              : "bg-white border-slate-200 text-slate-300"
           )}
         >
-          {step.completed && (
-            <CheckCircle2 className="size-3.5 text-white fill-[#0F3659]" />
-          )}
+          {step.completed && <CheckCircle2 className="size-3.5 fill-current text-white bg-[#0E3E65] rounded-full" />}
         </div>
-        {!isLast && <div className="w-0.5 flex-1 bg-slate-100 mt-1" />}
-      </div>
-
-      <div className="flex-1 pb-5">
-        <div className="flex items-start justify-between gap-2">
-          <h5
+        {!isLast && (
+          <div
             className={cn(
-              "text-sm font-semibold leading-tight",
-              step.completed ? "text-[#1A1A2E]" : "text-slate-600"
+              "w-0.5 flex-1 min-h-8 my-1",
+              step.completed ? "bg-[#0E3E65]" : "bg-slate-100"
             )}
-          >
-            {step.title}
-          </h5>
-          {step.link && onViewMap && (
-            <button
-              onClick={onViewMap}
-              className="flex items-center gap-1 text-[#0F3659] text-xs font-semibold underline shrink-0 cursor-pointer hover:opacity-75 transition-opacity"
-            >
-              <MapPin className="size-3" />
-              {step.link.label}
-            </button>
+          />
+        )}
+      </div>
+      <div className="pb-6 flex-1 min-w-0">
+        <h5
+          className={cn(
+            "text-sm font-bold leading-tight",
+            step.completed ? "text-[#1A1A2E]" : "text-slate-400"
           )}
-        </div>
-        <p className="text-xs text-slate-400 mt-1 leading-relaxed">{step.description}</p>
+        >
+          {step.title}
+        </h5>
+        <p className="text-xs text-slate-400 mt-1">{step.description}</p>
+        {step.link && onViewMap && (
+          <button
+            onClick={onViewMap}
+            className="flex items-center gap-1 text-[#0E3E65] text-xs font-bold mt-2 hover:underline cursor-pointer"
+          >
+            <MapPin className="size-3" />
+            <span>{step.link.label}</span>
+          </button>
+        )}
       </div>
     </div>
   );

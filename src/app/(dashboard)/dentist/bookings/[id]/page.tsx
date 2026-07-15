@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import {
-  getSubmittedBookings,
-  SubmittedBooking,
-} from "@/lib/storage/bookingService";
 import {
   ArrowLeft,
   ChevronDown,
@@ -17,36 +13,12 @@ import {
   Info,
 } from "lucide-react";
 import CreateFinalTreatmentPlanModal from "@/app/modules/dentist/booking-manage/create-final-treatment-plan-modal";
-
-// ─── Types ─────────────────────────────────────────────────────────────────────
-type BookingStep =
-  | "before_arrival"
-  | "patient_in_travel"
-  | "day1_arrival"
-  | "final_plan";
-
-const STEP_VALUES: Record<BookingStep, number> = {
-  before_arrival: 0,
-  patient_in_travel: 1,
-  day1_arrival: 2,
-  final_plan: 3,
-};
-
-// ─── Demo / fallback data ──────────────────────────────────────────────────────
-const DEMO_BOOKING = {
-  id: "demo",
-  name: "Jacob Smith",
-  email: "Jacob.smith@sample.com",
-  initials: "AH",
-  procedure: "All-on-4 Full Arch",
-  budget: "$1,200",
-  travelFrom: "12–24 Jan, 2024",
-  travelTo: "12–24 Jan, 2024",
-  lastVisited: "Wed 24 Jan, 2024",
-  conditions: "Bone loss, Gum Disease",
-};
-
-const STEP_STORAGE_PREFIX = "booking_step_";
+import {
+  useTreatmentBookingById,
+  useVerifyArrivalCode,
+  useSubmitFinalPlan,
+  useVerifyPaymentCode,
+} from "@/hooks/treatment-booking/useTreatmentBooking";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -76,92 +48,100 @@ export default function BookingDetailPage() {
   const id = params?.id as string | undefined;
   const router = useRouter();
 
-  const [booking, setBooking] = useState<SubmittedBooking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState<BookingStep>("day1_arrival");
+  const { data: response, isLoading } = useTreatmentBookingById(id || "");
+  const booking = response?.data;
+
   const [arrivalCode, setArrivalCode] = useState("");
   const [codeError, setCodeError] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
+
+  const [paymentCode, setPaymentCode] = useState("");
+  const [paymentCodeError, setPaymentCodeError] = useState(false);
+
   const [showFinalModal, setShowFinalModal] = useState(false);
-  const [planSubmitted, setPlanSubmitted] = useState(false);
   const [treatmentPlanOpen, setTreatmentPlanOpen] = useState(true);
 
-  // Load booking + persisted step
-  useEffect(() => {
-    if (!id) {
-      router.push("/dentist/bookings");
-      return;
-    }
-    try {
-      const bookings = getSubmittedBookings();
-      const found = bookings.find((b) => b.id === id) ?? null;
-      setBooking(found);
+  const verifyArrivalMutation = useVerifyArrivalCode();
+  const submitFinalPlanMutation = useSubmitFinalPlan();
+  const verifyPaymentMutation = useVerifyPaymentCode();
 
-      // Restore saved step from localStorage
-      const savedStep = localStorage.getItem(`${STEP_STORAGE_PREFIX}${id}`);
-      if (savedStep && savedStep in STEP_VALUES) {
-        setStep(savedStep as BookingStep);
+  // Determine booking step based on live booking status
+  let step: "day1_arrival" | "final_plan" | "payment_release" | "completed" | "cancelled" = "day1_arrival";
+
+  if (booking) {
+    if (booking.status === "CONFIRMED") {
+      step = "day1_arrival";
+    } else if (booking.status === "IN_PROGRESS") {
+      const metadata = booking.metadata || {};
+      if (metadata.finalPlanApproved) {
+        step = "payment_release";
+      } else {
+        step = "final_plan";
       }
-    } catch {
-      setBooking(null);
-    } finally {
-      setLoading(false);
+    } else if (booking.status === "COMPLETED") {
+      step = "completed";
+    } else if (booking.status === "CANCELLED") {
+      step = "cancelled";
     }
-  }, [id, router]);
+  }
 
-  const saveStep = (newStep: BookingStep) => {
-    setStep(newStep);
-    if (id) localStorage.setItem(`${STEP_STORAGE_PREFIX}${id}`, newStep);
-  };
-
-  // Build display data (real booking or demo fallback)
+  // Build display data
   const display = booking
     ? {
-      name: `${booking.personalInfo.firstName} ${booking.personalInfo.lastName}`,
-      email: booking.personalInfo.email,
-      initials: `${booking.personalInfo.firstName[0] || ""}${booking.personalInfo.lastName[0] || ""}`,
-      procedure: booking.procedure,
-      budget: booking.budget || "$1,200",
-      travelFrom: booking.travelFrom || "12–24 Jan, 2024",
-      lastVisited: booking.dentalHistory?.lastVisit || "Wed 24 Jan, 2024",
-      conditions:
-        booking.dentalHistory?.conditions?.join(", ") || "Bone loss, Gum Disease",
-    }
-    : DEMO_BOOKING;
-
-  const stepValue = STEP_VALUES[step];
+        name: `${booking.patient?.user?.firstName || ""} ${booking.patient?.user?.lastName || ""}`,
+        email: booking.patient?.user?.email || "",
+        initials: `${booking.patient?.user?.firstName?.[0] || ""}${booking.patient?.user?.lastName?.[0] || ""}`.toUpperCase(),
+        procedure: booking.treatmentPlan?.lineItems?.[0]?.globalProcedure?.name || "Dental Treatment",
+        budget: `$${Number(booking.escrowAmount).toLocaleString()}`,
+        travelFrom: booking.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString() : "Pending scheduling",
+        lastVisited: "N/A",
+        conditions: "N/A",
+      }
+    : {
+        name: "Jacob Smith",
+        email: "jacob.smith@example.com",
+        initials: "JS",
+        procedure: "Dental Treatment",
+        budget: "$0",
+        travelFrom: "Pending scheduling",
+        lastVisited: "N/A",
+        conditions: "N/A",
+      };
 
   // Timeline status per step
   const timelineItems = [
     {
       label: "Payment Confirmed",
-      detail: `${display.budget} held in escrow • April 30, 2026`,
+      detail: booking ? `$${Number(booking.escrowAmount).toLocaleString()} held in escrow • ${new Date(booking.createdAt).toLocaleDateString()}` : "Held in escrow",
       status: "completed" as const,
     },
     {
       label: "Patient in Travel",
-      detail: "May 02, 2026",
-      status: stepValue >= 1 ? ("completed" as const) : ("pending" as const),
+      detail: booking?.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString() : "Scheduled date",
+      status: booking && booking.status !== "PENDING_PAYMENT" ? ("completed" as const) : ("pending" as const),
     },
     {
       label: "Day 1 arrival, CBCT examination",
-      detail: "May 03, 2026",
+      detail: booking?.status === "CONFIRMED" ? "Waiting for check-in" : "Checked-in",
       status:
-        stepValue >= 3
+        booking && booking.status !== "CONFIRMED" && booking.status !== "PENDING_PAYMENT"
           ? ("completed" as const)
-          : stepValue === 2
+          : booking?.status === "CONFIRMED"
             ? ("current" as const)
             : ("pending" as const),
     },
     {
       label: "Final Treatment Plan Confirmed",
-      detail: "May 02, 2026",
-      status: planSubmitted ? ("completed" as const) : ("pending" as const),
+      detail: booking?.metadata?.finalPlanApproved ? "Approved by patient" : "Awaiting patient approval",
+      status: booking?.metadata?.finalPlanApproved
+        ? ("completed" as const)
+        : booking?.metadata?.finalPlan
+          ? ("current" as const)
+          : ("pending" as const),
     },
     {
-      label: "Treatment Done",
-      detail: "Waiting for review",
-      status: "pending" as const,
+      label: "Treatment Done & Payment Released",
+      detail: booking?.status === "COMPLETED" ? "Paid to your account" : "Awaiting treatment completion",
+      status: booking?.status === "COMPLETED" ? ("completed" as const) : ("pending" as const),
     },
   ];
 
@@ -172,14 +152,48 @@ export default function BookingDetailPage() {
       return;
     }
     setCodeError(false);
-    setIsVerifying(true);
-    await new Promise((r) => setTimeout(r, 800)); // Simulate API
-    setIsVerifying(false);
-    saveStep("final_plan");
+    verifyArrivalMutation.mutate(
+      { id: id!, arrivalCode },
+      {
+        onError: () => {
+          setCodeError(true);
+        },
+      }
+    );
   };
 
+  // Payment release verification handler
+  const handleVerifyPayment = async () => {
+    if (paymentCode.length !== 4) {
+      setPaymentCodeError(true);
+      return;
+    }
+    setPaymentCodeError(false);
+    verifyPaymentMutation.mutate(
+      { id: id!, paymentCode },
+      {
+        onError: () => {
+          setPaymentCodeError(true);
+        },
+      }
+    );
+  };
+
+  // Final plan modal submit
+  const handleFinalPlanSubmit = (data: any) => {
+    submitFinalPlanMutation.mutate({
+      id: id!,
+      payload: {
+        procedures: data.procedures,
+        notes: "Submitted via Create Final Treatment Plan Modal",
+      },
+    });
+  };
+
+  const planSubmitted = !!booking?.metadata?.finalPlan;
+
   // ── Loading state ──
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
         <div className="h-6 w-32 bg-slate-200 rounded" />
@@ -233,8 +247,14 @@ export default function BookingDetailPage() {
               <div>
                 <div className="font-bold text-lg text-[#0F172A]">{display.name}</div>
                 <div className="text-sm text-slate-500 mb-2">{display.email}</div>
-                <span className="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-                  IN PROGRESS
+                <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${
+                  booking?.status === "COMPLETED"
+                    ? "bg-green-50 text-green-700 border border-green-100"
+                    : booking?.status === "CANCELLED"
+                      ? "bg-red-50 text-red-700 border border-red-100"
+                      : "bg-blue-50 text-blue-700 border border-blue-100"
+                }`}>
+                  {booking?.status}
                 </span>
               </div>
             </div>
@@ -253,7 +273,9 @@ export default function BookingDetailPage() {
             <div className="sm:text-right">
               <div className="text-xs text-slate-500 mb-1">Estimate Budget</div>
               <div className="text-2xl font-bold text-[#0A2540]">{display.budget}</div>
-              <div className="text-sm font-semibold text-[#D97706]">In Escrow</div>
+              <div className="text-sm font-semibold text-[#D97706]">
+                {booking?.paymentStatus === "IN_ESCROW" ? "In Escrow" : booking?.paymentStatus === "PAID" ? "Paid" : booking?.paymentStatus}
+              </div>
             </div>
           </div>
         </div>
@@ -292,20 +314,22 @@ export default function BookingDetailPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          { label: "Initial examination", price: "Included" },
-                          { label: "CBCT scan (if needed)", price: "$693" },
-                          { label: "Temporary prosthesis", price: "$1,039" },
-                          { label: "Temporary prosthesis", price: "$1,200" },
-                          { label: "Final fitting & adjustments", price: "$346" },
-                        ].map((row, i) => (
+                        {booking?.treatmentPlan?.lineItems?.map((item: any, i: number) => (
                           <tr key={i} className="border-t border-slate-100">
-                            <td className="px-4 py-3 text-slate-500 text-xs">{row.label}</td>
+                            <td className="px-4 py-3 text-slate-500 text-xs">
+                              {item.globalProcedure?.name || "Procedure"}
+                            </td>
                             <td className="px-4 py-3 text-right text-xs text-slate-600">
-                              {row.price}
+                              ${Number(item.unitPrice).toLocaleString()}
                             </td>
                           </tr>
-                        ))}
+                        )) || (
+                          <tr className="border-t border-slate-100">
+                            <td className="px-4 py-3 text-slate-500 text-xs" colSpan={2}>
+                              No procedure breakdown available.
+                            </td>
+                          </tr>
+                        )}
                         <tr className="border-t border-slate-100 bg-slate-50">
                           <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">
                             Estimate amount
@@ -320,6 +344,44 @@ export default function BookingDetailPage() {
                 </div>
               )}
             </div>
+
+            {/* Proposed Final Treatment Plan (if submitted) */}
+            {booking?.metadata?.finalPlan && (
+              <div className="bg-white rounded-lg border border-slate-100 shadow-sm overflow-hidden">
+                <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                  <span className="font-bold text-[#0F172A]">Proposed Final Treatment Plan</span>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                    booking.metadata.finalPlanApproved ? "bg-green-50 text-green-700 border border-green-100" : "bg-blue-50 text-blue-700 border border-blue-100"
+                  }`}>
+                    {booking.metadata.finalPlanApproved ? "Approved" : "Awaiting Approval"}
+                  </span>
+                </div>
+                <div className="px-6 py-5">
+                  <div className="rounded-lg border border-slate-100 overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Procedure</th>
+                          <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {booking.metadata.finalPlan.procedures.map((row: any, i: number) => (
+                          <tr key={i} className="border-t border-slate-100">
+                            <td className="px-4 py-3 text-slate-500 text-xs">{row.name}</td>
+                            <td className="px-4 py-3 text-right text-xs text-slate-600">${Number(row.price).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                        <tr className="border-t border-slate-100 bg-slate-50">
+                          <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">Final Total</td>
+                          <td className="px-4 py-3 text-right font-bold text-[#163E5C] text-sm">${Number(booking.metadata.finalPlan.finalTotal).toLocaleString()}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* ── Step-based Section ── */}
 
@@ -381,11 +443,11 @@ export default function BookingDetailPage() {
                     <button
                       type="button"
                       onClick={handleVerify}
-                      disabled={arrivalCode.length !== 4 || isVerifying}
+                      disabled={arrivalCode.length !== 4 || verifyArrivalMutation.isPending}
                       className="h-12 px-6 rounded-lg bg-[#0A2540] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#0d2f50] transition-colors"
                     >
                       <ShieldCheck className="w-4 h-4" />
-                      {isVerifying ? "Verifying…" : "Verify"}
+                      {verifyArrivalMutation.isPending ? "Verifying…" : "Verify"}
                     </button>
                   </div>
                   {codeError && (
@@ -438,6 +500,123 @@ export default function BookingDetailPage() {
                 )}
               </div>
             )}
+
+            {/* Step: Payment Release Code Verification */}
+            {step === "payment_release" && (
+              <div className="space-y-4">
+                {/* Dark payment release banner */}
+                <div className="bg-[#10B981] rounded-lg px-5 py-4 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                      <KeyRound className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold text-sm">
+                        Release Escrow Payment
+                      </div>
+                      <div className="text-emerald-100 text-xs mt-0.5">
+                        Ask the patient for their 4-digit payment release code
+                      </div>
+                    </div>
+                  </div>
+                  <span className="shrink-0 text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
+                    ACTION REQUIRED
+                  </span>
+                </div>
+
+                {/* Code input */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                    Enter Payment Code
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={4}
+                      value={paymentCode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                        setPaymentCode(val);
+                        setPaymentCodeError(false);
+                      }}
+                      placeholder="e.g. 9812"
+                      className={`flex-1 h-12 rounded-lg border px-4 text-base tracking-widest text-center font-mono bg-white focus:outline-none focus:ring-2 transition-all ${paymentCodeError
+                          ? "border-red-400 focus:ring-red-200"
+                          : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
+                        }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleVerifyPayment}
+                      disabled={paymentCode.length !== 4 || verifyPaymentMutation.isPending}
+                      className="h-12 px-6 rounded-lg bg-[#10B981] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#059669] transition-colors"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      {verifyPaymentMutation.isPending ? "Verifying…" : "Release Funds"}
+                    </button>
+                  </div>
+                  {paymentCodeError && (
+                    <p className="text-xs text-red-500 mt-1.5">
+                      Please enter a valid 4-digit payment code.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Step: Completed Details */}
+            {step === "completed" && (
+              <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 flex flex-col items-center text-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center">
+                  <Check className="w-8 h-8 text-[#10B981]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#0F172A] text-lg">Treatment Completed</h3>
+                  <p className="text-sm text-slate-500 max-w-sm mt-1">
+                    The escrow deposit has been released to your account successfully. Thank you for your service!
+                  </p>
+                </div>
+                {booking?.metadata?.review && (
+                  <div className="w-full bg-slate-50 rounded-lg p-4 text-left border border-slate-100 mt-2">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Patient Review</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      {Array.from({ length: 5 }).map((_, idx) => {
+                        const score = (Number(booking.metadata.review.ratingCommunication) + Number(booking.metadata.review.ratingValueForMoney) + Number(booking.metadata.review.ratingFollowThrough)) / 3;
+                        return (
+                          <span key={idx} className={idx < Math.round(score) ? "text-[#D97706] text-lg" : "text-slate-300 text-lg"}>★</span>
+                        );
+                      })}
+                    </div>
+                    <p className="text-slate-600 text-sm mt-2 font-normal italic">
+                      "{booking.metadata.review.comments}"
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step: Cancelled details */}
+            {step === "cancelled" && (
+              <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 flex flex-col items-center text-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center">
+                  <span className="text-rose-500 font-bold text-xl">✕</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#0F172A] text-lg">Booking Cancelled</h3>
+                  <p className="text-sm text-slate-500 max-w-sm mt-1">
+                    This booking has been cancelled and refunded to the patient.
+                  </p>
+                  {booking?.metadata?.rejection && (
+                    <div className="bg-rose-50 border border-rose-100 text-rose-800 text-xs font-medium rounded-lg px-4 py-3 mt-3 text-left">
+                      <strong>Rejection Reason:</strong> {booking.metadata.rejection.reason}
+                      <br/>
+                      <strong>Refunded amount:</strong> ${Number(booking.metadata.rejection.refundedAmount).toLocaleString()} ({booking.metadata.rejection.refundPercentage}% refund)
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ── Right Column: Patient Timeline ── */}
@@ -471,55 +650,27 @@ export default function BookingDetailPage() {
             </ol>
           </div>
         </div>
-
-        {/* ── Dev Step Navigator (for demo) ── */}
-        <div className="flex flex-wrap gap-2 mt-2 p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-          <p className="w-full text-xs text-slate-400 mb-1">
-            Demo — simulate booking step:
-          </p>
-          {(
-            [
-              "before_arrival",
-              "patient_in_travel",
-              "day1_arrival",
-              "final_plan",
-            ] as BookingStep[]
-          ).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => saveStep(s)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium border transition-colors ${step === s
-                  ? "bg-[#0A2540] text-white border-[#0A2540]"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
-                }`}
-            >
-              {s.replace(/_/g, " ")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* ── Create Final Treatment Plan Modal ── */}
-      <CreateFinalTreatmentPlanModal
-        isOpen={showFinalModal}
-        onClose={() => setShowFinalModal(false)}
-        onSubmit={() => {
-          setPlanSubmitted(true);
-          setShowFinalModal(false);
-        }}
-        estimateTotal={display.budget}
-        patient={{
-          name: display.name,
-          email: display.email,
-          initials: display.initials,
-          procedure: display.procedure,
-          budget: display.budget,
-          travelDates: display.travelFrom,
-          lastVisited: display.lastVisited,
-          conditions: display.conditions,
-        }}
-      />
+      {booking && (
+        <CreateFinalTreatmentPlanModal
+          isOpen={showFinalModal}
+          onClose={() => setShowFinalModal(false)}
+          onSubmit={handleFinalPlanSubmit}
+          estimateTotal={display.budget}
+          patient={{
+            name: display.name,
+            email: display.email,
+            initials: display.initials,
+            procedure: display.procedure,
+            budget: display.budget,
+            travelDates: display.travelFrom,
+            lastVisited: display.lastVisited,
+            conditions: display.conditions,
+          }}
+        />
+      )}
     </>
   );
 }

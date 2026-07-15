@@ -1,12 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, User as UserIcon, MessageSquare, Calendar, Clock, Loader2 } from "lucide-react";
 import { useSession, useMe } from "@/hooks/auth/useAuth";
 import { usePatientConsultations, useDentistConsultations } from "@/hooks/consultation/useConsultation";
 import { ConsultationChat } from "@/app/consultation/components/meeting/ConsultationChat";
 
 export function InboxPage() {
+  const searchParams = useSearchParams();
+  const chatId = searchParams.get("chatId");
+  const [selectedId, setSelectedId] = useState<string | null>(chatId);
+
+  useEffect(() => {
+    if (chatId) {
+      setSelectedId(chatId);
+    }
+  }, [chatId]);
+
   const { user } = useMe();
   const sessionQuery = useSession();
   const userId = sessionQuery.data?.user?.id || sessionQuery.data?.id;
@@ -22,7 +33,6 @@ export function InboxPage() {
   const isLoading = consultationsQuery.isLoading;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const activeChats = consultations.filter((item: any) => {
     return ["ACCEPTED", "SCHEDULED", "ACTIVE", "COMPLETED", "MISSED"].includes(item.requestStatus);
