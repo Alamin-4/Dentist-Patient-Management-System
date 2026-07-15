@@ -62,6 +62,7 @@ export default function ScheduleContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchScheduleData = async () => {
@@ -109,6 +110,7 @@ export default function ScheduleContent() {
 
   const updateSelection = useCallback(
     (dentistId: string, updates: Partial<Omit<DentistSelection, "dentistId">>) => {
+      setErrorMsg(null);
       setSelections((prev) => {
         const next = prev.map((s) =>
           s.dentistId === dentistId ? { ...s, ...updates } : s,
@@ -201,6 +203,7 @@ export default function ScheduleContent() {
     }));
     sessionStorage.setItem(STORED_KEY, JSON.stringify(storable));
 
+    setErrorMsg(null);
     try {
       setIsConfirming(true);
       await consultationBookingApi.stepSeven({
@@ -214,7 +217,9 @@ export default function ScheduleContent() {
       clearBookingData();
       setShowSuccess(true);
     } catch (error) {
-      toast.error(normalizeApiError(error).message);
+      const errMsg = normalizeApiError(error).message;
+      setErrorMsg(errMsg);
+      toast.error(errMsg);
     } finally {
       setIsConfirming(false);
     }
@@ -259,6 +264,14 @@ export default function ScheduleContent() {
             />
           ))}
         </div>
+
+        {/* Error Message */}
+        {errorMsg && (
+          <div className="mt-6 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-750 flex items-start gap-2 max-w-xl ml-auto">
+            <span className="font-semibold shrink-0">Error:</span>
+            <span>{errorMsg}</span>
+          </div>
+        )}
 
         {/* Confirm button */}
         <div className="flex justify-end mt-8">

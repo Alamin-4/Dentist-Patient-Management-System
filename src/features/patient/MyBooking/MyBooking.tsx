@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import ToggleButton from "@/app/(dashboard)/patient/_components/Module/MyBooking/ToggleButton/ToggleButton";
+import ToggleButton from "./ToggleButton/ToggleButton";
 import InProgressBookingCard from "./InProgressBookingCard";
 import InProgressBookingCardSkeleton from "./InProgressBookingCardSkeleton";
 import { CalendarOff } from "lucide-react";
@@ -55,11 +55,26 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
   // Build progress steps based on treatmentBooking status
   // PENDING_PAYMENT, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
   const tbStatus = plan.treatmentBooking?.status || "PENDING_PAYMENT";
+  const finalPlanObj = plan.treatmentBooking?.metadata?.finalPlan;
+  
+  const finalPlan = finalPlanObj
+    ? {
+        breakdown: finalPlanObj.procedures.map((p: any) => ({
+          label: p.name,
+          price: Number(p.price),
+        })),
+        finalTotal: Number(finalPlanObj.finalTotal),
+        isWithinLeeway: Number(finalPlanObj.finalTotal) <= totalEstimate * 1.15,
+      }
+    : null;
+
+  const isApproved = !!plan.treatmentBooking?.metadata?.finalPlanApproved || tbStatus === "COMPLETED";
+
   const progressSteps = [
     { label: "Payment Confirmed", completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED" },
     { label: "Travel destination", completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED" },
-    { label: "Day 1 arrival, CBCT examination", completed: tbStatus === "CONFIRMED" || tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" },
-    { label: "Final Treatment Plan Confirm", completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" },
+    { label: "Day 1 arrival, CBCT examination", completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" },
+    { label: "Final Treatment Plan Confirm", completed: isApproved },
     { label: "Treatment Done", completed: tbStatus === "COMPLETED" },
   ];
 
@@ -82,25 +97,27 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
     },
     {
       title: "Day 1 arrival, CBCT examination",
-      description: "Show arrival code at clinic",
-      completed: tbStatus === "CONFIRMED" || tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED",
-    },
-    {
-      title: "Final Treatment Plan Confirm",
-      description: "Dr submit final price you confirm via sms",
+      description: plan.treatmentBooking?.arrivalCode ? `Arrival Code: ${plan.treatmentBooking.arrivalCode}` : "Show arrival code at clinic",
       completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED",
     },
     {
+      title: "Final Treatment Plan Confirm",
+      description: isApproved ? "Confirmed" : finalPlan ? "Review final plan" : "Awaiting dentist proposal",
+      completed: isApproved,
+    },
+    {
       title: "Treatment Done",
-      description: "Review to the doctor",
+      description: tbStatus === "COMPLETED" ? "Review submitted" : "Ask dentist for release",
       completed: tbStatus === "COMPLETED",
     },
   ];
 
   return {
     id: plan.id,
-    slug: plan.id, // slug is the ID of the treatment plan
+    slug: plan.id,
+    treatmentBookingId: plan.treatmentBooking?.id,
     bookingStatus,
+    isApproved,
     doctor: {
       name: doctorName,
       specialty,
@@ -108,7 +125,7 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
       rating,
       reviewCount,
       rdvScore: plan.dentist?.dentistVerificationProgress?.rvdScore || 95,
-      isVerified: plan.dentist?.dentistVerificationProgress?.isLicenseVerified || true,
+      isVerified: plan.dentist?.dentistVerificationProgress?.isLicenseVerified ?? true,
     },
     procedure: procedureName,
     appointmentDate: scheduledDate,
@@ -129,18 +146,14 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
       lat: Number(dentistDirectory?.latitude) || 19.4326,
       lng: Number(dentistDirectory?.longitude) || -99.1332,
     },
-    arrivalCode: plan.treatmentBooking?.arrivalCode || "7623",
-    paymentCode: plan.treatmentBooking?.paymentCode || "5263",
-    finalPlan: {
-      breakdown,
-      finalTotal: totalEstimate,
-      isWithinLeeway: true,
-    },
-    journeyCompleted: {
-      finalAmount: totalEstimate,
+    arrivalCode: plan.treatmentBooking?.arrivalCode || "",
+    paymentCode: plan.treatmentBooking?.paymentCode || "",
+    finalPlan,
+    journeyCompleted: tbStatus === "COMPLETED" ? {
+      finalAmount: finalPlan ? finalPlan.finalTotal : totalEstimate,
       treatmentDuration: "Completed",
       location: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}`,
-    },
+    } : null,
   };
 }
 

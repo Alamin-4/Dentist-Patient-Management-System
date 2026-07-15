@@ -22,11 +22,16 @@ export interface ChatMessage {
   };
 }
 
-export function useConsultationChat(consultationId: string, currentUserId?: string) {
+export function useConsultationChat(consultationId: string, currentUserId?: string, isChatOpen = false) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const socketRef = useRef<Socket | null>(null);
+
+  const isChatOpenRef = useRef(isChatOpen);
+  useEffect(() => {
+    isChatOpenRef.current = isChatOpen;
+  }, [isChatOpen]);
 
   // 1. Fetch initial message history
   useEffect(() => {
@@ -99,8 +104,8 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     socket.on("new_message", (newMsg: ChatMessage) => {
       setMessages((prev) => [...prev, newMsg]);
 
-      // Automatically send read receipt if we receive a message from the other party
-      if (newMsg.senderId !== currentUserId) {
+      // Automatically send read receipt if we receive a message from the other party AND chat is open
+      if (newMsg.senderId !== currentUserId && isChatOpenRef.current) {
         socket.emit("message_read", { consultationId, messageId: newMsg.id });
       }
     });
@@ -129,7 +134,24 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     };
   }, [consultationId, currentUserId]);
 
-  // 3. Send message action
+  // 3. Mark all unread messages as read when chat is opened
+  useEffect(() => {
+    if (isChatOpen && socketRef.current && messages.length > 0) {
+      messages.forEach((msg) => {
+        if (!msg.isRead && msg.senderId !== currentUserId) {
+          socketRef.current?.emit("message_read", { consultationId, messageId: msg.id });
+        }
+      });
+      // Mark as read in local state
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.senderId !== currentUserId ? { ...msg, isRead: true } : msg
+        )
+      );
+    }
+  }, [isChatOpen, currentUserId, consultationId, messages.length]);
+
+  // 4. Send message action
   const sendMessage = useCallback(
     (text: string) => {
       if (!socketRef.current || !text.trim() || !consultationId) return;
@@ -149,7 +171,7 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     [consultationId]
   );
 
-  // 4. Send typing indicator action
+  // 5. Send typing indicator action
   const sendTyping = useCallback(
     (typingState: boolean) => {
       if (!socketRef.current || !consultationId) return;
@@ -158,7 +180,7 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     [consultationId]
   );
 
-  // 5. Mark messages as read
+  // 6. Mark messages as read manually
   const markAsRead = useCallback(
     (messageId: string) => {
       if (!socketRef.current || !consultationId) return;
@@ -167,10 +189,15 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     [consultationId]
   );
 
+  const unreadCount = messages.filter(
+    (msg) => !msg.isRead && msg.senderId !== currentUserId
+  ).length;
+
   return {
     messages,
     loading,
     isTyping,
+    unreadCount,
     sendMessage,
     sendTyping,
     markAsRead,

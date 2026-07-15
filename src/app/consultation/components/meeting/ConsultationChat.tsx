@@ -13,6 +13,13 @@ interface ConsultationChatProps {
   onClose?: () => void;
   onBack?: () => void;
   theme?: "light" | "dark";
+
+  // Lifted state/functions
+  messages?: any[];
+  loading?: boolean;
+  isTyping?: boolean;
+  sendMessage?: (text: string) => void;
+  sendTyping?: (typingState: boolean) => void;
 }
 
 export function ConsultationChat({
@@ -23,9 +30,23 @@ export function ConsultationChat({
   onClose,
   onBack,
   theme = "dark",
+  messages: propMessages,
+  loading: propLoading,
+  isTyping: propIsTyping,
+  sendMessage: propSendMessage,
+  sendTyping: propSendTyping,
 }: ConsultationChatProps) {
-  const { messages, loading, isTyping, sendMessage, sendTyping } =
-    useConsultationChat(consultationId, currentUserId);
+  // Call useConsultationChat conditionally if props are not provided
+  const localChat = useConsultationChat(
+    propMessages ? "" : consultationId,
+    propMessages ? "" : currentUserId
+  );
+
+  const messages = propMessages !== undefined ? propMessages : localChat.messages;
+  const loading = propLoading !== undefined ? propLoading : localChat.loading;
+  const isTyping = propIsTyping !== undefined ? propIsTyping : localChat.isTyping;
+  const sendMessage = propSendMessage !== undefined ? propSendMessage : localChat.sendMessage;
+  const sendTyping = propSendTyping !== undefined ? propSendTyping : localChat.sendTyping;
 
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);

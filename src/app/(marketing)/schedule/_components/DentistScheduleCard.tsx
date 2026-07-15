@@ -48,6 +48,25 @@ function generateTimeSlots(): string[] {
 
 const TIME_SLOTS = generateTimeSlots();
 
+export function formatSlotToAmPm(slot: string): string {
+  if (!slot) return "";
+  const parts = slot.split(" to ");
+  if (parts.length !== 2) return slot;
+
+  const toAmPmStr = (timeStr: string) => {
+    const timeParts = timeStr.split(":");
+    if (timeParts.length < 2) return timeStr;
+    const h = parseInt(timeParts[0], 10);
+    const m = parseInt(timeParts[1], 10);
+    if (isNaN(h) || isNaN(m)) return timeStr;
+    const ampm = h >= 12 ? "PM" : "AM";
+    const displayH = h % 12 === 0 ? 12 : h % 12;
+    return `${displayH.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} ${ampm}`;
+  };
+
+  return `${toAmPmStr(parts[0])} to ${toAmPmStr(parts[1])}`;
+}
+
 // ─── Helper: Format selected date nicely ──────────────────────────────────────
 function formatSelectedDate(date: Date | null): string {
   if (!date) return "";

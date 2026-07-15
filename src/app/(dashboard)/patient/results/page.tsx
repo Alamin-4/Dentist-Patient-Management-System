@@ -1,4 +1,4 @@
-import MyResultPage from "../_components/Module/MyResult/MyResult";
+import MyResultPage from "@/app/modules/patient/MyResult/MyResult";
 
 export default function MyResultPages() {
   return (

@@ -10,6 +10,7 @@ interface ConsultationCardProps {
   consultation: ConsultationItem;
   onPrimaryAction: () => void;
   onReschedule?: () => void;
+  completedCount?: number;
 }
 
 const isToday = (dateString?: string | Date | null) => {
@@ -30,6 +31,7 @@ export function ConsultationCard({
   consultation,
   onPrimaryAction,
   onReschedule,
+  completedCount,
 }: ConsultationCardProps) {
   const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -42,7 +44,7 @@ export function ConsultationCard({
   const specialty = consultation.dentist?.specialty?.name || dentistDirectory?.specialty || "General Dentist";
   const avatarSrc = dentistUser?.image || dentistDirectory?.image || "/images/dentist.png";
 
-  const rating = dentistDirectory?.googleRating || dentistDirectory?.doctoraliaRating || 5;
+  const rating = dentistDirectory?.googleRating || dentistDirectory?.doctoraliaRating || undefined;
   const reviewCount = dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
   const rdvScore = consultation.dentist?.dentistVerificationProgress?.rvdScore || 100;
 
@@ -64,9 +66,11 @@ export function ConsultationCard({
     isoDate: consultation.scheduledDate || "",
   };
 
-  const isPending = consultation.requestStatus === "PENDING";
-  const isAccepted = consultation.requestStatus === "ACCEPTED";
-  const showRescheduleAction = consultation.requestStatus === "MISSED";
+  const statusUpper = consultation.requestStatus?.toUpperCase();
+  const isPending = statusUpper === "PENDING";
+  const isAccepted = statusUpper === "ACCEPTED";
+  const isCompleted = statusUpper === "COMPLETED";
+  const showRescheduleAction = statusUpper === "MISSED";
 
   let alertMessage = undefined;
   if (showRescheduleAction) {
@@ -75,6 +79,8 @@ export function ConsultationCard({
     alertMessage = "Your consultation request has been approved by the doctor! Please select your preferred date and time to secure your slot.";
   } else if (isPending) {
     alertMessage = "Your request has been sent to the doctor and is awaiting review. We will notify you here once they approve it.";
+  } else if (isCompleted) {
+    alertMessage = "Your consultation has been successfully completed! The dentist is currently reviewing your case and will post your estimated treatment plan shortly. If you need to schedule another session, you can book a new slot below.";
   }
 
   let primaryActionLabel = "Join Consultation";
@@ -84,7 +90,9 @@ export function ConsultationCard({
     primaryActionLabel = "Schedule Slot";
   } else if (isPending) {
     primaryActionLabel = "Awaiting Approval";
-  } else if (consultation.requestStatus === "SCHEDULED" && !isToday(consultation.scheduledDate)) {
+  } else if (isCompleted) {
+    primaryActionLabel = "Book New Slot";
+  } else if (statusUpper === "SCHEDULED" && !isToday(consultation.scheduledDate)) {
     primaryActionLabel = "View Details";
   }
 
@@ -92,8 +100,14 @@ export function ConsultationCard({
     <>
       <div className="rounded-lg border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
         {alertMessage ? (
-          <div className="mb-4 flex items-start gap-3 rounded-lg border border-[#FACC15]/40 bg-[#FFF7E6] px-4 py-3 text-[12px] leading-relaxed text-[#7A4A00]">
-            <div className="mt-0.5 size-5 rounded-full bg-white flex items-center justify-center text-[#F59E0B] shrink-0">
+          <div className={`mb-4 flex items-start gap-3 rounded-lg border px-4 py-3 text-[12px] leading-relaxed ${
+            isCompleted
+              ? "border-[#10B981]/30 bg-[#E8F8F5] text-[#065F46]"
+              : "border-[#FACC15]/40 bg-[#FFF7E6] text-[#7A4A00]"
+          }`}>
+            <div className={`mt-0.5 size-5 rounded-full bg-white flex items-center justify-center shrink-0 ${
+              isCompleted ? "text-[#10B981]" : "text-[#F59E0B]"
+            }`}>
               <CalendarDays className="size-3.5" />
             </div>
             <p>{alertMessage}</p>
@@ -122,15 +136,21 @@ export function ConsultationCard({
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#9CA3AF]">
-                <span className="flex items-center gap-1 text-[#113254] font-semibold">
-                  <span className="text-[13px]">{rating}</span>
-                  <span className="flex items-center gap-0.5 text-[#F5B000]">
-                    {Array.from({ length: Math.round(rating) }).map((_, index) => (
-                      <Star key={index} className="size-3.5 fill-current" />
-                    ))}
-                  </span>
-                </span>
-                <span>({reviewCount} Ratings)</span>
+                {rating !== undefined ? (
+                  <>
+                    <span className="flex items-center gap-1 text-[#113254] font-semibold">
+                      <span className="text-[13px]">{rating}</span>
+                      <span className="flex items-center gap-0.5 text-[#F5B000]">
+                        {Array.from({ length: Math.round(rating) }).map((_, index) => (
+                          <Star key={index} className="size-3.5 fill-current" />
+                        ))}
+                      </span>
+                    </span>
+                    <span>({reviewCount} Ratings)</span>
+                  </>
+                ) : (
+                  <span className="text-[#9CA3AF]">No ratings yet</span>
+                )}
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#10B981]">
@@ -138,9 +158,18 @@ export function ConsultationCard({
                 Verified
               </div>
 
-              <div className="inline-flex items-center gap-1.5 rounded-lg border border-[#CEE0F4] px-3 py-1.5 text-[#1A1A2E]">
-                <span className="text-[14px] font-black">{rdvScore}</span>
-                <span className="text-[11px] font-medium text-[#6B7280]">RDV Score</span>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <div className="inline-flex items-center gap-1.5 rounded-lg border border-[#CEE0F4] px-3 py-1.5 text-[#1A1A2E]">
+                  <span className="text-[14px] font-black">{rdvScore}</span>
+                  <span className="text-[11px] font-medium text-[#6B7280]">RDV Score</span>
+                </div>
+
+                {completedCount !== undefined && completedCount > 0 && (
+                  <div className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-200/60 px-3 py-1.5 text-emerald-800 shadow-[0_1px_2px_rgba(16,185,129,0.05)]">
+                    <span className="text-[14px] font-black">{completedCount}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Completed Sessions</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -171,7 +200,7 @@ export function ConsultationCard({
             <p className="text-[13px] font-medium text-[#6B7280]">
               {timeStr === "N/A" && (isPending || isAccepted) ? "Awaiting scheduling" : timeStr} · {duration}
             </p>
-            {!isPending && !isAccepted && consultation.scheduledDate && (
+            {!isPending && !isAccepted && !isCompleted && consultation.scheduledDate && (
               <button
                 type="button"
                 onClick={() => setCalendarOpen(true)}
@@ -195,7 +224,7 @@ export function ConsultationCard({
             >
               {primaryActionLabel}
             </button>
-            {onReschedule && !isPending && !isAccepted ? (
+            {onReschedule && !isPending && !isAccepted && !isCompleted ? (
               <button
                 type="button"
                 onClick={onReschedule}

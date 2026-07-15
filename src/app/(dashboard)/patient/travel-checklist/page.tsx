@@ -1,4 +1,4 @@
-import TravelChecklistPageComponent from "../_components/Module/Travel_Checklist/Travel_Checklist";
+import TravelChecklistPageComponent from "@/app/modules/patient/Travel_Checklist/Travel_Checklist";
 
 export default function TravelChecklistPage() {
   return (

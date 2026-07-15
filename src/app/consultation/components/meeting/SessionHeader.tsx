@@ -12,18 +12,15 @@ export function SessionHeader({ otherParticipantName, timeLeft, isLowTime }: Ses
     };
 
     return (
-        <div className="flex-none flex items-center justify-between border-b border-slate-800/80 pb-4">
-            <div className="space-y-1">
-                <h1 className="text-lg md:text-xl font-bold tracking-tight text-white">
-                    Live Consultation
+        <div className="flex-none flex items-center justify-between pb-4">
+            <div>
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#0F3659]">
+                    Consultation
                 </h1>
-                <p className="text-xs text-slate-400">
-                    Secure video call with {otherParticipantName}
-                </p>
             </div>
 
             <div className="text-right">
-                <p className={`text-xl md:text-2xl font-mono font-bold tracking-tight tabular-nums ${isLowTime ? "text-rose-500 animate-pulse" : "text-emerald-400"
+                <p className={`text-xl md:text-2xl font-mono font-bold tracking-tight tabular-nums ${isLowTime ? "text-rose-500 animate-pulse" : "text-[#0F3659]"
                     }`}>
                     {formatTime(timeLeft)}
                 </p>
