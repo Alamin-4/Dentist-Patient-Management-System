@@ -40,7 +40,7 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
     // ── Expired / Missed session ──────────────────────────────────────────────
     if (isExpired) {
         return (
-            <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#0B0F19] p-4 text-white">
+            <div className="flex h-full w-full flex-1 flex-col items-center justify-center bg-[#0B0F19] p-4 text-white">
                 <div className="max-w-md w-full rounded-2xl border border-amber-500/20 bg-slate-900/60 p-8 shadow-2xl backdrop-blur-md space-y-6">
                     <div className="text-center space-y-1">
                         <div className="mx-auto size-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-4">
@@ -96,7 +96,7 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
         : undefined;
 
     return (
-        <div className="flex h-screen w-screen items-center justify-center bg-[#0B0F19] p-4 text-white overflow-hidden">
+        <div className="flex h-full w-full flex-1 items-center justify-center bg-[#0B0F19] p-4 text-white overflow-hidden">
             <div className="max-w-6xl w-full flex flex-col md:flex-row gap-6 items-center md:items-stretch justify-center">
                 <div className="max-w-md w-full rounded-2xl border border-blue-500/20 bg-slate-900/60 p-8 shadow-2xl backdrop-blur-md space-y-6">
                     <div className="text-center space-y-1">
@@ -149,13 +149,14 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
                 </div>
 
                 {showChat && (
-                    <div className="w-full md:w-96 min-h-[450px] md:min-h-0 rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl flex flex-col">
+                    <div className="w-full md:w-96 min-h-[450px] md:min-h-0 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl flex flex-col">
                         <ConsultationChat
                             consultationId={consultation.id}
                             currentUserId={userId}
                             recipientName={recipientName}
                             recipientAvatar={recipientAvatar}
                             onClose={() => setShowChat(false)}
+                            theme="light"
                         />
                     </div>
                 )}

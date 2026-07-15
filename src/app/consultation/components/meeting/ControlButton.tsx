@@ -4,18 +4,20 @@ interface ControlButtonProps {
     onIcon: React.ReactNode;
     offIcon: React.ReactNode;
     title: string;
+    disabled?: boolean;
 }
 
-export function ControlButton({ isOff, onClick, onIcon, offIcon, title }: ControlButtonProps) {
+export function ControlButton({ isOff, onClick, onIcon, offIcon, title, disabled }: ControlButtonProps) {
     return (
         <button
             type="button"
             onClick={onClick}
-            className={`size-12 rounded-xl flex items-center justify-center border transition-all duration-200 cursor-pointer active:scale-95 ${isOff
-                    ? "border-rose-500/30 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30"
-                    : "border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-850 hover:text-white"
+            disabled={disabled}
+            className={`size-12 rounded-full flex items-center justify-center border transition-all duration-200 cursor-pointer active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed ${isOff
+                    ? "border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-100"
+                    : "border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100"
                 }`}
-            title={title}
+            title={disabled ? `${title} (Device not available)` : title}
         >
             {isOff ? offIcon : onIcon}
         </button>

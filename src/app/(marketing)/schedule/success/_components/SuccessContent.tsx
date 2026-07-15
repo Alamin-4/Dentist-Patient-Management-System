@@ -6,6 +6,7 @@ import Image from "next/image";
 import { CheckCircle2, Video } from "lucide-react";
 import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 import { apiClient } from "@/api/client";
+import { formatSlotToAmPm } from "../../_components/DentistScheduleCard";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -147,7 +148,7 @@ export default function SuccessContent() {
                     {sel?.date ? formatDate(sel.date) : "—"}
                   </p>
                   <p className="text-[12px] text-[#9CA3AF] mt-0.5 flex items-center justify-end gap-1">
-                    {sel?.timeSlot ?? "—"}
+                    {sel?.timeSlot ? formatSlotToAmPm(sel.timeSlot) : "—"}
                     {" · "}
                     <Video className="size-3.5 inline shrink-0" />
                     {" "}15-min video call

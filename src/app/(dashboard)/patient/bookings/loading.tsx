@@ -1,4 +1,4 @@
-import InProgressBookingCardSkeleton from "@/app/(dashboard)/patient/_components/Module/MyBooking/InProgressBookingCardSkeleton";
+import InProgressBookingCardSkeleton from "@/app/modules/patient/MyBooking/InProgressBookingCardSkeleton";
 import { Skeleton } from "@/components/feedback/skeleton";
 
 export default function BookingsLoading() {

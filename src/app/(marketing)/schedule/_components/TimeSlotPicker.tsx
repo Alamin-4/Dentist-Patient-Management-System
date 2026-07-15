@@ -1,5 +1,6 @@
 
-import { cn } from "@/lib/utils"; // Assuming you have the shadcn 'cn' utility
+import { cn } from "@/lib/utils";
+import { formatSlotToAmPm } from "./DentistScheduleCard";
 
 interface TimeSlotPickerProps {
     slots: string[];
@@ -28,7 +29,7 @@ export function TimeSlotPicker({ slots, selectedSlot, onSelect }: TimeSlotPicker
                                     : "bg-white text-gray-600 border-gray-200 hover:border-[#113254] hover:text-[#113254] hover:bg-gray-50"
                             )}
                         >
-                            {slot}
+                            {formatSlotToAmPm(slot)}
                         </button>
                     );
                 })}

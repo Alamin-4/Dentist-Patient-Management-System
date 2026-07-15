@@ -60,8 +60,8 @@ export default function ConsultationMeetingPage() {
   // 4. Loading State
   if (!token || !serverUrl || !consultation) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[#0B0F19] text-white">
-        <p>Loading consultation...</p>
+      <div className="flex h-full w-full flex-1 items-center justify-center bg-[#F8FAFB] text-slate-800">
+        <p className="font-medium">Loading consultation...</p>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function ConsultationMeetingPage() {
       connect={true}
       video={true}
       audio={true}
-      className="flex flex-col h-screen max-h-screen w-screen bg-[#070A13] font-sans text-slate-100 antialiased overflow-hidden"
+      className="flex flex-col flex-1 h-full w-full bg-[#F8FAFB] font-sans text-slate-800 antialiased overflow-hidden"
     >
       <ConsultationVideoSession
         consultation={consultation}

@@ -200,7 +200,7 @@ export const ConsultationDetailsSidebar = ({
         ) : (
           <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
             <button
-              onClick={() => router.push(`/consultation/${data.id}?mode=details`)}
+              onClick={() => router.push(`/dentist/messages?chatId=${data.id}`)}
               className="flex-1 h-12 rounded-lg bg-[#0A2540] text-white font-bold text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <MessageSquare className="size-4" />

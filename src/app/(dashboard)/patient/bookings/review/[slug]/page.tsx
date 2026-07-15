@@ -6,9 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import SignatureModal from "../../../_components/Module/MyBooking/Modal/SignatureModal";
-import { RejectPlanModal } from "../../../_components/Module/MyBooking/Modal/RejectModal";
-import PaymentSuccessModal from "../../../_components/Module/MyBooking/Modal/PaySuccessModal";
+import SignatureModal from "@/app/modules/patient/MyBooking/Modal/SignatureModal";
+import { RejectPlanModal } from "@/app/modules/patient/MyBooking/Modal/RejectModal";
+import PaymentSuccessModal from "@/app/modules/patient/MyBooking/Modal/PaySuccessModal";
 import { useTreatmentPlanById, useTreatmentPlanDecision } from "@/hooks/treatment-plan/useTreatmentPlan";
 
 // ─── Section card wrapper ─────────────────────────────────────────────────────

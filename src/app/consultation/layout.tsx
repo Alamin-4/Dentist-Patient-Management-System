@@ -3,5 +3,5 @@ export default function ConsultationLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main className="min-h-screen bg-[#F8FAFB]">{children}</main>;
+  return <main className="min-h-dvh h-dvh flex flex-col bg-[#F8FAFB]">{children}</main>;
 }

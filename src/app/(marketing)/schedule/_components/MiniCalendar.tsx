@@ -10,6 +10,7 @@ interface MiniCalendarProps {
   onSelect?: (date: Date | undefined) => void;
   disabledDates?: Date[];
   className?: string;
+  fullWidth?: boolean;
 }
 
 export default function MiniCalendar({
@@ -17,15 +18,16 @@ export default function MiniCalendar({
   onSelect,
   disabledDates = [],
   className,
+  fullWidth = false,
 }: MiniCalendarProps) {
-  // 🔥 FIX: Reset time to midnight so "today" is never considered past
+  // Reset time to midnight so "today" is never considered past
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   // Combine past dates + any custom disabled dates
   const disabled = [{ before: today }, ...disabledDates];
 
-  // 🔥 FIX: Custom Chevron component for react-day-picker v9
+  // Custom Chevron component for react-day-picker v9
   const ChevronComponent: CustomComponents["Chevron"] = ({ orientation }) => {
     if (orientation === "left") {
       return <ChevronLeft className="h-4 w-4" />;
@@ -43,33 +45,41 @@ export default function MiniCalendar({
         showOutsideDays
         className="pointer-events-auto"
         classNames={{
-          root: "w-fit",
-          months: "flex flex-col sm:flex-row gap-2",
-          month: "flex flex-col gap-2",
-          month_caption: "flex justify-center items-center h-7 relative", // v9 renamed from 'caption'
-          caption_label: "text-sm font-semibold text-gray-800",
+          root: fullWidth ? "w-full" : "w-fit",
+          months: "w-full flex flex-col gap-2",
+          month: "w-full flex flex-col gap-2",
+          month_caption: "flex justify-center items-center h-8 relative mb-4",
+          caption_label: "text-sm font-bold text-slate-800",
           nav: "flex items-center justify-between absolute inset-x-0",
-          button_previous: cn( // v9 renamed from 'nav_button_previous'
-            "absolute left-0 top-0 z-10 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-gray-100 border border-gray-200 rounded-md inline-flex items-center justify-center"
+          button_previous: cn(
+            "absolute left-0 top-0 z-10 h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-slate-105 border border-slate-200 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer"
           ),
-          button_next: cn( // v9 renamed from 'nav_button_next'
-            "absolute right-0 top-0 z-10 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-gray-100 border border-gray-200 rounded-md inline-flex items-center justify-center"
+          button_next: cn(
+            "absolute right-0 top-0 z-10 h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-slate-105 border border-slate-200 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer"
           ),
-          weekdays: "flex",
-          weekday: "text-gray-500 w-9 font-medium text-[0.8rem] uppercase text-center",
-          week: "flex w-full mt-2",
-          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 relative focus-within:relative focus-within:z-20",
+          weekdays: "flex w-full justify-between",
+          weekday: cn(
+            "text-slate-400 font-semibold text-[11px] uppercase text-center tracking-wider py-1",
+            fullWidth ? "flex-1" : "w-9"
+          ),
+          week: "flex w-full mt-1.5 justify-between",
+          day: cn(
+            "p-0 font-normal aria-selected:opacity-100 relative focus-within:relative focus-within:z-20",
+            fullWidth ? "flex-1" : "h-9 w-9"
+          ),
           day_button: cn(
-            "h-9 w-9 p-0 font-normal hover:bg-gray-100 transition-colors rounded-md inline-flex items-center justify-center"
+            "p-0 font-medium transition-all rounded-lg inline-flex items-center justify-center cursor-pointer",
+            fullWidth ? "w-full aspect-square sm:aspect-video h-auto text-[11px] sm:text-xs" : "h-9 w-9 text-xs sm:text-sm",
+            "text-slate-500 active:scale-95"
           ),
-          selected: "bg-[#113254] text-white hover:bg-[#0d2844] hover:text-white focus:bg-[#113254] focus:text-white font-semibold shadow-sm",
-          today: "bg-blue-50 text-[#113254] font-bold ring-1 ring-[#113254]/30",
-          outside: "text-gray-400 opacity-40 aria-selected:bg-gray-100/50 aria-selected:text-gray-400 aria-selected:opacity-30",
-          disabled: "text-gray-300 opacity-40 cursor-not-allowed hover:bg-transparent",
+          selected: "!bg-[#113254] !text-white hover:!bg-[#0d2844] hover:!text-white focus:!bg-[#113254] focus:!text-white font-bold shadow-md shadow-[#113254]/20 rounded-lg after:!bg-white",
+          today: "text-[#113254] font-bold relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1 after:rounded-full after:bg-[#113254] aria-selected:!text-white aria-selected:after:!bg-white",
+          outside: "text-slate-300 opacity-40",
+          disabled: "text-slate-200 opacity-30 cursor-not-allowed hover:bg-transparent",
           hidden: "invisible",
         }}
         components={{
-          Chevron: ChevronComponent, // v9 renamed from 'IconLeft' / 'IconRight'
+          Chevron: ChevronComponent,
         }}
       />
     </div>

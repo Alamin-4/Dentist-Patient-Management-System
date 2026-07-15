@@ -1,4 +1,4 @@
-import ReferralsPageComponent from "../_components/Module/Referral/Referral";
+import ReferralsPageComponent from "@/app/modules/patient/Referral/Referral";
 
 export default function ReferralsPage() {
   return (

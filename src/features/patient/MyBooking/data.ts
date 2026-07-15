@@ -339,6 +339,7 @@ export interface InProgressBooking {
   id: string;
   slug: string;
   bookingStatus: "in_progress" | "completed" | "rejected";
+  isApproved: boolean;
   doctor: {
     name: string;
     specialty: string;
@@ -386,6 +387,7 @@ export const inProgressBookingsData: InProgressBooking[] = [
     id: "IB-001",
     slug: "all-on-4-full-arch",
     bookingStatus: "in_progress",
+    isApproved: false,
     doctor: {
       name: "Dr. Eliza Mick",
       specialty: "Orthodontist",

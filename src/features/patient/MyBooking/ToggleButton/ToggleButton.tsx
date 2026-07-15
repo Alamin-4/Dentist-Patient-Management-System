@@ -14,7 +14,7 @@ interface ToggleButtonProps {
 
 export default function ToggleButton({ value, onChange, tabs }: ToggleButtonProps) {
   return (
-    <div className="flex flex-wrap gap-3 border-b border-[#E5E7EB]">
+    <div className="flex flex-wrap gap-6 border-b border-[#E5E7EB]">
       {tabs.map((tab) => {
         const isActive = value === tab.key;
         return (
@@ -22,7 +22,7 @@ export default function ToggleButton({ value, onChange, tabs }: ToggleButtonProp
             key={tab.key}
             type="button"
             onClick={() => onChange(tab.key)}
-            className={`relative pb-3 pt-2 text-[15px] font-semibold transition-all duration-150 outline-none select-none flex items-center gap-2 ${isActive ? "text-[#163E5C]" : "text-[#64748B] hover:text-slate-600"
+            className={`relative pb-3 px-2 lg:px-4 pt-2 text-[15px] font-semibold transition-all duration-150 outline-none select-none flex items-center gap-2 ${isActive ? "text-[#163E5C]" : "text-[#64748B] hover:text-slate-600"
               }`}
           >
             <span>{tab.label}</span>
