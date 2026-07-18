@@ -321,6 +321,7 @@ export function AddEditKolModal({ open, mode, kol, onClose, onSave }: AddEditKol
                       type="number"
                       min={0}
                       max={60}
+                      onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                       value={form.years_experience}
                       onChange={(e) => set("years_experience", e.target.value)}
                       placeholder="e.g. 18"

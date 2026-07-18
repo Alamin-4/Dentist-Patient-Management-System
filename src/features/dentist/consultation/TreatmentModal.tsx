@@ -251,6 +251,8 @@ export default function CreateTreatmentPlanModal({
                           </span>
                           <Input
                             type="number"
+                            min={0}
+                            onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                             {...register(`procedures.${index}.price`)}
                             className="h-15 pl-12 text-sm text-[#181D27] border-slate-200 overflow-hidden rounded-lg focus-visible:ring-0"
                           />

@@ -215,6 +215,8 @@ export default function PersonalInfo() {
             <label className="block text-sm font-medium text-[#475569] mb-2">Years of Experience</label>
             <input
               type="number"
+              min={0}
+              onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("yearsOfExperience", {
                 required: "Years of experience is required",

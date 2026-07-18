@@ -191,6 +191,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
             placeholder="24"
             type="number"
             min="0"
+            onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
             className="h-12 rounded-lg border-input px-4 text-base shadow-none focus-visible:ring-ring sm:h-14"
           />
         </div>

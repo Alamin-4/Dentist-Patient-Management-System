@@ -70,6 +70,7 @@ export function RdvScoreWeights({ initialWeights }: RdvScoreWeightsProps) {
                 type="number"
                 min={0}
                 max={100}
+                onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                 value={phase.weight}
                 onChange={(e) => handleChange(phase.id, e.target.value)}
                 className={cn(

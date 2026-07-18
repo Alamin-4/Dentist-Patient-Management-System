@@ -180,6 +180,8 @@ export function ProfessionalDetailsForm({
         <Input
           id="experience_years"
           type="number"
+          min={0}
+          onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
           {...register("experience_years", { onChange: () => clearErrors("experience_years") })}
           placeholder="8"
           className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.experience_years ? "border-red-500" : ""}`}

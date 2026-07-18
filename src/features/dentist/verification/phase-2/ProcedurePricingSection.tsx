@@ -105,6 +105,8 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
                   </span>
                   <input
                     type="number"
+                    min={0}
+                    onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                     disabled={disabled}
                     {...register(`procedures.${index}.price`)}
                     className="h-11 w-full rounded-lg border border-border bg-card pl-8 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"

@@ -47,6 +47,7 @@ export function PlatformFee({ initialFee }: PlatformFeeProps) {
               min={0}
               max={100}
               step={0.1}
+              onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
               value={rate}
               onChange={(e) => setRate(Math.max(0, Math.min(100, Number(e.target.value) || 0)))}
               className={cn(

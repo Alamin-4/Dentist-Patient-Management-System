@@ -454,6 +454,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                     <Label className="text-slate-700 font-semibold">Years of Experience</Label>
                     <Input
                       type="number"
+                      min={0}
+                      onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                       value={yearsOfExperience}
                       onChange={(e) => setYearsOfExperience(Number(e.target.value))}
                       className="border-slate-200 focus:border-[#0E3E65]"
@@ -463,6 +465,8 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
                     <Label className="text-slate-700 font-semibold">International Patients (%)</Label>
                     <Input
                       type="number"
+                      min={0}
+                      onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                       value={internationalPatients}
                       onChange={(e) => setInternationalPatients(Number(e.target.value))}
                       className="border-slate-200 focus:border-[#0E3E65]"
