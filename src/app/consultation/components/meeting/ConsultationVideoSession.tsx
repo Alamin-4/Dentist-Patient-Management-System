@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Check } from "lucide-react";
 import { useTracks, useLocalParticipant, useRoomContext, RoomAudioRenderer, useRemoteParticipants } from "@livekit/components-react";
 import { Track } from "livekit-client";
 import toast from "react-hot-toast";
@@ -29,6 +30,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
     const [cameraOff, setCameraOff] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [showCompletedModal, setShowCompletedModal] = useState(false);
 
     const { messages, loading, isTyping, unreadCount, sendMessage, sendTyping } =
         useConsultationChat(consultation.id, userId, showChat);
@@ -136,7 +138,11 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
         const handleDisconnect = () => {
             if (!isEndingRef.current) {
                 isEndingRef.current = true;
-                router.push(`/consultation/${slug}/complete`);
+                if (isPatient) {
+                    router.push(`/consultation/${slug}/complete`);
+                } else {
+                    setShowCompletedModal(true);
+                }
             }
         };
 
@@ -144,7 +150,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
         return () => {
             room.off("disconnected", handleDisconnect);
         };
-    }, [room, slug, router]);
+    }, [room, slug, router, isPatient]);
 
     const handleEndCall = async (autoExpire = false) => {
         if (isEndingRef.current) return;
@@ -162,7 +168,11 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
         } catch (err) {
             console.error("Error finalizing consultation:", err);
         } finally {
-            router.push(`/consultation/${slug}/complete`);
+            if (isPatient) {
+                router.push(`/consultation/${slug}/complete`);
+            } else {
+                setShowCompletedModal(true);
+            }
         }
     };
 
@@ -241,6 +251,31 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
                     )}
                 </div>
             </div>
+            
+            {showCompletedModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
+                    <div className="bg-white rounded-2xl p-8 md:p-10 shadow-2xl max-w-md w-full mx-4 flex flex-col items-center text-center space-y-6 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="size-20 rounded-full bg-[#113254] flex items-center justify-center shadow-lg shadow-[#113254]/10">
+                            <Check className="size-10 text-white stroke-[3px]" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-[22px] md:text-[24px] font-extrabold text-[#1A1A2E] leading-tight">
+                                Consultation has been completed.
+                            </h2>
+                            <p className="text-[14px] text-gray-500 leading-relaxed max-w-sm">
+                                Now, you can move forward with creating the treatment plan based on the consultation details.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => router.push("/dentist/consultations?tab=Treatment Estimate")}
+                            className="w-full py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-bold text-[15px] rounded-lg active:scale-[0.98] transition-all cursor-pointer"
+                        >
+                            Create Treatment Plan
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

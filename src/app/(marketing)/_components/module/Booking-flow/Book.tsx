@@ -31,6 +31,7 @@ export default function IntakeModal() {
   const [step, setStep] = useState(() => getBookingDraft().currentStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const {
     showBookingModal,
     setShowBookingModal,
@@ -48,6 +49,7 @@ export default function IntakeModal() {
   const syncStep = (nextStep: number) => {
     setStep(nextStep);
     setBookingCurrentStep(nextStep);
+    setFormErrors({});
   };
 
   const validateStep = (): boolean => {
@@ -57,8 +59,14 @@ export default function IntakeModal() {
       case 1: {
         const { firstName, lastName, dateOfBirth, country } =
           data.personalInfo;
-        if (!firstName || !lastName || !dateOfBirth || !country) {
-          toast.error("Please fill in all required personal information fields");
+        const newErrors: Record<string, string> = {};
+        if (!firstName) newErrors.firstName = "First name is required";
+        if (!lastName) newErrors.lastName = "Last name is required";
+        if (!dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
+        if (!country) newErrors.country = "Country is required";
+        
+        if (Object.keys(newErrors).length > 0) {
+          setFormErrors(newErrors);
           return false;
         }
         return true;
@@ -69,15 +77,23 @@ export default function IntakeModal() {
           return false;
         }
         return true;
-      case 3:
-        if (!data.budget || !data.travelFrom || !data.travelTo) {
-          toast.error("Please fill in your budget and travel dates");
+      case 3: {
+        const newErrors: Record<string, string> = {};
+        if (!data.budget) newErrors.budget = "Budget is required";
+        if (!data.travelFrom) newErrors.travelFrom = "Start travel date is required";
+        if (!data.travelTo) newErrors.travelTo = "End travel date is required";
+        
+        if (Object.keys(newErrors).length > 0) {
+          setFormErrors(newErrors);
           return false;
         }
         return true;
+      }
       case 4:
         if (!data.dentalHistory.lastVisit) {
-          toast.error("Please select when you last visited a dentist");
+          const newErrors: Record<string, string> = {};
+          newErrors.lastVisit = "Please select when you last visited a dentist";
+          setFormErrors(newErrors);
           return false;
         }
         return true;
@@ -265,9 +281,29 @@ export default function IntakeModal() {
         setSchedule(true);
         setShowCompareModal(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting intake step:", error);
-      toast.error("Failed to submit consultation details. Please try again.");
+      if (error?.errors && Array.isArray(error.errors)) {
+        const newErrors: Record<string, string> = {};
+        error.errors.forEach((err: any) => {
+          const fieldName = err.field?.replace("body.", "") || "";
+          if (fieldName) {
+            newErrors[fieldName] = err.message || "Invalid input";
+          }
+        });
+        setFormErrors(newErrors);
+      } else if (
+        error?.errorDetails?.code === "LIMIT_FILE_SIZE" ||
+        error?.errorDetails?.name === "MulterError" ||
+        error?.message?.includes("too large")
+      ) {
+        const newErrors: Record<string, string> = {
+          file: error.message || "File too large (Max 5MB)",
+        };
+        setFormErrors(newErrors);
+      } else {
+        toast.error(error?.message || "Failed to submit consultation details. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -313,12 +349,12 @@ export default function IntakeModal() {
 
             {/* Step content */}
             <div>
-              {step === 1 && <PersonalInfoForm />}
+              {step === 1 && <PersonalInfoForm errors={formErrors} setErrors={setFormErrors} />}
               {step === 2 && <ProcedureSelectionForm />}
-              {step === 3 && <TreatmentDetailsForm />}
-              {step === 4 && <DentalHistoryForm />}
-              {step === 5 && <PhotoUploadForm />}
-              {step === 6 && <XRayUploadForm />}
+              {step === 3 && <TreatmentDetailsForm errors={formErrors} setErrors={setFormErrors} />}
+              {step === 4 && <DentalHistoryForm errors={formErrors} setErrors={setFormErrors} />}
+              {step === 5 && <PhotoUploadForm errors={formErrors} setErrors={setFormErrors} />}
+              {step === 6 && <XRayUploadForm errors={formErrors} setErrors={setFormErrors} />}
             </div>
 
             {/* Navigation */}

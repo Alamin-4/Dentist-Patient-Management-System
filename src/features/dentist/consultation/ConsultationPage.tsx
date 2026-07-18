@@ -8,7 +8,7 @@ import CreateTreatmentPlanModal from "./TreatmentModal";
 import CustomTabs from "../../shared/custom-tabs/custom-tabs";
 import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-page-header";
 import { useDentistConsultations, useUpdateConsultationStatus } from "@/hooks/consultation/useConsultation";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 const tabs = [
@@ -62,17 +62,24 @@ const isWithinMeetingWindow = (item: any): boolean => {
 
 export default function ConsultationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: consultationsResponse, isLoading } = useDentistConsultations();
   const updateStatusMutation = useUpdateConsultationStatus();
 
   const [selectedConsultation, setSelectedConsultation] = useState<any>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTreatmentModalOpen, setIsTreatmentModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>("Upcoming");
+  
+  const queryTab = searchParams ? searchParams.get("tab") : null;
+  const [activeTab, setActiveTab] = useState<TabType>((queryTab as TabType) || "Upcoming");
 
   const consultations = consultationsResponse?.data || [];
 
   const filteredConsultations = consultations.filter((item: any) => {
+    if (item.treatmentPlan?.treatmentBooking) {
+      return false;
+    }
+
     if (activeTab === "Upcoming") {
       return (
         item.requestStatus === "PENDING" ||
@@ -171,6 +178,10 @@ export default function ConsultationPage() {
         }}
         isOpen={isSidebarOpen}
         data={selectedConsultation}
+        onCreateTreatmentPlan={() => {
+          setIsSidebarOpen(false);
+          setIsTreatmentModalOpen(true);
+        }}
       />
 
       <CreateTreatmentPlanModal

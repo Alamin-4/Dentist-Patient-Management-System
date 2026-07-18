@@ -83,26 +83,48 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
     price: Number(item.unitPrice),
   })) || [];
 
+  const paymentConfirmedDate = plan.treatmentBooking && tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED"
+    ? new Date(plan.treatmentBooking.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : null;
+
+  const travelFromDate = plan.consultation?.intake?.travelFrom
+    ? new Date(plan.consultation.intake.travelFrom).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : null;
+
+  const day1Date = plan.consultation?.intake?.travelFrom
+    ? new Date(new Date(plan.consultation.intake.travelFrom).getTime() + 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : null;
+
+  const finalPlanApprovedDate = plan.treatmentBooking?.metadata?.finalPlanApprovedAt
+    ? new Date(plan.treatmentBooking.metadata.finalPlanApprovedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : (isApproved && plan.treatmentBooking?.updatedAt
+      ? new Date(plan.treatmentBooking.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      : null);
+
   const timeline = [
     {
       title: "Payment Confirmed",
-      description: `$${totalEstimate.toLocaleString()} held in escrow`,
+      description: `$${totalEstimate.toLocaleString()} held in escrow${paymentConfirmedDate ? ` · ${paymentConfirmedDate}` : ""}`,
       completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED",
     },
     {
       title: "Travel destination",
-      description: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}`,
+      description: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}${travelFromDate ? ` · ${travelFromDate}` : ""}`,
       completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED",
       link: { label: "View map location" },
     },
     {
       title: "Day 1 arrival, CBCT examination",
-      description: plan.treatmentBooking?.arrivalCode ? `Arrival Code: ${plan.treatmentBooking.arrivalCode}` : "Show arrival code at clinic",
+      description: `Show arrival code at clinic${day1Date ? ` · ${day1Date}` : ""}`,
       completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED",
     },
     {
       title: "Final Treatment Plan Confirm",
-      description: isApproved ? "Confirmed" : finalPlan ? "Review final plan" : "Awaiting dentist proposal",
+      description: isApproved 
+        ? `Confirmed${finalPlanApprovedDate ? ` · ${finalPlanApprovedDate}` : ""}` 
+        : finalPlan 
+          ? "Review final plan" 
+          : `Dr. ${dentistUser?.lastName || 'Dentist'} submit final price you confirm via sms`,
       completed: isApproved,
     },
     {

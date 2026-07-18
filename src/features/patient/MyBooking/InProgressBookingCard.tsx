@@ -94,6 +94,9 @@ export default function InProgressBookingCard({ booking }: Props) {
           {booking.paymentStatus === "paid" && (
             <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
           )}
+          {booking.paymentStatus === "refunded" && (
+            <p className="text-xs font-bold text-rose-600 mt-0.5">Refunded</p>
+          )}
         </div>
       </div>
 

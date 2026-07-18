@@ -25,7 +25,15 @@ function makeSlots(count: number): PhotoSlot[] {
   return Array.from({ length: count }, () => ({ file: null, preview: null }));
 }
 
-export default function PhotoUploadForm() {
+interface PhotoUploadFormProps {
+  errors?: Record<string, string>;
+  setErrors?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+}
+
+export default function PhotoUploadForm({
+  errors = {},
+  setErrors,
+}: PhotoUploadFormProps) {
   const [showGuidelines, setShowGuidelines] = useState(false);
   const [requiredSlots, setRequiredSlots] = useState<PhotoSlot[]>(
     makeSlots(REQUIRED_LABELS.length),
@@ -39,6 +47,13 @@ export default function PhotoUploadForm() {
     index: number,
     file: File | null,
   ) => {
+    if (setErrors) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.file;
+        return copy;
+      });
+    }
     setter((prev) => {
       const next = [...prev];
       if (prev[index].preview) {
@@ -57,6 +72,12 @@ export default function PhotoUploadForm() {
       <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-6">
         Upload your dental photos
       </h2>
+
+      {errors.file && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 font-semibold text-sm mb-6 animate-in fade-in slide-in-from-top-1">
+          {errors.file}
+        </div>
+      )}
 
       {/* Tip banner */}
       <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-lg mb-8">

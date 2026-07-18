@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   ChevronLeft,
@@ -12,7 +12,7 @@ import {
   Copy,
   ShieldAlert,
 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTreatmentPlanById } from "@/hooks/treatment-plan/useTreatmentPlan";
 import { mapPlanToBooking } from "@/app/modules/patient/MyBooking/MyBooking";
@@ -27,12 +27,42 @@ import {
   useRespondFinalPlan,
   useSubmitReview,
 } from "@/hooks/treatment-booking/useTreatmentBooking";
+import { apiClient } from "@/api/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function TreatmentDetailsPage() {
   const { slug } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   const { data: treatmentPlanResponse, isLoading } = useTreatmentPlanById(slug as string);
+
+  // Confirm escrow payment when Stripe redirects back with ?success=true&session_id=...
+  useEffect(() => {
+    const isSuccess = searchParams.get("success") === "true";
+    const sessionId = searchParams.get("session_id");
+    if (!isSuccess || !sessionId) return;
+
+    const confirm = async () => {
+      try {
+        await apiClient.treatmentBookings.confirmEscrowPayment(sessionId);
+        // Invalidate queries so status refreshes
+        await queryClient.invalidateQueries({ queryKey: ["treatmentPlan", slug] });
+        await queryClient.invalidateQueries({ queryKey: ["patientTreatmentPlans"] });
+        // Clean URL without reload
+        const url = new URL(window.location.href);
+        url.searchParams.delete("success");
+        url.searchParams.delete("session_id");
+        window.history.replaceState({}, "", url.toString());
+      } catch (err) {
+        console.error("Failed to confirm escrow payment:", err);
+      }
+    };
+
+    confirm();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [estimatePlanOpen, setEstimatePlanOpen] = useState(true);
   const [finalPlanOpen, setFinalPlanOpen] = useState(true);
@@ -43,6 +73,7 @@ export default function TreatmentDetailsPage() {
   const [noSurpriseRejectModalOpen, setNoSurpriseRejectModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+  const [arrivalCodeCopied, setArrivalCodeCopied] = useState(false);
 
   const createEscrowSessionMutation = useCreateEscrowSession();
   const respondFinalPlanMutation = useRespondFinalPlan();
@@ -75,11 +106,34 @@ export default function TreatmentDetailsPage() {
   const finalPlan = booking.finalPlan;
   const isWithinLeeway = finalPlan?.isWithinLeeway ?? true;
   const isApproved = booking.isApproved;
+  const isCancelled = plan.treatmentBooking?.status === "CANCELLED";
+
+  const travelFromDateStr = plan.consultation?.intake?.travelFrom;
+  const isArrivalToday = (() => {
+    if (searchParams.get("mockArrival") === "true") return true;
+    if (!travelFromDateStr) return false;
+    const tFrom = new Date(travelFromDateStr);
+    const day1Arrival = new Date(tFrom.getTime() + 24 * 60 * 60 * 1000);
+    const today = new Date();
+    
+    const isToday = (d: Date) => 
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate();
+      
+    return isToday(tFrom) || isToday(day1Arrival);
+  })();
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(booking.paymentCode);
     setCodeCopied(true);
     setTimeout(() => setCodeCopied(false), 2000);
+  };
+
+  const handleCopyArrivalCode = () => {
+    navigator.clipboard.writeText(booking.arrivalCode);
+    setArrivalCodeCopied(true);
+    setTimeout(() => setArrivalCodeCopied(false), 2000);
   };
 
   const handlePayDeposit = () => {
@@ -156,11 +210,13 @@ export default function TreatmentDetailsPage() {
         onClose={() => setRejectModalOpen(false)}
         onConfirm={handleRejectPlanConfirm}
         totalEstimate={booking.treatmentPlan.totalEstimate}
+        isLoading={respondFinalPlanMutation.isPending}
       />
       <NoSurpriseRejectModal
         isOpen={noSurpriseRejectModalOpen}
         onClose={() => setNoSurpriseRejectModalOpen(false)}
         onConfirm={handleNoSurpriseRejectConfirm}
+        isLoading={respondFinalPlanMutation.isPending}
       />
       <LeaveReviewModal
         isOpen={reviewModalOpen}
@@ -258,6 +314,8 @@ export default function TreatmentDetailsPage() {
               <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
             ) : booking.paymentStatus === "pending" ? (
               <p className="text-xs font-bold text-red-500 mt-0.5">Payment Required</p>
+            ) : booking.paymentStatus === "refunded" ? (
+              <p className="text-xs font-bold text-rose-600 mt-0.5">Refunded</p>
             ) : (
               <p className="text-xs font-bold text-[#CA8504] mt-0.5">In Escrow</p>
             )}
@@ -269,6 +327,36 @@ export default function TreatmentDetailsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* ── Left column ─────────────────────────────────────────────────── */}
         <div className="lg:col-span-7 space-y-4">
+
+          {/* Cancelled Banner */}
+          {isCancelled && (
+            <div className="bg-rose-50 border border-rose-200 rounded-lg p-5 flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+                  <span className="text-rose-600 font-bold text-lg">✕</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#1A1A2E]">Booking Cancelled</h4>
+                  <p className="text-xs text-slate-500">
+                    This booking has been cancelled and refunded.
+                  </p>
+                </div>
+              </div>
+              {plan.treatmentBooking?.metadata?.rejection && (
+                <div className="bg-white border border-rose-100 rounded-md p-3.5 text-xs text-slate-600 space-y-1">
+                  <p>
+                    <span className="font-bold text-[#1A1A2E]">Reason:</span>{" "}
+                    {plan.treatmentBooking.metadata.rejection.reason}
+                  </p>
+                  <p>
+                    <span className="font-bold text-[#1A1A2E]">Refunded Amount:</span>{" "}
+                    ${Number(plan.treatmentBooking.metadata.rejection.refundedAmount).toLocaleString()}{" "}
+                    ({plan.treatmentBooking.metadata.rejection.refundPercentage}% refund)
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Estimate Treatment plan (collapsible) */}
           <div className="bg-white border border-slate-100 rounded-lg shadow-sm overflow-hidden">
@@ -345,8 +433,8 @@ export default function TreatmentDetailsPage() {
                     isFinal
                   />
 
-                  {/* No Surprise Reject — only when exceeds leeway */}
-                  {!isWithinLeeway && !isApproved && (
+                  {/* No Surprise Reject — only when exceeds leeway and booking is in progress */}
+                  {!isWithinLeeway && !isApproved && plan.treatmentBooking?.status === "IN_PROGRESS" && (
                     <button
                       onClick={() => setNoSurpriseRejectModalOpen(true)}
                       className="mt-4 w-full py-3 rounded-lg border border-[#F43F5E] text-[#F43F5E] text-sm font-semibold hover:bg-[#FFF1F2] transition-colors cursor-pointer"
@@ -417,6 +505,28 @@ export default function TreatmentDetailsPage() {
             </div>
           </div>
 
+          {/* Arrival Code (visible when arrival date is today, booking is CONFIRMED, and arrival code exists) */}
+          {plan.treatmentBooking?.status === "CONFIRMED" && isArrivalToday && booking.arrivalCode && (
+            <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
+              <p className="text-sm font-bold text-[#1A1A2E] mb-3">Arrival Code</p>
+              <div className="flex items-center justify-between">
+                <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">
+                  {booking.arrivalCode}
+                </span>
+                <button
+                  onClick={handleCopyArrivalCode}
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 cursor-pointer"
+                  title="Copy code"
+                >
+                  <Copy className="size-5" />
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 mt-3">
+                {arrivalCodeCopied ? "Copied!" : `Show this to ${booking.doctor.name} on day 1 at clinic`}
+              </p>
+            </div>
+          )}
+
           {/* Payment Code (visible when approved but not yet fully completed/paid) */}
           {isApproved && booking.paymentCode && plan.treatmentBooking?.status !== "COMPLETED" && (
             <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
@@ -441,8 +551,8 @@ export default function TreatmentDetailsPage() {
         </div>
       </div>
 
-      {/* ── Sticky footer ───────────────────────────────────────────────── */}
-      <div className="sticky bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
+      {/* ── Fixed footer ───────────────────────────────────────────────── */}
+      <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
             Dispute
@@ -457,6 +567,15 @@ export default function TreatmentDetailsPage() {
               >
                 {createEscrowSessionMutation.isPending ? "Loading Stripe..." : "Pay Escrow Deposit"}
               </button>
+            ) : isCancelled ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                  Cancelled
+                </span>
+                <span className="text-xs font-semibold text-slate-500">
+                  {booking.paymentStatus === "refunded" ? "Refunded" : ""}
+                </span>
+              </div>
             ) : isApproved ? (
               <>
                 <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
@@ -474,14 +593,17 @@ export default function TreatmentDetailsPage() {
               </>
             ) : (
               <>
-                {finalPlan && (
+                {finalPlan && plan.treatmentBooking?.status === "IN_PROGRESS" && (
                   <>
-                    <button
-                      onClick={() => setRejectModalOpen(true)}
-                      className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
-                    >
-                      Reject Plan
-                    </button>
+                    {isWithinLeeway && (
+                      <button
+                        onClick={() => setRejectModalOpen(true)}
+                        disabled={respondFinalPlanMutation.isPending}
+                        className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Reject Plan
+                      </button>
+                    )}
                     <button
                       onClick={handleApprovePlan}
                       disabled={respondFinalPlanMutation.isPending}

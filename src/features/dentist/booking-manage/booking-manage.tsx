@@ -131,6 +131,7 @@ export default function BookingManage() {
       name: `${firstName} ${lastName}`,
       email: b.patient?.user?.email || "",
       initials,
+      image: b.patient?.user?.image || "",
       procedure,
       budget: `$${Number(b.escrowAmount).toLocaleString()}`,
       status: b.paymentStatus === "IN_ESCROW" ? "In Escrow" : b.paymentStatus === "PAID" ? "Paid" : b.paymentStatus,
@@ -159,6 +160,7 @@ export default function BookingManage() {
                 name={card.name}
                 email={card.email}
                 initials={card.initials}
+                image={card.image}
                 procedure={card.procedure}
                 budget={card.budget}
                 status={card.status}

@@ -10,12 +10,14 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   data: any;
+  onCreateTreatmentPlan?: () => void;
 }
 
 export const ConsultationDetailsSidebar = ({
   isOpen,
   onClose,
   data,
+  onCreateTreatmentPlan,
 }: SidebarProps) => {
   const router = useRouter();
   const respondMutation = useRespondToConsultation();
@@ -197,17 +199,16 @@ export const ConsultationDetailsSidebar = ({
               {respondMutation.isPending ? "Processing..." : "Accept"}
             </button>
           </div>
-        ) : (
+        ) : (data.requestStatus === "COMPLETED" || data.requestStatus === "ACTIVE" || data.requestStatus === "SCHEDULED") && data.treatmentPlan?.status !== "ACTIVE" && data.treatmentPlan?.status !== "COMPLETED" && onCreateTreatmentPlan ? (
           <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
             <button
-              onClick={() => router.push(`/dentist/messages?chatId=${data.id}`)}
-              className="flex-1 h-12 rounded-lg bg-[#0A2540] text-white font-bold text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
+              onClick={onCreateTreatmentPlan}
+              className="flex-1 h-12 rounded-lg bg-[#113254] hover:bg-[#0d2844] text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2"
             >
-              <MessageSquare className="size-4" />
-              Chat with Patient
+              {data.treatmentPlan ? "Update Treatment Plan" : "Create Treatment Plan"}
             </button>
           </div>
-        )}
+        ) : null}
       </div>
     </>
   );

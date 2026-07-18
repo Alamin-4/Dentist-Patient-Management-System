@@ -60,7 +60,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
 
             return (
               <div
-                key={booking.patient_info.email}
+                key={booking.id || `booking-${booking.patient_info.email}-${index}`}
                 className="grid grid-cols-[2fr_1.1fr_0.9fr_1.4fr_auto] items-center gap-4 py-4 first:pt-0 last:pb-0"
               >
                 {/* Patient */}
@@ -134,7 +134,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
 
           return (
             <article
-              key={booking.patient_info.email}
+              key={booking.id || `booking-${booking.patient_info.email}-${index}`}
               className="rounded-lg border border-border bg-background p-4"
             >
               {/* Top row */}

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Star, Info, ShieldCheck } from "lucide-react";
+import { Star, Info, ShieldCheck, MessageSquare } from "lucide-react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -75,9 +75,22 @@ const DoctorCard = ({ data }: CardProps) => {
 
         {/* Middle: Doctor Info */}
         <div className="flex-1 space-y-1">
-          <h2 className="text-xl md:text-2xl font-bold text-[#1A1A2E]">
-            {doctorName}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-bold text-[#1A1A2E]">
+              {doctorName}
+            </h2>
+            {(data.consultationId || data.consultation?.id) && (
+              <button
+                onClick={() =>
+                  router.push(`/patient/messages?chatId=${data.consultationId || data.consultation?.id}`)
+                }
+                title="Message Dentist"
+                className="p-1.5 bg-slate-50 hover:bg-slate-100 text-[#113254] rounded-full border border-slate-200 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
+              >
+                <MessageSquare size={14} />
+              </button>
+            )}
+          </div>
           <p className="text-base font-medium text-[#475569]">
             {specialty}
           </p>
