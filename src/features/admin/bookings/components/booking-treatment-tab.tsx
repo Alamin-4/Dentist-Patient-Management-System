@@ -56,7 +56,7 @@ function PlanTable({
                   ) : item.price !== null && item.price !== undefined ? (
                     `$${item.price.toLocaleString()}`
                   ) : (
-                    "—"
+                    "0"
                   )}
                 </td>
               </tr>
@@ -146,7 +146,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
                         ) : item.price !== null && item.price !== undefined ? (
                           `$${item.price.toLocaleString()}`
                         ) : (
-                          "—"
+                          "0"
                         )}
                       </td>
                     </tr>

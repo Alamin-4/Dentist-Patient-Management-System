@@ -20,7 +20,7 @@ interface StoredSelection {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const formatDate = (iso: string) => {
-  if (!iso) return "—";
+  if (!iso) return "0";
   try {
     return new Date(iso).toLocaleDateString("en-US", {
       weekday: "long",
@@ -29,7 +29,7 @@ const formatDate = (iso: string) => {
       year: "numeric",
     });
   } catch {
-    return "—";
+    return "0";
   }
 };
 
@@ -145,10 +145,10 @@ export default function SuccessContent() {
 
                 <div className="text-right shrink-0">
                   <p className="text-[13px] font-semibold text-[#1A1A2E]">
-                    {sel?.date ? formatDate(sel.date) : "—"}
+                    {sel?.date ? formatDate(sel.date) : "0"}
                   </p>
                   <p className="text-[12px] text-[#9CA3AF] mt-0.5 flex items-center justify-end gap-1">
-                    {sel?.timeSlot ? formatSlotToAmPm(sel.timeSlot) : "—"}
+                    {sel?.timeSlot ? formatSlotToAmPm(sel.timeSlot) : "0"}
                     {" · "}
                     <Video className="size-3.5 inline shrink-0" />
                     {" "}15-min video call

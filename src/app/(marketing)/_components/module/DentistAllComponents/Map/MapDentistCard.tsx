@@ -57,7 +57,7 @@ export default function MapDentistCard({
           </div>
           <div className="flex items-center gap-1 rounded-md bg-slate-50 px-3 py-1.5 border border-slate-200">
             <span className="text-xs font-bold text-[#003366] leading-none">
-              {dentist.rdvScore > 0 ? dentist.rdvScore : "—"}
+              {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
             </span>
             <span className="text-xs font-medium text-[#6B7280]">Score</span>
           </div>
