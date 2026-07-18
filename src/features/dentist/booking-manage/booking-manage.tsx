@@ -74,14 +74,15 @@ export default function BookingManage() {
   const rawBookings = response?.data || [];
 
   // 1. Filter by Active Tab
+  const currentTab = activeTab || "booking-1";
   const filteredByTab = rawBookings.filter((b: any) => {
-    if (activeTab === "In Progress" || activeTab === "booking-1") {
+    if (currentTab === "In Progress" || currentTab === "booking-1") {
       return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
     }
-    if (activeTab === "Completed" || activeTab === "booking-2") {
+    if (currentTab === "Completed" || currentTab === "booking-2") {
       return b.status === "COMPLETED";
     }
-    if (activeTab === "Rejected" || activeTab === "booking-3") {
+    if (currentTab === "Rejected" || currentTab === "booking-3") {
       return b.status === "CANCELLED";
     }
     return true;
@@ -131,6 +132,7 @@ export default function BookingManage() {
       name: `${firstName} ${lastName}`,
       email: b.patient?.user?.email || "",
       initials,
+      image: b.patient?.user?.image || "",
       procedure,
       budget: `$${Number(b.escrowAmount).toLocaleString()}`,
       status: b.paymentStatus === "IN_ESCROW" ? "In Escrow" : b.paymentStatus === "PAID" ? "Paid" : b.paymentStatus,
@@ -159,6 +161,7 @@ export default function BookingManage() {
                 name={card.name}
                 email={card.email}
                 initials={card.initials}
+                image={card.image}
                 procedure={card.procedure}
                 budget={card.budget}
                 status={card.status}

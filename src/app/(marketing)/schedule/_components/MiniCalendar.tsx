@@ -62,14 +62,14 @@ export default function MiniCalendar({
             "text-slate-400 font-semibold text-[11px] uppercase text-center tracking-wider py-1",
             fullWidth ? "flex-1" : "w-9"
           ),
-          week: "flex w-full mt-1.5 justify-between",
+          week: "flex w-full mt-1 justify-between",
           day: cn(
             "p-0 font-normal aria-selected:opacity-100 relative focus-within:relative focus-within:z-20",
             fullWidth ? "flex-1" : "h-9 w-9"
           ),
           day_button: cn(
             "p-0 font-medium transition-all rounded-lg inline-flex items-center justify-center cursor-pointer",
-            fullWidth ? "w-full aspect-square sm:aspect-video h-auto text-[11px] sm:text-xs" : "h-9 w-9 text-xs sm:text-sm",
+            fullWidth ? "w-full h-9 sm:h-10 text-xs sm:text-sm" : "h-9 w-9 text-xs sm:text-sm",
             "text-slate-500 active:scale-95"
           ),
           selected: "!bg-[#113254] !text-white hover:!bg-[#0d2844] hover:!text-white focus:!bg-[#113254] focus:!text-white font-bold shadow-md shadow-[#113254]/20 rounded-lg after:!bg-white",

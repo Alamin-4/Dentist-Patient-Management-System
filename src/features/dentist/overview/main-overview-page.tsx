@@ -1,6 +1,7 @@
 "use client";
 
 import { useDentistOverview } from "@/hooks/dentist/useDentist";
+import { useMe } from "@/hooks/auth/useAuth";
 import { OverviewActiveBookingsCard } from "./overview-active-bookings-card";
 import { OverviewAlertsCard } from "./overview-alerts-card";
 import { OverviewPageSkeleton } from "./overview-page-skeleton";
@@ -10,6 +11,7 @@ import { OverviewStatsSection } from "./overview-stats-section";
 
 export default function MainOverviewPage() {
   const { data, isLoading } = useDentistOverview();
+  const { user } = useMe();
 
   if (isLoading) {
     return <OverviewPageSkeleton />;
@@ -23,15 +25,19 @@ export default function MainOverviewPage() {
     referralCode: "RD-DR-MEMBER",
   };
 
+  const displayName = user?.name 
+    ? (user.name.toLowerCase().startsWith("dr.") ? user.name : `Dr. ${user.name}`)
+    : "Dr. Mick";
+
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
           Dashboard
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-          Welcome back. Here is your practice overview.
+        <p className="mt-1 text-sm text-gray-400 sm:text-base">
+          Welcome back, {displayName}. Here is your practice overview.
         </p>
       </div>
 

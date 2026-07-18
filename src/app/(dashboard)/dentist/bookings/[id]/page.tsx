@@ -59,6 +59,7 @@ export default function BookingDetailPage() {
 
   const [showFinalModal, setShowFinalModal] = useState(false);
   const [treatmentPlanOpen, setTreatmentPlanOpen] = useState(true);
+  const [finalPlanOpen, setFinalPlanOpen] = useState(true);
 
   const verifyArrivalMutation = useVerifyArrivalCode();
   const submitFinalPlanMutation = useSubmitFinalPlan();
@@ -107,21 +108,39 @@ export default function BookingDetailPage() {
         conditions: "N/A",
       };
 
+  const formatDate = (dateInput: any) => {
+    if (!dateInput) return "";
+    const date = new Date(dateInput);
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const travelDate = booking?.scheduledDate ? new Date(booking.scheduledDate) : null;
+  const arrivalDate = travelDate ? new Date(travelDate.getTime() + 24 * 60 * 60 * 1000) : null;
+
   // Timeline status per step
   const timelineItems = [
     {
       label: "Payment Confirmed",
-      detail: booking ? `$${Number(booking.escrowAmount).toLocaleString()} held in escrow • ${new Date(booking.createdAt).toLocaleDateString()}` : "Held in escrow",
+      detail: booking ? `$${Number(booking.escrowAmount).toLocaleString()} held in escrow • ${formatDate(booking.createdAt)}` : "Held in escrow",
       status: "completed" as const,
     },
     {
       label: "Patient in Travel",
-      detail: booking?.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString() : "Scheduled date",
+      detail: booking?.scheduledDate ? formatDate(booking.scheduledDate) : "Scheduled date",
       status: booking && booking.status !== "PENDING_PAYMENT" ? ("completed" as const) : ("pending" as const),
     },
     {
       label: "Day 1 arrival, CBCT examination",
-      detail: booking?.status === "CONFIRMED" ? "Waiting for check-in" : "Checked-in",
+      detail:
+        booking && booking.status !== "CONFIRMED" && booking.status !== "PENDING_PAYMENT"
+          ? arrivalDate
+            ? formatDate(arrivalDate)
+            : "Checked-in"
+          : "Waiting for check-in",
       status:
         booking && booking.status !== "CONFIRMED" && booking.status !== "PENDING_PAYMENT"
           ? ("completed" as const)
@@ -131,16 +150,29 @@ export default function BookingDetailPage() {
     },
     {
       label: "Final Treatment Plan Confirmed",
-      detail: booking?.metadata?.finalPlanApproved ? "Approved by patient" : "Awaiting patient approval",
+      detail: booking?.metadata?.finalPlanApproved
+        ? "Approved by patient"
+        : booking?.status === "CANCELLED"
+          ? "Rejected by patient"
+          : booking?.metadata?.finalPlan
+            ? "Awaiting patient approval"
+            : "Review final plan",
       status: booking?.metadata?.finalPlanApproved
         ? ("completed" as const)
-        : booking?.metadata?.finalPlan
-          ? ("current" as const)
-          : ("pending" as const),
+        : booking?.status === "CANCELLED"
+          ? ("pending" as const)
+          : booking?.metadata?.finalPlan
+            ? ("current" as const)
+            : ("pending" as const),
     },
     {
-      label: "Treatment Done & Payment Released",
-      detail: booking?.status === "COMPLETED" ? "Paid to your account" : "Awaiting treatment completion",
+      label: "Treatment Done",
+      detail:
+        booking?.status === "COMPLETED"
+          ? "Paid to your account"
+          : booking?.status === "CANCELLED"
+            ? "Cancelled"
+            : "Waiting for review",
       status: booking?.status === "COMPLETED" ? ("completed" as const) : ("pending" as const),
     },
   ];
@@ -223,17 +255,24 @@ export default function BookingDetailPage() {
     <>
       <div className="space-y-6 pb-12">
         {/* ── Back + Title ── */}
-        <div>
-          <button
-            onClick={() => router.push("/dentist/bookings")}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 mb-4 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </button>
-          <h1 className="text-2xl lg:text-3xl text-[#1A1A2E] font-bold">
-            Treatment Detail
-          </h1>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <button
+              onClick={() => router.push("/dentist/bookings")}
+              className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 mb-4 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </button>
+            <h1 className="text-2xl lg:text-3xl text-[#1A1A2E] font-bold">
+              Treatment Detail
+            </h1>
+          </div>
+          {booking?.status === "CANCELLED" && (
+            <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-full uppercase tracking-wider">
+              Rejected
+            </span>
+          )}
         </div>
 
         {/* ── Patient Info Card ── */}
@@ -254,7 +293,7 @@ export default function BookingDetailPage() {
                       ? "bg-red-50 text-red-700 border border-red-100"
                       : "bg-blue-50 text-blue-700 border border-blue-100"
                 }`}>
-                  {booking?.status}
+                  {booking?.status === "CANCELLED" ? "Rejected" : booking?.status}
                 </span>
               </div>
             </div>
@@ -273,8 +312,20 @@ export default function BookingDetailPage() {
             <div className="sm:text-right">
               <div className="text-xs text-slate-500 mb-1">Estimate Budget</div>
               <div className="text-2xl font-bold text-[#0A2540]">{display.budget}</div>
-              <div className="text-sm font-semibold text-[#D97706]">
-                {booking?.paymentStatus === "IN_ESCROW" ? "In Escrow" : booking?.paymentStatus === "PAID" ? "Paid" : booking?.paymentStatus}
+              <div className={`text-sm font-semibold ${
+                booking?.paymentStatus === "REFUNDED" 
+                  ? "text-[#0284C7]" 
+                  : booking?.paymentStatus === "PAID" 
+                    ? "text-green-700" 
+                    : "text-[#D97706]"
+              }`}>
+                {booking?.paymentStatus === "IN_ESCROW"
+                  ? "In Escrow"
+                  : booking?.paymentStatus === "PAID"
+                    ? "Paid"
+                    : booking?.paymentStatus === "REFUNDED"
+                      ? "Refund"
+                      : booking?.paymentStatus}
               </div>
             </div>
           </div>
@@ -284,6 +335,13 @@ export default function BookingDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ── Left Column ── */}
           <div className="lg:col-span-2 space-y-5">
+            {/* Rejection / Cancelled Banner */}
+            {booking?.status === "CANCELLED" && (
+              <div className="bg-[#FFF1F2] border border-[#FCA5A5] rounded-lg px-5 py-4 text-[#B91C1C] text-sm font-semibold shadow-sm leading-relaxed">
+                {booking.metadata?.rejection?.reason || "I'm not ready to proceed with treatment at this time"}
+              </div>
+            )}
+
             {/* Estimate Treatment Plan */}
             <div className="bg-white rounded-lg border border-slate-100 shadow-sm overflow-hidden">
               <button
@@ -348,38 +406,61 @@ export default function BookingDetailPage() {
             {/* Proposed Final Treatment Plan (if submitted) */}
             {booking?.metadata?.finalPlan && (
               <div className="bg-white rounded-lg border border-slate-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                  <span className="font-bold text-[#0F172A]">Proposed Final Treatment Plan</span>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                    booking.metadata.finalPlanApproved ? "bg-green-50 text-green-700 border border-green-100" : "bg-blue-50 text-blue-700 border border-blue-100"
-                  }`}>
-                    {booking.metadata.finalPlanApproved ? "Approved" : "Awaiting Approval"}
-                  </span>
-                </div>
-                <div className="px-6 py-5">
-                  <div className="rounded-lg border border-slate-100 overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead className="bg-slate-50">
-                        <tr>
-                          <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Procedure</th>
-                          <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {booking.metadata.finalPlan.procedures.map((row: any, i: number) => (
-                          <tr key={i} className="border-t border-slate-100">
-                            <td className="px-4 py-3 text-slate-500 text-xs">{row.name}</td>
-                            <td className="px-4 py-3 text-right text-xs text-slate-600">${Number(row.price).toLocaleString()}</td>
-                          </tr>
-                        ))}
-                        <tr className="border-t border-slate-100 bg-slate-50">
-                          <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">Final Total</td>
-                          <td className="px-4 py-3 text-right font-bold text-[#163E5C] text-sm">${Number(booking.metadata.finalPlan.finalTotal).toLocaleString()}</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                <button
+                  type="button"
+                  onClick={() => setFinalPlanOpen((v) => !v)}
+                  className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="font-bold text-[#0F172A]">Final treatment Plan</span>
+                    {(() => {
+                      const estimateTotal = Number(booking.escrowAmount || 0);
+                      const finalTotal = Number(booking.metadata.finalPlan.finalTotal || 0);
+                      const isWithinLeeway = finalTotal <= estimateTotal * 1.15;
+                      return isWithinLeeway ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5">
+                          Within 15% protected range
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#BE185D] bg-[#FDF2F8] border border-[#FBCFE8] rounded-full px-2.5 py-0.5">
+                          Exceed 15% protected range
+                        </span>
+                      );
+                    })()}
                   </div>
-                </div>
+                  {finalPlanOpen ? (
+                    <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />
+                  )}
+                </button>
+
+                {finalPlanOpen && (
+                  <div className="px-6 pb-6">
+                    <div className="rounded-lg border border-slate-100 overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead className="bg-slate-50">
+                          <tr>
+                            <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Procedure</th>
+                            <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {booking.metadata.finalPlan.procedures.map((row: any, i: number) => (
+                            <tr key={i} className="border-t border-slate-100">
+                              <td className="px-4 py-3 text-slate-500 text-xs">{row.name}</td>
+                              <td className="px-4 py-3 text-right text-xs text-slate-600">${Number(row.price).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                          <tr className="border-t border-slate-100 bg-slate-50">
+                            <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">Final Total</td>
+                            <td className="px-4 py-3 text-right font-bold text-[#163E5C] text-sm">${Number(booking.metadata.finalPlan.finalTotal).toLocaleString()}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -596,27 +677,7 @@ export default function BookingDetailPage() {
               </div>
             )}
 
-            {/* Step: Cancelled details */}
-            {step === "cancelled" && (
-              <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 flex flex-col items-center text-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center">
-                  <span className="text-rose-500 font-bold text-xl">✕</span>
-                </div>
-                <div>
-                  <h3 className="font-bold text-[#0F172A] text-lg">Booking Cancelled</h3>
-                  <p className="text-sm text-slate-500 max-w-sm mt-1">
-                    This booking has been cancelled and refunded to the patient.
-                  </p>
-                  {booking?.metadata?.rejection && (
-                    <div className="bg-rose-50 border border-rose-100 text-rose-800 text-xs font-medium rounded-lg px-4 py-3 mt-3 text-left">
-                      <strong>Rejection Reason:</strong> {booking.metadata.rejection.reason}
-                      <br/>
-                      <strong>Refunded amount:</strong> ${Number(booking.metadata.rejection.refundedAmount).toLocaleString()} ({booking.metadata.rejection.refundPercentage}% refund)
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* Cancelled step content is handled via the top-level banner */}
           </div>
 
           {/* ── Right Column: Patient Timeline ── */}

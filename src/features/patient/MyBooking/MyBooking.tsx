@@ -83,31 +83,62 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
     price: Number(item.unitPrice),
   })) || [];
 
+  const paymentConfirmedDate = plan.treatmentBooking && tbStatus !== "PENDING_PAYMENT"
+    ? new Date(plan.treatmentBooking.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
+  const travelFromDate = plan.consultation?.intake?.travelFrom
+    ? new Date(plan.consultation.intake.travelFrom).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
+  const day1Date = plan.consultation?.intake?.travelFrom
+    ? new Date(new Date(plan.consultation.intake.travelFrom).getTime() + 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
+  const finalPlanApprovedDate = plan.treatmentBooking?.metadata?.finalPlanApprovedAt
+    ? new Date(plan.treatmentBooking.metadata.finalPlanApprovedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : (isApproved && plan.treatmentBooking?.updatedAt
+      ? new Date(plan.treatmentBooking.updatedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+      : null);
+
+  const finalPlanRejectionDate = tbStatus === "CANCELLED" && plan.treatmentBooking?.updatedAt
+    ? new Date(plan.treatmentBooking.updatedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
   const timeline = [
     {
       title: "Payment Confirmed",
-      description: `$${totalEstimate.toLocaleString()} held in escrow`,
-      completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED",
+      description: `$${totalEstimate.toLocaleString()} held in escrow${paymentConfirmedDate ? ` • ${paymentConfirmedDate}` : ""}`,
+      completed: tbStatus !== "PENDING_PAYMENT",
     },
     {
-      title: "Travel destination",
-      description: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}`,
-      completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CANCELLED",
+      title: "Patient in Travel",
+      description: travelFromDate || "Pending travel details",
+      completed: tbStatus !== "PENDING_PAYMENT" && tbStatus !== "CONFIRMED",
       link: { label: "View map location" },
     },
     {
       title: "Day 1 arrival, CBCT examination",
-      description: plan.treatmentBooking?.arrivalCode ? `Arrival Code: ${plan.treatmentBooking.arrivalCode}` : "Show arrival code at clinic",
-      completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED",
+      description:
+        tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" || tbStatus === "CANCELLED"
+          ? day1Date || "Arrived"
+          : "Show arrival code at clinic",
+      completed: tbStatus === "IN_PROGRESS" || tbStatus === "COMPLETED" || tbStatus === "CANCELLED",
     },
     {
       title: "Final Treatment Plan Confirm",
-      description: isApproved ? "Confirmed" : finalPlan ? "Review final plan" : "Awaiting dentist proposal",
+      description: isApproved 
+        ? `Confirmed${finalPlanApprovedDate ? ` • ${finalPlanApprovedDate}` : ""}` 
+        : tbStatus === "CANCELLED"
+          ? `Rejected${finalPlanRejectionDate ? ` • ${finalPlanRejectionDate}` : ""}`
+          : finalPlan 
+            ? "Review final plan" 
+            : `Dr. ${dentistUser?.lastName || 'Dentist'} submit final price you confirm via sms`,
       completed: isApproved,
     },
     {
       title: "Treatment Done",
-      description: tbStatus === "COMPLETED" ? "Review submitted" : "Ask dentist for release",
+      description: tbStatus === "COMPLETED" ? "Review submitted" : tbStatus === "CANCELLED" ? "Cancelled" : "Waiting for review",
       completed: tbStatus === "COMPLETED",
     },
   ];

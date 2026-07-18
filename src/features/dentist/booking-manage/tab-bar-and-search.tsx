@@ -35,6 +35,8 @@ export default function TabBarAndSearch() {
         <CustomTabs
           tabs={tabs}
           storageKey="booking-tabs"
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
       </div>
 

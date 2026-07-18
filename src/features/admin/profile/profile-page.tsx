@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<ProfileTabs>("profile");
   const { data: response, isLoading, refetch } = useGetMe();
 
-  const user = response?.data || response;
+  const user = (response as any)?.data || response;
 
   const navItems = [
     { key: "profile" as ProfileTabs, label: "Profile Info", icon: User },

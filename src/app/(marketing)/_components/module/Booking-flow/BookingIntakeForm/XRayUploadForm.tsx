@@ -7,13 +7,28 @@ import {
   updateXrayNotes,
 } from "@/lib/storage/bookingService";
 
-export default function XRayUploadForm() {
+interface XRayUploadFormProps {
+  errors?: Record<string, string>;
+  setErrors?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+}
+
+export default function XRayUploadForm({
+  errors = {},
+  setErrors,
+}: XRayUploadFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState(() => getBookingData().xrayNotes);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (selectedFile: File | null) => {
+    if (setErrors) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.file;
+        return copy;
+      });
+    }
     if (selectedFile) {
       setFile(selectedFile);
       setXrayFile(selectedFile);
@@ -36,6 +51,11 @@ export default function XRayUploadForm() {
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
+      {errors.file && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 font-semibold text-sm mb-6 animate-in fade-in slide-in-from-top-1">
+          {errors.file}
+        </div>
+      )}
       <div className="mb-8">
         <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-2">
           Do you have recent dental X-rays?
@@ -75,6 +95,13 @@ export default function XRayUploadForm() {
                   e.stopPropagation();
                   setFile(null);
                   setXrayFile(null);
+                  if (setErrors) {
+                    setErrors((prev) => {
+                      const copy = { ...prev };
+                      delete copy.file;
+                      return copy;
+                    });
+                  }
                 }}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
               >

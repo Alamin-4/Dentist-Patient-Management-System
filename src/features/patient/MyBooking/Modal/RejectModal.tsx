@@ -13,6 +13,7 @@ interface RejectPlanModalProps {
   onClose: () => void;
   onConfirm: (reason: string) => void;
   totalEstimate?: number;
+  isLoading?: boolean;
 }
 
 export function RejectPlanModal({
@@ -20,6 +21,7 @@ export function RejectPlanModal({
   onClose,
   onConfirm,
   totalEstimate = 1075,
+  isLoading = false,
 }: RejectPlanModalProps) {
   const [reason, setReason] = useState("");
 
@@ -32,7 +34,7 @@ export function RejectPlanModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
       <DialogContent className="sm:max-w-lg p-8 gap-6 border-none rounded-3xl shadow">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#1A1A2E] text-left">
@@ -47,6 +49,7 @@ export function RejectPlanModal({
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter Reason"
             rows={4}
+            disabled={isLoading}
             className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F3659] resize-none"
           />
         </div>
@@ -60,16 +63,18 @@ export function RejectPlanModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 rounded-lg border border-slate-300 font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors cursor-pointer"
+            disabled={isLoading}
+            className="flex-1 py-3 rounded-lg border border-slate-300 font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleConfirm}
-            className="flex-1 py-3 rounded-lg bg-[#0F3659] font-bold text-white hover:bg-[#0A2640] transition-colors cursor-pointer"
+            disabled={isLoading}
+            className="flex-1 py-3 rounded-lg bg-[#0F3659] font-bold text-white hover:bg-[#0A2640] transition-colors cursor-pointer disabled:opacity-50"
           >
-            Yes, Reject treatment
+            {isLoading ? "Rejecting..." : "Yes, Reject treatment"}
           </button>
         </div>
       </DialogContent>

@@ -226,7 +226,7 @@ export default function ScheduleContent() {
   };
 
   const handleGoToBookings = () => {
-    router.push("/patient/bookings");
+    router.push("/patient");
   };
 
   return (
@@ -244,51 +244,61 @@ export default function ScheduleContent() {
               (Eastern Time, UTC&#8209;5).
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowCompareModal(true)}
-            className="shrink-0 px-5 py-2.5 border border-[#E5E7EB] rounded-lg text-[14px] font-semibold text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors"
-          >
-            View Comparison
-          </button>
+          {dentists.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setShowCompareModal(true)}
+              className="shrink-0 px-5 py-2.5 border border-[#E5E7EB] rounded-lg text-[14px] font-semibold text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors"
+            >
+              View Comparison
+            </button>
+          )}
         </div>
 
-        {/* Dentist cards grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {dentists.map((doc, i) => (
-            <DentistScheduleCard
-              key={doc.id}
-              dentist={doc}
-              selection={selections[i] ?? makeSelection(doc.id)}
-              onUpdate={(updates) => updateSelection(doc.id, updates)}
-            />
-          ))}
-        </div>
-
-        {/* Error Message */}
-        {errorMsg && (
-          <div className="mt-6 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-750 flex items-start gap-2 max-w-xl ml-auto">
-            <span className="font-semibold shrink-0">Error:</span>
-            <span>{errorMsg}</span>
+        {/* Content wrapper */}
+        <div className={dentists.length === 1 ? "max-w-3xl mx-auto space-y-8" : "space-y-8"}>
+          {/* Dentist cards grid */}
+          <div className={dentists.length === 1 ? "w-full" : "grid grid-cols-1 lg:grid-cols-2 gap-6"}>
+            {dentists.map((doc, i) => (
+              <DentistScheduleCard
+                key={doc.id}
+                dentist={doc}
+                selection={selections[i] ?? makeSelection(doc.id)}
+                onUpdate={(updates) => updateSelection(doc.id, updates)}
+              />
+            ))}
           </div>
-        )}
 
-        {/* Confirm button */}
-        <div className="flex justify-end mt-8">
-          <button
-            type="button"
-            onClick={handleConfirm}
-            disabled={isConfirming}
-            className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {isConfirming ? "Confirming..." : "Confirm Video Consultation"}
-          </button>
+          {/* Error Message */}
+          {errorMsg && (
+            <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-750 flex items-start gap-2 max-w-xl ml-auto">
+              <span className="font-semibold shrink-0">Error:</span>
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {/* Confirm button */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleConfirm}
+              disabled={isConfirming}
+              className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isConfirming ? "Confirming..." : "Confirm Video Consultation"}
+            </button>
+          </div>
         </div>
       </div>
 
       <ScheduleSuccessModal
         open={showSuccess}
-        onOpenChange={setShowSuccess}
+        onOpenChange={(isOpen) => {
+          setShowSuccess(isOpen);
+          if (!isOpen) {
+            handleGoToBookings();
+          }
+        }}
         dentists={dentists}
         selections={selections}
         formatDate={formatDate}

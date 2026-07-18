@@ -7,6 +7,7 @@ interface BookingCardProps {
   name?: string;
   email?: string;
   initials?: string;
+  image?: string;
   procedure?: string;
   budget?: string;
   status?: string;
@@ -20,6 +21,7 @@ export default function BookingCard({
   name = "Jacob Smith",
   email = "Jacob.smith@sample.com",
   initials = "AH",
+  image,
   procedure = "Dental Implants",
   budget = "$1254",
   status = "In Escrow",
@@ -36,56 +38,62 @@ export default function BookingCard({
   };
 
   return (
-    <div className="w-full bg-white border border-[#E2E8F0] rounded-lg p-6 shadow-sm font-sans">
+    <div className="w-full h-full bg-white border border-[#E2E8F0] rounded-lg p-6 shadow-sm font-sans flex flex-col">
       <div className="flex items-center gap-4 pb-5 border-b border-gray-100">
-        <div className="flex items-center justify-center w-14 h-14 bg-[#F1F5F9] rounded-full text-[#1E3A8A] font-bold text-base tracking-wide shrink-0">
-          {initials}
-        </div>
-        <div className="space-y-0.5 min-w-0">
-          <h2 className="text-xl font-bold text-[#0F172A] truncate">{name}</h2>
-          <p className="text-[15px] text-[#0F172A] font-medium opacity-80 truncate">
+        {image ? (
+          <img
+            src={image}
+            alt={name}
+            className="w-14 h-14 rounded-full object-cover shrink-0 border border-slate-100"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-14 h-14 bg-[#F1F5F9] rounded-full text-[#1E3A8A] font-bold text-base tracking-wide shrink-0">
+            {initials}
+          </div>
+        )}
+        <div className="space-y-0.5 min-w-0 flex-1">
+          <h2 className="text-xl font-bold text-[#0F172A] truncate" title={name}>{name}</h2>
+          <p className="text-[15px] text-[#0F172A] font-medium opacity-80 truncate" title={email}>
             {email}
           </p>
         </div>
       </div>
 
-      <div className="py-5 grid grid-cols-12 gap-2 border-b border-gray-100">
-        <div className="col-span-5 space-y-1">
-          <span className="text-[14px] text-[#64748B] font-medium">
+      <div className="py-5 grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-2 border-b border-gray-100">
+        <div className="sm:col-span-5 space-y-1 min-w-0">
+          <span className="text-[14px] text-[#64748B] font-medium block">
             Treatment Procedure
           </span>
-          <h3 className="text-[17px] font-bold text-[#0F172A]">{procedure}</h3>
+          <h3 className="text-[17px] font-bold text-[#0F172A] wrap-break-word">{procedure}</h3>
         </div>
-        <div className="col-span-3 space-y-1">
-          <span className="text-[14px] text-[#64748B] font-medium">
+        <div className="sm:col-span-3 space-y-1">
+          <span className="text-[14px] text-[#64748B] font-medium block">
             Est. Budget
           </span>
           <h3 className="text-[17px] font-bold text-[#0F172A]">{budget}</h3>
         </div>
-        <div className="col-span-4 flex items-center justify-end">
+        <div className="sm:col-span-4 flex items-center sm:justify-end">
           <span className="text-[17px] font-bold text-[#D97706]">{status}</span>
         </div>
       </div>
 
       <div className="py-5 border-b border-gray-100 space-y-1">
-        <span className="text-[14px] text-[#64748B] font-medium">
+        <span className="text-[14px] text-[#64748B] font-medium block">
           Traveling Dates
         </span>
         <h3 className="text-[17px] font-bold text-[#0F172A]">{dates}</h3>
       </div>
 
-      <div className="mt-5">
-        <div className="flex items-center justify-between w-full h-12 px-4 bg-[#FEF3C7] border border-[#FDE68A] rounded-lg">
-          <span className="text-[15px] font-medium text-[#334155]">
+      <div className="mt-auto pt-5 space-y-5">
+        <div className="flex items-center justify-between w-full min-h-12 py-2 px-4 bg-[#FEF3C7] border border-[#FDE68A] rounded-lg gap-2">
+          <span className="text-[15px] font-medium text-[#334155] shrink-0">
             {timelineLabel}
           </span>
-          <span className="text-[15px] font-bold text-[#0F172A]">
+          <span className="text-[15px] font-bold text-[#0F172A] text-right wrap-break-word">
             {timelineStatus}
           </span>
         </div>
-      </div>
 
-      <div className="mt-5">
         <button
           type="button"
           onClick={handleViewDetail}

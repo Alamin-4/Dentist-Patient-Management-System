@@ -7,6 +7,39 @@ import { useSession, useMe } from "@/hooks/auth/useAuth";
 import { usePatientConsultations, useDentistConsultations } from "@/hooks/consultation/useConsultation";
 import { ConsultationChat } from "@/app/consultation/components/meeting/ConsultationChat";
 
+const getFriendlyStatus = (status: string) => {
+  switch (status) {
+    case "ACCEPTED":
+    case "SCHEDULED":
+      return "Upcoming";
+    case "ACTIVE":
+      return "Active";
+    case "COMPLETED":
+      return "Completed";
+    case "MISSED":
+      return "Missed";
+    default:
+      return status;
+  }
+};
+
+const getStatusBadgeCls = (status: string, isSelected: boolean) => {
+  if (isSelected) return "bg-white/15 text-white";
+  switch (status) {
+    case "ACCEPTED":
+    case "SCHEDULED":
+      return "bg-blue-50 text-blue-700 border border-blue-100";
+    case "ACTIVE":
+      return "bg-emerald-50 text-emerald-700 border border-emerald-100 animate-pulse";
+    case "COMPLETED":
+      return "bg-slate-100 text-slate-600 border border-slate-200";
+    case "MISSED":
+      return "bg-rose-50 text-rose-700 border border-rose-100";
+    default:
+      return "bg-slate-100 text-slate-600 border border-slate-200";
+  }
+};
+
 export function InboxPage() {
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
@@ -38,7 +71,36 @@ export function InboxPage() {
     return ["ACCEPTED", "SCHEDULED", "ACTIVE", "COMPLETED", "MISSED"].includes(item.requestStatus);
   });
 
-  const filteredChats = activeChats.filter((item: any) => {
+  // Deduplicate conversations so we only show one thread per user pair,
+  // but always preserve the selected/active chat if one is specified.
+  const uniqueActiveChats = (() => {
+    const groupedChatsMap = new Map<string, any>();
+    
+    activeChats.forEach((item: any) => {
+      const key = isDentist 
+        ? (item.patientId || item.intake?.email || item.id) 
+        : (item.dentistId || item.directoryEntryId || item.id);
+        
+      const existing = groupedChatsMap.get(key);
+      if (!existing) {
+        groupedChatsMap.set(key, item);
+      } else {
+        if (item.id === selectedId) {
+          groupedChatsMap.set(key, item);
+        } else if (existing.id !== selectedId) {
+          const existingDate = new Date(existing.scheduledDate || existing.createdAt).getTime();
+          const itemDate = new Date(item.scheduledDate || item.createdAt).getTime();
+          if (itemDate > existingDate) {
+            groupedChatsMap.set(key, item);
+          }
+        }
+      }
+    });
+    
+    return Array.from(groupedChatsMap.values());
+  })();
+
+  const filteredChats = uniqueActiveChats.filter((item: any) => {
     const patientName = `${item.intake?.firstName || ""} ${item.intake?.lastName || ""}`.trim();
     const dentistName = item.dentist?.user?.name || item.directoryEntry?.name || "";
     const searchTarget = isDentist ? patientName : dentistName;
@@ -162,12 +224,9 @@ export function InboxPage() {
 
                     <div className="flex items-center gap-3 mt-1.5">
                       <span
-                        className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${isSelected
-                          ? "bg-white/15 text-white"
-                          : "bg-[#113254]/10 text-[#113254]"
-                          }`}
+                        className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${getStatusBadgeCls(item.requestStatus, isSelected)}`}
                       >
-                        {item.requestStatus}
+                        {getFriendlyStatus(item.requestStatus)}
                       </span>
                       {item.scheduledTime && (
                         <span

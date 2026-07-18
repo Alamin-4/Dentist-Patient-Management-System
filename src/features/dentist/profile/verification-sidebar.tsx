@@ -1,37 +1,27 @@
 "use client";
 
 import {
-  CheckCircle2,
-  Circle,
-  ArrowRight,
-  Clock,
+  Check,
   AlertCircle,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
-import type {
-  DentistVerificationProgress,
-  VerificationProgressStep,
-} from "../overview/verification-progress.types";
-
-const getStepByPhase = (
-  steps: VerificationProgressStep[],
-  phase: "LICENSE" | "OPERATIONAL" | "CLINICAL",
-) => steps.find((step) => step.phase === phase);
+import { FaCircleCheck } from "react-icons/fa6";
 
 export function VerificationSidebar() {
   const router = useRouter();
   const { data: progressData } = useDentistProgress();
   const { nextIncompleteStep } = useVerificationProgress();
 
-  const progress = progressData?.data as any; // Temporary any, we'll map directly from the response
-  
+  const progress = progressData?.data as any;
+
   const step1Status = progress?.step_one_status || "PENDING";
   const step2Status = progress?.step_two_status || "PENDING";
   const step3Status = progress?.step_three_status || "PENDING";
-  
+
   const step1Done = progress?.is_step_one_completed || false;
   const step2Done = progress?.is_step_two_completed || false;
   const step3Done = progress?.is_step_three_completed || false;
@@ -69,85 +59,63 @@ export function VerificationSidebar() {
 
   const allDone = step1Done && step2Done && step3Done;
 
-  const renderIcon = (status: string, done: boolean, isCurrent: boolean) => {
-    if (status === "APPROVED" || status === "SUBMITTED") {
+  const renderIcon = (status: string, done: boolean) => {
+
+    if (status === "APPROVED" || status === "SUBMITTED" || done) {
       return (
-        <CheckCircle2 className="h-5 w-5 bg-green-500 text-white border-2 border-green-500 rounded-full" />
+        <div className="flex p-1 items-center justify-center rounded-full bg-[#4ADE80] text-white">
+          <FaCircleCheck className="" />
+        </div>
       );
     }
     if (status === "REJECTED") {
-      return <AlertCircle className="h-5 w-5 text-red-500" />;
+      return <AlertCircle className="h-5 w-5 text-red-500 bg-white" />;
     }
 
-    return <div className="h-5 w-5 border-4 border-primary rounded-full" />;
+    return (
+      <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-200 bg-white">
+        <div className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+      </div>
+    );
   };
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-lg border border-gray-100 bg-white p-6">
-        <h3 className="mb-6 font-bold text-gray-900">Verification Progress</h3>
-        <div className="space-y-8 relative">
-          <div className="absolute left-[9px] top-2.5 bottom-2 w-0.5 bg-gray-100" />
-          {steps.map((step, i) => {
-            const isCurrent = i + 1 === nextIncompleteStep;
-            return (
-              <div key={i} className="relative flex gap-4 pl-8">
-                <div className="absolute left-0 top-1 z-10 flex items-center justify-center rounded-full bg-white">
-                  {renderIcon(step.status, step.done || false, isCurrent)}
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {step.title}
-                  </p>
-                  <p className="text-xs text-gray-400  flex items-center gap-2">
-                    {step.sub}
-                    {(step.status === "SUBMITTED") && (
-                      <span className="text-xs text-yellow-400">Review</span>
-                    )}
-                    {(step.status === "REJECTED") && (
-                      <span className="text-xs text-red-400">Rejected</span>
-                    )}
-                  </p>
-                </div>
+    <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+      <h3 className="mb-6 font-bold text-gray-900 text-sm tracking-wide">Verification Prgress</h3>
+
+      <div className="space-y-8 relative">
+        {/* Connecting timeline line */}
+        <div className="absolute left-[9px] top-2.5 bottom-2.5 w-0.5 bg-gray-100" />
+
+        {steps.map((step, i) => {
+          return (
+            <div key={i} className="relative flex gap-4 pl-8">
+              <div className="absolute left-0 top-0.5 z-10 flex items-center justify-center rounded-full bg-white">
+                {renderIcon(step.status, step.done || false)}
               </div>
-            );
-          })}
-        </div>
-        <Button
-          onClick={handleStart}
-          disabled={nextIncompleteStep === 3}
-          className="mt-8 h-12 w-full bg-[#163E5C] hover:bg-[#113149]"
-        >
-          {allDone ? "APPROVED" : `Start Phase ${nextIncompleteStep}`}{" "}
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
+              <div className="space-y-0.5">
+                <p className="text-sm font-semibold text-gray-800">
+                  {step.title}
+                </p>
+                <p className="text-xs text-gray-400 font-medium">
+                  {step.sub}
+                </p>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="rounded-lg border border-gray-100 bg-white p-6">
-        <h3 className="mb-4 font-bold text-gray-900">Profile completeness</h3>
-        <div className="space-y-4">
-          {[
-            { label: "Basic Info", completed: true },
-            {
-              label: "License Verification",
-              completed: step1Done,
-              phase: "Phase 1",
-            },
-            { label: "Headshot", completed: step1Done, phase: "Phase 1" },
-            { label: "Pricing Set", completed: step2Done, phase: "Phase 2" },
-            { label: "Credentials", completed: step3Done, phase: "Phase 3" },
-          ].map((item, i) => (
-            <div key={i} className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">{item.label}</span>
-              {item.completed ? (
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-              ) : (
-                <span className="text-gray-400">{item.phase}</span>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Show action button only when verification is incomplete */}
+      {!allDone && (
+        <Button
+          onClick={handleStart}
+          className="mt-8 h-11 w-full bg-[#163E5C] hover:bg-[#113149] text-white font-semibold rounded-lg text-sm transition-colors"
+        >
+          Start Phase {nextIncompleteStep}
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

@@ -7,13 +7,14 @@ export const USER_KEYS = {
   me: ["user", "me"] as const,
 };
 
-export function useGetMe() {
+export function useGetMe(options?: any) {
   return useQuery({
     queryKey: USER_KEYS.me,
     queryFn: async () => {
       return await apiClient.users.getMe();
     },
     staleTime: 1000 * 60 * 5,
+    ...options,
   });
 }
 
