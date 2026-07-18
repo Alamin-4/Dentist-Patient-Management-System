@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import useAuth from "@/hooks/auth/useAuth";
 import {
   LayoutDashboard,
   User,
@@ -96,7 +97,16 @@ const DASHBOARD_ROOTS = ["/dentist", "/patient"];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { close } = useSidebar();
+  const { logoutMutation } = useAuth();
+  const { mutate: logout } = logoutMutation;
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+    close();
+  };
 
   const isVerificationPath = pathname === "/dentist/verification";
 
@@ -171,7 +181,10 @@ export function Sidebar() {
 
       {/* Logout */}
       <div className="border-t border-slate-100 p-3">
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+        <button 
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
+        >
           <LogOut className="h-4.5 w-4.5" />
           Log Out
         </button>

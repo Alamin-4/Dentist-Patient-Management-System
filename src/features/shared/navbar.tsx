@@ -12,6 +12,7 @@ import { HamburgerButton } from "./hamburger-button";
 import useAuth, { useMe } from "@/hooks/auth/useAuth";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import Link from "next/link";
 
 export function Navbar() {
   const { logoutMutation } = useAuth();
@@ -65,11 +66,11 @@ export function Navbar() {
                 </p>
               </div>
               <div className="border-b border-slate-200 my-2"></div>
-              <DropdownMenuItem className="cursor-pointer">
-                My Profile
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/profile">My Profile</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                Settings
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/settings">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-600 cursor-pointer flex items-center gap-2"
