@@ -11,7 +11,7 @@ interface DoctorProfileHeaderProps {
 const estimateLow = (price: number) => Math.round((price * 2.2) / 20) * 20;
 
 export function DoctorProfileHeader({ dentist }: DoctorProfileHeaderProps) {
-    const location = dentist.location.fullAddress ?? dentist.location.city ?? "Location unavailable";
+    const location = dentist.location?.fullAddress ?? dentist.location?.city ?? "Location unavailable";
 
     return (
         <div className="flex items-start justify-between gap-4 p-6 border-b border-gray-100">
