@@ -72,9 +72,8 @@ export function ProcedureTable({
               paginatedData.map((p: any) => (
                 <tr
                   key={p.id}
-                  className={`transition-colors hover:bg-gray-50/80 ${
-                    selectedIds.includes(p.id) ? "bg-blue-50/30" : ""
-                  }`}
+                  className={`transition-colors hover:bg-gray-50/80 ${selectedIds.includes(p.id) ? "bg-blue-50/30" : ""
+                    }`}
                 >
                   {/* Checkbox */}
                   <td className="px-4 py-3.5">
@@ -108,7 +107,7 @@ export function ProcedureTable({
                   </td>
                   {/* Created At */}
                   <td className="px-4 py-3.5 text-sm text-gray-500">
-                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "—"}
+                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "0"}
                   </td>
                   {/* Actions */}
                   <td className="px-4 py-3.5">

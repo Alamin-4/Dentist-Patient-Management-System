@@ -305,7 +305,7 @@ export function PatientOverviewTab({
               <span className="font-semibold text-[#1A1A2E]">
                 {profile.activity.avg_rating > 0
                   ? `${profile.activity.avg_rating} ★`
-                  : "—"}
+                  : "0"}
               </span>
             </div>
             <div className="flex justify-between text-sm">

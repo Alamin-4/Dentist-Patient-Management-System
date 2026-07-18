@@ -208,7 +208,7 @@ export default function DentistCard({
               {/* Star rating */}
               <div className="flex items-center gap-1.5">
                 <span className="text-[14px] font-bold text-[#10436B]">
-                  {ratingValue > 0 ? ratingValue.toFixed(1) : "—"}
+                  {ratingValue > 0 ? ratingValue.toFixed(1) : "0"}
                 </span>
                 <div className="flex gap-0.5">
                   {[...Array(5)].map((_, i) => (
