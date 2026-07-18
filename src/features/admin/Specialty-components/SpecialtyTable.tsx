@@ -79,9 +79,8 @@ export function SpecialtyTable({
               paginatedData.map((s: ExtendedSpecialty) => (
                 <tr
                   key={s.id}
-                  className={`transition-colors hover:bg-gray-50/80 ${
-                    selectedIds.includes(s.id) ? "bg-blue-50/30" : ""
-                  }`}
+                  className={`transition-colors hover:bg-gray-50/80 ${selectedIds.includes(s.id) ? "bg-blue-50/30" : ""
+                    }`}
                 >
                   {/* Checkbox */}
                   <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -109,7 +108,7 @@ export function SpecialtyTable({
                   </td>
                   {/* Created At */}
                   <td className="px-4 py-3.5 text-sm text-gray-500">
-                    {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : "—"}
+                    {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : "0"}
                   </td>
                   {/* Actions */}
                   <td className="px-4 py-3.5">

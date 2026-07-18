@@ -287,7 +287,7 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
 
             <div className="flex items-center justify-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 text-center">
               <div className="font-extrabold text-[#0E3E65]">
-                {dentist.verified ? dentist.rdvScore : "—"}
+                {dentist.verified ? dentist.rdvScore : "0"}
               </div>
               <div className="text-xs font-medium text-[#1A1A2E]">
                 RDV Score

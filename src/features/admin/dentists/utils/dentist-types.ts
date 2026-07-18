@@ -117,14 +117,14 @@ export const mapVerificationStatus = (status?: string): string => {
 
 export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   const anyD = d as any;
-  let location = "—";
+  let location = "0";
   if (anyD.license_step?.city || anyD.license_step?.country) {
     location = [anyD.license_step.city, anyD.license_step.country].filter(Boolean).join(", ");
   } else if (anyD.clinical_step?.clinic_address) {
     location = anyD.clinical_step.clinic_address;
   } else if (d.dentist_verification?.clinical_path_verification?.clinic_address) {
     const clinicAddr = d.dentist_verification.clinical_path_verification.clinic_address;
-    location = typeof clinicAddr === "string" ? clinicAddr : (clinicAddr?.address || "—");
+    location = typeof clinicAddr === "string" ? clinicAddr : (clinicAddr?.address || "0");
   } else if (d.dentist_address?.[0]) {
     location = `${d.dentist_address[0].city}, ${d.dentist_address[0].country}`;
   }
@@ -252,8 +252,8 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
     name: d.full_name,
     initials,
     avatar_color: avatarColor,
-    email: d.user?.email || "—",
-    phone: d.phone || d.user?.phone || "—",
+    email: d.user?.email || "0",
+    phone: d.phone || d.user?.phone || "0",
     location,
     specialty: mapSpecialty(d.specialty),
     experience_years: d.experience_years || 0,
@@ -264,7 +264,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
     bookings: 0,
     joined: d.created_at
       ? new Date(d.created_at).toISOString().split("T")[0]
-      : "—",
+      : "0",
     rdv_score: d.rdv_score || 0,
     rdv_verified: d.is_verified,
     profile: {
@@ -273,7 +273,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
         revenue_lifetime: { amount: 0, avg_per_visit: 0 },
         cancellation_rate: { pct: "0%", benchmark: "5.7%" },
         estimate_accuracy: { pct: "0%", note: "No data" },
-        avg_response_time: { value: "—", note: "No data" },
+        avg_response_time: { value: "0", note: "No data" },
       },
       performance: {
         show_up_rate: 0,
@@ -290,15 +290,15 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           ),
           country:
             d.dentist_verification?.dentist_license_verification?.country ||
-            "—",
+            "0",
           city:
-            d.dentist_verification?.dentist_license_verification?.city || "—",
+            d.dentist_verification?.dentist_license_verification?.city || "0",
           registration_authority:
             d.dentist_verification?.dentist_license_verification
-              ?.registration_authority_name || "—",
+              ?.registration_authority_name || "0",
           registration_no:
             d.dentist_verification?.dentist_license_verification
-              ?.registration_no || "—",
+              ?.registration_no || "0",
           files: [],
         },
         phase2: {
@@ -324,8 +324,8 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           clinic_location: d.dentist_verification?.clinical_path_verification?.clinic_address
             ? (typeof d.dentist_verification.clinical_path_verification.clinic_address === "string"
               ? d.dentist_verification.clinical_path_verification.clinic_address
-              : d.dentist_verification.clinical_path_verification.clinic_address.address || "—")
-            : "—",
+              : d.dentist_verification.clinical_path_verification.clinic_address.address || "0")
+            : "0",
           categories: phase3Categories,
         },
       },

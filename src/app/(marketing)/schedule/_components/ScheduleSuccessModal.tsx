@@ -74,7 +74,7 @@ export default function ScheduleSuccessModal({
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-[13px] font-semibold text-[#1A1A2E]">
-                      {sel?.date ? formatDate(sel.date) : "—"}
+                      {sel?.date ? formatDate(sel.date) : "0"}
                     </p>
                     <p className="text-[12px] text-[#9CA3AF] flex items-center justify-end gap-1 mt-0.5">
                       {sel?.timeSlot

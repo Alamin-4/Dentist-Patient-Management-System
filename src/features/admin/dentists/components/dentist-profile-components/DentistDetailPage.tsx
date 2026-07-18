@@ -87,11 +87,11 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
     const { initials, color } = getAvatarMeta(fullName);
     const rdvScore = data.dentist?.rdv_score ?? 0;
     const specialty = data.dentist?.specialty || "General";
-    const email = data.user_profile?.email || "—";
-    const phone = data.user_profile?.phone || "—";
+    const email = data.user_profile?.email || "0";
+    const phone = data.user_profile?.phone || "0";
     const location = data.license_step
         ? [data.license_step.city, data.license_step.country].filter(Boolean).join(", ")
-        : "—";
+        : "0";
 
     // Queue / overall status badge
     const queueStatus = data.queue_status ?? "pending";
@@ -162,12 +162,12 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-gray-500">
                                 <span className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5 shrink-0" />{email}</span>
                                 <span className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 shrink-0" />{phone}</span>
-                                {location !== "—" && (
+                                {location !== "0" && (
                                     <span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 shrink-0" />{location}</span>
                                 )}
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="h-3.5 w-3.5 shrink-0" />
-                                    Member since {data.created_at ? new Date(data.created_at).toLocaleDateString() : "—"}
+                                    Member since {data.created_at ? new Date(data.created_at).toLocaleDateString() : "0"}
                                 </span>
                             </div>
                         </div>

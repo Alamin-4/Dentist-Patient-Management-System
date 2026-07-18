@@ -351,7 +351,7 @@ export default function CompareModal() {
                   <Row
                     label="RDV SCORE"
                     colCount={colCount}
-                    values={dentists.map((d) => d.rdvScore ? `${d.rdvScore}/100` : "—")}
+                    values={dentists.map((d) => d.rdvScore ? `${d.rdvScore}/100` : "0")}
                   />
                   <Row
                     label="PATIENT RATING"
@@ -381,12 +381,12 @@ export default function CompareModal() {
                   <Row
                     label="LOCATION"
                     colCount={colCount}
-                    values={dentists.map((d) => d.location?.fullAddress ?? d.location?.city ?? d.location?.country ?? "—")}
+                    values={dentists.map((d) => d.location?.fullAddress ?? d.location?.city ?? d.location?.country ?? "0")}
                   />
                   <Row
                     label="LANGUAGES"
                     colCount={colCount}
-                    values={dentists.map((d) => d.languages && d.languages.length > 0 ? langAbbr(d.languages) : "—")}
+                    values={dentists.map((d) => d.languages && d.languages.length > 0 ? langAbbr(d.languages) : "0")}
                   />
                   <Row
                     label="ESTIMATE RANGE"

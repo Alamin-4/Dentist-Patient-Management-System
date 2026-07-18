@@ -261,7 +261,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
                       : "text-gray-500"
               )}
             >
-              {booking.payment.escrow_status ?? "—"}
+              {booking.payment.escrow_status ?? "0"}
             </span>
           </div>
         </div>

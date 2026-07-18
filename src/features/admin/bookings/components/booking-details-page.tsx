@@ -269,7 +269,7 @@ export default function BookingDetailPage({
                 >
                   {booking.platform_fee.fee_amount !== null
                     ? `-$${booking.platform_fee.fee_amount.toLocaleString()}`
-                    : "—"}
+                    : "0"}
                 </span>
               </div>
               <div className="flex justify-between border-t border-gray-100 pt-3 text-sm">
@@ -286,7 +286,7 @@ export default function BookingDetailPage({
                 >
                   {booking.platform_fee.net_to_dentist !== null
                     ? `$${booking.platform_fee.net_to_dentist.toLocaleString()}`
-                    : "—"}
+                    : "0"}
                 </span>
               </div>
             </div>
