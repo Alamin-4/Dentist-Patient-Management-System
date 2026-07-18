@@ -381,7 +381,7 @@ export default function CompareModal() {
                   <Row
                     label="LOCATION"
                     colCount={colCount}
-                    values={dentists.map((d) => d.location.fullAddress ?? d.location.city ?? d.location.country ?? "—")}
+                    values={dentists.map((d) => d.location?.fullAddress ?? d.location?.city ?? d.location?.country ?? "—")}
                   />
                   <Row
                     label="LANGUAGES"
