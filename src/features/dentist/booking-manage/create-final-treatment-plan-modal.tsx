@@ -116,7 +116,7 @@ export default function CreateFinalTreatmentPlanModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
         <DialogOverlay className="bg-black/30 backdrop-blur-sm" />
-        <DialogContent className="w-[95vw] max-w-3xl rounded-lg p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
+        <DialogContent className="w-[95vw] sm:max-w-3xl rounded-lg p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
           {/* ── Modal Header ── */}
           <div className="flex items-center justify-between px-7 py-5 border-b border-slate-100 shrink-0">
             <DialogTitle className="text-lg font-bold text-[#1A1A2E]">
@@ -205,8 +205,8 @@ export default function CreateFinalTreatmentPlanModal({
                   onDragLeave={() => setIsDragging(false)}
                   onDrop={handleFileDrop}
                   className={`w-full border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${isDragging
-                      ? "border-[#163E5C] bg-[#F0F5FA]"
-                      : "border-slate-200 bg-white hover:bg-slate-50"
+                    ? "border-[#163E5C] bg-[#F0F5FA]"
+                    : "border-slate-200 bg-white hover:bg-slate-50"
                     }`}
                 >
                   <Upload className="w-5 h-5 text-slate-400" />
@@ -267,6 +267,7 @@ export default function CreateFinalTreatmentPlanModal({
                             <Input
                               type="number"
                               min={0}
+                              onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                               {...register(`procedures.${index}.price`)}
                               className="h-12 pl-11 text-sm border-slate-200 rounded-lg focus-visible:ring-0"
                             />

@@ -16,7 +16,7 @@ export default function ProfileSettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  const user = response?.data || response;
+  const user = (response as any)?.data || response;
 
   const tabs = [
     { id: "personal", label: "Personal Information", icon: User },

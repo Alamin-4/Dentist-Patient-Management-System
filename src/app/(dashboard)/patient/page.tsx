@@ -60,15 +60,58 @@ const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
   return 0;
 };
 
+const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
+  const dObj = new Date(scheduledDate);
+  const year = dObj.getUTCFullYear();
+  const month = dObj.getUTCMonth();
+  const day = dObj.getUTCDate();
+  
+  const timeParts = scheduledTime.split(":");
+  let hours = parseInt(timeParts[0], 10);
+  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+  
+  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
+    hours += 12;
+  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
+    hours = 0;
+  }
+  
+  if (isNaN(hours)) hours = 0;
+  if (isNaN(minutes)) minutes = 0;
+  
+  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
+  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
+  return localUtcMs - offsetMinutes * 60 * 1000;
+};
+
 // Returns true if current moment is within the meeting window:
 // from 5 minutes before scheduledDate until (scheduledDate + durationMinutes)
 const isWithinMeetingWindow = (consultation: ConsultationItem): boolean => {
-  if (!consultation.scheduledDate) return false;
-  const scheduledUtc = new Date(consultation.scheduledDate).getTime();
+  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
+  const startUtcMs = getConsultationStartUtcMs(
+    consultation.scheduledDate,
+    consultation.scheduledTime,
+    consultation.timezone
+  );
   const duration = (consultation.durationMinutes || 15) * 60 * 1000;
   const earlyMs = 5 * 60 * 1000;
   const nowUtc = Date.now();
-  return nowUtc >= scheduledUtc - earlyMs && nowUtc <= scheduledUtc + duration;
+  return nowUtc >= startUtcMs - earlyMs && nowUtc <= startUtcMs + duration;
+};
+
+const isConsultationExpired = (consultation: ConsultationItem): boolean => {
+  const statusUpper = consultation.requestStatus?.toUpperCase();
+  if (statusUpper === "COMPLETED" || statusUpper === "MISSED" || statusUpper === "CANCELLED") return false;
+  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
+
+  const startUtcMs = getConsultationStartUtcMs(
+    consultation.scheduledDate,
+    consultation.scheduledTime,
+    consultation.timezone
+  );
+  const durationMin = consultation.durationMinutes || 15;
+  const endMs = startUtcMs + durationMin * 60 * 1000;
+  return Date.now() > endMs;
 };
 
 // Returns true if the scheduled date (in the consultation's stored timezone) is today
@@ -122,6 +165,10 @@ export default function Overview() {
   const proposedTreatmentPlans = treatmentPlans.filter((plan) => plan.status === "PROPOSED");
 
   const consultationsToShow = consultations.filter((item) => {
+    if (item.treatmentPlan?.treatmentBooking) {
+      return false;
+    }
+
     if (activeTab === "upcoming") {
       return (
         item.requestStatus === "PENDING" ||
@@ -220,7 +267,9 @@ export default function Overview() {
           </div>
         ) : activeTab === "estimate-updates" ? (
           (() => {
-            const completedConsultations = consultations.filter((item) => item.requestStatus === "COMPLETED");
+            const completedConsultations = consultations.filter(
+              (item) => item.requestStatus === "COMPLETED" && !item.treatmentPlan
+            );
 
             // Filter to show only the latest completed consultation per dentist
             const uniqueCompletedConsultations: ConsultationItem[] = [];
@@ -284,7 +333,11 @@ export default function Overview() {
                   consultation={consultation}
                   completedCount={completedCount}
                   onPrimaryAction={() => {
-                    if (consultation.requestStatus === "MISSED" || consultation.requestStatus === "ACCEPTED") {
+                    if (
+                      consultation.requestStatus === "MISSED" ||
+                      consultation.requestStatus === "ACCEPTED" ||
+                      isConsultationExpired(consultation)
+                    ) {
                       openReschedule(consultation);
                       return;
                     }

@@ -621,6 +621,10 @@ export const apiClient = {
       const response = await api.post(endpoints.treatmentBookings.createEscrowSession, { bookingId });
       return response.data;
     },
+    confirmEscrowPayment: async (sessionId: string) => {
+      const response = await api.post(endpoints.stripe.confirmPayment, { sessionId });
+      return response.data;
+    },
   },
 };
 

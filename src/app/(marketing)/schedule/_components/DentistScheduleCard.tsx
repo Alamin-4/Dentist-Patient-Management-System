@@ -85,7 +85,7 @@ export default function DentistScheduleCard({
   onUpdate,
 }: DentistScheduleCardProps) {
   return (
-    <Card className="bg-white border-gray-200 shadow-sm overflow-hidden">
+    <Card className="bg-white border-gray-200 shadow-sm relative overflow-visible!">
       {/* 1. Doctor Header */}
       <DoctorProfileHeader dentist={dentist} />
 
@@ -125,6 +125,7 @@ export default function DentistScheduleCard({
           </div>
           <MiniCalendar
             selected={selection.date}
+            fullWidth={true}
             onSelect={(date) => {
               // 🔥 FIX: Reset selected date to midnight so it matches backend expectations
               if (date) {

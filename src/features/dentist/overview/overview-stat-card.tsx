@@ -1,4 +1,4 @@
-import { ArrowUp, CalendarDays, Clock, DollarSign, Target } from "lucide-react";
+import { CalendarDays, Clock, DollarSign, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StatIcon, StatTrend } from "./overview-data";
 
@@ -7,6 +7,13 @@ const ICON_MAP: Record<StatIcon, React.ElementType> = {
   clock: Clock,
   dollar: DollarSign,
   target: Target,
+};
+
+const ICON_STYLES: Record<StatIcon, { bg: string; text: string }> = {
+  calendar: { bg: "bg-[#E6F0FA]", text: "text-[#163E5C]" },
+  clock: { bg: "bg-[#FEF3C7]", text: "text-[#D97706]" },
+  dollar: { bg: "bg-[#E6F0FA]", text: "text-[#163E5C]" },
+  target: { bg: "bg-[#E6F0FA]", text: "text-[#163E5C]" },
 };
 
 interface OverviewStatCardProps {
@@ -29,27 +36,27 @@ export function OverviewStatCard({
   className,
 }: OverviewStatCardProps) {
   const Icon = ICON_MAP[icon];
+  const style = ICON_STYLES[icon] || { bg: "bg-gray-100", text: "text-gray-500" };
 
   return (
     <div
       className={cn(
-        "rounded-lg border border-border bg-card p-5 shadow-[0_4px_20px_rgba(15,35,61,0.06)]",
+        "rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)]",
         className,
       )}
     >
       {/* Label row */}
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-medium text-muted-foreground">{label}</p>
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-100">
-          <Icon className="size-5 text-gray-500" />
+        <p className="text-sm font-semibold text-gray-400">{label}</p>
+        <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-lg", style.bg, style.text)}>
+          <Icon className="size-5" />
         </div>
       </div>
 
       {/* Value */}
       <p
         className={cn(
-          "mt-4 text-3xl font-bold tracking-tight sm:text-[2rem]",
-          highlight ? "text-gold-500" : "text-foreground",
+          "mt-4 text-3xl font-extrabold tracking-tight text-gray-900",
         )}
       >
         {String(value)}
@@ -57,14 +64,12 @@ export function OverviewStatCard({
 
       {/* Sub-label */}
       {trend === "positive" ? (
-        <div className="mt-2 flex items-center gap-1.5">
-          <span className="flex size-5 items-center justify-center rounded-full bg-success-50">
-            <ArrowUp className="size-3 text-success-600" />
-          </span>
-          <p className="text-sm font-medium text-success-700">{subLabel}</p>
+        <div className="mt-2 flex items-center gap-1 text-sm font-semibold text-[#10B981]">
+          <span>↑</span>
+          <span>{subLabel}</span>
         </div>
       ) : (
-        <p className="mt-2 text-sm text-muted-foreground">{subLabel}</p>
+        <p className="mt-2 text-xs font-semibold text-gray-400">{subLabel}</p>
       )}
     </div>
   );

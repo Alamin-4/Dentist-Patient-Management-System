@@ -288,6 +288,7 @@ export default function AddPricing() {
                         type="number"
                         placeholder="0"
                         min="0"
+                        onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                         {...register(`procedures.${index}.price` as const)}
                         className="h-10 w-full rounded-lg border border-border bg-card pl-7 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-slate-400 focus:outline-none"
                       />

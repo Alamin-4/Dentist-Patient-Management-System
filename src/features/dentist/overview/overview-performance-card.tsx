@@ -1,12 +1,4 @@
 import { cn } from "@/lib/utils";
-import type { BadgeColor } from "./overview-data";
-
-const BADGE_STYLES: Record<BadgeColor, string> = {
-  success: "bg-success-50 text-success-700",
-  sky: "bg-sky-50 text-sky-700",
-  warning: "bg-warning-100 text-warning-700",
-  destructive: "bg-destructive-50 text-destructive-700",
-};
 
 interface Props {
   chart: {
@@ -17,56 +9,78 @@ interface Props {
       label: string;
       value: string;
       badge: string;
-      badgeColor: BadgeColor;
     }>;
   };
 }
 
 export function OverviewPerformanceCard({ chart }: Props) {
-  // Clamp to valid conic-gradient percentage
+  // Clamp to valid percentage
   const pct = Math.min(Math.max(chart.score, 0), 100);
 
+  // SVG Ring Calculations
+  const radius = 70;
+  const strokeWidth = 16;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (pct / 100) * circumference;
+
   return (
-    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
       {/* Main layout: chart left + metrics right */}
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center">
-        {/* Donut chart */}
-        <div className="shrink-0">
-          <div
-            className="relative flex size-44 items-center justify-center rounded-full"
-            style={{
-              background: `conic-gradient(var(--color-gold-500) 0 ${pct}%, var(--color-gray-200) ${pct}% 100%)`,
-            }}
-          >
-            {/* Inner circle — white hole */}
-            <div className="absolute inset-3.5 flex flex-col items-center justify-center rounded-full bg-card text-center">
-              <span className="text-[1.625rem] font-bold leading-none text-gold-500">
-                {chart.score}%
-              </span>
-              <span className="mt-1 text-xs font-semibold text-muted-foreground">
-                RDV Score
-              </span>
-            </div>
+        {/* SVG Donut chart */}
+        <div className="shrink-0 relative flex size-44 items-center justify-center">
+          <svg className="size-full transform -rotate-90">
+            {/* Background circle */}
+            <circle
+              cx="88"
+              cy="88"
+              r={radius}
+              stroke="#FEF3C7"
+              strokeWidth={strokeWidth}
+              fill="transparent"
+            />
+            {/* Progress circle */}
+            <circle
+              cx="88"
+              cy="88"
+              r={radius}
+              stroke="#F3C043"
+              strokeWidth={strokeWidth}
+              fill="transparent"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              className="transition-all duration-500 ease-out"
+            />
+          </svg>
+
+          {/* Inner labels */}
+          <div className="absolute flex flex-col items-center justify-center text-center">
+            <span className="text-lg lg:text-xl font-bold text-[#D48D1D]">
+              {chart.score}%
+            </span>
+            <span className="mt-1.5 text-sm text-[#D48D1D]">
+              RDV Score
+            </span>
           </div>
         </div>
 
         {/* Metrics list */}
-        <div className="w-full flex-1 divide-y divide-border">
+        <div className="w-full flex-1 divide-y divide-gray-100">
           {chart.labels.map((item) => (
             <div
               key={item.label}
               className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0"
             >
-              <p className="min-w-0 flex-1 text-sm text-muted-foreground">
+              <p className="min-w-0 flex-1 text-sm font-semibold text-gray-400">
                 {item.label}
               </p>
-              <p className="shrink-0 text-sm font-semibold text-foreground">
+              <p className="shrink-0 text-sm font-extrabold text-gray-900">
                 {item.value}
               </p>
               <span
                 className={cn(
-                  "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                  BADGE_STYLES[item.badgeColor],
+                  "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold bg-[#4CA30D]/11 text-[#4CA30D]",
                 )}
               >
                 {item.badge}
@@ -77,7 +91,7 @@ export function OverviewPerformanceCard({ chart }: Props) {
       </div>
 
       {/* Note */}
-      <p className="mt-6 border-t border-border pt-4 text-sm leading-6 text-muted-foreground">
+      <p className="mt-6 border-t border-gray-100 pt-4 text-xs font-semibold leading-relaxed text-gray-400">
         Review sentiment is displayed separately and does not affect your RDV
         Score.
       </p>

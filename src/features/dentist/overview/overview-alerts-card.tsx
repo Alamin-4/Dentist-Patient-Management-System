@@ -1,4 +1,4 @@
-import { ChevronRight, Clock } from "lucide-react";
+import { ChevronRight, Clock, AlertCircle } from "lucide-react";
 
 interface Props {
   alerts: Array<{
@@ -9,34 +9,41 @@ interface Props {
 
 export function OverviewAlertsCard({ alerts }: Props) {
   return (
-    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
-      <h2 className="text-lg font-semibold text-foreground">Alerts</h2>
+    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
+      <h2 className="text-lg font-bold text-gray-900 mb-5">Alerts</h2>
 
-      <div className="mt-5 divide-y divide-border">
-        {alerts.map((alert) => (
-          <div
-            key={alert.label}
-            className="flex cursor-pointer items-start gap-4 py-4 transition-colors hover:bg-gray-50 first:pt-0 last:pb-0"
-          >
-            {/* Clock icon */}
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-warning-50">
-              <Clock className="size-5 text-warning-600" />
+      <div className="space-y-3">
+        {alerts.map((alert, index) => {
+          const isBooking = alert.label.toLowerCase().includes("booking");
+          return (
+            <div
+              key={index}
+              className="flex cursor-pointer items-center gap-4 rounded-xl border border-blue-50/50 bg-[#F4F8FA] p-4 hover:bg-[#EBF3F8] transition-all duration-200"
+            >
+              {/* Icon */}
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+                {isBooking ? (
+                  <AlertCircle className="size-5 text-[#CDA555]" />
+                ) : (
+                  <Clock className="size-5 text-[#CDA555]" />
+                )}
+              </div>
+
+              {/* Text */}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-gray-900">
+                  {alert.label}
+                </p>
+                <p className="mt-1 text-xs text-gray-500 leading-normal">
+                  {alert.detail}
+                </p>
+              </div>
+
+              {/* Chevron */}
+              <ChevronRight className="size-4 shrink-0 text-gray-400" />
             </div>
-
-            {/* Text */}
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-foreground">
-                {alert.label}
-              </p>
-              <p className="mt-0.5 text-sm leading-5 text-muted-foreground">
-                {alert.detail}
-              </p>
-            </div>
-
-            {/* Chevron */}
-            <ChevronRight className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

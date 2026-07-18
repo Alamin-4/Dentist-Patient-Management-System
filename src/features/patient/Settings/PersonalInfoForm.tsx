@@ -41,9 +41,16 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
   // Populate form values when user details are retrieved
   useEffect(() => {
     if (user) {
+      let fName = user.firstName || "";
+      let lName = user.lastName || "";
+      if (!fName && !lName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || "";
+        lName = parts.slice(1).join(" ") || "";
+      }
       reset({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
+        firstName: fName,
+        lastName: lName,
         phoneNumber: user.patient?.phoneNumber || "",
         country: user.patient?.country || "",
         dateOfBirth: getFormattedDOB(user.patient?.dateOfBirth),
@@ -53,9 +60,16 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
 
   const handleCancel = () => {
     if (user) {
+      let fName = user.firstName || "";
+      let lName = user.lastName || "";
+      if (!fName && !lName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || "";
+        lName = parts.slice(1).join(" ") || "";
+      }
       reset({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
+        firstName: fName,
+        lastName: lName,
         phoneNumber: user.patient?.phoneNumber || "",
         country: user.patient?.country || "",
         dateOfBirth: getFormattedDOB(user.patient?.dateOfBirth),

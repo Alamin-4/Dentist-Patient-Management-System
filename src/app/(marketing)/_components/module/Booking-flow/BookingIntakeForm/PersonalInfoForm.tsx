@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { getBookingData, updatePersonalInfo } from "@/lib/storage/bookingService";
 import { useMe } from "@/hooks/auth/useAuth";
+import { useGetMe } from "@/hooks/user/useUser";
 
 const COUNTRIES = [
   "United States",
@@ -18,7 +19,15 @@ const COUNTRIES = [
   "Other",
 ];
 
-export default function PersonalInfoForm() {
+interface PersonalInfoFormProps {
+  errors?: Record<string, string>;
+  setErrors?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+}
+
+export default function PersonalInfoForm({
+  errors = {},
+  setErrors,
+}: PersonalInfoFormProps) {
   const [formData, setFormData] = useState(() => {
     const info = getBookingData().personalInfo || {};
     return {
@@ -30,18 +39,41 @@ export default function PersonalInfoForm() {
     };
   });
   const { user } = useMe();
+  const { data: profileResponse } = useGetMe({ enabled: !!user });
+  const profile = (profileResponse as any)?.data || profileResponse;
 
   useEffect(() => {
     if (user) {
-      setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        dateOfBirth: "",
-        country: "",
+      let fName = user.firstName || "";
+      let lName = user.lastName || "";
+      if (!fName && !lName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || "";
+        lName = parts.slice(1).join(" ") || "";
+      }
+
+      const dobStr = profile?.patient?.dateOfBirth;
+      const getFormattedDOB = (dob?: string) => {
+        if (!dob) return "";
+        const dateObj = new Date(dob);
+        return !isNaN(dateObj.getTime()) ? dateObj.toISOString().split("T")[0] : "";
+      };
+      const formattedDOB = getFormattedDOB(dobStr);
+
+      setFormData((prev) => {
+        const info = getBookingData().personalInfo || {};
+        const updated = {
+          firstName: fName || prev.firstName || info.firstName || "",
+          lastName: lName || prev.lastName || info.lastName || "",
+          email: user.email || prev.email || info.email || "",
+          dateOfBirth: formattedDOB || prev.dateOfBirth || info.dateOfBirth || "",
+          country: profile?.patient?.country || prev.country || info.country || "",
+        };
+        updatePersonalInfo(updated);
+        return updated;
       });
     }
-  }, [user]);
+  }, [user, profile]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -50,11 +82,23 @@ export default function PersonalInfoForm() {
     const updated = { ...formData, [name]: value };
     setFormData(updated);
     updatePersonalInfo(updated);
+    if (setErrors) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[name];
+        return copy;
+      });
+    }
   };
 
   const labelCls = "block text-[#1A1A2E] font-medium text-sm mb-2.5";
-  const inputCls =
-    "w-full px-4 py-4 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#113254]/10 focus:border-[#113254] placeholder-[#9EA9AA] transition-all bg-white";
+  const getInputCls = (name: string) => {
+    const hasError = !!errors[name];
+    return `w-full px-4 py-4 border rounded-lg focus:outline-none transition-all bg-white disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-500 ${hasError
+      ? "border-red-500 focus:ring-2 focus:ring-red-100/50"
+      : "border-[#E5E7EB] focus:ring-2 focus:ring-[#113254]/10 focus:border-[#113254]"
+      } placeholder-[#9EA9AA]`;
+  };
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -75,8 +119,13 @@ export default function PersonalInfoForm() {
               placeholder="Enter Name"
               value={formData.firstName || ""}
               onChange={handleChange}
-              className={inputCls}
+              className={getInputCls("firstName")}
             />
+            {errors.firstName && (
+              <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                {errors.firstName}
+              </p>
+            )}
           </div>
           <div>
             <label className={labelCls}>
@@ -88,8 +137,13 @@ export default function PersonalInfoForm() {
               placeholder="Enter Name"
               value={formData.lastName || ""}
               onChange={handleChange}
-              className={inputCls}
+              className={getInputCls("lastName")}
             />
+            {errors.lastName && (
+              <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                {errors.lastName}
+              </p>
+            )}
           </div>
         </div>
 
@@ -104,8 +158,14 @@ export default function PersonalInfoForm() {
             placeholder="johnsmith@gmail.com"
             value={formData.email || ""}
             onChange={handleChange}
-            className={inputCls}
+            disabled={!!user}
+            className={getInputCls("email")}
           />
+          {errors.email && (
+            <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              {errors.email}
+            </p>
+          )}
         </div>
 
         {/* Date of Birth */}
@@ -120,10 +180,15 @@ export default function PersonalInfoForm() {
               placeholder="MM/DD/YYYY"
               value={formData.dateOfBirth || ""}
               onChange={handleChange}
-              className={`${inputCls} pr-12`}
+              className={`${getInputCls("dateOfBirth")} pr-12`}
             />
             <CalendarDays className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280] pointer-events-none" />
           </div>
+          {errors.dateOfBirth && (
+            <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              {errors.dateOfBirth}
+            </p>
+          )}
         </div>
 
         {/* Country */}
@@ -136,7 +201,7 @@ export default function PersonalInfoForm() {
               name="country"
               value={formData.country || ""}
               onChange={handleChange}
-              className={`${inputCls} appearance-none cursor-pointer pr-12`}
+              className={`${getInputCls("country")} appearance-none cursor-pointer pr-12`}
             >
               <option value="" disabled>
                 Select Country
@@ -149,6 +214,11 @@ export default function PersonalInfoForm() {
             </select>
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF] pointer-events-none" />
           </div>
+          {errors.country && (
+            <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              {errors.country}
+            </p>
+          )}
         </div>
       </div>
     </div>

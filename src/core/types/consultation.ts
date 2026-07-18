@@ -89,6 +89,7 @@ export interface ConsultationItem {
   updatedAt: string;
   dentist: DentistItem | null;
   directoryEntry?: DentistDirectoryItem | null;
+  treatmentPlan?: any;
 }
 
 export interface GlobalProcedureItem {
