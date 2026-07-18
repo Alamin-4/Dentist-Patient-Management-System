@@ -9,6 +9,7 @@ import { useStateContext } from "@/providers/StateProvider";
 import Link from "next/link";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
+import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
 
 const SkeletonCard = () => (
   <div className="rounded-md p-4 sm:p-6 flex flex-col items-start gap-4 border-2 border-slate-100 bg-white animate-pulse">
@@ -159,7 +160,11 @@ export default function VerifiedDentists() {
               <div>
                 <Button
                   onClick={() => {
-                    setDentistsToCompare(selectedDentists);
+                    const mappedForCompare = selectedDentists.map((doc: any) => {
+                      const raw = directoryResponse?.data?.find((item: any) => item.id === doc.id);
+                      return raw ? mapApiDentist(raw) : null;
+                    }).filter(Boolean) as Dentist[];
+                    setDentistsToCompare(mappedForCompare);
                     if (user) {
                       const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
                       if (hasProfileDetails) {

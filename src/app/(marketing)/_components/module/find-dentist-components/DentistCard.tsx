@@ -123,7 +123,7 @@ export default function DentistCard({
 
 
   const locationText =
-    dentist.location.fullAddress ?? dentist.location.city ?? dentist.country ?? "";
+    dentist.location?.fullAddress ?? dentist.location?.city ?? dentist.country ?? "";
 
   const isClaimableProfile = dentist.accountType === "CLAIMABLE" && !dentist.isClaimed
   return (
