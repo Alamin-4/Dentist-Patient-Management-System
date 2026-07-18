@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { getBookingData, updatePersonalInfo } from "@/lib/storage/bookingService";
 import { useMe } from "@/hooks/auth/useAuth";
+import { useGetMe } from "@/hooks/user/useUser";
 
 const COUNTRIES = [
   "United States",
@@ -38,18 +39,41 @@ export default function PersonalInfoForm({
     };
   });
   const { user } = useMe();
+  const { data: profileResponse } = useGetMe({ enabled: !!user });
+  const profile = (profileResponse as any)?.data || profileResponse;
 
   useEffect(() => {
     if (user) {
-      setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        dateOfBirth: "",
-        country: "",
+      let fName = user.firstName || "";
+      let lName = user.lastName || "";
+      if (!fName && !lName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || "";
+        lName = parts.slice(1).join(" ") || "";
+      }
+
+      const dobStr = profile?.patient?.dateOfBirth;
+      const getFormattedDOB = (dob?: string) => {
+        if (!dob) return "";
+        const dateObj = new Date(dob);
+        return !isNaN(dateObj.getTime()) ? dateObj.toISOString().split("T")[0] : "";
+      };
+      const formattedDOB = getFormattedDOB(dobStr);
+
+      setFormData((prev) => {
+        const info = getBookingData().personalInfo || {};
+        const updated = {
+          firstName: fName || prev.firstName || info.firstName || "",
+          lastName: lName || prev.lastName || info.lastName || "",
+          email: user.email || prev.email || info.email || "",
+          dateOfBirth: formattedDOB || prev.dateOfBirth || info.dateOfBirth || "",
+          country: profile?.patient?.country || prev.country || info.country || "",
+        };
+        updatePersonalInfo(updated);
+        return updated;
       });
     }
-  }, [user]);
+  }, [user, profile]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -70,11 +94,10 @@ export default function PersonalInfoForm({
   const labelCls = "block text-[#1A1A2E] font-medium text-sm mb-2.5";
   const getInputCls = (name: string) => {
     const hasError = !!errors[name];
-    return `w-full px-4 py-4 border rounded-lg focus:outline-none transition-all bg-white ${
-      hasError
-        ? "border-red-500 focus:ring-2 focus:ring-red-100/50"
-        : "border-[#E5E7EB] focus:ring-2 focus:ring-[#113254]/10 focus:border-[#113254]"
-    } placeholder-[#9EA9AA]`;
+    return `w-full px-4 py-4 border rounded-lg focus:outline-none transition-all bg-white disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-500 ${hasError
+      ? "border-red-500 focus:ring-2 focus:ring-red-100/50"
+      : "border-[#E5E7EB] focus:ring-2 focus:ring-[#113254]/10 focus:border-[#113254]"
+      } placeholder-[#9EA9AA]`;
   };
 
   return (
@@ -135,6 +158,7 @@ export default function PersonalInfoForm({
             placeholder="johnsmith@gmail.com"
             value={formData.email || ""}
             onChange={handleChange}
+            disabled={!!user}
             className={getInputCls("email")}
           />
           {errors.email && (

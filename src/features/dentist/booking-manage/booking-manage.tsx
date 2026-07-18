@@ -74,14 +74,15 @@ export default function BookingManage() {
   const rawBookings = response?.data || [];
 
   // 1. Filter by Active Tab
+  const currentTab = activeTab || "booking-1";
   const filteredByTab = rawBookings.filter((b: any) => {
-    if (activeTab === "In Progress" || activeTab === "booking-1") {
+    if (currentTab === "In Progress" || currentTab === "booking-1") {
       return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
     }
-    if (activeTab === "Completed" || activeTab === "booking-2") {
+    if (currentTab === "Completed" || currentTab === "booking-2") {
       return b.status === "COMPLETED";
     }
-    if (activeTab === "Rejected" || activeTab === "booking-3") {
+    if (currentTab === "Rejected" || currentTab === "booking-3") {
       return b.status === "CANCELLED";
     }
     return true;

@@ -61,7 +61,7 @@ export default function TreatmentDetailsPage() {
     };
 
     confirm();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [estimatePlanOpen, setEstimatePlanOpen] = useState(true);
@@ -115,12 +115,12 @@ export default function TreatmentDetailsPage() {
     const tFrom = new Date(travelFromDateStr);
     const day1Arrival = new Date(tFrom.getTime() + 24 * 60 * 60 * 1000);
     const today = new Date();
-    
-    const isToday = (d: Date) => 
+
+    const isToday = (d: Date) =>
       d.getFullYear() === today.getFullYear() &&
       d.getMonth() === today.getMonth() &&
       d.getDate() === today.getDate();
-      
+
     return isToday(tFrom) || isToday(day1Arrival);
   })();
 
@@ -241,7 +241,14 @@ export default function TreatmentDetailsPage() {
         <span className="text-sm">Back</span>
       </button>
 
-      <h1 className="text-2xl font-bold text-[#1A1A2E] mb-5">Treatment Detail</h1>
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
+        <h1 className="text-2xl font-bold text-[#1A1A2E]">Treatment Detail</h1>
+        {isCancelled && (
+          <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-full uppercase tracking-wider">
+            Rejected
+          </span>
+        )}
+      </div>
 
       {/* Doctor Header Card */}
       <div className="bg-white border border-[#CEE0F4] rounded-lg p-5 md:p-6 mb-6">
@@ -310,12 +317,12 @@ export default function TreatmentDetailsPage() {
             <p className="text-xl font-bold text-[#0E3E65]">
               ${booking.estimateBudget.toLocaleString()}
             </p>
-            {booking.paymentStatus === "paid" ? (
+            {booking.paymentStatus === "refunded" || isCancelled ? (
+              <p className="text-xs font-bold text-sky-600 mt-0.5">Refund</p>
+            ) : booking.paymentStatus === "paid" ? (
               <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
             ) : booking.paymentStatus === "pending" ? (
               <p className="text-xs font-bold text-red-500 mt-0.5">Payment Required</p>
-            ) : booking.paymentStatus === "refunded" ? (
-              <p className="text-xs font-bold text-rose-600 mt-0.5">Refunded</p>
             ) : (
               <p className="text-xs font-bold text-[#CA8504] mt-0.5">In Escrow</p>
             )}
@@ -330,31 +337,8 @@ export default function TreatmentDetailsPage() {
 
           {/* Cancelled Banner */}
           {isCancelled && (
-            <div className="bg-rose-50 border border-rose-200 rounded-lg p-5 flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
-                  <span className="text-rose-600 font-bold text-lg">✕</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#1A1A2E]">Booking Cancelled</h4>
-                  <p className="text-xs text-slate-500">
-                    This booking has been cancelled and refunded.
-                  </p>
-                </div>
-              </div>
-              {plan.treatmentBooking?.metadata?.rejection && (
-                <div className="bg-white border border-rose-100 rounded-md p-3.5 text-xs text-slate-600 space-y-1">
-                  <p>
-                    <span className="font-bold text-[#1A1A2E]">Reason:</span>{" "}
-                    {plan.treatmentBooking.metadata.rejection.reason}
-                  </p>
-                  <p>
-                    <span className="font-bold text-[#1A1A2E]">Refunded Amount:</span>{" "}
-                    ${Number(plan.treatmentBooking.metadata.rejection.refundedAmount).toLocaleString()}{" "}
-                    ({plan.treatmentBooking.metadata.rejection.refundPercentage}% refund)
-                  </p>
-                </div>
-              )}
+            <div className="bg-[#FFF1F2] border border-[#FCA5A5] rounded-xl px-5 py-4 text-[#B91C1C] text-sm font-semibold shadow-sm leading-relaxed">
+              {plan.treatmentBooking?.metadata?.rejection?.reason || "I'm not ready to proceed with treatment at this time"}
             </div>
           )}
 
@@ -552,72 +536,65 @@ export default function TreatmentDetailsPage() {
       </div>
 
       {/* ── Fixed footer ───────────────────────────────────────────────── */}
-      <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
-            Dispute
-          </button>
+      {!isCancelled && (
+        <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
+              Dispute
+            </button>
 
-          <div className="flex items-center gap-3">
-            {booking.paymentStatus === "pending" ? (
-              <button
-                onClick={handlePayDeposit}
-                disabled={createEscrowSessionMutation.isPending}
-                className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
-              >
-                {createEscrowSessionMutation.isPending ? "Loading Stripe..." : "Pay Escrow Deposit"}
-              </button>
-            ) : isCancelled ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-lg uppercase tracking-wider">
-                  Cancelled
-                </span>
-                <span className="text-xs font-semibold text-slate-500">
-                  {booking.paymentStatus === "refunded" ? "Refunded" : ""}
-                </span>
-              </div>
-            ) : isApproved ? (
-              <>
-                <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
-                  View Document
+            <div className="flex items-center gap-3">
+              {booking.paymentStatus === "pending" ? (
+                <button
+                  onClick={handlePayDeposit}
+                  disabled={createEscrowSessionMutation.isPending}
+                  className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {createEscrowSessionMutation.isPending ? "Loading Stripe..." : "Pay Escrow Deposit"}
                 </button>
-                {plan.treatmentBooking?.status === "COMPLETED" && !plan.treatmentBooking?.metadata?.review && (
-                  <button
-                    onClick={() => setReviewModalOpen(true)}
-                    disabled={submitReviewMutation.isPending}
-                    className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                  >
-                    Review Doctor
+              ) : isApproved ? (
+                <>
+                  <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
+                    View Document
                   </button>
-                )}
-              </>
-            ) : (
-              <>
-                {finalPlan && plan.treatmentBooking?.status === "IN_PROGRESS" && (
-                  <>
-                    {isWithinLeeway && (
-                      <button
-                        onClick={() => setRejectModalOpen(true)}
-                        disabled={respondFinalPlanMutation.isPending}
-                        className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        Reject Plan
-                      </button>
-                    )}
+                  {plan.treatmentBooking?.status === "COMPLETED" && !plan.treatmentBooking?.metadata?.review && (
                     <button
-                      onClick={handleApprovePlan}
-                      disabled={respondFinalPlanMutation.isPending}
-                      className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                      onClick={() => setReviewModalOpen(true)}
+                      disabled={submitReviewMutation.isPending}
+                      className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                     >
-                      {respondFinalPlanMutation.isPending ? "Approving..." : "Approve"}
+                      Review Doctor
                     </button>
-                  </>
-                )}
-              </>
-            )}
+                  )}
+                </>
+              ) : (
+                <>
+                  {finalPlan && plan.treatmentBooking?.status === "IN_PROGRESS" && (
+                    <>
+                      {isWithinLeeway && (
+                        <button
+                          onClick={() => setRejectModalOpen(true)}
+                          disabled={respondFinalPlanMutation.isPending}
+                          className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          Reject Plan
+                        </button>
+                      )}
+                      <button
+                        onClick={handleApprovePlan}
+                        disabled={respondFinalPlanMutation.isPending}
+                        className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {respondFinalPlanMutation.isPending ? "Approving..." : "Approve"}
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

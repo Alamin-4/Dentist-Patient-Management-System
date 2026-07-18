@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Video, Clock, AlertTriangle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConsultationChat } from "./ConsultationChat";
@@ -55,6 +56,7 @@ interface MeetingDetailsProps {
 }
 
 export function MeetingDetails({ consultation, userId, onBack, onReschedule }: MeetingDetailsProps) {
+    const router = useRouter();
     const [showChat, setShowChat] = useState(false);
     const dentist = consultation.dentist;
     const dentistName = dentist?.user
@@ -185,30 +187,17 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
 
                     <div className="flex flex-col gap-2">
                         <Button
-                            onClick={() => setShowChat(!showChat)}
+                            onClick={() => router.push(isPatient ? `/patient/messages?chatId=${consultation.id}` : `/dentist/messages?chatId=${consultation.id}`)}
                             className="w-full bg-[#113254] hover:bg-[#0d2844] text-white font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2"
                         >
                             <MessageSquare className="size-4" />
-                            {showChat ? "Hide Chat" : "Chat Now"}
+                            Chat Now
                         </Button>
                         <Button onClick={onBack} variant="ghost" className="w-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 font-semibold py-2.5 rounded-xl transition-all">
                             ← Back to Dashboard
                         </Button>
                     </div>
                 </div>
-
-                {showChat && (
-                    <div className="w-full md:w-96 min-h-[450px] md:min-h-0 rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-lg flex flex-col">
-                        <ConsultationChat
-                            consultationId={consultation.id}
-                            currentUserId={userId}
-                            recipientName={recipientName}
-                            recipientAvatar={recipientAvatar}
-                            onClose={() => setShowChat(false)}
-                            theme="light"
-                        />
-                    </div>
-                )}
             </div>
         </div>
     );

@@ -7,9 +7,27 @@ interface Props {
   activeBookings: any[];
 }
 
+/** Format date string nicely: e.g. "2026-06-15" -> "June 15, 2026" */
+function formatDate(dateStr: string) {
+  if (!dateStr || dateStr === "TBD") return "TBD";
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch (e) {
+    return dateStr;
+  }
+}
+
 /** Travel date — prefer the second timeline event (first is usually "inquiry"). */
-const getTravelDate = (patient: any) =>
-  patient.patient_timeline?.[1]?.date ?? patient.patient_timeline?.[0]?.date ?? "TBD";
+const getTravelDate = (patient: any) => {
+  const rawDate = patient.patient_timeline?.[1]?.date ?? patient.patient_timeline?.[0]?.date ?? "TBD";
+  return formatDate(rawDate);
+};
 
 /** Two-letter initials from a full name. */
 function getInitials(name: string): string {
@@ -19,14 +37,11 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-/** Cycling avatar bg colours (navy palette). */
-const AVATAR_BG = ["bg-navy-800", "bg-navy-700", "bg-navy-600"] as const;
-
 /** Per-status badge style. */
 function statusBadge(status: string) {
   if (status === "In Progress")
-    return "bg-navy-800 text-white";
-  return "bg-sky-50 text-sky-700";
+    return "bg-[#0F172A] text-white";
+  return "bg-[#EFF6FF] text-[#1D4ED8]";
 }
 
 /** Per-status action hint. */
@@ -37,15 +52,15 @@ function actionText(status: string) {
 
 export function OverviewActiveBookingsCard({ activeBookings }: Props) {
   return (
-    <section className="rounded-lg border border-border bg-card p-6 shadow-[0_4px_20px_rgba(15,35,61,0.06)] sm:p-8">
+    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-bold text-gray-900">
           Active bookings
         </h2>
         <Link
           href="/dentist/bookings"
-          className="text-sm font-semibold text-gold-500 transition-colors hover:text-gold-600"
+          className="text-sm font-bold text-[#CDA555] transition-colors hover:text-[#b08c43]"
         >
           View all
         </Link>
@@ -53,10 +68,9 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
 
       {/* Desktop table */}
       <div className="mt-5 hidden overflow-hidden md:block">
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-gray-100">
           {activeBookings.map((booking, index) => {
             const initials = getInitials(booking.patient_info.name);
-            const avatarBg = AVATAR_BG[index % AVATAR_BG.length];
 
             return (
               <div
@@ -67,17 +81,16 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
                 <div className="flex min-w-0 items-center gap-3">
                   <div
                     className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white",
-                      avatarBg,
+                      "flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white bg-[#0F172A]",
                     )}
                   >
                     {initials}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate font-semibold text-foreground">
+                    <p className="font-bold text-gray-900">
                       {booking.patient_info.name}
                     </p>
-                    <p className="truncate text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-400">
                       {booking.patient_info.procedure}
                     </p>
                   </div>
@@ -85,8 +98,8 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
 
                 {/* Travel date */}
                 <div>
-                  <p className="text-xs text-muted-foreground">Travel date</p>
-                  <p className="mt-0.5 text-sm font-semibold text-foreground">
+                  <p className="text-xs font-semibold text-gray-400">Travel date</p>
+                  <p className="mt-0.5 text-sm font-bold text-gray-900">
                     {getTravelDate(booking)}
                   </p>
                 </div>
@@ -95,7 +108,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
                 <div>
                   <span
                     className={cn(
-                      "inline-flex rounded-full px-3 py-1 text-xs font-semibold",
+                      "inline-flex rounded-md px-2.5 py-1 text-xs font-bold",
                       statusBadge(booking.patient_info.status),
                     )}
                   >
@@ -105,10 +118,10 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
 
                 {/* Price + action */}
                 <div>
-                  <p className="text-sm font-bold text-gold-500">
+                  <p className="text-sm font-extrabold text-[#CDA555]">
                     {formatPatientMoney(booking.patient_info.final_budget)}
                   </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
+                  <p className="mt-0.5 text-xs text-gray-400">
                     {actionText(booking.patient_info.status)}
                   </p>
                 </div>
@@ -116,7 +129,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
                 {/* View button */}
                 <Link
                   href="/dentist/bookings"
-                  className="inline-flex h-9 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-foreground transition-colors hover:bg-gray-50"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-gray-200 px-4 text-xs font-bold text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   View
                 </Link>
@@ -130,36 +143,34 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
       <div className="mt-5 space-y-3 md:hidden">
         {activeBookings.map((booking, index) => {
           const initials = getInitials(booking.patient_info.name);
-          const avatarBg = AVATAR_BG[index % AVATAR_BG.length];
 
           return (
             <article
               key={booking.id || `booking-${booking.patient_info.email}-${index}`}
-              className="rounded-lg border border-border bg-background p-4"
+              className="rounded-xl border border-gray-100 bg-white p-4"
             >
               {/* Top row */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div
                     className={cn(
-                      "flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white",
-                      avatarBg,
+                      "flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white bg-[#0F172A]",
                     )}
                   >
                     {initials}
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">
+                    <p className="font-bold text-gray-900">
                       {booking.patient_info.name}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-400">
                       {booking.patient_info.procedure}
                     </p>
                   </div>
                 </div>
                 <span
                   className={cn(
-                    "shrink-0 rounded-full px-3 py-1 text-xs font-semibold",
+                    "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
                     statusBadge(booking.patient_info.status),
                   )}
                 >
@@ -170,16 +181,16 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
               {/* Bottom row */}
               <div className="mt-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-muted-foreground">Travel date</p>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-xs font-semibold text-gray-400">Travel date</p>
+                  <p className="text-sm font-bold text-gray-900">
                     {getTravelDate(booking)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-gold-500">
+                  <p className="text-sm font-extrabold text-[#CDA555]">
                     {formatPatientMoney(booking.patient_info.final_budget)}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-gray-400">
                     {actionText(booking.patient_info.status)}
                   </p>
                 </div>
@@ -188,7 +199,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
               {/* View link */}
               <Link
                 href="/dentist/bookings"
-                className="mt-3 flex items-center gap-1 text-sm font-semibold text-gold-500"
+                className="mt-3 flex items-center gap-1 text-xs font-bold text-[#CDA555]"
               >
                 View booking <ChevronRight className="size-4" />
               </Link>

@@ -176,33 +176,34 @@ export function ConsultationChat({
 
       {/* ── MESSAGES PANE ── */}
       <div
-        className={`flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-track-transparent ${isLight ? "scrollbar-thumb-slate-200" : "scrollbar-thumb-slate-800"
-          }`}
+        className={`flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-track-transparent ${
+          isLight ? "scrollbar-thumb-slate-200" : "scrollbar-thumb-slate-800"
+        } ${(loading || messages.length === 0) ? "flex flex-col justify-center items-center" : ""}`}
       >
         {loading ? (
           <div
-            className={`flex flex-col items-center justify-center h-full gap-2 ${isLight ? "text-slate-400" : "text-slate-400"
-              }`}
+            className={`flex flex-col items-center justify-center gap-2 ${isLight ? "text-slate-400" : "text-slate-400"}`}
           >
             <Loader2
-              className={`size-6 animate-spin ${isLight ? "text-[#113254]" : "text-blue-400"
-                }`}
+              className={`size-6 animate-spin ${isLight ? "text-[#113254]" : "text-blue-400"}`}
             />
             <p className="text-xs">Loading message history...</p>
           </div>
         ) : messages.length === 0 ? (
           <div
-            className={`flex flex-col items-center justify-center h-full text-center p-6 ${isLight ? "text-slate-400" : "text-slate-500"
-              }`}
+            className={`flex flex-col items-center justify-center text-center p-6 max-w-[240px] ${
+              isLight ? "text-slate-400" : "text-slate-500"
+            }`}
           >
             <div
-              className={`size-12 rounded-full flex items-center justify-center mb-3 ${isLight ? "bg-slate-100" : "bg-slate-800/40"
-                }`}
+              className={`size-12 rounded-full flex items-center justify-center mb-3 ${
+                isLight ? "bg-slate-100" : "bg-slate-800/40"
+              }`}
             >
               💬
             </div>
             <h5 className="font-semibold text-sm">No Messages Yet</h5>
-            <p className="text-xs mt-1 max-w-[200px] leading-relaxed">
+            <p className="text-xs mt-1 leading-relaxed">
               Start the conversation by sending a message below.
             </p>
           </div>

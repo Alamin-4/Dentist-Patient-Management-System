@@ -24,7 +24,7 @@ export default function PersonalInfo() {
   const updateDentistProfileMutation = useUpdateDentistProfile();
   const [isEditing, setIsEditing] = useState(false);
 
-  const user = response?.data || response;
+  const user = (response as any)?.data || response;
 
   // Fetch specialties
   const { data: specialtiesRes } = useQuery({
@@ -45,9 +45,16 @@ export default function PersonalInfo() {
   // Populate dentist data
   useEffect(() => {
     if (user) {
+      let fName = user.firstName || "";
+      let lName = user.lastName || "";
+      if (!fName && !lName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || "";
+        lName = parts.slice(1).join(" ") || "";
+      }
       reset({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
+        firstName: fName,
+        lastName: lName,
         phoneNumber: user.dentist?.phoneNumber || "",
         country: user.dentist?.country || "",
         specialtyId: user.dentist?.specialtyId || "",
@@ -60,9 +67,16 @@ export default function PersonalInfo() {
 
   const handleCancel = () => {
     if (user) {
+      let fName = user.firstName || "";
+      let lName = user.lastName || "";
+      if (!fName && !lName && user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        fName = parts[0] || "";
+        lName = parts.slice(1).join(" ") || "";
+      }
       reset({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
+        firstName: fName,
+        lastName: lName,
         phoneNumber: user.dentist?.phoneNumber || "",
         country: user.dentist?.country || "",
         specialtyId: user.dentist?.specialtyId || "",
