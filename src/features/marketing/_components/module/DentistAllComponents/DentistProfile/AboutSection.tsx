@@ -6,7 +6,7 @@ export default function AboutSection({
   bio: string;
 }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-6">
+    <section id="overview" className="rounded-lg border border-slate-200 bg-white p-6">
       <p className="text-xl md:text-2xl lg:text-3xl font-bold text-[#0E3E65] mb-6">
         About {name}
       </p>

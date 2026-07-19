@@ -293,6 +293,20 @@ export const apiClient = {
       const response = await api.get(endpoints.dentists.directoryDetail(slug));
       return response.data;
     },
+    getDirectoryReviews: async (slug: string) => {
+      const response = await api.get(endpoints.dentists.directoryReviews(slug));
+      return response.data;
+    },
+    createDirectoryReview: async (slug: string, payload: {
+      rating: number;
+      communication?: number;
+      valueForMoney?: number;
+      followThrough?: number;
+      text: string;
+    }) => {
+      const response = await api.post(endpoints.dentists.directoryReviews(slug), payload);
+      return response.data;
+    },
     claimDirectoryProfile: async (slug: string, payload: ClaimProfilePayload) => {
       const response = await api.post(endpoints.dentists.directoryClaim(slug), payload);
       return response.data;

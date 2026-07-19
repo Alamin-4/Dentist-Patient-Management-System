@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ProfessionalDetailsForm } from "./professional-details-form";
 import { ProfileSuccessState } from "./ProfileSuccessRate";
 import { useMe } from "@/hooks/auth/useAuth";
+import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 
 export default function RegisterPageComponent() {
   const router = useRouter();
@@ -17,6 +18,10 @@ export default function RegisterPageComponent() {
   const dentistParam = searchParams.get("dentist");
 
   const { user, isPending } = useMe();
+  const { data: dentistProfileResponse, isLoading: isProfileLoading } = useDentistProfileQuery({
+    enabled: !!user && user.role === "DENTIST",
+  });
+  const dentistProfile = dentistProfileResponse?.data || dentistProfileResponse;
 
   const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">(
     dentistParam === "professional-info" ? "professional-info" : "create-account"
@@ -32,11 +37,23 @@ export default function RegisterPageComponent() {
         router.replace("/patient");
       } else if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
         router.replace("/admin");
+      } else if (user.role === "DENTIST" && dentistProfile?.specialtyId) {
+        router.replace("/dentist");
       }
     }
-  }, [user, isPending, router]);
+  }, [user, isPending, dentistProfile, router]);
 
-  if (isPending) {
+  const isQueryLoading = isPending || (!!user && user.role === "DENTIST" && isProfileLoading);
+
+  if (isQueryLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>
+      </div>
+    );
+  }
+
+  if (user && user.role === "DENTIST" && dentistProfile?.specialtyId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>

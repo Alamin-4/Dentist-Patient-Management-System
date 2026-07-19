@@ -1,52 +1,91 @@
-import { Skeleton } from "@/components/feedback/skeleton";
+import { MapPin } from "lucide-react";
 
-const cases = [
-  { procedure: "Porcelain Veneers (6 teeth)", duration: "2 visits / 5 days" },
-  { procedure: "Full Smile Makeover", duration: "3 visits / 7 days" },
-  { procedure: "Single Implant + Crown", duration: "2 phases / 3 months" },
-  { procedure: "Composite Bonding", duration: "1 visit / 2 hours" },
-];
+interface DentistResult {
+  id: string;
+  title: string;
+  patientName: string;
+  date: string;
+  location: string;
+  beforeImage: string;
+  afterImage: string;
+}
 
-export default function ResultsSection() {
+export default function ResultsSection({ 
+  results = [],
+  dentistName = "",
+}: { 
+  results?: DentistResult[];
+  dentistName?: string;
+}) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-6 space-y-6">
+    <section id="results" className="rounded-lg border border-slate-200 bg-white p-6 space-y-6">
       <div>
-        <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65] mb-1">
-          Before &amp; After Results
+        <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65]">
+          Patient Results
         </h2>
-        <p className="text-sm text-[#6B7280]">
-          Real patient outcomes. Photos provided with patient consent.
-        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {cases.map((c, i) => (
-          <div key={i} className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">
-                  Before
-                </span>
-                <Skeleton className="h-36 w-full rounded-lg" />
+      {results.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-slate-400 border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
+          <p className="text-sm font-semibold text-slate-600">No patient results published yet</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {results.map((c) => (
+            <div key={c.id} className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50 flex flex-col shadow-xs">
+              {/* Images container */}
+              <div className="grid grid-cols-2 gap-0.5 p-1 bg-white">
+                <div className="relative">
+                  <span className="absolute top-2 left-2 z-10 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-xs">
+                    Before
+                  </span>
+                  <img
+                    src={c.beforeImage || "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=300"}
+                    alt="Before treatment"
+                    className="h-44 w-full object-cover"
+                  />
+                </div>
+                <div className="relative">
+                  <span className="absolute top-2 left-2 z-10 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-xs">
+                    After
+                  </span>
+                  <img
+                    src={c.afterImage || "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=300"}
+                    alt="After treatment"
+                    className="h-44 w-full object-cover"
+                  />
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">
-                  After
-                </span>
-                <Skeleton className="h-36 w-full rounded-lg" />
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-800">{c.procedure}</p>
-              <p className="text-xs text-[#6B7280]">{c.duration}</p>
-            </div>
-          </div>
-        ))}
-      </div>
 
-      <p className="text-xs text-slate-400 text-center pt-2">
-        Full gallery available after booking a consultation.
-      </p>
+              {/* Body */}
+              <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
+                <div>
+                  <h4 className="text-[15px] font-bold text-slate-900 leading-snug">
+                    {c.title}
+                  </h4>
+                  {dentistName && (
+                    <p className="text-xs font-semibold text-slate-500 mt-1">
+                      Dr. {dentistName}
+                    </p>
+                  )}
+                </div>
+
+                {/* Footer details */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs">
+                  <div className="flex items-center gap-1 text-slate-500 font-medium">
+                    <MapPin className="size-3.5 text-slate-400" />
+                    <span>{c.location || "Istanbul, Turkey"}</span>
+                  </div>
+                  <span className="font-bold text-[#4CA30D] flex items-center gap-1">
+                    <span className="size-1.5 rounded-full bg-[#4CA30D]" />
+                    Public
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

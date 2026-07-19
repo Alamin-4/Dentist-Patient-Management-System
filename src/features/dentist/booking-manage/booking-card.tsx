@@ -18,16 +18,16 @@ interface BookingCardProps {
 
 export default function BookingCard({
   id,
-  name = "Jacob Smith",
-  email = "Jacob.smith@sample.com",
-  initials = "AH",
+  name = "",
+  email = "",
+  initials = "",
   image,
-  procedure = "Dental Implants",
-  budget = "$1254",
-  status = "In Escrow",
-  dates = "12–24 Jan, 2024",
+  procedure = "",
+  budget = "$0",
+  status = "",
+  dates = "",
   timelineLabel = "Timeline",
-  timelineStatus = "Patient in Travel",
+  timelineStatus = "",
 }: BookingCardProps) {
   const router = useRouter();
 

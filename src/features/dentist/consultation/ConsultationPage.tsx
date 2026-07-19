@@ -80,18 +80,20 @@ export default function ConsultationPage() {
       return false;
     }
 
+    const isPast = item.scheduledDate ? new Date(item.scheduledDate).getTime() <= Date.now() : false;
+
     if (activeTab === "Upcoming") {
       return (
         item.requestStatus === "PENDING" ||
         item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item))
+        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item) && !isPast)
       );
     }
     if (activeTab === "Active") {
       return (
         item.requestStatus === "ACTIVE" ||
         item.requestStatus === "MISSED" ||
-        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item)))
+        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item) || isPast))
       );
     }
     if (activeTab === "Treatment Estimate") {

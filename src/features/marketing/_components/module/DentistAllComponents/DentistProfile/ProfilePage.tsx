@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import ProfileTabs, { type ProfileTab } from "./ProfileTabs";
 import AboutSection from "./AboutSection";
 import ReviewSection from "./ReviewSection";
@@ -11,10 +12,18 @@ import ResultsSection from "./ResultsSection";
 import BookingSidebar from "./BookingSidebar";
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMe } from "@/hooks/auth/useAuth";
+import WriteReviewDialog from "./WriteReviewDialog";
 
 export default function DentistProfilePage({ dentist }: { dentist: any }) {
+  const { user } = useMe();
+  const router = useRouter();
+  const isOwnProfile = user && (user.id === dentist.claimedByUserId || (dentist.userId && user.id === dentist.userId));
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   console.log("show dentist from profile page:", dentist)
+
+  const isClaimed = dentist.status === "CLAIMED" || dentist.status === "VERIFIED";
   const showPlaceholder = !dentist.verified && activeTab !== "overview";
 
   return (
@@ -35,21 +44,23 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
                   <ShieldAlert className="size-8 text-amber-500" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-[#0E3E65]">Verification Pending</h3>
+                  <h3 className="text-lg font-bold text-[#0E3E65]">
+                    {isClaimed ? "Verification Pending" : "Profile Not Yet Claimed"}
+                  </h3>
                   <p className="text-slate-500 text-sm max-w-md mx-auto">
-                    Verified pricing, sterilisation protocols, and material certifications will be published once Dr. {dentist.name} claims this profile and completes the RatedDocs 3-phase verification.
+                    {isClaimed
+                      ? `Dr. ${dentist.name} has claimed this profile. Verified details are currently being reviewed by the RatedDocs verification team.`
+                      : `Verified pricing, sterilisation protocols, and material certifications will be published once Dr. ${dentist.name} claims this profile and completes the RatedDocs 3-phase verification.`
+                    }
                   </p>
                 </div>
-                {dentist.isClaimable && (
+                {!isClaimed && dentist.isClaimable && (
                   <div className="flex justify-center">
                     <Button
                       variant="default"
                       className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 shadow-sm transition-colors"
                       onClick={() => {
-                        const url = new URL(window.location.href);
-                        url.searchParams.set("claim", "true");
-                        window.history.pushState({}, "", url.toString());
-                        window.dispatchEvent(new Event("popstate"));
+                        router.push(`/find-dentists/${dentist.slug}/claim`);
                       }}
                     >
                       Are you Dr. {dentist.name}? Claim Profile
@@ -59,35 +70,90 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
               </div>
             ) : (
               <>
-                {activeTab === "pricing" && <PricingSection procedures={dentist.procedures} />}
+                {/* 1. Overview Tab -> Stacks all sections */}
+                {activeTab === "overview" && (
+                  <div className="space-y-5">
+                    {dentist.verified && dentist.procedures && dentist.procedures.length > 0 && dentist.procedures.some((p: any) => p && typeof p === 'object' && 'price' in p) && (
+                      <PricingSection procedures={dentist.procedures} />
+                    )}
+
+                    <ReviewSection
+                      slug={dentist.slug}
+                      dentist={dentist}
+                      googleRating={dentist.googleRating}
+                      googleReviewCount={dentist.googleReviewCount}
+                      isReviewModalOpen={isReviewModalOpen}
+                      setIsReviewModalOpen={setIsReviewModalOpen}
+                    />
+
+                    {dentist.verified && (
+                      <ProtocolSection
+                        dentistLicense={dentist.dentistLicense}
+                        dentistOperations={dentist.dentistOperations}
+                      />
+                    )}
+
+                    {dentist.verified && dentist.materials && dentist.materials.length > 0 && (
+                      <MaterialsSection
+                        procedures={dentist.procedures}
+                        materials={dentist.materials}
+                      />
+                    )}
+
+                    {dentist.verified && dentist.results && dentist.results.length > 0 && (
+                      <ResultsSection results={dentist.results} dentistName={dentist.name} />
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "pricing" && (
+                  <PricingSection procedures={dentist.procedures} />
+                )}
+
                 {activeTab === "reviews" && (
                   <ReviewSection
+                    slug={dentist.slug}
+                    dentist={dentist}
                     googleRating={dentist.googleRating}
                     googleReviewCount={dentist.googleReviewCount}
+                    isReviewModalOpen={isReviewModalOpen}
+                    setIsReviewModalOpen={setIsReviewModalOpen}
                   />
                 )}
+
                 {activeTab === "protocols" && (
                   <ProtocolSection
                     dentistLicense={dentist.dentistLicense}
                     dentistOperations={dentist.dentistOperations}
                   />
                 )}
+
                 {activeTab === "materials" && (
                   <MaterialsSection
                     procedures={dentist.procedures}
                     materials={dentist.materials}
                   />
                 )}
-                {activeTab === "results" && <ResultsSection />}
+
+                {activeTab === "results" && (
+                  <ResultsSection results={dentist.results} dentistName={dentist.name} />
+                )}
               </>
             )}
           </div>
 
           <div className="w-full lg:w-110 lg:shrink-0">
-            <BookingSidebar dentist={dentist} />
+            <BookingSidebar dentist={dentist} setIsReviewModalOpen={setIsReviewModalOpen} />
           </div>
         </div>
       </div>
+
+      <WriteReviewDialog
+        isOpen={isReviewModalOpen}
+        onOpenChange={setIsReviewModalOpen}
+        slug={dentist.slug}
+        dentistName={dentist.name}
+      />
     </main>
   );
 }

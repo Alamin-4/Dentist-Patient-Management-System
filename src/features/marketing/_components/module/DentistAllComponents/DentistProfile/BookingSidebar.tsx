@@ -1,52 +1,46 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
-import { ShieldCheck, MapPin, Star, FileText, Pen, Loader2, Check, AlertCircle, ShieldAlert } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ShieldCheck, Star, Pen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import {
-  useClaimDentistDirectoryProfile,
-  useRequestDirectoryConsultation,
-  useCreateDirectoryCheckoutSession,
-  useSendClaimOtp,
-} from "@/hooks/dentist/useDentistDirectory";
-
+import { useMe } from "@/hooks/auth/useAuth";
 import { useStateContext } from "@/providers/StateProvider";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 
-export default function BookingSidebar({ dentist }: { dentist: any }) {
+export default function BookingSidebar({
+  dentist,
+  setIsReviewModalOpen,
+}: {
+  dentist: any;
+  setIsReviewModalOpen: (open: boolean) => void;
+}) {
   const { user } = useMe();
-  const router = useRouter();
-  const queryClient = useQueryClient();
+  const isOwnProfile = user && (user.id === dentist.claimedByUserId || (dentist.userId && user.id === dentist.userId));
   const {
     setShowSigninModal,
     setShowSignupModal,
     setShowBookingModal,
     setShowPersonalizeModal,
     setSelectedDentistId,
-    setShowRequestConsultationModal,
-    setRequestConsultationDentist,
     setBookingMode,
   } = useStateContext();
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (searchParams.get("claim") === "true" || searchParams.get("cancelled") === "true") {
+      router.push(`/find-dentists/${dentist.slug}/claim`);
+    }
+  }, [searchParams, router, dentist.slug]);
 
   const handleBookConsultation = () => {
+    if (isOwnProfile) {
+      toast.error("Dentists cannot book consultations on their own profiles.");
+      return;
+    }
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("book");
@@ -63,6 +57,10 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
   };
 
   const handleRequestConsultation = () => {
+    if (isOwnProfile) {
+      toast.error("Dentists cannot book consultations on their own profiles.");
+      return;
+    }
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("request");
@@ -78,269 +76,97 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
     }
   };
 
-  const [isClaimOpen, setIsClaimOpen] = useState(false);
-  // Auto-open claim dialog if ?claim=true is in URL
-  useEffect(() => {
-    if (searchParams.get("claim") === "true") {
-      setIsClaimOpen(true);
-    }
-  }, [searchParams]);
-
-  // Claim Profile Wizard State
-  const claimMutation = useClaimDentistDirectoryProfile();
-  const checkoutMutation = useCreateDirectoryCheckoutSession();
-  const sendClaimOtpMutation = useSendClaimOtp();
-  const verifyOtpMutation = useOtpVerify();
-  const resendOtpMutation = useResendOtp();
-
-  const [claimStep, setClaimStep] = useState(1);
-  const [claimEmail, setClaimEmail] = useState("");
-  const [claimPassword, setClaimPassword] = useState("");
-  const [claimOtp, setClaimOtp] = useState("");
-  const [yearsOfExperience, setYearsOfExperience] = useState(5);
-  const [motivation, setMotivation] = useState("");
-  const [internationalPatients, setInternationalPatients] = useState(10);
-  const [selectedPlan, setSelectedPlan] = useState("6_MONTH");
-  const [claimedDirectoryId, setClaimedDirectoryId] = useState("");
-
-  // Checkboxes
-  const [hasSterilizationDocs, setHasSterilizationDocs] = useState(false);
-  const [hasBeforeAfterPhotos, setHasBeforeAfterPhotos] = useState(false);
-  const [hasMaterialsDocs, setHasMaterialsDocs] = useState(false);
-  const [hasEducationCertificates, setHasEducationCertificates] = useState(false);
-  const [hasGuarantees, setHasGuarantees] = useState(false);
-
-  // Autofill email if user logged in & skip to step 3
-  useEffect(() => {
-    if (user?.email) {
-      setClaimEmail(user.email);
-      if (claimStep < 3) {
-        setClaimStep(3);
-      }
-    }
-  }, [user, claimStep]);
-
-  const handleSendOtp = () => {
-    if (!claimEmail || !claimPassword) {
-      toast.error("Please provide email and password to create your account.");
+  const handleWriteReviewClick = () => {
+    if (!user) {
+      toast.error("Please sign in to write a review.");
+      setShowSigninModal(true);
       return;
     }
-    if (yearsOfExperience < 0) {
-      toast.error("Experience must be a positive number.");
+    const isOwnProfile = user.id === dentist.claimedByUserId || (dentist.userId && user.id === dentist.userId);
+    if (isOwnProfile) {
+      toast.error("Dentists cannot write a review on their own profile.");
       return;
     }
-
-    const toastId = toast.loading("Sending verification OTP to your email...");
-    sendClaimOtpMutation.mutate(
-      {
-        email: claimEmail,
-        password: claimPassword,
-        name: dentist.name,
-      },
-      {
-        onSuccess: () => {
-          toast.success("OTP sent successfully. Please check your email.", { id: toastId });
-          setClaimStep(2);
-        },
-        onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to send OTP.";
-          toast.error(errMsg, { id: toastId });
-        },
-      }
-    );
-  };
-
-  const handleVerifyOtp = () => {
-    if (!claimOtp || claimOtp.length < 4) {
-      toast.error("Please enter a valid OTP code.");
-      return;
-    }
-
-    const toastId = toast.loading("Verifying OTP...");
-    verifyOtpMutation.mutate(
-      {
-        email: claimEmail,
-        otp: claimOtp,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Email verified and logged in successfully!", { id: toastId });
-          setClaimStep(3);
-        },
-        onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Invalid OTP code.";
-          toast.error(errMsg, { id: toastId });
-        },
-      }
-    );
-  };
-
-  const handleResendOtpCode = () => {
-    const toastId = toast.loading("Resending OTP...");
-    resendOtpMutation.mutate(
-      { email: claimEmail },
-      {
-        onSuccess: () => {
-          toast.success("Verification OTP resent to your email.", { id: toastId });
-        },
-        onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to resend OTP.";
-          toast.error(errMsg, { id: toastId });
-        },
-      }
-    );
-  };
-
-  const handleNextStep = () => {
-    if (claimStep === 3) {
-      if (!hasSterilizationDocs || !hasBeforeAfterPhotos || !hasMaterialsDocs || !hasEducationCertificates || !hasGuarantees) {
-        toast.error("You must fulfill and agree to all quality standards to claim this profile.");
-        return;
-      }
-      // Submit claim form first, then go to payment plan step
-      const toastId = toast.loading("Saving your application...");
-      claimMutation.mutate(
-        {
-          slug: dentist.slug,
-          payload: {
-            yearsOfExperience: Number(yearsOfExperience),
-            motivation,
-            internationalPatients: Number(internationalPatients),
-            procedures: [dentist.specialty || "General Dentistry"],
-            hasSterilizationDocs,
-            hasBeforeAfterPhotos,
-            hasMaterialsDocs,
-            hasEducationCertificates,
-            hasGuarantees,
-          },
-        },
-        {
-          onSuccess: (res: any) => {
-            const directoryId = res?.data?.id;
-            if (directoryId) setClaimedDirectoryId(directoryId);
-            toast.success("Application saved! Please select your membership plan.", { id: toastId });
-            setClaimStep(4);
-          },
-          onError: (err: any) => {
-            const errMsg = err?.response?.data?.message || err?.message || "Failed to save application.";
-            toast.error(errMsg, { id: toastId });
-          },
-        }
-      );
-    }
-  };
-
-  const handleProceedToPayment = () => {
-    const directoryId = claimedDirectoryId || dentist.id;
-    if (!directoryId) {
-      toast.error("Profile ID not found. Please try again.");
-      return;
-    }
-    const toastId = toast.loading("Creating secure checkout session...");
-    checkoutMutation.mutate(
-      { dentistDirectoryId: directoryId, membershipPlan: selectedPlan },
-      {
-        onSuccess: (res: any) => {
-          const checkoutUrl = res?.data?.url;
-          if (checkoutUrl) {
-            toast.dismiss(toastId);
-            window.location.href = checkoutUrl;
-          } else {
-            toast.error("Failed to create checkout session. Please try again.", { id: toastId });
-          }
-        },
-        onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Payment setup failed.";
-          toast.error(errMsg, { id: toastId });
-        },
-      }
-    );
+    setIsReviewModalOpen(true);
   };
 
   return (
     <aside className="lg:sticky lg:top-24 w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex gap-5 mb-6">
-        <div className="flex flex-col gap-4 items-center">
-          <div className="relative size-24 shrink-0 overflow-hidden rounded-full ring-4 ring-slate-50 bg-slate-100">
-            <Image
-              src={dentist.image || "/images/man-avatar.png"}
-              alt={dentist.name}
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="flex w-full flex-col items-center gap-2">
-            {dentist.verified ? (
-              <div className="flex items-center gap-1 text-xs font-semibold text-[#1A1A2E]">
-                <ShieldCheck className="size-4 text-[#4CA30D]" />
-                VERIFIED
-              </div>
-            ) : dentist.status === "CLAIMED" ? (
-              <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                CLAIMED
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
-                DIRECTORY
-              </div>
-            )}
-
-            <div className="flex items-center justify-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 text-center">
-              <div className="font-extrabold text-[#0E3E65]">
-                {dentist.verified ? dentist.rdvScore : "0"}
-              </div>
-              <div className="text-xs font-medium text-[#1A1A2E]">
-                RDV Score
-              </div>
-            </div>
-          </div>
+      {/* Figma Row 1: Profile Avatar and details */}
+      <div className="flex gap-5 mb-6 items-start">
+        <div className="relative size-20 shrink-0 overflow-hidden rounded-full ring-4 ring-slate-50 bg-slate-100">
+          <Image
+            src={dentist.image || "/images/man-avatar.png"}
+            alt={dentist.name}
+            fill
+            className="object-cover"
+          />
         </div>
-        <div className="space-y-2 min-w-0">
-          <p className="text-xl md:text-2xl font-bold text-[#0E3E65] truncate">
+        <div className="space-y-1 min-w-0 flex-1">
+          <h3 className="text-lg md:text-xl font-bold text-[#0E3E65] truncate leading-tight">
             {dentist.name}
-          </p>
-          <p className="font-semibold text-[#1A1A2E]">{dentist.specialty}</p>
-          <div className="flex flex-col lg:flex-row lg:items-center gap-2">
-            <div className="flex items-center gap-1">
-              <span className="font-semibold text-[#003366]">
-                {(dentist.googleRating ?? dentist.rating ?? 5.0).toFixed(1)}
-              </span>
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`size-4 ${i < Math.round(dentist.googleRating ?? dentist.rating ?? 5.0)
-                      ? "fill-current text-amber-400"
-                      : "text-slate-200"
-                      }`}
-                  />
-                ))}
-              </div>
+          </h3>
+          <p className="text-xs text-[#6B7280] font-medium leading-none">Dentist</p>
+          <div className="flex items-center gap-1.5 pt-1">
+            <span className="font-bold text-sm text-[#0E3E65]">
+              {(dentist.googleRating ?? dentist.rating ?? 5.0).toFixed(1)}
+            </span>
+            <div className="flex text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`size-3.5 ${i < Math.round(dentist.googleRating ?? dentist.rating ?? 5.0)
+                    ? "fill-current text-amber-400"
+                    : "text-slate-200"
+                    }`}
+                />
+              ))}
             </div>
-            <button className="text-xs flex items-center justify-start gap-1 text-[#003366] border-b cursor-pointer lg:ml-2">
-              <Pen size={14} /> Write a review
-            </button>
+            {!isOwnProfile && (
+              <button
+                onClick={handleWriteReviewClick}
+                className="text-[11px] font-semibold text-[#003366] hover:underline cursor-pointer flex items-center gap-0.5 ml-1.5"
+              >
+                <Pen size={10} /> Write a review
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="space-y-6 border-t border-slate-200 pt-6">
-        <div className="space-y-4 text-[#6B7280]">
-          <div className="flex items-center gap-3">
-            <MapPin className="size-5 text-slate-400" /> {dentist.location}
+      {/* Figma Row 2: Trust pill row */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {/* Verified Status */}
+        {dentist.verified ? (
+          <div className="flex items-center gap-1 text-[10px] font-bold text-[#4CA30D] bg-green-50 border border-[#4CA30D]/20 px-2.5 py-1 rounded-full">
+            <ShieldCheck className="size-3 text-[#4CA30D]" />
+            Verified
           </div>
-          <div className="flex items-center gap-3">
-            <FileText className="size-5 text-slate-400" /> License No.{" "}
-            <span className="text-slate-900">
-              {dentist.dentistLicense?.registrationNumber || "Pending Claim"}
-            </span>
+        ) : dentist.status === "CLAIMED" ? (
+          <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+            Claimed
           </div>
+        ) : (
+          <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+            Directory
+          </div>
+        )}
+
+        {/* RDV score badge */}
+        <div className="flex items-center gap-1 text-[10px] font-bold text-[#003366] bg-[#EEF8FF] border border-[#003366]/10 px-2.5 py-1 rounded-full">
+          <span className="font-extrabold">{dentist.verified ? dentist.rdvScore : "0"}</span> RDV score
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <div className="flex items-center gap-2 rounded-full bg-[#EEF8FF] px-4 py-2 text-xs font-medium text-[#0E3E65]">
-            <ShieldCheck className="size-4 text-[#003366]" /> No Surprise Guarantee
-          </div>
+        {/* No Surprise Guarantee */}
+        <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+          <ShieldCheck className="size-3 text-slate-400" />
+          No Surprise Guarantee
+        </div>
+
+        {/* Escrow Badge */}
+        <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+          <ShieldCheck className="size-3 text-slate-400" />
+          Escrow
         </div>
       </div>
 
@@ -353,411 +179,37 @@ export default function BookingSidebar({ dentist }: { dentist: any }) {
           <p className="text-[10px] text-[#9CA3AF]">Estimate</p>
         </div>
 
-        {dentist.verified ? (
-          <Button
-            onClick={handleBookConsultation}
-            className="h-14 flex-1 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
-          >
-            Book consultation
-          </Button>
-        ) : (
-          <div className="flex flex-col gap-2 flex-1">
-            {dentist.isClaimable && (
-              <Button
-                variant="outline"
-                className="h-11 border-amber-500 text-amber-700 bg-amber-50/50 hover:bg-amber-50 font-bold"
-                onClick={() => setIsClaimOpen(true)}
-              >
-                Claim Profile
-              </Button>
-            )}
-            {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
-              <Button
-                className="h-11 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
-                onClick={handleRequestConsultation}
-              >
-                Request Consultation
-              </Button>
-            )}
-          </div>
+        {!isOwnProfile && (
+          dentist.verified ? (
+            <Button
+              onClick={handleBookConsultation}
+              className="h-14 flex-1 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
+            >
+              Book consultation
+            </Button>
+          ) : (
+            <div className="flex flex-col gap-2 flex-1">
+              {dentist.isClaimable && (
+                <Button
+                  variant="outline"
+                  className="h-11 border-amber-500 text-amber-700 bg-amber-50/50 hover:bg-amber-50 font-bold"
+                  onClick={() => router.push(`/find-dentists/${dentist.slug}/claim`)}
+                >
+                  Claim Profile
+                </Button>
+              )}
+              {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
+                <Button
+                  className="h-11 bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
+                  onClick={handleRequestConsultation}
+                >
+                  Request Consultation
+                </Button>
+              )}
+            </div>
+          )
         )}
       </div>
-
-      <Dialog open={isClaimOpen} onOpenChange={setIsClaimOpen}>
-        <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-2xl rounded-lg overflow-hidden p-0">
-          <DialogHeader className="sr-only">
-            <DialogTitle>Claim Dentist Profile</DialogTitle>
-            <DialogDescription>
-              Verify your identity, select a premium plan, and start getting international patient leads.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-[#0E3E65] text-white p-6">
-            <h3 className="text-xl font-bold">Claim Dentist Profile</h3>
-            <p className="text-sky-100 text-xs mt-1">
-              Verify your identity, select a premium plan, and start getting international patient leads.
-            </p>
-
-            {/* Step Indicators */}
-            <div className="flex items-center gap-2 mt-4">
-              {[1, 2, 3, 4].map((s) => (
-                <div key={s} className="flex items-center gap-1">
-                  <div
-                    className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${claimStep >= s
-                      ? "bg-amber-400 text-[#0E3E65] scale-110"
-                      : "bg-[#0E3E65] border border-sky-400/40 text-sky-200"
-                      }`}
-                  >
-                    {claimStep > s ? <Check className="size-3.5 stroke-3" /> : s}
-                  </div>
-                  {s < 4 && <div className={`w-8 h-[2px] ${claimStep > s ? "bg-amber-400" : "bg-sky-400/20"}`} />}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-6">
-            {/* Step 1: Onboarding Credentials */}
-            {claimStep === 1 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-slate-700 font-semibold">Email Address</Label>
-                  <Input
-                    type="email"
-                    value={claimEmail}
-                    onChange={(e) => setClaimEmail(e.target.value)}
-                    disabled={!!user}
-                    placeholder="Enter professional email"
-                    className="border-slate-200 focus:border-[#0E3E65]"
-                  />
-                  {user && (
-                    <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
-                      <ShieldCheck className="size-3.5" /> Logged in session account auto-filled
-                    </p>
-                  )}
-                </div>
-
-                {!user && (
-                  <div className="space-y-2 animate-fadeIn">
-                    <Label className="text-slate-700 font-semibold">Create Password</Label>
-                    <Input
-                      type="password"
-                      value={claimPassword}
-                      onChange={(e) => setClaimPassword(e.target.value)}
-                      placeholder="Minimum 8 characters"
-                      className="border-slate-200 focus:border-[#0E3E65]"
-                    />
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-slate-700 font-semibold">Years of Experience</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
-                      value={yearsOfExperience}
-                      onChange={(e) => setYearsOfExperience(Number(e.target.value))}
-                      className="border-slate-200 focus:border-[#0E3E65]"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-slate-700 font-semibold">International Patients (%)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
-                      value={internationalPatients}
-                      onChange={(e) => setInternationalPatients(Number(e.target.value))}
-                      className="border-slate-200 focus:border-[#0E3E65]"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-slate-700 font-semibold">Professional Bio / Motivation</Label>
-                  <Textarea
-                    value={motivation}
-                    onChange={(e) => setMotivation(e.target.value)}
-                    placeholder="Tell patients about your dental approach and clinical background..."
-                    className="border-slate-200 focus:border-[#0E3E65] min-h-[80px]"
-                  />
-                </div>
-
-                <div className="flex justify-end pt-4 border-t border-slate-100">
-                  <Button
-                    onClick={handleSendOtp}
-                    disabled={sendClaimOtpMutation.isPending}
-                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold"
-                  >
-                    {sendClaimOtpMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Sending OTP...
-                      </>
-                    ) : (
-                      "Send OTP & Continue"
-                    )}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: OTP Verification */}
-            {claimStep === 2 && (
-              <div className="space-y-4">
-                <div className="rounded-lg bg-sky-50 border border-sky-100 p-4">
-                  <p className="text-sky-900 text-xs font-medium">
-                    We sent a verification code to <span className="font-semibold">{claimEmail}</span>. Enter the 6-digit OTP code below:
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-slate-700 font-semibold">Verification Code</Label>
-                  <Input
-                    value={claimOtp}
-                    onChange={(e) => setClaimOtp(e.target.value)}
-                    placeholder="0 0 0 0 0 0"
-                    maxLength={6}
-                    className="border-slate-200 focus:border-[#0E3E65] text-center text-lg font-mono tracking-widest"
-                  />
-                </div>
-
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={handleResendOtpCode}
-                    disabled={resendOtpMutation.isPending}
-                    className="text-xs text-[#0E3E65] hover:underline font-semibold"
-                  >
-                    {resendOtpMutation.isPending ? "Resending..." : "Resend Code"}
-                  </button>
-                </div>
-
-                <div className="flex justify-between pt-4 border-t border-slate-100">
-                  <Button
-                    variant="outline"
-                    onClick={() => setClaimStep(1)}
-                    className="border-slate-200 text-slate-600 hover:bg-slate-50"
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handleVerifyOtp}
-                    disabled={verifyOtpMutation.isPending}
-                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold"
-                  >
-                    {verifyOtpMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Verifying...
-                      </>
-                    ) : (
-                      "Verify & Continue"
-                    )}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Quality Checkmarks */}
-            {claimStep === 3 && (
-              <div className="space-y-4">
-                <div className="rounded-lg bg-amber-50/50 border border-amber-200 p-4 mb-2">
-                  <p className="text-amber-800 text-xs font-medium flex items-center gap-1.5">
-                    <AlertCircle className="size-4" /> Please verify you adhere to RatedDocs medical protocols:
-                  </p>
-                </div>
-
-                <div className="space-y-4 py-2">
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      id="steril"
-                      checked={hasSterilizationDocs}
-                      onCheckedChange={(checked) => setHasSterilizationDocs(!!checked)}
-                      className="mt-1 data-[state=checked]:bg-[#0E3E65]"
-                    />
-                    <label htmlFor="steril" className="text-sm font-medium text-slate-600 cursor-pointer">
-                      I maintain detailed sterilization logs for all dental apparatuses
-                    </label>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      id="photos"
-                      checked={hasBeforeAfterPhotos}
-                      onCheckedChange={(checked) => setHasBeforeAfterPhotos(!!checked)}
-                      className="mt-1 data-[state=checked]:bg-[#0E3E65]"
-                    />
-                    <label htmlFor="photos" className="text-sm font-medium text-slate-600 cursor-pointer">
-                      I possess clear and verifiable before & after treatment photos
-                    </label>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      id="materials"
-                      checked={hasMaterialsDocs}
-                      onCheckedChange={(checked) => setHasMaterialsDocs(!!checked)}
-                      className="mt-1 data-[state=checked]:bg-[#0E3E65]"
-                    />
-                    <label htmlFor="materials" className="text-sm font-medium text-slate-600 cursor-pointer">
-                      I only utilize FDA / CE approved dental implant and crown materials
-                    </label>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      id="education"
-                      checked={hasEducationCertificates}
-                      onCheckedChange={(checked) => setHasEducationCertificates(!!checked)}
-                      className="mt-1 data-[state=checked]:bg-[#0E3E65]"
-                    />
-                    <label htmlFor="education" className="text-sm font-medium text-slate-600 cursor-pointer">
-                      I hold authentic, accredited certificates of dentistry education & license
-                    </label>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      id="guarantees"
-                      checked={hasGuarantees}
-                      onCheckedChange={(checked) => setHasGuarantees(!!checked)}
-                      className="mt-1 data-[state=checked]:bg-[#0E3E65]"
-                    />
-                    <label htmlFor="guarantees" className="text-sm font-medium text-slate-600 cursor-pointer">
-                      I agree to offer the RatedDocs "No Surprise Price Guarantee" for patients
-                    </label>
-                  </div>
-                </div>
-
-                <div className="flex justify-between pt-4 border-t border-slate-100">
-                  {!user && (
-                    <Button
-                      variant="outline"
-                      onClick={() => setClaimStep(2)}
-                      className="border-slate-200 text-slate-600 hover:bg-slate-50"
-                    >
-                      Back
-                    </Button>
-                  )}
-                  <Button
-                    onClick={handleNextStep}
-                    className={`${user ? "w-full" : ""} bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold`}
-                  >
-                    Continue to Payment
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Secure Payment Simulation */}
-            {claimStep === 4 && (
-              <div className="space-y-4">
-                <div className="space-y-3 mb-4">
-                  <p className="text-sm font-semibold text-slate-700">Choose Your Membership Plan</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div
-                      onClick={() => setSelectedPlan("6_MONTH")}
-                      className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
-                        ? "border-[#0E3E65] bg-sky-50 ring-2 ring-[#0E3E65]/20"
-                        : "border-slate-200 hover:bg-slate-50"
-                        }`}
-                    >
-                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
-                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$899</span>
-                      <span className="block text-[10px] text-slate-400 mt-1">~$149.83/mo</span>
-                    </div>
-                    <div
-                      onClick={() => setSelectedPlan("12_MONTH")}
-                      className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "12_MONTH"
-                        ? "border-amber-500 bg-amber-50 ring-2 ring-amber-400/20"
-                        : "border-slate-200 hover:bg-slate-50"
-                        }`}
-                    >
-                      <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
-                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
-                      <span className="block text-2xl font-extrabold text-[#0E3E65] mt-1">$1499</span>
-                      <span className="block text-[10px] text-slate-400 mt-1">~$124.92/mo</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-start gap-2">
-                  <ShieldCheck className="size-4 shrink-0 mt-0.5 text-emerald-600" />
-                  <span>You will be redirected to <strong>Stripe's secure checkout</strong>. Your profile will be marked as <strong>Claimed</strong> automatically after payment.</span>
-                </div>
-
-                <div className="flex justify-between pt-4 border-t border-slate-100">
-                  <Button
-                    variant="outline"
-                    onClick={() => setClaimStep(3)}
-                    disabled={checkoutMutation.isPending}
-                    className="border-slate-200 text-slate-600 hover:bg-slate-50"
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handleProceedToPayment}
-                    disabled={checkoutMutation.isPending}
-                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 shadow-md transition-colors"
-                  >
-                    {checkoutMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Redirecting...
-                      </>
-                    ) : (
-                      `Pay ${selectedPlan === "12_MONTH" ? "$1499" : "$899"} & Claim →`
-                    )}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-
-            {/* Step 5: Success Celebratory Screen */}
-            {claimStep === 5 && (
-              <div className="text-center py-6 space-y-4 animate-scaleUp">
-                <div className="mx-auto size-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-                  <ShieldCheck className="size-10 stroke-[1.5]" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-lg font-bold text-slate-900">Congratulations, Dr. {dentist.name}!</h4>
-                  <p className="text-slate-500 text-sm max-w-sm mx-auto">
-                    Your profile claim was registered, and membership status has been successfully updated via Stripe.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-150 inline-block text-left text-xs space-y-1.5 text-slate-600">
-                  <p className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Check className="size-4 text-emerald-500 stroke-3" /> Credentials registered successfully
-                  </p>
-                  <p className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Check className="size-4 text-emerald-500 stroke-3" /> Stripe signature and payment verified
-                  </p>
-                  <p className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Check className="size-4 text-emerald-500 stroke-3" /> EJS Email template notifications dispatched
-                  </p>
-                </div>
-
-                <div className="pt-4">
-                  <Button
-                    onClick={async () => {
-                      setIsClaimOpen(false);
-                      await queryClient.invalidateQueries({ queryKey: ["auth"] });
-                      router.push("/dentist");
-                    }}
-                    className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold px-8 cursor-pointer"
-                  >
-                    Go to Dashboard →
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </aside>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreditCard, Pencil } from "lucide-react";
 
 interface CardInfo {
@@ -17,6 +17,10 @@ interface PaymentInfoProps {
 export default function PaymentInfo({ connected = true, card = null }: PaymentInfoProps) {
   const [isConnected, setIsConnected] = useState(connected);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    setIsConnected(connected);
+  }, [connected]);
 
   return (
     <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
