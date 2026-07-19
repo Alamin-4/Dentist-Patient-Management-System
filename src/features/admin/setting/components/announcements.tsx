@@ -1,15 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Trash2, Info, Users, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
-import type { Announcement, AnnouncementAudience } from "@/lib/settings-data";
-import { NewAnnouncementModal } from "./new-announcement-modal";
+import { NewAnnouncementModal, type AnnouncementAudience } from "./new-announcement-modal";
 
-interface AnnouncementsProps {
-  initialAnnouncements: Announcement[];
-}
+export type AnnouncementStatus = "live" | "dismissed";
+
+export type Announcement = {
+  id: string;
+  title: string;
+  message: string;
+  audience: AnnouncementAudience;
+  status: AnnouncementStatus;
+  publishedAt: string;
+};
+
+const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
+  {
+    id: "ann-1",
+    title: "Scheduled maintenance — May 10",
+    message:
+      "RatedDocs will be unavailable for approximately 2 hours on Saturday May 10 between 02:00–04:00 UTC for routine maintenance.",
+    audience: "all",
+    status: "live",
+    publishedAt: "2026-05-06",
+  },
+  {
+    id: "ann-2",
+    title: "New: Release code system now live",
+    message:
+      "We have launched the new release code flow for escrow payments. Patients will now receive a unique code upon accepting the final treatment plan.",
+    audience: "dentists",
+    status: "dismissed",
+    publishedAt: "2026-04-30",
+  },
+];
 
 function generateId() {
   return `ann-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -62,9 +89,23 @@ function StatusBadge({ status }: { status: Announcement["status"] }) {
   );
 }
 
-export function Announcements({ initialAnnouncements }: AnnouncementsProps) {
-  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
+export function Announcements() {
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rateddocs_announcements");
+    if (saved) {
+      try {
+        setAnnouncements(JSON.parse(saved));
+      } catch (e) {
+        setAnnouncements(DEFAULT_ANNOUNCEMENTS);
+      }
+    } else {
+      setAnnouncements(DEFAULT_ANNOUNCEMENTS);
+      localStorage.setItem("rateddocs_announcements", JSON.stringify(DEFAULT_ANNOUNCEMENTS));
+    }
+  }, []);
 
   const handlePublish = (data: { title: string; message: string; audience: AnnouncementAudience }) => {
     const newAnn: Announcement = {
@@ -73,13 +114,17 @@ export function Announcements({ initialAnnouncements }: AnnouncementsProps) {
       status: "live",
       publishedAt: new Date().toISOString().split("T")[0],
     };
-    setAnnouncements((prev) => [newAnn, ...prev]);
+    const updated = [newAnn, ...announcements];
+    setAnnouncements(updated);
+    localStorage.setItem("rateddocs_announcements", JSON.stringify(updated));
     setModalOpen(false);
     toast.success("Announcement published.");
   };
 
   const handleDelete = (id: string) => {
-    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+    const updated = announcements.filter((a) => a.id !== id);
+    setAnnouncements(updated);
+    localStorage.setItem("rateddocs_announcements", JSON.stringify(updated));
     toast.success("Announcement removed.");
   };
 

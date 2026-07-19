@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { AnnouncementAudience } from "@/lib/settings-data";
+export type AnnouncementAudience = "all" | "patients" | "dentists";
 
 interface NewAnnouncementModalProps {
   open: boolean;

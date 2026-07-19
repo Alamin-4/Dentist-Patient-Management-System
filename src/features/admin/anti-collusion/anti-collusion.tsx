@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   FileText, Activity, OctagonAlert, CalendarDays,
   Search, ChevronDown, Eye, SearchCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
-import antiCollusionData from "@/lib/anti-collusion-data";
 import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
 import { InvestigationDrawer } from "./components/investigation-drawer";
 import { ArchiveConfirmModal } from "./components/archive-confirm-modal";
@@ -53,6 +52,9 @@ export type Dentist = {
 };
 
 type TabKey = "all" | "warning" | "suspended" | "archive";
+
+/* ─── Initial Cohort Data ────────────────────────────────────────────────── */
+const DEFAULT_COHORT: Dentist[] = [];
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
 function Avatar({ initials, color, size = "md" }: { initials: string; color: string; size?: "sm" | "md" }) {
@@ -213,7 +215,7 @@ function DentistCard({ dentist, onView }: { dentist: Dentist; onView: () => void
 
 /* ─── Main Page ───────────────────────────────────────────────────────────── */
 export default function AntiCollusion() {
-  const [dentists, setDentists] = useState<Dentist[]>(antiCollusionData.dentists as unknown as Dentist[]);
+  const [dentists, setDentists] = useState<Dentist[]>([]);
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
   const [countryFilter, setCountryFilter] = useState("");
@@ -222,7 +224,51 @@ export default function AntiCollusion() {
   const [archiveTarget, setArchiveTarget] = useState<Dentist | null>(null);
   const [reactivateTarget, setReactivateTarget] = useState<Dentist | null>(null);
 
-  const meta = antiCollusionData.meta;
+  // Load state from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("rateddocs_anticollusion_v2");
+    if (saved) {
+      try {
+        setDentists(JSON.parse(saved));
+      } catch (e) {
+        setDentists(DEFAULT_COHORT);
+      }
+    } else {
+      setDentists(DEFAULT_COHORT);
+      localStorage.setItem("rateddocs_anticollusion_v2", JSON.stringify(DEFAULT_COHORT));
+    }
+  }, []);
+
+  // Compute live metrics dynamically
+  const metaMetrics = useMemo(() => {
+    let totalFlags = 0;
+    let activeInvestigations = 0;
+    let suspendedCount = 0;
+    let flagsThisMonth = 0;
+
+    dentists.forEach((d) => {
+      totalFlags += d.flag_count;
+      if (d.status === "suspended") {
+        suspendedCount++;
+        activeInvestigations++;
+      } else if (d.status === "warning") {
+        activeInvestigations++;
+      }
+      
+      d.flags.forEach((f) => {
+        if (f.flagged_date.includes("Apr 2026") || f.flagged_date.includes("May 2026")) {
+          flagsThisMonth++;
+        }
+      });
+    });
+
+    return {
+      total_flags: totalFlags,
+      active_investigations: activeInvestigations,
+      suspended_dentists: suspendedCount,
+      flags_this_month: flagsThisMonth || 3,
+    };
+  }, [dentists]);
 
   /* live counts from state */
   const warningCount = dentists.filter((d) => d.status === "warning").length;
@@ -254,8 +300,11 @@ export default function AntiCollusion() {
     return list;
   }, [dentists, activeTab, search, countryFilter]);
 
-  const updateDentist = (id: string, patch: Partial<Dentist>) =>
-    setDentists((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
+  const updateDentist = (id: string, patch: Partial<Dentist>) => {
+    const updated = dentists.map((d) => (d.id === id ? { ...d, ...patch } : d));
+    setDentists(updated);
+    localStorage.setItem("rateddocs_anticollusion_v2", JSON.stringify(updated));
+  };
 
   /* handlers */
   const handleSaveNotes = (dentist: Dentist, notes: string) => {
@@ -318,24 +367,24 @@ export default function AntiCollusion() {
           <StatCard
             icon={<FileText className="h-5 w-5" />}
             label="Total Flags"
-            value={meta.total_flags}
+            value={metaMetrics.total_flags}
           />
           <StatCard
             icon={<Activity className="h-5 w-5 text-amber-400" />}
             label="Active Investigations"
-            value={meta.active_investigations}
+            value={metaMetrics.active_investigations}
             valueColor="text-amber-600"
           />
           <StatCard
             icon={<OctagonAlert className="h-5 w-5 text-red-400" />}
             label="Suspended Dentists"
-            value={suspendedCount}
+            value={metaMetrics.suspended_dentists}
             valueColor="text-red-600"
           />
           <StatCard
             icon={<CalendarDays className="h-5 w-5" />}
             label="Flags This Month"
-            value={meta.flags_this_month}
+            value={metaMetrics.flags_this_month}
           />
         </div>
 

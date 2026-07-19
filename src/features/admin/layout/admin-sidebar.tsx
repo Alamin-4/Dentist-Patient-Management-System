@@ -68,7 +68,7 @@ const adminNav: NavGroup[] = [
     label: "ENGAGEMENT",
     items: [
       { icon: Star, label: "Reviews & Ratings", href: "/admin/reviews" },
-      { icon: Bell, label: "Notifications", href: "/admin/notifications" },
+      // { icon: Bell, label: "Notifications", href: "/admin/notifications" },
     ],
   },
   {

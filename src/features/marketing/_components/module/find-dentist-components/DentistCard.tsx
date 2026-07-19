@@ -296,7 +296,7 @@ export default function DentistCard({
                     variant="secondary"
                     className="h-10 rounded-lg border border-amber-300 bg-amber-50 px-5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all"
                     onClick={() =>
-                      router.push(`/find-dentists/${dentist.slug}?claim=true`)
+                      router.push(`/find-dentists/${dentist.slug}/claim`)
                     }
                   >
                     Claim Profile

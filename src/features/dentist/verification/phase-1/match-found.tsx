@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { UploadCloud, FileText, Loader2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface MatchProps {
   status: "match" | "no-match";
@@ -116,7 +117,10 @@ export function VerificationResult({
 
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-card p-8 transition-all hover:border-primary hover:bg-background sm:p-10"
+            className={cn(
+              "group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-card p-8 transition-all hover:border-primary hover:bg-background sm:p-10",
+              error ? "border-red-500 bg-red-50/10" : "border-border"
+            )}
           >
             <div className="mb-3 rounded-full bg-background p-3 shadow-sm transition-all group-hover:scale-110 group-hover:bg-card">
               <UploadCloud className="h-6 w-6 text-primary" />
@@ -138,7 +142,10 @@ export function VerificationResult({
           </div>
         </div>
       ) : (
-        <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-card p-4 animate-in fade-in slide-in-from-bottom-2">
+        <div className={cn(
+          "mt-6 flex items-center justify-between rounded-lg border bg-card p-4 animate-in fade-in slide-in-from-bottom-2",
+          error ? "border-red-500 bg-red-50/10" : "border-border"
+        )}>
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-warning-50">
               {isUploading ? (

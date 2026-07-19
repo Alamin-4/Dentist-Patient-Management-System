@@ -107,8 +107,8 @@ export default function FindDentistComponents() {
                             specialty: "",
                             phone: "",
                         });
-                        // Redirect to the newly created profile with claim dialog active
-                        router.push(`/find-dentists/${slug}?claim=true`);
+                        // Redirect to the newly created profile claim page directly
+                        router.push(`/find-dentists/${slug}/claim`);
                     } else {
                         toast.error("Failed to process dentist profile. Please try again.", { id: toastId });
                     }

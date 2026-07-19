@@ -3,12 +3,38 @@
 import { useState, useMemo } from "react";
 import {
   Search, Download, X, ChevronDown, ChevronRight,
-  Shield, DollarSign, Clock, CheckCircle, Circle,
+  Shield, DollarSign, Clock, CheckCircle, Circle, Loader2
 } from "lucide-react";
-import paymentsData from "@/lib/payments-data";
 import { cn } from "@/lib/utils";
+import { useTreatmentBookings } from "@/hooks/treatment-booking/useTreatmentBooking";
+import { mapDbBookingToUiBooking } from "@/features/admin/bookings/utils/booking-mapper";
 
-type Transaction = (typeof paymentsData.transactions)[number];
+type Transaction = {
+  id: string;
+  booking_id: string;
+  txn_ref: string;
+  patient_name: string;
+  patient_initials: string;
+  patient_avatar_color: string;
+  dentist_name: string;
+  dentist_initials: string;
+  dentist_avatar_color: string;
+  dentist_specialty: string;
+  procedure: string;
+  amount: number;
+  status: "In Escrow" | "Released" | "Refunded" | "Refund Pending";
+  date: string;
+  payment_date: string;
+  stripe_ref: string;
+  escrow_timeline: Array<{
+    step: string;
+    completed: boolean;
+    date: string | null;
+    description?: string;
+    current?: boolean;
+  }>;
+};
+
 type StatusFilter = "All" | "In Escrow" | "Released" | "Refunded" | "Refund Pending";
 
 /* ─── helpers ───────────────────────────────────────────────────────────── */
@@ -26,8 +52,7 @@ function Avatar({ initials, color, size = "md" }: { initials: string; color: str
 const STATUS_STYLES: Record<string, { dot: string; text: string; bg: string; border: string }> = {
   "In Escrow": { dot: "bg-amber-400", text: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200" },
   Released: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
-  "Refunded (100%)": { dot: "bg-red-400", text: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
-  "Refunded (90%)": { dot: "bg-red-400", text: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
+  Refunded: { dot: "bg-red-400", text: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
   "Refund Pending": { dot: "bg-orange-400", text: "text-orange-700", bg: "bg-orange-50", border: "border-orange-200" },
 };
 
@@ -106,7 +131,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
             <div className="rounded-lg border border-gray-100 bg-white p-4">
               <ol className="space-y-4">
                 {txn.escrow_timeline.map((step, i) => {
-                  const isCurrent = "current" in step && step.current === true;
+                  const isCurrent = step.current === true;
                   const isDone = step.completed && !isCurrent;
                   return (
                     <li key={i} className="flex items-start gap-3">
@@ -147,9 +172,57 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
   );
 }
 
+/* ─── Skeleton Loader ────────────────────────────────────────────────────── */
+function PaymentsSkeleton() {
+  return (
+    <div className="flex flex-col gap-5 animate-pulse">
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <div className="h-7 w-48 rounded bg-gray-200" />
+          <div className="h-4 w-96 rounded bg-gray-200" />
+        </div>
+        <div className="h-10 w-24 rounded bg-gray-200" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="h-11 w-11 rounded-full bg-gray-200" />
+            <div className="space-y-2 flex-1">
+              <div className="h-3 w-24 rounded bg-gray-200" />
+              <div className="h-6 w-32 rounded bg-gray-200" />
+              <div className="h-3 w-36 rounded bg-gray-200" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
+        <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
+          <div className="h-9 flex-1 rounded bg-gray-200" />
+          <div className="h-9 w-28 rounded bg-gray-200" />
+          <div className="h-9 w-28 rounded bg-gray-200" />
+        </div>
+
+        <div className="space-y-4 p-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center justify-between border-b border-gray-50 pb-4 last:border-0 last:pb-0">
+              <div className="h-5 w-20 rounded bg-gray-200" />
+              <div className="h-5 w-40 rounded bg-gray-200" />
+              <div className="h-5 w-48 rounded bg-gray-200" />
+              <div className="h-5 w-16 rounded bg-gray-200" />
+              <div className="h-5 w-24 rounded bg-gray-200" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function PaymentPage() {
-  const meta = paymentsData.meta;
+  const { data: bookingsResponse, isLoading, isError } = useTreatmentBookings();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [statusOpen, setStatusOpen] = useState(false);
@@ -157,13 +230,112 @@ export default function PaymentPage() {
 
   const statusOptions: StatusFilter[] = ["All", "In Escrow", "Released", "Refunded", "Refund Pending"];
 
-  const filtered = useMemo(() => {
-    let list = paymentsData.transactions as Transaction[];
-    if (statusFilter !== "All") {
-      list = list.filter((t) => {
-        if (statusFilter === "Refunded") return t.status.startsWith("Refunded");
-        return t.status === statusFilter;
+  const transactions = useMemo<Transaction[]>(() => {
+    if (!bookingsResponse?.data) return [];
+    return bookingsResponse.data.map((b: any) => {
+      const mapped = mapDbBookingToUiBooking(b);
+      if (!mapped) return null;
+      
+      let status: Transaction["status"] = "In Escrow";
+      if (b.paymentStatus === "PAID") {
+        status = "Released";
+      } else if (b.paymentStatus === "REFUNDED") {
+        status = "Refunded";
+      } else if (b.status === "CANCELLED" && b.paymentStatus === "PENDING") {
+        status = "Refund Pending";
+      }
+
+      const createdDateStr = new Date(b.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
       });
+
+      const scheduledDateStr = b.scheduledDate 
+        ? new Date(b.scheduledDate).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          })
+        : null;
+
+      const completionDateStr = b.status === "COMPLETED"
+        ? new Date(b.updatedAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          })
+        : null;
+
+      const escrow_timeline = [
+        {
+          step: "Escrow Deposited",
+          date: createdDateStr,
+          completed: b.paymentStatus === "IN_ESCROW" || b.paymentStatus === "PAID",
+          description: "Stripe payment intent successfully authorized & escrowed"
+        },
+        {
+          step: "Treatment Confirmed",
+          date: scheduledDateStr,
+          completed: b.status === "COMPLETED" || b.status === "IN_PROGRESS",
+          description: "Patient check-in verified and treatment plan activated"
+        },
+        {
+          step: "Funds Released",
+          date: completionDateStr,
+          completed: b.paymentStatus === "PAID",
+          description: "Platform fee collected and remaining payout completed"
+        }
+      ];
+
+      return {
+        id: b.id,
+        booking_id: `B-${b.id.substring(0, 8).toUpperCase()}`,
+        txn_ref: `TXN-${b.id.substring(0, 6).toUpperCase()}`,
+        patient_name: mapped.patient.name,
+        patient_initials: mapped.patient.initials,
+        patient_avatar_color: mapped.patient.avatar_color,
+        dentist_name: mapped.dentist.name,
+        dentist_initials: mapped.dentist.initials,
+        dentist_avatar_color: mapped.dentist.avatar_color,
+        dentist_specialty: mapped.dentist.specialty,
+        procedure: mapped.procedure,
+        amount: mapped.amount,
+        status,
+        date: scheduledDateStr || createdDateStr,
+        payment_date: createdDateStr,
+        stripe_ref: `pi_${b.id.substring(0, 10).toLowerCase()}`,
+        escrow_timeline
+      } as Transaction;
+    }).filter((t: any): t is Transaction => t !== null);
+  }, [bookingsResponse]);
+
+  const meta = useMemo(() => {
+    let totalEscrowHeld = 0;
+    let releasedThisMonth = 0;
+    let pendingRefunds = 0;
+
+    transactions.forEach((t: Transaction) => {
+      if (t.status === "In Escrow") {
+        totalEscrowHeld += t.amount;
+      } else if (t.status === "Released") {
+        releasedThisMonth += t.amount;
+      } else if (t.status === "Refunded" || t.status === "Refund Pending") {
+        pendingRefunds += t.amount;
+      }
+    });
+
+    return {
+      total_escrow_held: totalEscrowHeld,
+      released_this_month: releasedThisMonth,
+      pending_refunds: pendingRefunds
+    };
+  }, [transactions]);
+
+  const filtered = useMemo(() => {
+    let list = transactions;
+    if (statusFilter !== "All") {
+      list = list.filter((t) => t.status === statusFilter);
     }
     if (search) {
       const q = search.toLowerCase();
@@ -175,7 +347,17 @@ export default function PaymentPage() {
       );
     }
     return list;
-  }, [statusFilter, search]);
+  }, [transactions, statusFilter, search]);
+
+  if (isLoading) return <PaymentsSkeleton />;
+
+  if (isError) {
+    return (
+      <div className="flex h-96 flex-col items-center justify-center gap-3">
+        <p className="text-red-500 font-semibold">Failed to load transactions history.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -195,8 +377,8 @@ export default function PaymentPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {[
             { icon: <Shield className="h-6 w-6 text-amber-500" />, iconBg: "bg-amber-50", label: "Total Escrow Held", value: `$${meta.total_escrow_held.toLocaleString()}`, sub: "All active bookings" },
-            { icon: <DollarSign className="h-6 w-6 text-emerald-500" />, iconBg: "bg-emerald-50", label: "Released This Month", value: `$${meta.released_this_month.toLocaleString()}`, sub: "Paid out to dentists", valueColor: "text-emerald-600" },
-            { icon: <Clock className="h-6 w-6 text-red-500" />, iconBg: "bg-red-50", label: "Pending Refunds", value: `$${meta.pending_refunds.toLocaleString()}`, sub: "Awaiting processing", valueColor: "text-red-500" },
+            { icon: <DollarSign className="h-6 w-6 text-emerald-500" />, iconBg: "bg-emerald-50", label: "Released Payments", value: `$${meta.released_this_month.toLocaleString()}`, sub: "Paid out to dentists", valueColor: "text-emerald-600" },
+            { icon: <Clock className="h-6 w-6 text-red-500" />, iconBg: "bg-red-50", label: "Pending/Refunded", value: `$${meta.pending_refunds.toLocaleString()}`, sub: "Disputes & cancellations", valueColor: "text-red-500" },
           ].map((s) => (
             <div key={s.label} className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
               <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-full", s.iconBg)}>{s.icon}</div>
@@ -232,9 +414,6 @@ export default function PaymentPage() {
                 </div>
               )}
             </div>
-            <button className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50">
-              📅 Date range <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
-            </button>
           </div>
 
           {/* Table */}
@@ -281,7 +460,7 @@ export default function PaymentPage() {
           </div>
 
           <div className="border-t border-gray-100 px-4 py-3">
-            <p className="text-sm text-gray-400">Showing {filtered.length} of {paymentsData.transactions.length} transactions</p>
+            <p className="text-sm text-gray-400">Showing {filtered.length} of {transactions.length} transactions</p>
           </div>
         </div>
       </div>
