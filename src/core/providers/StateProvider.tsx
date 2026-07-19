@@ -13,8 +13,7 @@ export { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 export { useDataStoreForVerification } from "@/lib/hooks/verification-store-hooks";
 export { useUiStoreForVerification } from "@/lib/hooks/verification-store-hooks";
 
-import type { kolSteps } from "@/store/slices/uiSlice";
-export type { kolSteps };
+
 
 export type dentistBookingTabs = "In Progress" | "Completed" | "Rejected";
 
@@ -49,10 +48,7 @@ interface StateContextType {
   setDentistsToCompare: (
     dentists: Dentist[] | ((prev: Dentist[]) => Dentist[]),
   ) => void;
-  kolModalOpen: boolean;
-  setKolModalOpen: (open: boolean) => void;
-  addKolStep: kolSteps;
-  setAddKolStep: (step: kolSteps) => void;
+
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   isNewestFirst: boolean;
@@ -80,7 +76,7 @@ const MODAL_TO_QUERY: Record<Exclude<AppModalType, null>, string> = {
   compare: "compare",
   startBooking: "start-booking",
   booking: "booking",
-  kol: "kol",
+
 };
 
 const QUERY_TO_MODAL = Object.fromEntries(
@@ -152,7 +148,6 @@ function ModalSync({
 
     const timeoutId = window.setTimeout(() => {
       store.openModal(urlModal);
-      store.setKolModalOpen(urlModal === "kol");
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
@@ -189,7 +184,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     store.openModal(modal);
-    store.setKolModalOpen(modal === "kol");
   };
 
   useEffect(() => {
@@ -325,10 +319,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({
     setCompareModalPurpose: store.setCompareModalPurpose,
     bookingMode: store.bookingMode,
     setBookingMode: store.setBookingMode,
-    kolModalOpen: store.kolModalOpen,
-    setKolModalOpen: store.setKolModalOpen,
-    addKolStep: store.addKolStep,
-    setAddKolStep: store.setAddKolStep,
+
     searchQuery: store.searchQuery,
     setSearchQuery: store.setSearchQuery,
     isNewestFirst: store.isNewestFirst,

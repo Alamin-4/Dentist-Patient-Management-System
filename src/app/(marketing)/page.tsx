@@ -4,7 +4,7 @@ import AiSmilePreview from "@/features/marketing/_components/module/Home/Ai-Smil
 // import SmileTransformations from "@/features/marketing/_components/module/Home/smile-transformations/smile-transformations";
 import VerifiedDentists from "@/features/marketing/_components/module/Home/verified-dentist-section/verified-dentist";
 import WhyTrust from "@/features/marketing/_components/module/Home/WhyTrsut/why-trust";
-import AddKolMemberModal from "@/features/marketing/_components/modal/add-kol-member-modal";
+
 
 export default function HomePage() {
   return (
@@ -15,7 +15,7 @@ export default function HomePage() {
       {/* <SmileTransformations /> */}
       <AiSmilePreview />
       <CtaSearchSection />
-      <AddKolMemberModal />
+
     </div>
   );
 }

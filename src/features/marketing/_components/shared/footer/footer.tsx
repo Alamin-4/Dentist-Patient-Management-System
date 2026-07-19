@@ -1,6 +1,6 @@
 "use client";
 
-import { useStateContext } from "@/providers/StateProvider";
+
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +21,6 @@ const resources = [
 ];
 
 export default function Footer() {
-  const { setKolModalOpen } = useStateContext();
   return (
     <footer className="bg-[#10436B] pt-20 pb-10 px-6 md:px-12 text-white">
       <div className="max-w-400 w-11/12 mx-auto">

@@ -22,7 +22,7 @@ A comprehensive space for dentists to manage their practices, patients, and veri
 ### 2. Admin Dashboard
 An control center for platform administration and quality assurance:
 *   **Dentist Verification Queue:** Dedicated system for admins to audit and verify incoming dentist licenses and sterilization credentials.
-*   **KOL (Key Opinion Leader) Management:** Directory of key dentists, status toggling (deactivate/activate), and filtering systems.
+
 *   **Anti-Collusion & Review Auditing:** Advanced anti-collusion mechanisms and fraud detection to safeguard the platform's review system integrity.
 *   **SEO Review Pages:** Tools for monitoring and configuring public-facing SEO doctor review pages.
 *   **Global Settings:** Central control for RDV (RatedDocs Verification) score weights, platform fees, and system-wide announcements.
@@ -62,7 +62,7 @@ src/
 │   └── (admin-dashboard)/  # Admin Dashboard & modules
 ├── app/modules/            # Modular feature components split by domain
 │   ├── auth/               # Login & Registration sub-components
-│   ├── admin/              # Admin pages (Anti-collusion, KOL management, Settings)
+│   ├── admin/              # Admin pages (Anti-collusion, Settings)
 │   ├── dentist/            # Dentist pages (Verification phases, Booking, Patient lists)
 │   └── shared/             # Universally shared modular code
 ├── components/             # Reusable UI components
