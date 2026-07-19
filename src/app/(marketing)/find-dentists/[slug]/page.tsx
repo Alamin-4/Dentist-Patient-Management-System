@@ -4,11 +4,11 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
-import ProfilePageSkeleton from "../../_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
+import ProfilePageSkeleton from "@/features/marketing/_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
 
 const DentistProfile = dynamic(
   () =>
-    import("../../_components/module/DentistAllComponents/DentistProfile/ProfilePage"),
+    import("@/features/marketing/_components/module/DentistAllComponents/DentistProfile/ProfilePage"),
   { ssr: false },
 );
 

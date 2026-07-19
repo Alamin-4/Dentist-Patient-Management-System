@@ -1,5 +1,5 @@
-import DentistCardSkeleton from "../_components/module/DentistAllComponents/DentistCardSkeleton";
-import FilterSidebarSkeleton from "../_components/module/DentistAllComponents/SideBar/FilterSidebarSkeleton";
+import DentistCardSkeleton from "@/features/marketing/_components/module/DentistAllComponents/DentistCardSkeleton";
+import FilterSidebarSkeleton from "@/features/marketing/_components/module/DentistAllComponents/SideBar/FilterSidebarSkeleton";
 import { Skeleton } from "@/components/feedback/skeleton";
 
 export default function FindDentistLoading() {

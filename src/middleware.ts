@@ -141,11 +141,19 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url);
       }
     }
-    if (pathname === "/register-doctor" && userRole === UserRole.DENTIST) {
-      const dentistStep = request.nextUrl.searchParams.get("dentist");
-      if (dentistStep !== "professional-info") {
-        const url = new URL("/dentist/profile", request.url);
+    if (pathname === "/register-doctor") {
+      if (userRole === UserRole.PATIENT) {
+        const url = new URL("/patient", request.url);
         return NextResponse.redirect(url);
+      } else if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
+        const url = new URL("/admin", request.url);
+        return NextResponse.redirect(url);
+      } else if (userRole === UserRole.DENTIST) {
+        const dentistStep = request.nextUrl.searchParams.get("dentist");
+        if (dentistStep !== "professional-info") {
+          const url = new URL("/dentist/profile", request.url);
+          return NextResponse.redirect(url);
+        }
       }
     }
   }

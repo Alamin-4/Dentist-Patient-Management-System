@@ -4,16 +4,19 @@ import { ArrowLeft } from "lucide-react";
 
 import Image from "next/image";
 import { CreateAccountForm } from "./create-account";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { VerifyOtpForm } from "./verify-otp-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProfessionalDetailsForm } from "./professional-details-form";
 import { ProfileSuccessState } from "./ProfileSuccessRate";
+import { useMe } from "@/hooks/auth/useAuth";
 
 export default function RegisterPageComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dentistParam = searchParams.get("dentist");
+
+  const { user, isPending } = useMe();
 
   const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">(
     dentistParam === "professional-info" ? "professional-info" : "create-account"
@@ -22,6 +25,32 @@ export default function RegisterPageComponent() {
     typeof window !== "undefined"
       ? localStorage.getItem("registerEmail")
       : null;
+
+  useEffect(() => {
+    if (!isPending && user) {
+      if (user.role === "PATIENT") {
+        router.replace("/patient");
+      } else if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+        router.replace("/admin");
+      }
+    }
+  }, [user, isPending, router]);
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>
+      </div>
+    );
+  }
+
+  if (user && user.role !== "DENTIST") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>
+      </div>
+    );
+  }
 
   return (
     <main className="flex min-h-screen w-full flex-col lg:flex-row">

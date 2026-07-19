@@ -1,9 +1,9 @@
-import IntakeModal from "@/app/(marketing)/_components/module/Booking-flow/Book";
+import IntakeModal from "@/features/marketing/_components/module/Booking-flow/Book";
 import { Navbar } from "@/app/modules/shared/navbar";
 import { Sidebar } from "@/app/modules/shared/sidebar";
 import { MobileSidebarDrawer } from "@/app/modules/shared/mobile-sidebar-drawer";
-import StartBookingModal from "@/app/(marketing)/_components/module/Booking-flow/StartBooking";
-import CompareModal from "@/app/(marketing)/_components/module/CompareModal/CompareModal";
+import StartBookingModal from "@/features/marketing/_components/module/Booking-flow/StartBooking";
+import CompareModal from "@/features/marketing/_components/module/CompareModal/CompareModal";
 import { SidebarProvider } from "@/context/sidebar-context";
 
 export default function DashboardLayout({

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle2, Video } from "lucide-react";
-import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
 import { apiClient } from "@/api/client";
 import { formatSlotToAmPm } from "../../_components/DentistScheduleCard";
 

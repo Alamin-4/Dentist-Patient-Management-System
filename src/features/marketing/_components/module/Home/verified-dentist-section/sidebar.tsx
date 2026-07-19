@@ -184,14 +184,14 @@ export default function Sidebar({
           )}
         </div>
 
-        {procedureList.length > 1 && (
+        {/* {procedureList.length > 1 && (
           <Link
             href="/find-dentists"
             className="text-[#10436B] text-sm font-semibold mt-6 px-4 hover:underline text-left block"
           >
             View all procedures
           </Link>
-        )}
+        )} */}
       </aside>
     );
   };

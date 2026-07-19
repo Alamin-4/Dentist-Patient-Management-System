@@ -9,7 +9,7 @@ import { useStateContext } from "@/providers/StateProvider";
 import Link from "next/link";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
-import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
 
 const SkeletonCard = () => (
   <div className="rounded-md p-4 sm:p-6 flex flex-col items-start gap-4 border-2 border-slate-100 bg-white animate-pulse">

@@ -1,8 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { Search, SlidersHorizontal, List, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMe } from "@/hooks/auth/useAuth";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 type TopBarProps = {
   query: string;
@@ -23,6 +33,23 @@ export default function TopBar({
   onToggleMapFilters,
   onOpenMobileFilters,
 }: TopBarProps) {
+  const { user } = useMe();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const showJoinButton = !user || user.role !== "DENTIST";
+
+  const handleJoinAsDentistClick = (e: React.MouseEvent) => {
+    if (user && user.role !== "DENTIST") {
+      e.preventDefault();
+      setShowLogoutConfirm(true);
+    }
+  };
+
+  const handleConfirmLogout = () => {
+    document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    window.location.href = "/register-doctor";
+  };
+
   return (
     <div className="w-full">
       <div className="flex flex-col gap-6 py-7">
@@ -30,12 +57,15 @@ export default function TopBar({
           <h1 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0A0A1A] md:text-[40px]">
             Search Verified Dentists
           </h1>
-          <Link
-            href="/register-doctor"
-            className="inline-flex h-12 items-center justify-center rounded-lg bg-[#0E3E65] px-6 text-[14px] font-semibold text-white transition-all hover:bg-[#002850] active:scale-95 shadow-sm shrink-0"
-          >
-            Join as a Dentist
-          </Link>
+          {showJoinButton && (
+            <Link
+              href="/register-doctor"
+              onClick={handleJoinAsDentistClick}
+              className="inline-flex h-12 items-center justify-center rounded-lg bg-[#0E3E65] px-6 text-[14px] font-semibold text-white transition-all hover:bg-[#002850] active:scale-95 shadow-sm shrink-0"
+            >
+              Join as a Dentist
+            </Link>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
@@ -129,6 +159,34 @@ export default function TopBar({
           </div>
         </div>
       </div>
+
+      <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
+          <DialogHeader>
+            <DialogTitle className="text-[#0E3E65] font-bold text-xl">Sign Out Required</DialogTitle>
+            <DialogDescription className="text-slate-500">
+              You are currently signed in as a Patient. To register a new Dentist account, you must sign out of your current account.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="pt-4 border-t border-slate-100 mt-6 flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowLogoutConfirm(false)}
+              className="border-slate-200 text-slate-600 hover:bg-slate-50 h-10 text-sm"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmLogout}
+              className="bg-[#0E3E65] hover:bg-[#002850] text-white font-bold h-10 text-sm px-6"
+            >
+              Sign Out & Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
