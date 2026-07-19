@@ -1,4 +1,4 @@
-import { Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
 
 const makeRating = (value: number, count: number) => ({
   google: value,

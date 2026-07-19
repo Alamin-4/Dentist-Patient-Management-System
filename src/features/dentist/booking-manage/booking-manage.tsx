@@ -6,45 +6,6 @@ import TabBarAndSearch from "./tab-bar-and-search";
 import BookingCard from "./booking-card";
 import { getSubmittedBookings, SubmittedBooking } from "@/lib/storage/bookingService";
 
-const DEMO_CARDS = [
-  {
-    id: "booking_demo_1",
-    name: "Jacob Smith",
-    email: "Jacob.smith@sample.com",
-    initials: "JS",
-    procedure: "Dental Implants",
-    budget: "$1,254",
-    status: "In Escrow",
-    dates: "12–24 Jan, 2024",
-    timelineLabel: "Patient timeline",
-    timelineStatus: "Day 1 arrival",
-  },
-  {
-    id: "booking_demo_2",
-    name: "Jacob Smith",
-    email: "Jacob.smith@sample.com",
-    initials: "JS",
-    procedure: "Dental Implants",
-    budget: "$1,254",
-    status: "In Escrow",
-    dates: "12–24 Jan, 2024",
-    timelineLabel: "Timeline",
-    timelineStatus: "Patient in Travel",
-  },
-  {
-    id: "booking_demo_3",
-    name: "Jacob Smith",
-    email: "Jacob.smith@sample.com",
-    initials: "JS",
-    procedure: "Dental Implants",
-    budget: "$1,254",
-    status: "In Escrow",
-    dates: "12–24 Jan, 2024",
-    timelineLabel: "Timeline",
-    timelineStatus: "Patient in Travel",
-  },
-];
-
 import { useTreatmentBookings } from "@/hooks/treatment-booking/useTreatmentBooking";
 import { useStateContext } from "@/providers/StateProvider";
 

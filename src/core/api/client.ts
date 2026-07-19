@@ -94,6 +94,34 @@ export const apiClient = {
       const response = await api.get(`/patients/${slug}`);
       return response.data;
     },
+    getReferrals: async () => {
+      const response = await api.get(endpoints.patients.referrals);
+      return response.data;
+    },
+    getDocuments: async () => {
+      const response = await api.get(endpoints.patients.documents);
+      return response.data;
+    },
+    uploadDocument: async (payload: { title: string; category: string; fileUrl: string }) => {
+      const response = await api.post(endpoints.patients.uploadDocument, payload);
+      return response.data;
+    },
+    getResults: async () => {
+      const response = await api.get(endpoints.patients.results);
+      return response.data;
+    },
+    uploadResult: async (payload: { title: string; doctor: string; location: string; beforeImg: string; afterImg: string }) => {
+      const response = await api.post(endpoints.patients.uploadResult, payload);
+      return response.data;
+    },
+    getTravelChecklist: async () => {
+      const response = await api.get(endpoints.patients.travelChecklist);
+      return response.data;
+    },
+    updateTravelChecklist: async (payload: { items: Array<{ id: string; completed: boolean }> }) => {
+      const response = await api.patch(endpoints.patients.updateTravelChecklist, payload);
+      return response.data;
+    },
   },
   dentists: {
     register: async (payload: IRegisterDentist) => {
@@ -265,6 +293,20 @@ export const apiClient = {
       const response = await api.get(endpoints.dentists.directoryDetail(slug));
       return response.data;
     },
+    getDirectoryReviews: async (slug: string) => {
+      const response = await api.get(endpoints.dentists.directoryReviews(slug));
+      return response.data;
+    },
+    createDirectoryReview: async (slug: string, payload: {
+      rating: number;
+      communication?: number;
+      valueForMoney?: number;
+      followThrough?: number;
+      text: string;
+    }) => {
+      const response = await api.post(endpoints.dentists.directoryReviews(slug), payload);
+      return response.data;
+    },
     claimDirectoryProfile: async (slug: string, payload: ClaimProfilePayload) => {
       const response = await api.post(endpoints.dentists.directoryClaim(slug), payload);
       return response.data;
@@ -299,6 +341,22 @@ export const apiClient = {
     },
     sendClaimOtp: async (payload: { email: string; password?: string; name?: string }) => {
       const response = await api.post(endpoints.dentists.directorySendClaimOtp, payload);
+      return response.data;
+    },
+    getReferrals: async () => {
+      const response = await api.get(endpoints.dentists.referrals);
+      return response.data;
+    },
+    withdrawReferral: async () => {
+      const response = await api.post(endpoints.dentists.withdrawReferral);
+      return response.data;
+    },
+    getResults: async () => {
+      const response = await api.get(endpoints.dentists.results);
+      return response.data;
+    },
+    createResult: async (payload: { title: string; patientName: string; date: string; location: string; beforeImage: string; afterImage: string }) => {
+      const response = await api.post(endpoints.dentists.createResult, payload);
       return response.data;
     },
   },

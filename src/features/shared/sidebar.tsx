@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import useAuth, { useMe } from "@/hooks/auth/useAuth";
 import {
   LayoutDashboard,
   User,
@@ -16,13 +17,13 @@ import {
   FolderOpen,
   Activity,
   Plane,
-  BookOpen,
   Tag,
   Share2,
   X,
   MessageSquare,
   type LucideIcon,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/context/sidebar-context";
 
@@ -58,11 +59,6 @@ const patientNav: NavGroup[] = [
         href: "/patient/travel-checklist",
       },
       {
-        icon: BookOpen,
-        label: "KOL Directory",
-        href: "/patient/kol-directory",
-      },
-      {
         icon: Settings,
         label: "Profile & Settings",
         href: "/patient/settings",
@@ -96,7 +92,22 @@ const DASHBOARD_ROOTS = ["/dentist", "/patient"];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { close } = useSidebar();
+  const { logoutMutation } = useAuth();
+  const { mutate: logout } = logoutMutation;
+  const { user } = useMe();
+
+  const displayName = user?.name || user?.email?.split("@")[0] || "User";
+  const initials = user?.email
+    ? user.email.slice(0, 2).toUpperCase()
+    : "US";
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+    close();
+  };
 
   const isVerificationPath = pathname === "/dentist/verification";
 
@@ -169,11 +180,28 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="border-t border-slate-100 p-3">
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
-          <LogOut className="h-4.5 w-4.5" />
-          Log Out
+      {/* User Section (Direct Logout) */}
+      <div className="border-t border-slate-100 p-3 shrink-0">
+        <button 
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-red-50 focus:outline-none transition-colors border border-transparent hover:border-red-100 cursor-pointer group"
+          title="Click to Log Out"
+        >
+          <Avatar className="h-9 w-9 border border-slate-200 group-hover:border-red-200">
+            <AvatarImage src={user?.image || undefined} referrerPolicy="no-referrer" />
+            <AvatarFallback className="bg-[#10436B] text-white font-semibold text-xs uppercase group-hover:bg-red-600 transition-colors">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-slate-800 truncate leading-tight group-hover:text-red-600 transition-colors duration-150">
+              {displayName}
+            </p>
+            <p className="text-[11px] text-slate-400 truncate mt-0.5 capitalize font-medium group-hover:text-red-400 transition-colors">
+              {role} Account
+            </p>
+          </div>
+          <LogOut className="h-4 w-4 text-slate-400 shrink-0 transition-all duration-200 group-hover:text-red-500 group-hover:translate-x-0.5" />
         </button>
       </div>
     </aside>

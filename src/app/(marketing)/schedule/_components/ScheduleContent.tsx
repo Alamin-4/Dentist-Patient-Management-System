@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useStateContext } from "@/providers/StateProvider";
-import { mapApiDentist, type Dentist } from "@/app/(marketing)/_components/module/DentistAllComponents/types";
+import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
 import DentistScheduleCard, {
   type DentistSelection,
 } from "./DentistScheduleCard";

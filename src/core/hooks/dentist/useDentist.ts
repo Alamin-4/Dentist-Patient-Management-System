@@ -259,9 +259,10 @@ export function useDentistProceduresList() {
   });
 }
 
-export function useDentistProfileQuery() {
+export function useDentistProfileQuery(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["dentist_profile"],
     queryFn: () => apiClient.dentists.dentistProfile(),
+    ...options,
   });
 }

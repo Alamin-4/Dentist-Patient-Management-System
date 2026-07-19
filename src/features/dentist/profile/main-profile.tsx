@@ -15,7 +15,7 @@ export default function DentistProfilePage() {
   const { user } = useMe();
   const dentistProfile = useDentistProfileQuery();
   const { rdvScore } = useVerificationProgress();
-  const [activeTab, setActiveTab] = useState<"overview" | "operations" | "clinical-depth" | "reviews">("clinical-depth");
+  const [activeTab, setActiveTab] = useState<"overview" | "operations" | "clinical-depth" | "reviews">("overview");
 
   if (dentistProfile.isPending) {
     return (
@@ -82,9 +82,8 @@ export default function DentistProfilePage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`pb-4 text-sm font-bold transition-all relative ${
-                    isActive ? "text-[#163E5C]" : "text-gray-400 hover:text-gray-600"
-                  }`}
+                  className={`pb-4 text-sm font-bold transition-all relative ${isActive ? "text-[#163E5C]" : "text-gray-400 hover:text-gray-600"
+                    }`}
                 >
                   {tab.label}
                   {isActive && (

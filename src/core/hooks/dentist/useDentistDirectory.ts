@@ -118,3 +118,30 @@ export function useSendClaimOtp() {
       apiClient.dentists.sendClaimOtp(payload),
   });
 }
+
+export function useDentistDirectoryReviews(slug: string) {
+  return useQuery({
+    queryKey: ["dentistDirectoryReviews", slug],
+    queryFn: () => apiClient.dentists.getDirectoryReviews(slug),
+    enabled: !!slug,
+    staleTime: 30_000,
+  });
+}
+
+export function useCreateDentistDirectoryReview() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ slug, payload }: { slug: string; payload: {
+      rating: number;
+      communication?: number;
+      valueForMoney?: number;
+      followThrough?: number;
+      text: string;
+    } }) => apiClient.dentists.createDirectoryReview(slug, payload),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["dentistDirectoryReviews", variables.slug] });
+      queryClient.invalidateQueries({ queryKey: ["dentistDirectoryDetail", variables.slug] });
+    },
+  });
+}

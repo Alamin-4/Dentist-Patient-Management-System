@@ -1,65 +1,75 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
 import {
   Copy,
   Calendar,
   MessageSquare,
   Mail,
-  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 export default function ReferralsPageComponent() {
-  const referralCode = "RD-JW4729";
+  const { data: referralsData, isLoading } = useQuery({
+    queryKey: ["patient-referrals"],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.patients.getReferrals();
+        return response?.data || response;
+      } catch (err) {
+        console.warn("Patient Referrals API route not found or ready:", err);
+        return null;
+      }
+    },
+  });
 
-  const [history] = useState([
-    {
-      id: 1,
-      name: "James R.",
-      date: "March 15, 2026",
-      status: "Credit issued",
-    },
-    {
-      id: 2,
-      name: "Ethan K.",
-      date: "April 10, 2026",
-      status: "Credit issued",
-    },
-    {
-      id: 3,
-      name: "Ethan K.",
-      date: "April 10, 2026",
-      status: "Credit issued",
-    },
-    { id: 4, name: "Sophia L.", date: "April 2, 2026", status: "Pending" },
-  ]);
+  const referralCode = referralsData?.referralCode || "";
+  const availableCredits = referralsData?.availableCredits || "$0";
+  const expireDate = referralsData?.expireDate || "December 31, 2026";
+  const history = referralsData?.history || [];
 
   const copyToClipboard = () => {
+    if (!referralCode) {
+      toast.error("No referral code available");
+      return;
+    }
     navigator.clipboard.writeText(referralCode);
-    // toast.success("Code copied to clipboard!");
+    toast.success("Referral code copied to clipboard!");
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex h-60 items-center justify-center">
+        <p className="text-slate-500 animate-pulse">Loading referrals...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 animate-in fade-in duration-300">
       <h1 className="text-3xl font-bold text-[#1A1A2E]">Referrals</h1>
 
       {/* Top Section: Code & Credits */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Referral Code Card - Matches image_2df170.png */}
+        {/* Referral Code Card */}
         <div className="lg:col-span-2 bg-white rounded-lg border border-[#CEE0F4] p-8 flex flex-col items-center justify-center text-center space-y-6">
           <div className="space-y-1">
             <p className="text-[#6B7280]">Your Referral Code</p>
             <div className="flex items-center gap-3">
               <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A2E] tracking-tight">
-                {referralCode}
+                {referralCode || "—"}
               </span>
-              <button
-                onClick={copyToClipboard}
-                className="p-2 hover:bg-slate-50 rounded-full transition-colors group"
-              >
-                <Copy className="size-6 text-slate-300 group-hover:text-[#0F3659]" />
-              </button>
+              {referralCode && (
+                <button
+                  onClick={copyToClipboard}
+                  className="p-2 hover:bg-slate-50 rounded-full transition-colors group"
+                >
+                  <Copy className="size-6 text-slate-300 group-hover:text-[#0F3659]" />
+                </button>
+              )}
             </div>
             <p className="text-[#6B7280] text-xs">
               Share your code and you both get $50 credit
@@ -69,12 +79,14 @@ export default function ReferralsPageComponent() {
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
             <Button
               variant="outline"
+              disabled={!referralCode}
               className="flex-1 h-12 rounded-lg cursor-pointer border-[#6B7280] font-medium text-[#6B7280] gap-2"
             >
               <MessageSquare className="size-4" /> Share as SMS
             </Button>
             <Button
               variant="outline"
+              disabled={!referralCode}
               className="flex-1 h-12 rounded-lg cursor-pointer border-[#6B7280] font-medium text-[#6B7280] gap-2"
             >
               <Mail className="size-4" /> Share as Email
@@ -86,15 +98,15 @@ export default function ReferralsPageComponent() {
         <div className="bg-white rounded-lg border border-[#CEE0F4] p-8 flex flex-col justify-between min-h-60">
           <div className="space-y-1">
             <p className="text-[#6B7280]">Available Credits</p>
-            <p className="text-2xl md:text-3xl font-bold text-[#1A1A2E]">$50</p>
+            <p className="text-2xl md:text-3xl font-bold text-[#1A1A2E]">{availableCredits}</p>
           </div>
 
           <div className="flex items-center gap-2 text-[#6B7280] border-t pt-4">
             <Calendar className="size-5" />
             <p className="text-sm">
-              Expire on:{" "}
+              Expires on:{" "}
               <span className="font-bold text-slate-600">
-                December 31, 2026
+                {expireDate}
               </span>
             </p>
           </div>
@@ -105,30 +117,38 @@ export default function ReferralsPageComponent() {
       <div className="space-y-6 p-4 lg:p-6 rounded-lg bg-white border border-[#E9EDEE]">
         <h2 className="text-2xl font-bold text-[#1A1A2E]">Referral History</h2>
 
-        <div className="space-y-4">
-          {history.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-lg border border-[#CEE0F4] p-4 lg:p-6 flex items-center justify-between"
-            >
-              <div className="space-y-1">
-                <h4 className="text-xl font-bold text-[#1A1A2E]">
-                  {item.name}
-                </h4>
-                <p className="text-[#6B7280] font-medium">{item.date}</p>
-              </div>
-
+        {history.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
+            <p className="text-sm font-semibold text-slate-500">No referrals yet</p>
+            <p className="text-xs text-slate-400 mt-1">Start sharing your referral code with friends!</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {history.map((item: any) => (
               <div
-                className={`px-6 py-2 rounded-lg font-bold text-sm whitespace-nowrap ${item.status === "Credit issued"
-                    ? "bg-[#0BB05F] text-white"
-                    : "bg-[#F7941D] text-white"
-                  }`}
+                key={item.id}
+                className="bg-white rounded-lg border border-[#CEE0F4] p-4 lg:p-6 flex items-center justify-between"
               >
-                {item.status}
+                <div className="space-y-1">
+                  <h4 className="text-xl font-bold text-[#1A1A2E]">
+                    {item.name}
+                  </h4>
+                  <p className="text-[#6B7280] font-medium">{item.date}</p>
+                </div>
+
+                <div
+                  className={`px-6 py-2 rounded-lg font-bold text-sm whitespace-nowrap ${
+                    item.status === "Credit issued"
+                      ? "bg-[#0BB05F] text-white"
+                      : "bg-[#F7941D] text-white"
+                  }`}
+                >
+                  {item.status}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

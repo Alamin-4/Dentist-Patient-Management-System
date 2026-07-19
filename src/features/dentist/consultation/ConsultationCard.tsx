@@ -39,6 +39,10 @@ export const ConsultationCard = ({
     }
   }
 
+  const scheduledTimeMs = data.scheduledDate ? new Date(data.scheduledDate).getTime() : 0;
+  const durationMs = (data.durationMinutes || 15) * 60 * 1000;
+  const isExpired = scheduledTimeMs > 0 && scheduledTimeMs + durationMs < Date.now();
+
   return (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
       <div>
@@ -139,16 +143,20 @@ export const ConsultationCard = ({
           <>
             <button
               onClick={onClick}
-              className="flex-1 h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+              className={`h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${
+                isExpired ? "w-full" : "flex-1"
+              }`}
             >
               View Details
             </button>
-            <button
-              onClick={onJoinMeeting}
-              className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
-            >
-              Join Consultation
-            </button>
+            {!isExpired && (
+              <button
+                onClick={onJoinMeeting}
+                className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
+              >
+                Join Consultation
+              </button>
+            )}
           </>
         ) : (
           /* Treatment Estimate */

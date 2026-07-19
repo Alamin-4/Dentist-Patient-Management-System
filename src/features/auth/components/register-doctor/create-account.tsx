@@ -41,7 +41,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   } = useAuth();
 
   useEffect(() => {
-    if (user && user?.emailVerified && setStep) {
+    if (user && user?.role === "DENTIST" && user?.emailVerified && setStep) {
       setStep("professional-info")
       router.push(`${pathName}?dentist=professional-info`);
     }
