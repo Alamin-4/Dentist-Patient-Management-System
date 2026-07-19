@@ -25,7 +25,6 @@ export default function MultiStepForm() {
   const { checkPhotoVerifyProgress, step2Status, step2Note } = useVerificationProgress();
 
   const progressData = checkPhotoVerifyProgress?.data;
-  // Pre-fill form whenever there is server data (submitted, approved, or rejected resubmission)
   const hasServerData = !!progressData?.data;
 
   const methods = useForm<FormInputValues, unknown, FormValues>({
@@ -34,14 +33,13 @@ export default function MultiStepForm() {
     defaultValues: {
       jciCertificate: null,
       videoWalkthrough: null,
-      procedures: [{ name: "Implant consultation", price: 250, notes: "" }],
+      procedures: [{ name: "", price: 0, notes: "" }],
       signerFullName: "",
       typedSignature: "",
       agreeToGuarantee: false,
     },
   });
 
-  // Load existing data when server has previous submission (including rejected resubmissions)
   useEffect(() => {
     if (hasServerData && progressData?.data) {
       const serverData = progressData.data as any;

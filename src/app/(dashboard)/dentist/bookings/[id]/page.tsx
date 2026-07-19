@@ -98,12 +98,12 @@ export default function BookingDetailPage() {
         conditions: "N/A",
       }
     : {
-        name: "Jacob Smith",
-        email: "jacob.smith@example.com",
-        initials: "JS",
-        procedure: "Dental Treatment",
+        name: "",
+        email: "",
+        initials: "",
+        procedure: "",
         budget: "$0",
-        travelFrom: "Pending scheduling",
+        travelFrom: "",
         lastVisited: "N/A",
         conditions: "N/A",
       };

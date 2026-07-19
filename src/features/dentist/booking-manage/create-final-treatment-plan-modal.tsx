@@ -54,16 +54,16 @@ export default function CreateFinalTreatmentPlanModal({
   isOpen,
   onClose,
   onSubmit,
-  estimateTotal = "$1,200",
+  estimateTotal = "$0",
   patient = {
-    name: "Jacob Smith",
-    email: "Jacob.smith@sample.com",
-    initials: "AH",
-    procedure: "Dental Implants",
-    budget: "$1,200",
-    travelDates: "Wed 24 Jan, 2024",
-    lastVisited: "Wed 24 Jan, 2024",
-    conditions: "Bone loss, Gum Disease",
+    name: "",
+    email: "",
+    initials: "",
+    procedure: "",
+    budget: "",
+    travelDates: "",
+    lastVisited: "",
+    conditions: "",
   },
 }: CreateFinalTreatmentPlanModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -80,8 +80,7 @@ export default function CreateFinalTreatmentPlanModal({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       procedures: [
-        { name: "Implant consultation", price: 250, notes: "Includes treatment plan review" },
-        { name: "Implant consultation", price: 250, notes: "Includes treatment plan review" },
+        { name: "", price: 0, notes: "" },
       ],
     },
   });

@@ -66,7 +66,7 @@ export default function AddPricing() {
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      procedures: [{ name: "Implant consultation", price: "250", notes: "" }],
+      procedures: [{ name: "", price: "", notes: "" }],
       agreeToGuarantee: false,
       signerFullName: "",
       typedSignature: "",
@@ -78,26 +78,7 @@ export default function AddPricing() {
     name: "procedures",
   });
 
-  // Pre-fill form when data is loaded from the backend
-  useEffect(() => {
-    if (progressData) {
-      const procedures = progressData.procedures || [];
-      const ops = progressData.dentistOperations;
 
-      reset({
-        jciCertificate: ops?.jciCertificate ? new File([], "JCI Certificate") : null,
-        videoWalkthrough: ops?.walkthroughVideo ? new File([], "Video Walkthrough") : null,
-        procedures: procedures.map((p: any) => ({
-          name: p.procedureName || "",
-          price: String(p.price || ""),
-          notes: p.notes || "",
-        })),
-        signerFullName: ops?.signerName || "",
-        typedSignature: ops?.signature || "",
-        agreeToGuarantee: ops?.agreedToGuarantee || false,
-      });
-    }
-  }, [progressData, reset]);
 
   const onSubmit = (data: FormValues) => {
     const jciFile = data.jciCertificate instanceof FileList && data.jciCertificate.length > 0

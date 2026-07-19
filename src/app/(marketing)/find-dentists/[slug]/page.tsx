@@ -4,11 +4,11 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
-import ProfilePageSkeleton from "../../_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
+import ProfilePageSkeleton from "@/features/marketing/_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
 
 const DentistProfile = dynamic(
   () =>
-    import("../../_components/module/DentistAllComponents/DentistProfile/ProfilePage"),
+    import("@/features/marketing/_components/module/DentistAllComponents/DentistProfile/ProfilePage"),
   { ssr: false },
 );
 
@@ -39,13 +39,13 @@ export default function ViewDentistProfile() {
       id: d.id,
       name: d.name,
       slug: d.slug,
-      specialty: d.specialty || "General Dentist",
+      specialty: d.specialty || "",
       rating: combinedRating ?? 0,
       reviewCount,
-      image: d.image || "/images/man-avatar.png",
-      location: d.fullAddress || d.city || "Mexico",
+      image: d.image || "",
+      location: d.fullAddress || d.city || "",
       city: d.city || "",
-      country: d.country || "Mexico",
+      country: d.country || "",
       latitude: d.latitude ?? null,
       longitude: d.longitude ?? null,
       price: d.price || 0,
@@ -56,13 +56,19 @@ export default function ViewDentistProfile() {
       profileType: d.profileType || "CLAIMABLE",
       procedures: d.procedures || [],
       languages: d.languages || [],
-      bio: d.description || d.bio || `Dr. ${d.name} is a highly dedicated professional specializing in ${d.specialty || "dentistry"} at ${d.clinicName || "their local clinic"}. Located in ${d.city || "Mexico"}, they are committed to providing outstanding dental care.`,
+      bio: d.description || d.bio || (
+        d.specialty
+          ? `Dr. ${d.name} is a dedicated professional specializing in ${d.specialty}${d.clinicName ? ` at ${d.clinicName}` : ""}.${d.city || d.country ? ` Located in ${[d.city, d.country].filter(Boolean).join(", ")}.` : ""}`
+          : `Dr. ${d.name} is a dedicated professional dentist${d.clinicName ? ` at ${d.clinicName}` : ""}.${d.city || d.country ? ` Located in ${[d.city, d.country].filter(Boolean).join(", ")}.` : ""}`
+      ),
       googleRating: googleRating ?? combinedRating ?? 0,
       googleReviewCount: reviewCount,
       dentistLicense: d.dentistLicense,
       dentistOperations: d.dentistOperations,
       materials: d.materials || [],
       backendId: d.backendId,
+      claimedByUserId: d.claimedByUserId,
+      userId: d.userId,
     };
   }, [directoryDetailResponse]);
 

@@ -65,8 +65,7 @@ export const useUiStoreForVerification = () => {
   const activeModal = useAppStore((state) => state.activeModal);
   const compareModalPurpose = useAppStore((state) => state.compareModalPurpose);
   const setCompareModalPurpose = useAppStore((state) => state.setCompareModalPurpose);
-  const kolModalOpen = useAppStore((state) => state.kolModalOpen);
-  const setKolModalOpen = useAppStore((state) => state.setKolModalOpen);
+
 
   const showSignupModal = activeModal === "signup";
   const showSigninModal = activeModal === "signin";
@@ -79,8 +78,7 @@ export const useUiStoreForVerification = () => {
     activeModal,
     compareModalPurpose,
     setCompareModalPurpose,
-    kolModalOpen,
-    setKolModalOpen,
+
 
     // Computed values for compatibility
     showSignupModal,

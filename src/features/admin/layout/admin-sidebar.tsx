@@ -82,12 +82,7 @@ const adminNav: NavGroup[] = [
       { icon: BarChart3, label: "Reports", href: "/admin/reports" },
     ],
   },
-  {
-    label: "DIRECTORY",
-    items: [
-      { icon: Globe, label: "KOL Management", href: "/admin/kol-management" },
-    ],
-  },
+
   {
     label: "TRUST & SAFETY",
     items: [
