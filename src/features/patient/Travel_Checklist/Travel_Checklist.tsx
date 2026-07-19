@@ -1,112 +1,122 @@
 "use client";
 
-import React, { useState } from "react";
-import { Check } from "lucide-react";
+import React, { useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
+import { Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 interface ChecklistItem {
   id: string;
   text: string;
   completed: boolean;
+  section: "before" | "after";
 }
 
 export default function TravelChecklistPageComponent() {
-  const [beforeItems, setBeforeItems] = useState<ChecklistItem[]>([
-    {
-      id: "b1",
-      text: "Confirm travel insurance covers dental procedures abroad",
-      completed: true,
-    },
-    {
-      id: "b2",
-      text: "Share your treatment plan with your home dentist",
-      completed: true,
-    },
-    {
-      id: "b3",
-      text: "Arrange accommodation within 15 minutes of the clinic in Cancun",
-      completed: true,
-    },
-    {
-      id: "b4",
-      text: "Download all documents from your Document Vault",
-      completed: true,
-    },
-    { id: "b5", text: "Save your arrival code: 7429", completed: true },
-    {
-      id: "b6",
-      text: "Confirm your consultation video link is working",
-      completed: false,
-    },
-    {
-      id: "b7",
-      text: "Pack any recent X-rays or dental records",
-      completed: false,
-    },
-  ]);
+  const queryClient = useQueryClient();
 
-  const [afterItems, setAfterItems] = useState<ChecklistItem[]>([
-    { id: "a1", text: "Upload your after photo", completed: false },
-    { id: "a2", text: "Leave a review for Dr. Eliza Mick", completed: false },
-    { id: "a3", text: "Share your results with friends", completed: false },
-    {
-      id: "a4",
-      text: "Schedule a follow-up with your home dentist at 3 months",
-      completed: false,
+  const { data: items = [], isLoading } = useQuery<ChecklistItem[]>({
+    queryKey: ["patient-travel-checklist"],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.patients.getTravelChecklist();
+        const apiData = response?.data || response;
+        return Array.isArray(apiData) ? apiData : [];
+      } catch (err) {
+        console.warn("Patient Travel Checklist API route not found or ready:", err);
+        return [];
+      }
     },
-    {
-      id: "a5",
-      text: "Download your Treatment Completion Certificate",
-      completed: false,
-    },
-  ]);
+  });
 
-  const toggleItem = (id: string, section: "before" | "after") => {
-    const setter = section === "before" ? setBeforeItems : setAfterItems;
-    setter((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, completed: !item.completed } : item,
-      ),
-    );
+  const toggleMutation = useMutation({
+    mutationFn: async (payload: { id: string; completed: boolean }) => {
+      // Toggle a single item
+      return await apiClient.patients.updateTravelChecklist({
+        items: [{ id: payload.id, completed: payload.completed }],
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patient-travel-checklist"] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || err?.message || "Failed to update checklist item");
+    },
+  });
+
+  const beforeItems = useMemo(() => {
+    return items.filter((item) => item.section === "before");
+  }, [items]);
+
+  const afterItems = useMemo(() => {
+    return items.filter((item) => item.section === "after");
+  }, [items]);
+
+  const toggleItem = (id: string, currentStatus: boolean) => {
+    toggleMutation.mutate({ id, completed: !currentStatus });
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-[#0F3659] animate-spin" />
+        <p className="text-sm text-slate-500 mt-2">Loading travel checklist...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-300">
       <h1 className="text-2xl font-bold text-[#1A1A2E] mb-10">
         Travel Checklist
       </h1>
 
-      {/* Before you travel Section */}
-      <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
-        <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
-          Before you travel
-        </h2>
-        <div className="space-y-5">
-          {beforeItems.map((item) => (
-            <CheckRow
-              key={item.id}
-              item={item}
-              onToggle={() => toggleItem(item.id, "before")}
-            />
-          ))}
+      {items.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-slate-200 rounded-lg bg-white p-12">
+          <p className="text-base font-semibold text-slate-500">No checklist items created yet</p>
+          <p className="text-xs text-slate-400 mt-1">Your travel checklist items will show up here once generated by the system.</p>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Before you travel Section */}
+          {beforeItems.length > 0 && (
+            <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
+              <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
+                Before you travel
+              </h2>
+              <div className="space-y-5">
+                {beforeItems.map((item) => (
+                  <CheckRow
+                    key={item.id}
+                    item={item}
+                    onToggle={() => toggleItem(item.id, item.completed)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
-      {/* After you travel Section */}
-      <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
-        <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
-          After you travel
-        </h2>
-        <div className="space-y-5">
-          {afterItems.map((item) => (
-            <CheckRow
-              key={item.id}
-              item={item}
-              onToggle={() => toggleItem(item.id, "after")}
-            />
-          ))}
-        </div>
-      </div>
+          {/* After you travel Section */}
+          {afterItems.length > 0 && (
+            <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
+              <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
+                After you travel
+              </h2>
+              <div className="space-y-5">
+                {afterItems.map((item) => (
+                  <CheckRow
+                    key={item.id}
+                    item={item}
+                    onToggle={() => toggleItem(item.id, item.completed)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

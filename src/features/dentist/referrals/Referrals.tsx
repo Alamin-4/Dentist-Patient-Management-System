@@ -1,43 +1,68 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
 import ReferralStats from "./components/referral-stats";
 import ReferralHistory, { type ReferralHistoryItem } from "./components/referral-history";
-
-const referralCode = "RD-JW4729";
-
-const referralHistory: ReferralHistoryItem[] = [
-  { id: 1, name: "Dr. Maya Patel", email: "maya@gmail.com", amount: "$70", initials: "DM" },
-  { id: 2, name: "Dr. Brian Lee", email: "brian@gmail.com", amount: "$70", initials: "DB" },
-  { id: 3, name: "Dr. Amelia Garcia", email: "amelia@gmail.com", amount: "$70", initials: "DA" },
-  { id: 4, name: "Dr. Noah Kim", email: "noah@gmail.com", amount: "$70", initials: "DN" },
-  { id: 5, name: "Dr. Priya Shah", email: "priya@gmail.com", amount: "$70", initials: "DP" },
-  { id: 6, name: "Dr. Liam O'Connor", email: "liam@gmail.com", amount: "$70", initials: "DL" },
-  { id: 7, name: "Dr. Sara Chen", email: "sara@gmail.com", amount: "$70", initials: "DS" },
-  { id: 8, name: "Dr. Marcus Hall", email: "marcus@gmail.com", amount: "$70", initials: "DM" },
-];
+import ReferralsSkeleton from "./components/referrals-skeleton";
 
 export default function Referrals() {
+  const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
+
+  const { data: referralsData, isLoading } = useQuery({
+    queryKey: ["dentist-referrals"],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.dentists.getReferrals();
+        return response?.data || response;
+      } catch (err) {
+        // Log error quietly to the console in development
+        console.warn("Referrals API route not ready or found:", err);
+        return null;
+      }
+    },
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: async () => {
+      return await apiClient.dentists.withdrawReferral();
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Withdrawal request submitted successfully");
+      queryClient.invalidateQueries({ queryKey: ["dentist-referrals"] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || err?.message || "Failed to process withdrawal");
+    },
+  });
+
+  const referralCode = referralsData?.referralCode || "";
+  const availableBalance = referralsData?.availableBalance || "$0";
+  const historyItems = referralsData?.history || [];
 
   const filteredHistory = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
     if (!normalizedQuery) {
-      return referralHistory;
+      return historyItems;
     }
 
-    return referralHistory.filter((item) => {
+    return historyItems.filter((item: ReferralHistoryItem) => {
       return (
         item.name.toLowerCase().includes(normalizedQuery) ||
         item.email.toLowerCase().includes(normalizedQuery)
       );
     });
-  }, [query]);
+  }, [query, historyItems]);
 
   const handleCopyCode = async () => {
+    if (!referralCode) {
+      toast.error("No referral code available");
+      return;
+    }
     try {
       await navigator.clipboard.writeText(referralCode);
       toast.success("Referral code copied");
@@ -45,6 +70,10 @@ export default function Referrals() {
       toast.error("Unable to copy referral code");
     }
   };
+
+  if (isLoading) {
+    return <ReferralsSkeleton />;
+  }
 
   return (
     <section className="space-y-6 lg:space-y-7">
@@ -56,9 +85,9 @@ export default function Referrals() {
 
       <ReferralStats
         referralCode={referralCode}
-        availableBalance="$150"
+        availableBalance={availableBalance}
         onCopyCode={handleCopyCode}
-        onWithdraw={() => toast.success("Withdrawal request started")}
+        onWithdraw={() => withdrawMutation.mutate()}
       />
 
       <ReferralHistory

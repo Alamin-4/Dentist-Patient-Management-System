@@ -151,59 +151,6 @@ export default function UserMenu({
                     </p>
                 </DropdownMenuLabel>
 
-                {/* Status Selection Submenu */}
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">
-                        <div className="flex items-center gap-2.5 flex-1">
-                            <span className={cn(
-                                "h-2 w-2 rounded-full",
-                                status === "active" && "bg-emerald-500",
-                                status === "away" && "bg-amber-500",
-                                status === "dnd" && "bg-rose-500"
-                            )} />
-                            <span>Set status</span>
-                        </div>
-                        <span className="text-[10px] text-slate-400 capitalize font-normal ml-auto mr-1">
-                            {status === "dnd" ? "Do not disturb" : status}
-                        </span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className="w-48 p-1 bg-white border border-slate-100 shadow-lg rounded-xl space-y-0.5">
-                        <DropdownMenuItem
-                            onClick={() => setStatus("active")}
-                            className={cn(
-                                "flex items-center gap-2 px-2.5 py-1.5 text-sm font-medium rounded-lg cursor-pointer transition-colors",
-                                status === "active" ? "bg-slate-50 text-slate-900" : "text-slate-600 hover:bg-slate-50"
-                            )}
-                        >
-                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                            <span className="flex-1">Active</span>
-                            {status === "active" && <Check className="h-3.5 w-3.5 text-slate-500" />}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => setStatus("away")}
-                            className={cn(
-                                "flex items-center gap-2 px-2.5 py-1.5 text-sm font-medium rounded-lg cursor-pointer transition-colors",
-                                status === "away" ? "bg-slate-50 text-slate-900" : "text-slate-600 hover:bg-slate-50"
-                            )}
-                        >
-                            <span className="h-2 w-2 rounded-full bg-amber-500" />
-                            <span className="flex-1">Away</span>
-                            {status === "away" && <Check className="h-3.5 w-3.5 text-slate-500" />}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => setStatus("dnd")}
-                            className={cn(
-                                "flex items-center gap-2 px-2.5 py-1.5 text-sm font-medium rounded-lg cursor-pointer transition-colors",
-                                status === "dnd" ? "bg-slate-50 text-slate-900" : "text-slate-600 hover:bg-slate-50"
-                            )}
-                        >
-                            <span className="h-2 w-2 rounded-full bg-rose-500" />
-                            <span className="flex-1">Do not disturb</span>
-                            {status === "dnd" && <Check className="h-3.5 w-3.5 text-slate-500" />}
-                        </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                </DropdownMenuSub>
-
                 <DropdownMenuSeparator />
 
                 {/* Dashboard Nav link (since they are in marketing navbar, not dashboard) */}

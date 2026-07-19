@@ -15,6 +15,13 @@ export const endpoints = {
   patients: {
     register: "/auth/register/patient",
     personalizeData: "/patients/personalize-data",
+    referrals: "/patients/referrals",
+    documents: "/patients/documents",
+    uploadDocument: "/patients/documents",
+    results: "/patients/results",
+    uploadResult: "/patients/results",
+    travelChecklist: "/patients/travel-checklist",
+    updateTravelChecklist: "/patients/travel-checklist",
   },
   dentists: {
     profile: "/dentists/profile",
@@ -35,6 +42,10 @@ export const endpoints = {
     directoryConsultation: (slug: string) => `/dentists/directory/${slug}/request-consultation`,
     patients: "/dentists/patients",
     patientDetail: (id: string | number) => `/dentists/patients/${id}`,
+    referrals: "/dentists/referrals",
+    withdrawReferral: "/dentists/referrals/withdraw",
+    results: "/dentists/results",
+    createResult: "/dentists/results",
   },
   procedures: {
     dentist: "/procedures/dentist",
