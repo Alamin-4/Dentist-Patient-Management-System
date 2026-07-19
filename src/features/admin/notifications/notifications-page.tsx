@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Bell, Search, CheckCheck, Trash2, Shield, TriangleAlert,
   DollarSign, Settings, Star, CalendarDays, ChevronLeft,
@@ -8,15 +8,40 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
-import notificationsData, {
-  type Notification,
-  type NotificationType,
-  type NotificationPriority,
-} from "@/lib/notifications-data";
 import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
+
+export type NotificationType =
+  | "verification"
+  | "flag"
+  | "payment"
+  | "system"
+  | "review"
+  | "booking";
+
+export type NotificationPriority = "low" | "medium" | "high" | "critical";
+
+export type NotificationActor = {
+  name: string;
+  initials: string;
+  avatarColor: string;
+};
+
+export type Notification = {
+  id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  description: string;
+  timestamp: string;
+  read: boolean;
+  actor?: NotificationActor;
+  actionLabel?: string;
+};
 
 /* ─── Constants ────────────────────────────────────────────────────────────── */
 const PAGE_SIZE = 8;
+
+const DEFAULT_NOTIFICATIONS: Notification[] = [];
 
 const TYPE_META: Record<
   NotificationType,
@@ -374,12 +399,27 @@ const TYPE_FILTERS: NotificationType[] = ["verification", "flag", "payment", "re
 const PRIORITY_FILTERS: NotificationPriority[] = ["critical", "high", "medium", "low"];
 
 export default function NotificationsPage() {
-  const [items, setItems] = useState<Notification[]>(notificationsData);
+  const [items, setItems] = useState<Notification[]>([]);
   const [tab, setTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<NotificationType | "">("");
   const [priorityFilter, setPriorityFilter] = useState<NotificationPriority | "">("");
   const [page, setPage] = useState(1);
+
+  // Load from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("rateddocs_notifications_v2");
+    if (saved) {
+      try {
+        setItems(JSON.parse(saved));
+      } catch (e) {
+        setItems(DEFAULT_NOTIFICATIONS);
+      }
+    } else {
+      setItems(DEFAULT_NOTIFICATIONS);
+      localStorage.setItem("rateddocs_notifications_v2", JSON.stringify(DEFAULT_NOTIFICATIONS));
+    }
+  }, []);
 
   /* ── Derived counts ── */
   const unreadCount = items.filter((n) => !n.read).length;
@@ -439,21 +479,28 @@ export default function NotificationsPage() {
 
   /* ── Actions ── */
   const markRead = (id: string) => {
-    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    const updated = items.map((n) => (n.id === id ? { ...n, read: true } : n));
+    setItems(updated);
+    localStorage.setItem("rateddocs_notifications_v2", JSON.stringify(updated));
   };
 
   const dismiss = (id: string) => {
-    setItems((prev) => prev.filter((n) => n.id !== id));
+    const updated = items.filter((n) => n.id !== id);
+    setItems(updated);
+    localStorage.setItem("rateddocs_notifications_v2", JSON.stringify(updated));
     toast.success("Notification dismissed.");
   };
 
   const markAllRead = () => {
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+    const updated = items.map((n) => ({ ...n, read: true }));
+    setItems(updated);
+    localStorage.setItem("rateddocs_notifications_v2", JSON.stringify(updated));
     toast.success("All notifications marked as read.");
   };
 
   const clearAll = () => {
     setItems([]);
+    localStorage.removeItem("rateddocs_notifications_v2");
     toast.success("All notifications cleared.");
   };
 
@@ -482,7 +529,7 @@ export default function NotificationsPage() {
           {items.length > 0 && (
             <button
               onClick={clearAll}
-              className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-red-200 hover:bg-red-50 hover:text-red-500 transition-colors"
             >
               <Trash2 className="h-4 w-4" />
               Clear all
@@ -573,7 +620,7 @@ export default function NotificationsPage() {
             label="Priority"
             options={PRIORITY_FILTERS.map((p) => ({ value: p, label: PRIORITY_META[p].label }))}
             value={priorityFilter}
-            onChange={(v) => { setPriorityFilter(v as NotificationPriority | ""); resetPage(); }}
+            onChange={(v) => { setTypeFilter(""); setPriorityFilter(v as NotificationPriority | ""); resetPage(); }}
           />
 
           {/* Clear filters */}

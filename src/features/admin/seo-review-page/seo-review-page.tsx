@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Globe, CheckCircle2, Trash2, CalendarDays, Search,
   ExternalLink, RotateCcw, Trash, ChevronDown, X,
@@ -129,9 +129,7 @@ function RemoveModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm:
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function SEOReviewPage() {
-  const [pages, setPages] = useState<MutablePage[]>(() =>
-    seoPagesData.pages.map((p) => ({ ...p, currentStatus: p.status as "published" | "removed" }))
-  );
+  const [pages, setPages] = useState<MutablePage[]>([]);
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
   const [countryFilter, setCountryFilter] = useState("");
@@ -140,11 +138,27 @@ export default function SEOReviewPage() {
   const [openDropdown, setOpenDropdown] = useState<"country" | "procedure" | "status" | null>(null);
   const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("rateddocs_seopages_v2");
+    if (saved) {
+      try {
+        setPages(JSON.parse(saved));
+      } catch (e) {
+        setPages(seoPagesData.pages.map((p) => ({ ...p, currentStatus: p.status as "published" | "removed" })));
+      }
+    } else {
+      const initial = seoPagesData.pages.map((p) => ({ ...p, currentStatus: p.status as "published" | "removed" }));
+      setPages(initial);
+      localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(initial));
+    }
+  }, []);
+
   const publishedCount = pages.filter((p) => p.currentStatus === "published").length;
   const removedCount = pages.filter((p) => p.currentStatus === "removed").length;
+  const thisMonthCount = pages.filter((p) => p.published_date.includes("May 2026")).length;
 
-  const countries = [...new Set(seoPagesData.pages.map((p) => p.country))].sort();
-  const procedures = [...new Set(seoPagesData.pages.map((p) => p.procedure))].sort();
+  const countries = useMemo(() => [...new Set(seoPagesData.pages.map((p) => p.country))].sort(), []);
+  const procedures = useMemo(() => [...new Set(seoPagesData.pages.map((p) => p.procedure))].sort(), []);
   const statusOptions = ["Published", "Removed"];
 
   const filtered = useMemo(() => {
@@ -169,12 +183,16 @@ export default function SEOReviewPage() {
 
   const handleConfirmRemove = () => {
     if (!pendingRemoveId) return;
-    setPages((prev) => prev.map((p) => p.id === pendingRemoveId ? { ...p, currentStatus: "removed" } : p));
+    const updated = pages.map((p) => p.id === pendingRemoveId ? { ...p, currentStatus: "removed" as const } : p);
+    setPages(updated);
+    localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(updated));
     setPendingRemoveId(null);
   };
 
   const handleRestore = (id: string) => {
-    setPages((prev) => prev.map((p) => p.id === id ? { ...p, currentStatus: "published" } : p));
+    const updated = pages.map((p) => p.id === id ? { ...p, currentStatus: "published" as const } : p);
+    setPages(updated);
+    localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(updated));
   };
 
   const resetFilters = () => {
@@ -187,7 +205,7 @@ export default function SEOReviewPage() {
     { label: "Total SEO Pages", value: String(pages.length), icon: <Globe className="h-5 w-5" /> },
     { label: "Published", value: String(publishedCount), valueColor: "text-emerald-600", icon: <CheckCircle2 className="h-5 w-5 text-emerald-500" /> },
     { label: "Removed", value: String(removedCount), icon: <Trash2 className="h-5 w-5" /> },
-    { label: "This Month", value: String(seoPagesData.meta.this_month), icon: <CalendarDays className="h-5 w-5" /> },
+    { label: "This Month", value: String(thisMonthCount), icon: <CalendarDays className="h-5 w-5" /> },
   ];
 
   const tabs = [

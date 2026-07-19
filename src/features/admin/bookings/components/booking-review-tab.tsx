@@ -2,12 +2,10 @@
 
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-import bookingsData from "@/lib/bookings-data";
-
-type Booking = (typeof bookingsData.bookings)[number];
+import { UiBooking, ReviewCategory } from "../utils/booking-mapper";
 
 interface BookingReviewTabProps {
-  booking: Booking;
+  booking: UiBooking;
 }
 
 export function BookingReviewTab({ booking }: BookingReviewTabProps) {
@@ -63,7 +61,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
 
         {/* Category ratings */}
         <div className="mt-4 space-y-3 border-t border-gray-100 pt-4">
-          {review.categories.map((cat) => (
+          {review.categories.map((cat: ReviewCategory) => (
             <div key={cat.name} className="flex items-center justify-between">
               <span className="text-sm text-gray-500">{cat.name}</span>
               <div className="flex items-center gap-2">

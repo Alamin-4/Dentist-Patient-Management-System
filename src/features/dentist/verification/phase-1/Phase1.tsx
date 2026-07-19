@@ -50,6 +50,7 @@ export default function Phase1() {
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [submissionAttempted, setSubmissionAttempted] = useState(false);
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
 
   const [verificationStatus, setVerificationStatus] = useState<
     "IDLE" | "VERIFYING" | "SUCCESS" | "FAILED"
@@ -125,7 +126,6 @@ export default function Phase1() {
     }
 
     if (!isStepReady || !submittedLicence || !headshotFile) {
-      toast.error("Please complete all verification steps first.");
       return;
     }
 
@@ -151,20 +151,41 @@ export default function Phase1() {
           // setVerificationCompletedStep(1);
           // setVerificationStep(2);
         },
-        onError: (error: unknown) => {
-          const backendError =
-            typeof error === "object" && error !== null
-              ? ((
-                error as {
-                  response?: { data?: { detail?: { error?: string } } };
-                  message?: string;
-                }
-              ).response?.data?.detail?.error ??
-                (error as { message?: string }).message)
-              : undefined;
-          toast.error(
-            backendError || "Something went wrong. Please try again.",
-          );
+        onError: (error: any) => {
+          const resData = error?.response?.data;
+          const newErrors: Record<string, string> = {};
+
+          // 1. Check if there is an errorDetails.field
+          const field = resData?.errorDetails?.field || resData?.field;
+          const msg = resData?.message || error?.message || "Something went wrong. Please try again.";
+          if (field) {
+            newErrors[field] = msg;
+          }
+
+          // 2. Check if there is an errors array
+          if (Array.isArray(resData?.errors)) {
+            for (const errObj of resData.errors) {
+              if (errObj.field) {
+                newErrors[errObj.field] = errObj.message;
+              }
+            }
+          }
+
+          // 3. Check if there are ZodIssues
+          if (Array.isArray(resData?.errorDetails)) {
+            for (const issue of resData.errorDetails) {
+              const fieldName = issue.path?.[issue.path.length - 1];
+              if (fieldName) {
+                newErrors[fieldName] = issue.message;
+              }
+            }
+          }
+
+          if (Object.keys(newErrors).length > 0) {
+            setServerErrors(newErrors);
+          } else {
+            toast.error(msg);
+          }
         },
       },
     );
@@ -201,7 +222,14 @@ export default function Phase1() {
               defaultValues={serverSubmittedLicence ?? submittedLicence}
               isFormLocked={isFormLocked}
               isVerifying={verificationStatus === "VERIFYING"}
+              serverErrors={serverErrors}
+              submissionAttempted={submissionAttempted}
             />
+            {submissionAttempted && !submittedLicence && (
+              <p className="text-xs font-semibold text-destructive mt-1">
+                Please enter and verify your license registry details above first.
+              </p>
+            )}
 
             {verificationStatus === "SUCCESS" && submittedLicence && (
               <VerificationResult
@@ -222,12 +250,20 @@ export default function Phase1() {
             {verificationStatus === "FAILED" && (
               <VerificationResult
                 status="no-match"
-                onFileSelect={(file) => setLicenseFile(file)}
+                onFileSelect={(file) => {
+                  setLicenseFile(file);
+                  setServerErrors((prev) => ({ ...prev, licenseDocument: "" }));
+                }}
                 existingFileUrl={
                   (progressData?.data as LicenseProgressData | undefined)
                     ?.licenseDocument
                 }
-                error={submissionAttempted && !licenseFile && !((progressData?.data as LicenseProgressData | undefined)?.licenseDocument) ? "Registration Certificate is required." : undefined}
+                error={
+                  serverErrors.licenseDocument ||
+                  (submissionAttempted && !licenseFile && !((progressData?.data as LicenseProgressData | undefined)?.licenseDocument)
+                    ? "Registration Certificate is required."
+                    : undefined)
+                }
               />
             )}
           </div>
@@ -245,15 +281,22 @@ export default function Phase1() {
                 disabled={isFormLocked}
                 onChange={(file) => {
                   setHeadshotFile(file);
+                  setServerErrors((prev) => ({ ...prev, profilePicture: "" }));
                 }}
                 existingImageUrl={
                   (progressData?.data as LicenseProgressData | undefined)
                     ?.professional_headshot
                 }
+                error={
+                  serverErrors.profilePicture ||
+                  (submissionAttempted && !hasHeadshot
+                    ? "Professional headshot is required to continue."
+                    : undefined)
+                }
               />
-              {submissionAttempted && !hasHeadshot && (
+              {(serverErrors.profilePicture || (submissionAttempted && !hasHeadshot)) && (
                 <p className="text-xs font-semibold text-destructive mt-1">
-                  Professional headshot is required to continue.
+                  {serverErrors.profilePicture || "Professional headshot is required to continue."}
                 </p>
               )}
               <p

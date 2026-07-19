@@ -65,3 +65,30 @@ export function useVerifyPhase() {
     },
   });
 }
+
+export function useVerificationWeights() {
+  return useQuery({
+    queryKey: ["verification-weights"],
+    queryFn: async () => {
+      const res = await apiClient.admin.getWeights();
+      return res.data;
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
+export function useUpdateVerificationWeights() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      licenseWeight: number;
+      operationsWeight: number;
+      clinicDepthWeight: number;
+    }) => {
+      return await apiClient.admin.updateWeights(payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["verification-weights"] });
+    },
+  });
+}

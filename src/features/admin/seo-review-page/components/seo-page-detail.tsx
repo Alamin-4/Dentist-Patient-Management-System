@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, MapPin, Star, ThumbsUp, ThumbsDown, ShieldCheck, CheckCircle2, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import seoPagesData from "@/lib/seo-pages-data";
@@ -49,7 +49,7 @@ function PhotosSection() {
         {["Before", "After"].map((label) => (
           <div
             key={label}
-            className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg bg-gray-100"
+            className="relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-lg bg-gray-100"
           >
             <div className="flex flex-col items-center gap-2 text-gray-300">
               <div className="h-12 w-12 rounded-full bg-gray-200" />
@@ -127,8 +127,23 @@ function RelatedReviewCard({ page }: { page: SEOPage }) {
 }
 
 /* ─── Main detail component ──────────────────────────────────────────────── */
-export default function SEOPageDetail({ page }: SEOPageDetailProps) {
+export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps) {
+  const [page, setPage] = useState<SEOPage>(initialPage);
   const [helpful, setHelpful] = useState<"yes" | "no" | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rateddocs_seopages_v2");
+    if (saved) {
+      try {
+        const list = JSON.parse(saved);
+        const found = list.find((p: any) => p.id === initialPage.id);
+        if (found) {
+          setPage(found);
+        }
+      } catch (e) { }
+    }
+  }, [initialPage]);
+
   const yesCount = page.helpful_yes + (helpful === "yes" ? 1 : 0);
   const noCount = page.helpful_no + (helpful === "no" ? 1 : 0);
 
@@ -137,6 +152,27 @@ export default function SEOPageDetail({ page }: SEOPageDetailProps) {
     .slice(0, 3);
 
   const reviewMonth = page.published_date.split(" ").slice(0, 2).join(" ");
+
+  const handleHelpful = (type: "yes" | "no") => {
+    setHelpful(type);
+    const saved = localStorage.getItem("rateddocs_seopages_v2");
+    if (saved) {
+      try {
+        const list = JSON.parse(saved);
+        const updated = list.map((p: any) => {
+          if (p.id === page.id) {
+            return {
+              ...p,
+              helpful_yes: p.helpful_yes + (type === "yes" ? 1 : 0),
+              helpful_no: p.helpful_no + (type === "no" ? 1 : 0),
+            };
+          }
+          return p;
+        });
+        localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(updated));
+      } catch (e) { }
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -233,7 +269,7 @@ export default function SEOPageDetail({ page }: SEOPageDetailProps) {
             <p className="text-sm font-semibold text-[#1A1A2E]">Was this review helpful?</p>
             <div className="mt-3 flex items-center gap-3">
               <button
-                onClick={() => setHelpful("yes")}
+                onClick={() => handleHelpful("yes")}
                 className={cn(
                   "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
                   helpful === "yes"
@@ -244,7 +280,7 @@ export default function SEOPageDetail({ page }: SEOPageDetailProps) {
                 <ThumbsUp className="h-4 w-4" /> Yes · {yesCount}
               </button>
               <button
-                onClick={() => setHelpful("no")}
+                onClick={() => handleHelpful("no")}
                 className={cn(
                   "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
                   helpful === "no"

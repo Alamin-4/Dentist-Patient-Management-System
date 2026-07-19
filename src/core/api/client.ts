@@ -242,10 +242,17 @@ export const apiClient = {
     professionalDetails: async (payload: any) => {
       const response = await api.post(endpoints.dentists.professionalData, {
         legalName: payload.full_name || payload.legal_name || payload.legalName,
-        yearsOfExperience: Number(payload.experience_years || payload.years_of_experience || payload.yearsOfExperience),
+        yearsOfExperience: payload.experience_years !== undefined 
+          ? Number(payload.experience_years) 
+          : payload.years_of_experience !== undefined 
+            ? Number(payload.years_of_experience) 
+            : payload.yearsOfExperience !== undefined 
+              ? Number(payload.yearsOfExperience) 
+              : undefined,
         primarySpecialty: payload.specialty || payload.primary_specialty || payload.primarySpecialty,
-        country: payload.country || "Bangladesh",
-        city: payload.city || "Dhaka",
+        country: payload.country,
+        city: payload.city,
+        phoneNumber: payload.phoneNumber || payload.phone_number || payload.phone,
       });
       return response.data;
     },

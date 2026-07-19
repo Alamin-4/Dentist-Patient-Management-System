@@ -1,12 +1,10 @@
 "use client";
 
 import { ShieldCheck, Pencil } from "lucide-react";
-import bookingsData from "@/lib/bookings-data";
-
-type Booking = (typeof bookingsData.bookings)[number];
+import { UiBooking, PlanItem } from "../utils/booking-mapper";
 
 interface BookingTreatmentTabProps {
-  booking: Booking;
+  booking: UiBooking;
 }
 
 function PlanTable({
@@ -135,7 +133,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {plan.final_plan.items.map((item, i) => (
+                  {plan.final_plan.items.map((item: PlanItem, i: number) => (
                     <tr key={i}>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {item.name}

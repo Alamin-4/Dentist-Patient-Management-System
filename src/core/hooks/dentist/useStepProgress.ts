@@ -107,11 +107,11 @@ export default function useVerificationProgress() {
         3: step3Status === "SUBMITTED" || step3Status === "APPROVED",
     }), [step1Status, step2Status, step3Status]);
 
-    // Access to the next step only unlocks when the previous step is APPROVED
+    // Access to the next step unlocks when the previous step is APPROVED or already SUBMITTED
     const canAccessStep = (step: VerificationPhaseStep): boolean => {
         if (step === 1) return true;
-        if (step === 2) return step1Status === "APPROVED";
-        return step2Status === "APPROVED";
+        if (step === 2) return step1Status === "APPROVED" || submittedByStep[1];
+        return step2Status === "APPROVED" || submittedByStep[2];
     };
 
 

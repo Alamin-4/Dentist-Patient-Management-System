@@ -52,13 +52,11 @@ export default function ClaimSuccessPage() {
   if (confirmStatus === "loading") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-2xl border border-slate-100 shadow-xl text-center relative overflow-hidden">
-          {/* Top Decorative Gradient */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-linear-to-r from-emerald-400 via-teal-500 to-[#0E3E65]" />
+        <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-xl border border-slate-200/80 shadow-md text-center relative overflow-hidden">
           <div className="relative flex flex-col items-center justify-center py-10">
-            <Loader2 className="size-12 animate-spin text-[#0E3E65] mb-6" />
-            <h2 className="text-2xl font-bold text-[#0E3E65]">Verifying Your Payment</h2>
-            <p className="mt-2 text-slate-500 max-w-sm">
+            <Loader2 className="size-12 animate-spin text-[#163E5C] mb-6" />
+            <h2 className="text-2xl font-bold text-[#0A2533]">Verifying Your Payment</h2>
+            <p className="mt-2 text-gray-500 max-w-sm text-sm leading-relaxed">
               We are confirming your transaction with Stripe. This will only take a moment...
             </p>
           </div>
@@ -70,28 +68,26 @@ export default function ClaimSuccessPage() {
   if (confirmStatus === "error") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-2xl border border-slate-100 shadow-xl text-center relative overflow-hidden">
-          {/* Top Decorative Gradient */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-red-500" />
+        <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-xl border border-slate-200/80 shadow-md text-center relative overflow-hidden">
           <div className="relative flex flex-col items-center justify-center py-6">
             <div className="mx-auto size-16 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-600 mb-6">
               <AlertTriangle className="size-8" />
             </div>
             <h2 className="text-2xl font-bold text-red-600">Verification Failed</h2>
-            <p className="mt-2 text-slate-600 max-w-sm text-sm">
+            <p className="mt-2 text-gray-600 max-w-sm text-sm leading-relaxed">
               {errorMessage || "We encountered an issue verifying your payment session with Stripe."}
             </p>
             <div className="mt-8 space-y-3 flex flex-col items-center w-full">
               <Button
                 onClick={() => window.location.reload()}
-                className="w-full max-w-xs h-12 bg-[#0E3E65] hover:bg-[#002850] text-white font-bold rounded-xl shadow-md transition-all"
+                className="w-full max-w-xs h-14 bg-[#163E5C] hover:bg-[#113149] cursor-pointer text-white text-base font-semibold rounded-lg transition-all shadow-md active:scale-[0.98]"
               >
                 Retry Verification
               </Button>
               <Button
                 variant="link"
                 onClick={() => router.push("/find-dentists")}
-                className="text-slate-500 hover:text-[#0E3E65] text-xs font-medium"
+                className="text-gray-500 hover:text-[#163E5C] text-sm font-semibold transition-colors"
               >
                 Back to Dentist Directory
               </Button>
@@ -104,62 +100,55 @@ export default function ClaimSuccessPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-2xl border border-slate-100 shadow-xl text-center relative overflow-hidden">
-        {/* Top Decorative Gradient */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-linear-to-r from-emerald-400 via-teal-500 to-[#0E3E65]" />
-
-        {/* Floating sparkles background accent */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-50 rounded-full blur-3xl opacity-60 pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#0E3E65]/5 rounded-full blur-3xl opacity-60 pointer-events-none" />
-
+      <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-xl border border-slate-200/80 shadow-md text-center relative overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="relative">
-          {/* Animated Success Badge */}
-          <div className="mx-auto size-20 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-6 shadow-inner animate-bounce">
-            <ShieldCheck className="size-12 stroke-[1.5]" />
+          {/* Success Badge */}
+          <div className="mx-auto size-20 lg:size-24 rounded-full bg-[#163E5C] flex items-center justify-center text-white mb-8 shadow-md">
+            <Check className="size-10 lg:size-12 stroke-3" />
           </div>
 
-          <div className="flex justify-center items-center gap-1.5 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full flex items-center gap-1">
+          <div className="flex justify-center items-center gap-1.5 mb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163E5C] bg-[#163E5C]/10 px-3 py-1 rounded-full flex items-center gap-1">
               <Sparkles className="size-3" /> Payment Verified
             </span>
           </div>
 
-          <h1 className="text-3xl font-extrabold text-[#0E3E65] tracking-tight sm:text-4xl">
+          <h1 className="text-[28px] lg:text-[32px] font-bold text-[#0A2533] leading-tight mb-4">
             Profile Claimed Successfully!
           </h1>
-          <p className="mt-4 text-slate-500 text-base max-w-md mx-auto">
+          <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-md mx-auto">
             Welcome to RatedDocs! Your professional identity has been verified, your membership plan activated, and your premium directory page is now live.
           </p>
 
-          <div className="mt-8 p-6 rounded-xl bg-slate-50 border border-slate-100 text-left space-y-3.5 max-w-md mx-auto">
-            <h3 className="font-semibold text-slate-800 text-sm border-b border-slate-200/60 pb-2">
+          <div className="mt-8 p-6 rounded-xl bg-slate-50 border border-slate-200/60 text-left space-y-4 max-w-md mx-auto">
+            <h3 className="font-bold text-[#0A2533] text-sm border-b border-slate-200 pb-2">
               Setup Actions Completed:
             </h3>
-            <p className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
-              <Check className="size-4 text-emerald-500 stroke-3 shrink-0" />
-              <span>Membership status updated to <strong>Paid</strong></span>
+            <p className="flex items-center gap-3 text-xs font-medium text-gray-600">
+              <Check className="size-4 text-[#163E5C] stroke-3 shrink-0" />
+              <span>Membership status updated to <strong className="text-gray-800">Paid</strong></span>
             </p>
-            <p className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
-              <Check className="size-4 text-emerald-500 stroke-3 shrink-0" />
+            <p className="flex items-center gap-3 text-xs font-medium text-gray-600">
+              <Check className="size-4 text-[#163E5C] stroke-3 shrink-0" />
               <span>Professional credentials linked to your new dashboard</span>
             </p>
-            <p className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
-              <Check className="size-4 text-emerald-500 stroke-3 shrink-0" />
-              <span>EJS Welcome & verification template dispatched to your email</span>
+            <p className="flex items-center gap-3 text-xs font-medium text-gray-600">
+              <Check className="size-4 text-[#163E5C] stroke-3 shrink-0" />
+              <span>Welcome & verification email sent to your inbox</span>
             </p>
           </div>
 
           <div className="mt-8 space-y-3 flex flex-col items-center">
             <Button
               onClick={() => router.push("/dentist")}
-              className="w-full max-w-xs h-12 bg-[#0E3E65] hover:bg-[#002850] text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 hover:shadow-lg"
+              className="w-full max-w-xs h-14 bg-[#163E5C] hover:bg-[#113149] cursor-pointer text-white text-base font-semibold rounded-lg transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              Go To Your Dashboard <ArrowRight className="size-4" />
+              Go To Your Dashboard <ArrowRight className="size-5" />
             </Button>
             <Button
               variant="link"
               onClick={() => router.push("/find-dentists")}
-              className="text-slate-500 hover:text-[#0E3E65] text-xs font-medium"
+              className="text-gray-500 hover:text-[#163E5C] text-sm font-semibold transition-colors"
             >
               Back to Dentist Directory
             </Button>

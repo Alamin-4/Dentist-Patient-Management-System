@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Shield, DollarSign, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
-import settingsData from "@/lib/settings-data";
 import { RdvScoreWeights } from "./components/rdv-score-weights";
 import { PlatformFee } from "./components/platform-fee";
 import { Announcements } from "./components/announcements";
@@ -97,13 +96,13 @@ export default function SettingPage() {
         {/* Right content */}
         <div className="flex-1 rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
           {active === "rdv-weights" && (
-            <RdvScoreWeights initialWeights={settingsData.rdvWeights} />
+            <RdvScoreWeights />
           )}
           {active === "platform-fee" && (
-            <PlatformFee initialFee={settingsData.platformFee} />
+            <PlatformFee />
           )}
           {active === "announcements" && (
-            <Announcements initialAnnouncements={settingsData.announcements} />
+            <Announcements />
           )}
         </div>
       </div>

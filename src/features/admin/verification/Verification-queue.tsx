@@ -140,7 +140,6 @@ export default function VerificationQueue() {
         isApproved: true,
         note: "Approved by Admin",
       });
-      setActiveDentistId(null);
     } catch (e: any) {
       alert(e.message || "Failed to approve verification phase");
     }
@@ -168,8 +167,6 @@ export default function VerificationQueue() {
         isApproved: false,
         note: rejectNote,
       });
-      setDrawerOpen(false);
-      setActiveDentistId(null);
     } catch (e: any) {
       alert(e.message || "Failed to reject verification phase");
     }

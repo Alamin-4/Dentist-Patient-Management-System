@@ -42,7 +42,8 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
           <div
             onClick={() => !disabled && jciInputRef.current?.click()}
             className={cn(
-              "group flex items-center justify-between rounded-lg border border-dashed px-4 py-4 transition-all border-primary sm:px-5",
+              "group flex items-center justify-between rounded-lg border border-dashed px-4 py-4 transition-all sm:px-5",
+              errors.jciCertificate ? "border-red-500 bg-red-50/10 animate-shake" : "border-primary",
               disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-card"
             )}
           >
@@ -58,6 +59,11 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
               </span>
             )}
           </div>
+          {errors.jciCertificate && (
+            <p className="text-xs font-semibold text-destructive mt-1">
+              {String(errors.jciCertificate.message)}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -85,7 +91,8 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
           <div
             onClick={() => !disabled && videoInputRef.current?.click()}
             className={cn(
-              "group flex items-center justify-between rounded-lg border border-dashed px-4 py-4 border-primary sm:px-5",
+              "group flex items-center justify-between rounded-lg border border-dashed px-4 py-4 sm:px-5",
+              errors.videoWalkthrough ? "border-red-500 bg-red-50/10 animate-shake" : "border-primary",
               disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-card"
             )}
           >
@@ -101,9 +108,9 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
               </span>
             )}
           </div>
-          {errors.jciCertificate && (
-            <p className="text-xs font-semibold text-destructive mt-2">
-              {String(errors.jciCertificate.message)}
+          {errors.videoWalkthrough && (
+            <p className="text-xs font-semibold text-destructive mt-1">
+              {String(errors.videoWalkthrough.message)}
             </p>
           )}
         </div>

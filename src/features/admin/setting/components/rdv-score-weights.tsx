@@ -1,37 +1,92 @@
 "use client";
 
-import { useState } from "react";
-import { Save, Info, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Info, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
-import type { RdvPhaseWeight } from "@/lib/settings-data";
+import {
+  useVerificationWeights,
+  useUpdateVerificationWeights,
+} from "@/hooks/admin/verifications/useVerifications";
 
-interface RdvScoreWeightsProps {
-  initialWeights: RdvPhaseWeight[];
-}
+export function RdvScoreWeights() {
+  const { data, isLoading, isError } = useVerificationWeights();
+  const updateMutation = useUpdateVerificationWeights();
 
-export function RdvScoreWeights({ initialWeights }: RdvScoreWeightsProps) {
-  const [weights, setWeights] = useState<RdvPhaseWeight[]>(initialWeights);
-  const [saving, setSaving] = useState(false);
+  const [licenseWeight, setLicenseWeight] = useState(30);
+  const [operationsWeight, setOperationsWeight] = useState(40);
+  const [clinicDepthWeight, setClinicDepthWeight] = useState(30);
 
-  const total = weights.reduce((sum, p) => sum + (Number(p.weight) || 0), 0);
+  useEffect(() => {
+    if (data) {
+      setLicenseWeight(data.licenseWeight);
+      setOperationsWeight(data.operationsWeight);
+      setClinicDepthWeight(data.clinicDepthWeight);
+    }
+  }, [data]);
+
+  const total = Number(licenseWeight) + Number(operationsWeight) + Number(clinicDepthWeight);
   const isValid = total === 100;
-
-  const handleChange = (id: string, raw: string) => {
-    const val = Math.max(0, Math.min(100, Number(raw) || 0));
-    setWeights((prev) => prev.map((p) => (p.id === id ? { ...p, weight: val } : p)));
-  };
 
   const handleSave = async () => {
     if (!isValid) {
       toast.error("Weights must total exactly 100%.");
       return;
     }
-    setSaving(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setSaving(false);
-    toast.success("Score weights saved.");
+
+    const toastId = toast.loading("Saving score weights...");
+    try {
+      await updateMutation.mutateAsync({
+        licenseWeight,
+        operationsWeight,
+        clinicDepthWeight,
+      });
+      toast.success("Score weights saved successfully.", { id: toastId });
+    } catch (err: any) {
+      const errMsg = err?.response?.data?.message || err?.message || "Failed to save weights.";
+      toast.error(errMsg, { id: toastId });
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[200px] items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[200px] items-center justify-center text-red-500 font-semibold">
+        Failed to load score weights.
+      </div>
+    );
+  }
+
+  const phases = [
+    {
+      id: "license",
+      label: "Phase 1 — License Verification",
+      meta: "~5 min · RDV +30%",
+      weight: licenseWeight,
+      setter: setLicenseWeight,
+    },
+    {
+      id: "operations",
+      label: "Phase 2 — Operations",
+      meta: "~20–30 min · RDV +40%",
+      weight: operationsWeight,
+      setter: setOperationsWeight,
+    },
+    {
+      id: "clinicDepth",
+      label: "Phase 3 — Clinical depth",
+      meta: "Async · RDV +30%",
+      weight: clinicDepthWeight,
+      setter: setClinicDepthWeight,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,7 +113,7 @@ export function RdvScoreWeights({ initialWeights }: RdvScoreWeightsProps) {
 
       {/* Phase rows */}
       <div className="flex flex-col divide-y divide-gray-50">
-        {weights.map((phase) => (
+        {phases.map((phase) => (
           <div key={phase.id} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full border-2 border-gray-300" />
             <div className="min-w-0 flex-1">
@@ -70,9 +125,14 @@ export function RdvScoreWeights({ initialWeights }: RdvScoreWeightsProps) {
                 type="number"
                 min={0}
                 max={100}
-                onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                }}
                 value={phase.weight}
-                onChange={(e) => handleChange(phase.id, e.target.value)}
+                onChange={(e) => {
+                  const val = Math.max(0, Math.min(100, Number(e.target.value) || 0));
+                  phase.setter(val);
+                }}
                 className={cn(
                   "h-9 w-20 rounded-lg border px-3 text-sm font-medium text-right outline-none transition-colors",
                   "border-gray-200 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
@@ -92,16 +152,20 @@ export function RdvScoreWeights({ initialWeights }: RdvScoreWeightsProps) {
         </p>
         <button
           onClick={handleSave}
-          disabled={saving || !isValid}
+          disabled={updateMutation.isPending || !isValid}
           className={cn(
             "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95",
-            isValid
+            isValid && !updateMutation.isPending
               ? "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90"
               : "cursor-not-allowed bg-gray-300"
           )}
         >
-          <Save className="h-4 w-4" />
-          {saving ? "Saving…" : "Save weights"}
+          {updateMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          {updateMutation.isPending ? "Saving…" : "Save weights"}
         </button>
       </div>
     </div>
