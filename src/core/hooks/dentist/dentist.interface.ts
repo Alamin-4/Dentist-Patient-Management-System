@@ -7,11 +7,12 @@ export interface StepOneI {
     registrationNumber: string;
 }
 export interface ProfessionalDetailsI {
-    primarySpecialty: string;
-    yearsOfExperience: string;
-    legalName: string;
-    country: string;
-    city: string
+    primarySpecialty?: string;
+    yearsOfExperience?: string | number;
+    legalName?: string;
+    country?: string;
+    city?: string;
+    phoneNumber?: string;
 }
 export interface ClinicAddressI {
     address: string;

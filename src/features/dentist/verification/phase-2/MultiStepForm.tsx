@@ -102,14 +102,52 @@ export default function MultiStepForm() {
           router.push("/dentist/verification?phase=clinic-depth-verify");
         }, 1500);
       },
-      onError: (error: unknown) => {
-        const errMsg =
-          typeof error === "object" && error !== null
-            ? (error as { response?: { data?: { message?: string } } }).response
-              ?.data?.message ||
-            "Operations verification submission failed. Please try again."
-            : "Operations verification submission failed. Please try again.";
-        toast.error(errMsg);
+      onError: (error: any) => {
+        const resData = error?.response?.data;
+        const newErrors: Record<string, string> = {};
+
+        // 1. Check if there is an errorDetails.field
+        const field = resData?.errorDetails?.field || resData?.field;
+        const msg = resData?.message || error?.message || "Operations verification submission failed. Please try again.";
+        if (field) {
+          newErrors[field] = msg;
+        }
+
+        // 2. Check if there is an errors array
+        if (Array.isArray(resData?.errors)) {
+          for (const errObj of resData.errors) {
+            if (errObj.field) {
+              newErrors[errObj.field] = errObj.message;
+            }
+          }
+        }
+
+        // 3. Check if there are ZodIssues
+        if (Array.isArray(resData?.errorDetails)) {
+          for (const issue of resData.errorDetails) {
+            const fieldName = issue.path?.[issue.path.length - 1];
+            if (fieldName) {
+              newErrors[fieldName] = issue.message;
+            }
+          }
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+          Object.entries(newErrors).forEach(([fieldName, message]) => {
+            // Map backend fields to frontend form names
+            let mappedName: any = fieldName;
+            if (fieldName === "signerName") mappedName = "signerFullName";
+            if (fieldName === "signature") mappedName = "typedSignature";
+            if (fieldName === "agreedToGuarantee") mappedName = "agreeToGuarantee";
+
+            methods.setError(mappedName, {
+              type: "server",
+              message,
+            });
+          });
+        } else {
+          toast.error(msg);
+        }
       },
     });
   };

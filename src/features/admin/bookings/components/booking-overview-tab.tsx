@@ -2,12 +2,10 @@
 
 import { Mail, Phone, MapPin, ChevronRight, ShieldCheck, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import bookingsData from "@/lib/bookings-data";
-
-type Booking = (typeof bookingsData.bookings)[number];
+import { UiBooking } from "../utils/booking-mapper";
 
 interface BookingOverviewTabProps {
-  booking: Booking;
+  booking: UiBooking;
 }
 
 function InfoGrid({

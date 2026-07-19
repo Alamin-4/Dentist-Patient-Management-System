@@ -23,6 +23,8 @@ interface LicenceFormProps {
   defaultValues?: Partial<z.infer<typeof formSchema>> | null;
   isFormLocked: boolean;
   isVerifying: boolean;
+  serverErrors?: Record<string, string>;
+  submissionAttempted?: boolean;
 }
 
 export default function LicenceForm({
@@ -30,6 +32,8 @@ export default function LicenceForm({
   defaultValues,
   isFormLocked,
   isVerifying,
+  serverErrors,
+  submissionAttempted,
 }: LicenceFormProps) {
   const [countriesList, setCountriesList] = useState<CSCCountry[]>([]);
   const [citiesList, setCitiesList] = useState<CSCCity[]>([]);
@@ -93,6 +97,33 @@ export default function LicenceForm({
       });
     }
   }, [defaultValues, form]);
+
+  // Handle server errors
+  useEffect(() => {
+    if (serverErrors) {
+      Object.entries(serverErrors).forEach(([field, msg]) => {
+        let formField: "country" | "city" | "authority" | "regNo" | null = null;
+        if (field === "country") formField = "country";
+        else if (field === "city") formField = "city";
+        else if (field === "registrationAuthority" || field === "authority") formField = "authority";
+        else if (field === "registrationNumber" || field === "regNo") formField = "regNo";
+
+        if (formField) {
+          form.setError(formField, {
+            type: "server",
+            message: msg,
+          });
+        }
+      });
+    }
+  }, [serverErrors, form]);
+
+  // Trigger validation when parent form submission is attempted
+  useEffect(() => {
+    if (submissionAttempted) {
+      form.trigger();
+    }
+  }, [submissionAttempted, form]);
 
   return (
     <form onSubmit={form.handleSubmit(onVerify)} className="space-y-6">

@@ -3,11 +3,11 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Search, ChevronRight } from "lucide-react";
-import bookingsData from "@/lib/bookings-data";
+import { useTreatmentBookings } from "@/hooks/treatment-booking/useTreatmentBooking";
+import { mapDbBookingToUiBooking } from "./utils/booking-mapper";
 import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
 import { cn } from "@/lib/utils";
 
-type Booking = (typeof bookingsData.bookings)[number];
 type StatusFilter = "All" | "In Progress" | "Completed" | "Cancelled";
 
 const STATUS_BADGE: Record<string, string> = {
@@ -44,29 +44,138 @@ function Avatar({
   );
 }
 
+function BookingSkeleton() {
+  return (
+    <div className="flex flex-col gap-5 animate-pulse">
+      {/* Page Header Skeleton */}
+      <div>
+        <div className="h-7 w-36 rounded bg-slate-200" />
+        <div className="mt-2 h-4 w-72 rounded bg-slate-100" />
+      </div>
+
+      {/* Stats Cards Skeleton */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm space-y-2">
+            <div className="h-3 w-24 rounded bg-slate-200" />
+            <div className="h-8 w-16 rounded bg-slate-300" />
+          </div>
+        ))}
+      </div>
+
+      {/* Table Card Skeleton */}
+      <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden">
+        {/* Tabs Skeleton */}
+        <div className="border-b border-gray-100 px-4 py-3 flex gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-6 w-16 rounded bg-slate-200" />
+          ))}
+        </div>
+
+        {/* Filters Row Skeleton */}
+        <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
+          <div className="h-9 flex-1 rounded-lg bg-slate-100" />
+          <div className="h-9 w-36 rounded-lg bg-slate-100" />
+          <div className="h-9 w-32 rounded-lg bg-slate-100" />
+          <div className="h-9 w-32 rounded-lg bg-slate-100" />
+        </div>
+
+        {/* Table Rows Skeleton */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/40">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <th key={i} className="px-4 py-3"><div className="h-3 w-16 rounded bg-slate-200" /></th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i}>
+                  <td className="px-4 py-4"><div className="h-4 w-12 rounded bg-slate-200" /></td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-slate-200" />
+                      <div className="h-4 w-24 rounded bg-slate-200" />
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-slate-200" />
+                      <div className="space-y-1">
+                        <div className="h-4 w-20 rounded bg-slate-200" />
+                        <div className="h-3 w-16 rounded bg-slate-100" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4"><div className="h-4 w-32 rounded bg-slate-100" /></td>
+                  <td className="px-4 py-4"><div className="h-5 w-16 rounded-full bg-slate-200" /></td>
+                  <td className="px-4 py-4"><div className="h-5 w-16 rounded-full bg-slate-200" /></td>
+                  <td className="px-4 py-4"><div className="h-4 w-12 rounded bg-slate-200" /></td>
+                  <td className="px-4 py-4"><div className="h-4 w-20 rounded bg-slate-100" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Booking() {
   const router = useRouter();
-  const meta = bookingsData.meta;
+
+  const { data: response, isLoading } = useTreatmentBookings();
 
   const [activeTab, setActiveTab] = useState<StatusFilter>("All");
   const [search, setSearch] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [selectedDentist, setSelectedDentist] = useState("All dentists");
+  const [selectedEscrow, setSelectedEscrow] = useState("All escrow states");
 
-  const counts = useMemo(() => {
-    const all = bookingsData.bookings;
+  // Map the raw DB bookings response to the UI-compatible shape
+  const uiBookings = useMemo(() => {
+    const rawList = response?.data || [];
+    return rawList.map(mapDbBookingToUiBooking).filter(Boolean) as any[];
+  }, [response]);
+
+  // Dynamic Metadata totals
+  const meta = useMemo(() => {
+    const total = uiBookings.length;
+    const cancellations = uiBookings.filter((b) => b.status === "Cancelled").length;
+    const completed = uiBookings.filter((b) => b.status === "Completed").length;
     return {
-      All: all.length,
-      "In Progress": all.filter((b) => b.status === "In Progress").length,
-      Completed: all.filter((b) => b.status === "Completed").length,
-      Cancelled: all.filter((b) => b.status === "Cancelled").length,
+      total_bookings: total,
+      cancellations,
+      completed_mtd: completed,
     };
-  }, []);
+  }, [uiBookings]);
+
+  // Tab counts
+  const counts = useMemo(() => {
+    return {
+      All: uiBookings.length,
+      "In Progress": uiBookings.filter((b) => b.status === "In Progress").length,
+      Completed: uiBookings.filter((b) => b.status === "Completed").length,
+      Cancelled: uiBookings.filter((b) => b.status === "Cancelled").length,
+    };
+  }, [uiBookings]);
 
   const tabs = (["All", "In Progress", "Completed", "Cancelled"] as StatusFilter[]).map(
     (s) => ({ key: s, label: s, count: counts[s] })
   );
 
+  // Dynamic list of dentists for the dentist filter dropdown
+  const dentistOptions = useMemo(() => {
+    const names = uiBookings.map((b) => b.dentist.name);
+    return Array.from(new Set(names)).sort();
+  }, [uiBookings]);
+
+  // Filter logic
   const filtered = useMemo(() => {
-    let list = bookingsData.bookings as Booking[];
+    let list = uiBookings;
     if (activeTab !== "All") list = list.filter((b) => b.status === activeTab);
     if (search) {
       const q = search.toLowerCase();
@@ -78,8 +187,22 @@ export default function Booking() {
           b.procedure.toLowerCase().includes(q)
       );
     }
+    if (dateFilter) {
+      const q = dateFilter.toLowerCase();
+      list = list.filter((b) => b.date.toLowerCase().includes(q));
+    }
+    if (selectedDentist !== "All dentists") {
+      list = list.filter((b) => b.dentist.name === selectedDentist);
+    }
+    if (selectedEscrow !== "All escrow states") {
+      list = list.filter((b) => b.escrow_status === selectedEscrow);
+    }
     return list;
-  }, [activeTab, search]);
+  }, [uiBookings, activeTab, search, dateFilter, selectedDentist, selectedEscrow]);
+
+  if (isLoading) {
+    return <BookingSkeleton />;
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -139,22 +262,31 @@ export default function Booking() {
           <input
             type="text"
             placeholder="mm/dd/yyyy"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
             className="h-9 w-36 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-500 outline-none focus:border-[#1A1A2E]"
           />
-          <select className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]">
-            <option>All dentists</option>
-            <option>Dr. Maya Patel</option>
-            <option>Dr. Brian Lee</option>
-            <option>Dr. Noah Kim</option>
-            <option>Dr. Liam O&apos;Connor</option>
-            <option>Dr. Priya Shah</option>
-            <option>Dr. Marcus Hall</option>
+          <select
+            value={selectedDentist}
+            onChange={(e) => setSelectedDentist(e.target.value)}
+            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+          >
+            <option value="All dentists">All dentists</option>
+            {dentistOptions.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
           </select>
-          <select className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]">
-            <option>All escrow states</option>
-            <option>In Escrow</option>
-            <option>Released</option>
-            <option>Refunded</option>
+          <select
+            value={selectedEscrow}
+            onChange={(e) => setSelectedEscrow(e.target.value)}
+            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+          >
+            <option value="All escrow states">All escrow states</option>
+            <option value="In Escrow">In Escrow</option>
+            <option value="Released">Released</option>
+            <option value="Refunded">Refunded</option>
           </select>
         </div>
 
@@ -274,7 +406,7 @@ export default function Booking() {
         {/* Footer */}
         <div className="border-t border-gray-100 px-4 py-3">
           <p className="text-sm text-gray-400">
-            Showing {filtered.length} of {bookingsData.bookings.length} bookings
+            Showing {filtered.length} of {uiBookings.length} bookings
           </p>
         </div>
       </div>

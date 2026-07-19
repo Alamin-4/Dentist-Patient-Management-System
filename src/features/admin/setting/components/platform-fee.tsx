@@ -1,18 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
-import type { PlatformFeeData } from "@/lib/settings-data";
 
-interface PlatformFeeProps {
-  initialFee: PlatformFeeData;
-}
-
-export function PlatformFee({ initialFee }: PlatformFeeProps) {
-  const [rate, setRate] = useState(initialFee.rate);
+export function PlatformFee() {
+  const [rate, setRate] = useState(10);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rateddocs_platform_fee_rate");
+    if (saved) {
+      setRate(Number(saved) || 10);
+    }
+  }, []);
 
   const isValid = rate >= 0 && rate <= 100;
 
@@ -22,9 +24,11 @@ export function PlatformFee({ initialFee }: PlatformFeeProps) {
       return;
     }
     setSaving(true);
+    // Simulate API delay
     await new Promise((r) => setTimeout(r, 600));
+    localStorage.setItem("rateddocs_platform_fee_rate", String(rate));
     setSaving(false);
-    toast.success("Platform fee saved.");
+    toast.success("Platform fee saved successfully.");
   };
 
   return (
@@ -47,7 +51,9 @@ export function PlatformFee({ initialFee }: PlatformFeeProps) {
               min={0}
               max={100}
               step={0.1}
-              onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
+              onKeyDown={(e) => {
+                if (e.key === "-" || e.key === "e") e.preventDefault();
+              }}
               value={rate}
               onChange={(e) => setRate(Math.max(0, Math.min(100, Number(e.target.value) || 0)))}
               className={cn(

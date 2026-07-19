@@ -11,7 +11,6 @@ import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 import {
   useStepThreeMutation,
   useDentistProceduresList,
-  useUpdateVerificationPhase,
 } from "@/hooks/dentist/useDentist";
 import { StepThreeI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
@@ -63,7 +62,7 @@ export default function Phase3() {
   const dentistProcedureList = useDentistProceduresList();
   const dentistProcedures =
     (dentistProcedureList?.data as any)?.data || [];
-  const updatePhase = useUpdateVerificationPhase();
+
   const { checkIdVerifyProgress, step3Status, step3Note } = useVerificationProgress();
 
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -183,23 +182,8 @@ export default function Phase3() {
     };
     stepThreeMutation.mutate(formattedPayload, {
       onSuccess: () => {
-        updatePhase.mutate(
-          { verification_phase: "COMPLETE" },
-          {
-            onSuccess: () => {
-              router.push("/dentist");
-            },
-            onError: (error: unknown) => {
-              const errMsg =
-                typeof error === "object" && error !== null
-                  ? (error as { response?: { data?: { message?: string } } })
-                    .response?.data?.message ||
-                  "Verification submitted but phase completion update failed."
-                  : "Verification submitted but phase completion update failed.";
-              toast.error(errMsg);
-            },
-          },
-        );
+        toast.success("Clinical depth verification documents submitted successfully!");
+        router.push("/dentist");
       },
 
       onError: (error: unknown) => {
@@ -226,7 +210,7 @@ export default function Phase3() {
     return () => window.clearTimeout(timeoutId);
   }, [methods.formState.isValid, isFormLocked, setVerificationStepReady]);
 
-  const isPending = stepThreeMutation.isPending || updatePhase.isPending;
+  const isPending = stepThreeMutation.isPending;
   const selectedAddress = methods.watch("clinic_address") || {
     address: "",
     lat: "",

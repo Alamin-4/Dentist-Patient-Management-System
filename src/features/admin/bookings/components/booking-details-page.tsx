@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -11,7 +11,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import bookingsData from "@/lib/bookings-data";
+import { useTreatmentBookingById } from "@/hooks/treatment-booking/useTreatmentBooking";
+import { mapDbBookingToUiBooking } from "../utils/booking-mapper";
 import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
 import { BookingOverviewTab } from "./booking-overview-tab";
 import { BookingTreatmentTab } from "./booking-treatment-tab";
@@ -23,12 +24,95 @@ interface BookingDetailPageProps {
   bookingId: string;
 }
 
+function BookingDetailSkeleton() {
+  return (
+    <div className="flex flex-col gap-5 animate-pulse">
+      {/* Breadcrumb Skeleton */}
+      <div className="h-4 w-32 rounded bg-slate-200" />
+
+      {/* Hero Skeleton */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-24 rounded bg-slate-300" />
+            <div className="h-5 w-16 rounded-full bg-slate-200" />
+            <div className="h-5 w-24 rounded-full bg-slate-100" />
+          </div>
+          <div className="h-4 w-64 rounded bg-slate-100" />
+        </div>
+        <div className="h-14 w-48 rounded-lg bg-slate-200 animate-pulse" />
+      </div>
+
+      {/* Main Content Grid Skeleton */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {/* Left Column (Active Tab) */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Tabs */}
+          <div className="h-12 rounded-t-xl bg-white border border-gray-100 px-4 flex items-center gap-6">
+            <div className="h-5 w-16 rounded bg-slate-200" />
+            <div className="h-5 w-24 rounded bg-slate-200" />
+            <div className="h-5 w-28 rounded bg-slate-200" />
+          </div>
+
+          {/* Overview content skeleton */}
+          <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm space-y-6">
+            <div className="h-5 w-32 rounded bg-slate-300" />
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex gap-3">
+                <div className="h-10 w-10 rounded-full bg-slate-200 shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 w-28 rounded bg-slate-200" />
+                  <div className="h-3.5 w-20 rounded bg-slate-100" />
+                  <div className="h-3.5 w-36 rounded bg-slate-100" />
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="h-10 w-10 rounded-full bg-slate-200 shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 w-32 rounded bg-slate-200" />
+                  <div className="h-3.5 w-24 rounded bg-slate-100" />
+                  <div className="h-3.5 w-28 rounded bg-slate-100" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="flex flex-col gap-4">
+          <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm space-y-4">
+            <div className="h-5 w-28 rounded bg-slate-300" />
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex gap-3 items-center">
+                <div className="h-5 w-5 rounded-full bg-slate-200 shrink-0" />
+                <div className="space-y-1 flex-1">
+                  <div className="h-3.5 w-24 rounded bg-slate-200" />
+                  <div className="h-3 w-16 rounded bg-slate-100" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function BookingDetailPage({
   bookingId,
 }: BookingDetailPageProps) {
   const [activeTab, setActiveTab] = useState<MainTab>("overview");
 
-  const booking = bookingsData.bookings.find((b) => b.id === bookingId);
+  const { data: response, isLoading } = useTreatmentBookingById(bookingId);
+
+  // Map the raw DB booking response to the UI-compatible shape
+  const booking = useMemo(() => {
+    return mapDbBookingToUiBooking(response?.data);
+  }, [response]);
+
+  if (isLoading) {
+    return <BookingDetailSkeleton />;
+  }
 
   if (!booking) {
     return (
@@ -53,7 +137,6 @@ export default function BookingDetailPage({
     {
       key: "review_results",
       label: "Review & Results",
-      ...(hasReview ? {} : {}),
     },
   ];
 

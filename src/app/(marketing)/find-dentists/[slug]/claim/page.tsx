@@ -81,10 +81,31 @@ export default function ClaimProfilePage() {
   const verifyOtpMutation = useOtpVerify();
   const resendOtpMutation = useResendOtp();
 
-  const [claimStep, setClaimStep] = useState(1);
-  const [claimEmail, setClaimEmail] = useState("");
+  const [claimEmail, setClaimEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`claim_session_${slug}`);
+      if (saved) {
+        try {
+          return JSON.parse(saved).email || "";
+        } catch { }
+      }
+    }
+    return "";
+  });
   const [claimPassword, setClaimPassword] = useState("");
   const [claimOtp, setClaimOtp] = useState("");
+
+  const [claimStep, setClaimStep] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`claim_session_${slug}`);
+      if (saved) {
+        try {
+          return JSON.parse(saved).step || 1;
+        } catch { }
+      }
+    }
+    return 1;
+  });
 
   const [yearsOfExperience, setYearsOfExperience] = useState(5);
   const [motivation, setMotivation] = useState("");
@@ -101,28 +122,68 @@ export default function ClaimProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Authentication & Role verification checks
-  const isNotDentist = user && user.role !== "DENTIST";
+  const isNotDentist = useMemo(() => {
+    if (!user) return false;
+    if (user.role === "DENTIST") return false;
+
+    const savedSession = typeof window !== "undefined" ? localStorage.getItem(`claim_session_${slug}`) : null;
+    let savedEmail = "";
+    if (savedSession) {
+      try {
+        savedEmail = JSON.parse(savedSession).email || "";
+      } catch { }
+    }
+    const currentClaimingEmail = claimEmail || savedEmail;
+    if (user.role === "PATIENT" && currentClaimingEmail && user.email?.toLowerCase() === currentClaimingEmail.toLowerCase()) {
+      return false;
+    }
+
+    return true;
+  }, [user, claimEmail, slug]);
+
   const alreadyClaimedDirectoryId = fullUser?.dentist?.dentistDirectoryId;
   const hasAlreadyClaimedAnother = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId !== dentist?.id;
   const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id;
 
-  // Clear messages when step changes to keep UI clean
   useEffect(() => {
     setError(null);
     setSuccessMessage(null);
   }, [claimStep]);
 
   useEffect(() => {
-    if (user?.email && user.role === "DENTIST" && !alreadyClaimedDirectoryId) {
-      setClaimEmail(user.email);
-      if (claimStep < 3) {
-        setClaimStep(3);
+    if (user?.email && !alreadyClaimedDirectoryId) {
+      const savedSession = typeof window !== "undefined" ? localStorage.getItem(`claim_session_${slug}`) : null;
+      let savedEmail = "";
+      if (savedSession) {
+        try {
+          savedEmail = JSON.parse(savedSession).email || "";
+        } catch { }
+      }
+      const currentClaimingEmail = claimEmail || savedEmail;
+      const isAllowedPatient = user.role === "PATIENT" && currentClaimingEmail && user.email.toLowerCase() === currentClaimingEmail.toLowerCase();
+
+      if (user.role === "DENTIST" || isAllowedPatient) {
+        setClaimEmail(user.email);
+        if (claimStep < 3) {
+          setClaimStep(3);
+        }
       }
     }
-  }, [user, claimStep, alreadyClaimedDirectoryId]);
+  }, [user, claimStep, alreadyClaimedDirectoryId, claimEmail, slug]);
 
-  // Set Stripe cancelled notice if returned
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (claimStep === 5) {
+        localStorage.removeItem(`claim_session_${slug}`);
+      } else if (claimEmail || claimStep > 1) {
+        localStorage.setItem(
+          `claim_session_${slug}`,
+          JSON.stringify({ email: claimEmail, step: claimStep })
+        );
+      }
+    }
+  }, [claimEmail, claimStep, slug]);
+
   useEffect(() => {
     if (searchParams?.get("cancelled") === "true") {
       setError("Stripe checkout was cancelled. You can select a plan and try again.");
@@ -319,10 +380,10 @@ export default function ClaimProfilePage() {
                   <div key={s} className="flex items-center gap-1">
                     <div
                       className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${claimStep > s
-                          ? "bg-[#4CA30D] text-white animate-scaleUp"
-                          : claimStep === s
-                            ? "bg-[#0E3E65] text-white scale-110 ring-4 ring-[#0E3E65]/15 font-extrabold"
-                            : "bg-slate-50 border border-slate-200 text-slate-400"
+                        ? "bg-[#4CA30D] text-white animate-scaleUp"
+                        : claimStep === s
+                          ? "bg-[#0E3E65] text-white scale-110 ring-4 ring-[#0E3E65]/15 font-extrabold"
+                          : "bg-slate-50 border border-slate-200 text-slate-400"
                         }`}
                     >
                       {claimStep > s ? <Check className="size-3.5 stroke-3" /> : s}

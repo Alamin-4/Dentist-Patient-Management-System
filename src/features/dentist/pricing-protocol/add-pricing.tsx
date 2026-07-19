@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Upload, XCircle } from "lucide-react";
+import { ArrowLeft, Upload, XCircle, Loader2 } from "lucide-react";
 import { useStepTwoMutation, useDentistProgress } from "@/hooks/dentist/useDentist";
+import { useBulkUploadProcedures } from "@/core/hooks/procedures/useProcedures";
 import { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 const procedureSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -53,15 +55,19 @@ const sterilizationItems = [
 export default function AddPricing() {
   const router = useRouter();
   const stepTwoMutation = useStepTwoMutation();
-  const { data: progressQueryData, isLoading: isProgressLoading } = useDentistProgress();
+  const bulkUploadMutation = useBulkUploadProcedures();
+  const { data: progressQueryData, isLoading: isProgressLoading, refetch } = useDentistProgress();
 
   const progressData = progressQueryData?.data;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     control,
     handleSubmit,
     reset,
+    watch,
+    setError,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -73,12 +79,49 @@ export default function AddPricing() {
     },
   });
 
+  const jciCertificateFile = watch("jciCertificate");
+  const videoWalkthroughFile = watch("videoWalkthrough");
+
+  const getFileName = (fileValue: any) => {
+    if (!fileValue) return "";
+    if (fileValue instanceof FileList && fileValue.length > 0) {
+      return fileValue[0].name;
+    }
+    if (fileValue instanceof File) {
+      return fileValue.name;
+    }
+    if (typeof fileValue === "string") {
+      return fileValue.substring(fileValue.lastIndexOf("/") + 1);
+    }
+    return "";
+  };
+
+  useEffect(() => {
+    if (progressData?.dentistOperations) {
+      const ops = progressData.dentistOperations;
+      const proceduresList = progressData.procedures || [];
+
+      reset({
+        signerFullName: ops.signerName || "",
+        typedSignature: ops.signature || "",
+        agreeToGuarantee: ops.agreedToGuarantee || false,
+        procedures: proceduresList.length > 0
+          ? proceduresList.map((p: any) => ({
+              name: p.procedureName,
+              price: String(p.price),
+              notes: p.notes || "",
+            }))
+          : [{ name: "", price: "", notes: "" }],
+        jciCertificate: ops.jciCertificate || null,
+        videoWalkthrough: ops.walkthroughVideo || null,
+      });
+    }
+  }, [progressData, reset]);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "procedures",
   });
-
-
 
   const onSubmit = (data: FormValues) => {
     const jciFile = data.jciCertificate instanceof FileList && data.jciCertificate.length > 0
@@ -112,18 +155,88 @@ export default function AddPricing() {
         router.push("/dentist/pricing-protocols");
       },
       onError: (err: any) => {
-        const errMsg = err?.response?.data?.message || "Failed to save pricing protocols. Please check files and try again.";
-        toast.error(errMsg);
+        const resData = err?.response?.data;
+        const newErrors: Record<string, string> = {};
+
+        // 1. Check if there is an errorDetails.field
+        const field = resData?.errorDetails?.field || resData?.field;
+        const msg = resData?.message || err?.message || "Failed to save pricing protocols. Please check files and try again.";
+        if (field) {
+          newErrors[field] = msg;
+        }
+
+        // 2. Check if there is an errors array
+        if (Array.isArray(resData?.errors)) {
+          for (const errObj of resData.errors) {
+            if (errObj.field) {
+              newErrors[errObj.field] = errObj.message;
+            }
+          }
+        }
+
+        // 3. Check if there are ZodIssues
+        if (Array.isArray(resData?.errorDetails)) {
+          for (const issue of resData.errorDetails) {
+            const fieldName = issue.path?.[issue.path.length - 1];
+            if (fieldName) {
+              newErrors[fieldName] = issue.message;
+            }
+          }
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+          Object.entries(newErrors).forEach(([fieldName, message]) => {
+            // Map backend fields to frontend form names
+            let mappedName: any = fieldName;
+            if (fieldName === "signerName") mappedName = "signerFullName";
+            if (fieldName === "signature") mappedName = "typedSignature";
+            if (fieldName === "agreedToGuarantee") mappedName = "agreeToGuarantee";
+
+            setError(mappedName, {
+              type: "server",
+              message,
+            });
+          });
+        } else {
+          toast.error(msg);
+        }
+      },
+    });
+  };
+
+  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("csvFile", file);
+
+    const toastId = toast.loading("Uploading CSV...");
+    bulkUploadMutation.mutate(formData, {
+      onSuccess: (res: any) => {
+        toast.success(res?.message || "CSV procedures uploaded successfully!", { id: toastId });
+        refetch();
+      },
+      onError: (err: any) => {
+        toast.error(err?.response?.data?.message || "Failed to upload CSV.", { id: toastId });
       },
     });
   };
 
   const isSubmitting = stepTwoMutation.isPending;
-
   const today = new Date().toLocaleDateString("en-GB");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="pb-24">
+      {/* Hidden file input for CSV */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleCsvUpload}
+        accept=".csv"
+        className="hidden"
+      />
+
       {/* Page Header */}
       <div className="mb-6">
         <button
@@ -155,7 +268,10 @@ export default function AddPricing() {
               <p className="text-sm font-medium text-foreground">
                 Upload JCI Certificate
               </p>
-              <label className="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-border px-5 py-5 transition-colors hover:bg-muted/40">
+              <label className={cn(
+                "relative flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed px-5 py-5 transition-colors hover:bg-muted/40",
+                errors.jciCertificate ? "border-red-500 bg-red-50/10" : "border-border"
+              )}>
                 <input
                   type="file"
                   accept=".pdf,.png,.jpg,.jpeg"
@@ -164,9 +280,20 @@ export default function AddPricing() {
                 />
                 <Upload className="h-5 w-5 shrink-0 text-muted-foreground" />
                 <span className="text-sm font-medium text-foreground">
-                  Click to upload or drag and drop
+                  {getFileName(jciCertificateFile) ? (
+                    <span className="text-[#163E5C] font-semibold">
+                      Selected: {getFileName(jciCertificateFile)}
+                    </span>
+                  ) : (
+                    "Click to upload or drag and drop"
+                  )}
                 </span>
               </label>
+              {errors.jciCertificate && (
+                <p className="text-xs font-semibold text-destructive mt-1">
+                  {String(errors.jciCertificate.message)}
+                </p>
+              )}
             </div>
 
             {/* OR divider */}
@@ -183,7 +310,10 @@ export default function AddPricing() {
               <p className="text-sm font-medium text-foreground">
                 Start Video Walkthrough
               </p>
-              <label className="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-border px-5 py-5 transition-colors hover:bg-muted/40">
+              <label className={cn(
+                "relative flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed px-5 py-5 transition-colors hover:bg-muted/40",
+                errors.videoWalkthrough ? "border-red-500 bg-red-50/10" : "border-border"
+              )}>
                 <input
                   type="file"
                   accept="video/*"
@@ -192,9 +322,20 @@ export default function AddPricing() {
                 />
                 <Upload className="h-5 w-5 shrink-0 text-muted-foreground" />
                 <span className="text-sm font-medium text-foreground">
-                  Upload Video
+                  {getFileName(videoWalkthroughFile) ? (
+                    <span className="text-[#163E5C] font-semibold">
+                      Selected: {getFileName(videoWalkthroughFile)}
+                    </span>
+                  ) : (
+                    "Upload Video"
+                  )}
                 </span>
               </label>
+              {errors.videoWalkthrough && (
+                <p className="text-xs font-semibold text-destructive mt-1">
+                  {String(errors.videoWalkthrough.message)}
+                </p>
+              )}
             </div>
 
             {/* Instruction items */}
@@ -308,14 +449,17 @@ export default function AddPricing() {
               <button
                 type="button"
                 onClick={() => append({ name: "", price: "", notes: "" })}
-                className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+                className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 cursor-pointer"
               >
                 Add Procedure
               </button>
               <button
                 type="button"
-                className="h-10 rounded-lg border border-primary bg-card px-5 text-sm font-semibold text-primary transition-colors hover:bg-muted/40"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-10 rounded-lg border border-primary bg-card px-5 text-sm font-semibold text-primary transition-colors hover:bg-muted/40 cursor-pointer flex items-center gap-2"
+                disabled={bulkUploadMutation.isPending}
               >
+                {bulkUploadMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 Upload CSV price list
               </button>
             </div>
