@@ -185,6 +185,10 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
       treatmentDuration: "Completed",
       location: `${dentistDirectory?.city || "Mexico City"}, ${dentistDirectory?.country || "Mexico"}`,
     } : null,
+    dentistPayoutAmount: plan.treatmentBooking?.dentistPayoutAmount || null,
+    platformFeeAmount: plan.treatmentBooking?.platformFeeAmount || null,
+    refundAmount: plan.treatmentBooking?.refundAmount || null,
+    cancellationFeeAmount: plan.treatmentBooking?.cancellationFeeAmount || null,
   };
 }
 

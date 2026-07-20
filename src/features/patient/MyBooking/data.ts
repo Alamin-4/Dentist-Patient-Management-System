@@ -380,6 +380,10 @@ export interface InProgressBooking {
     treatmentDuration: string;
     location: string;
   };
+  dentistPayoutAmount?: number | string | null;
+  platformFeeAmount?: number | string | null;
+  refundAmount?: number | string | null;
+  cancellationFeeAmount?: number | string | null;
 }
 
 export const inProgressBookingsData: InProgressBooking[] = [

@@ -327,6 +327,26 @@ export default function BookingDetailPage() {
                       ? "Refund"
                       : booking?.paymentStatus}
               </div>
+              {booking?.paymentStatus === "PAID" && booking.dentistPayoutAmount && (
+                <div className="mt-1.5 text-xs text-emerald-600 font-semibold">
+                  Payout: ${Number(booking.dentistPayoutAmount).toLocaleString()}
+                  {booking.platformFeeAmount && (
+                    <span className="block text-[10px] text-slate-400 font-normal">
+                      Platform Fee: ${Number(booking.platformFeeAmount).toLocaleString()}
+                    </span>
+                  )}
+                </div>
+              )}
+              {booking?.paymentStatus === "REFUNDED" && booking.refundAmount && (
+                <div className="mt-1.5 text-xs text-slate-500 font-semibold">
+                  Patient Refund: ${Number(booking.refundAmount).toLocaleString()}
+                  {booking.cancellationFeeAmount && Number(booking.cancellationFeeAmount) > 0 && (
+                    <span className="block text-[10px] text-emerald-600 font-semibold">
+                      Your Fee (15%): ${Number(booking.cancellationFeeAmount).toLocaleString()}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

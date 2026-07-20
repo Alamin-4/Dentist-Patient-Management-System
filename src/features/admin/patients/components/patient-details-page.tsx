@@ -1,3 +1,5 @@
+// src/app/(admin-dashboard)/modules/patients/components/patient-detail-page.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -10,7 +12,6 @@ import {
   Phone,
   Calendar,
   Clock,
-  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
@@ -19,6 +20,8 @@ import { PatientBookingsTab } from "./patient-bookings-tab";
 import { PatientConsultationsTab } from "./patient-consultations-tab";
 import { PatientDocumentsTab } from "./patient-documents-tab";
 import { usePatientDetail } from "@/hooks/admin/patients/usePatients";
+import { PatientDetailSkeleton } from "./PatientDetailsPageSkeleton";
+import Image from "next/image";
 
 type MainTab = "overview" | "bookings" | "consultations" | "documents";
 
@@ -31,12 +34,9 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
 
   const { data: response, isLoading, isError } = usePatientDetail(patientId);
 
+  // Show skeleton while loading
   if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#163E5C]" />
-      </div>
-    );
+    return <PatientDetailSkeleton />;
   }
 
   if (isError || !response?.data) {
@@ -131,13 +131,25 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           {/* Left: avatar + info */}
           <div className="flex items-start gap-4">
-            {/* Avatar */}
-            <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white sm:h-16 sm:w-16"
-              style={{ backgroundColor: patient.avatar_color }}
-            >
-              {patient.initials}
-            </div>
+            {/* Avatar — shows profile photo if available, else initials */}
+            {patient.image ? (
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border border-gray-100 sm:h-16 sm:w-16">
+                <Image
+                  src={patient.image}
+                  alt={patient.name}
+                  height={64}
+                  width={64}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            ) : (
+              <div
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white sm:h-16 sm:w-16"
+                style={{ backgroundColor: patient.avatar_color }}
+              >
+                {patient.initials}
+              </div>
+            )}
             {/* Name + badges + meta */}
             <div>
               <div className="flex flex-wrap items-center gap-2">

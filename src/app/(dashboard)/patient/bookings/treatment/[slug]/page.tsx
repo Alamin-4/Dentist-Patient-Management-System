@@ -318,9 +318,28 @@ export default function TreatmentDetailsPage() {
               ${booking.estimateBudget.toLocaleString()}
             </p>
             {booking.paymentStatus === "refunded" || isCancelled ? (
-              <p className="text-xs font-bold text-sky-600 mt-0.5">Refund</p>
+              <>
+                <p className="text-xs font-bold text-sky-600 mt-0.5">Refunded</p>
+                {booking.refundAmount && (
+                  <p className="text-xs font-semibold text-slate-600 mt-0.5">
+                    Refund: ${Number(booking.refundAmount).toLocaleString()}
+                  </p>
+                )}
+                {booking.cancellationFeeAmount && Number(booking.cancellationFeeAmount) > 0 && (
+                  <p className="text-[10px] text-rose-600 font-medium mt-0.5">
+                    Cancellation Fee: ${Number(booking.cancellationFeeAmount).toLocaleString()}
+                  </p>
+                )}
+              </>
             ) : booking.paymentStatus === "paid" ? (
-              <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
+              <>
+                <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
+                {booking.finalPlan?.finalTotal && (
+                  <p className="text-xs font-semibold text-slate-600 mt-0.5">
+                    Final Price: ${Number(booking.finalPlan.finalTotal).toLocaleString()}
+                  </p>
+                )}
+              </>
             ) : booking.paymentStatus === "pending" ? (
               <p className="text-xs font-bold text-red-500 mt-0.5">Payment Required</p>
             ) : (

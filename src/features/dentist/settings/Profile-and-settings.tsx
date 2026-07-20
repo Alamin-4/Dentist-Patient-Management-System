@@ -1,15 +1,45 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 import ChangePassword from "./components/change-password";
 import PaymentInfo from "./components/payment-info";
 import PersonalInfo from "./components/personal-info";
 import { useGetMe } from "@/hooks/user/useUser";
+import { apiClient } from "@/api/client";
 
 export default function ProfileAndSettings() {
-  const { data: response, isLoading } = useGetMe();
+  const { data: response, isLoading, refetch } = useGetMe();
   const user = (response as any)?.data || response;
+  const searchParams = useSearchParams();
 
-  const isConnected = !!user?.dentist?.dentistDirectory?.stripeSubscriptionId || !!user?.dentist?.dentistDirectory?.stripeCustomerId;
+  const connectSuccess = searchParams.get("connect_success");
+  const connectRefresh = searchParams.get("connect_refresh");
+
+  useEffect(() => {
+    if (connectSuccess) {
+      const syncStatus = async () => {
+        try {
+          const res = await apiClient.stripe.connectStatus();
+          if (res?.success) {
+            toast.success("Stripe Connect account connected and synced successfully!");
+          } else {
+            toast.success("Stripe onboarding process completed!");
+          }
+          refetch();
+        } catch (error) {
+          console.error("Failed to sync Stripe Connect status:", error);
+          toast.error("Failed to sync your payouts status.");
+        }
+      };
+      syncStatus();
+    } else if (connectRefresh) {
+      toast.error("Stripe onboarding was interrupted. Please try again.");
+    }
+  }, [connectSuccess, connectRefresh, refetch]);
+
+  const isConnected = !!user?.dentist?.stripeConnectOnboarded;
 
   return (
     <div className="space-y-6 lg:space-y-8">
@@ -34,7 +64,9 @@ export default function ProfileAndSettings() {
           ) : (
             <PaymentInfo
               connected={isConnected}
-              card={null}
+              chargesEnabled={!!user?.dentist?.stripeConnectChargesEnabled}
+              payoutsEnabled={!!user?.dentist?.stripeConnectPayoutsEnabled}
+              refetch={refetch}
             />
           )}
         </div>

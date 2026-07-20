@@ -10,11 +10,41 @@ import { CustomStats } from "@/app/(admin-dashboard)/modules/shared/custom-stats
 import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
 import { CustomTable } from "@/app/(admin-dashboard)/modules/shared/custom-table";
 import type { Column } from "@/app/(admin-dashboard)/modules/shared/custom-table";
-import seoPagesData from "@/lib/seo-pages-data";
 import { cn } from "@/lib/utils";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
 
-type SEOPage = (typeof seoPagesData.pages)[number];
-type MutablePage = SEOPage & { currentStatus: "published" | "removed" };
+export type SEOPage = {
+  id: string;
+  dentist_name: string;
+  dentist_initials: string;
+  dentist_avatar_color: string;
+  dentist_title: string;
+  dentist_specialty: string;
+  dentist_location: string;
+  dentist_rating: number;
+  dentist_review_count: number;
+  dentist_verified: boolean;
+  patient_name: string;
+  patient_initials: string;
+  patient_avatar_color: string;
+  patient_location: string;
+  patient_verified: boolean;
+  procedure: string;
+  city: string;
+  country: string;
+  rating: number;
+  review_content: string;
+  helpful_yes: number;
+  helpful_no: number;
+  has_photos: boolean;
+  published_date: string;
+  status: "published" | "removed";
+  ratings_breakdown: Array<{ label: string; rating: number }>;
+  currentStatus: "published" | "removed";
+};
+
+type MutablePage = SEOPage;
 type TabKey = "all" | "published" | "removed";
 
 /* ─── Avatar ─────────────────────────────────────────────────────────────── */
@@ -129,7 +159,8 @@ function RemoveModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm:
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function SEOReviewPage() {
-  const [pages, setPages] = useState<MutablePage[]>([]);
+  const queryClient = useQueryClient();
+
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
   const [countryFilter, setCountryFilter] = useState("");
@@ -138,44 +169,62 @@ export default function SEOReviewPage() {
   const [openDropdown, setOpenDropdown] = useState<"country" | "procedure" | "status" | null>(null);
   const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("rateddocs_seopages_v2");
-    if (saved) {
-      try {
-        setPages(JSON.parse(saved));
-      } catch (e) {
-        setPages(seoPagesData.pages.map((p) => ({ ...p, currentStatus: p.status as "published" | "removed" })));
-      }
-    } else {
-      const initial = seoPagesData.pages.map((p) => ({ ...p, currentStatus: p.status as "published" | "removed" }));
-      setPages(initial);
-      localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(initial));
-    }
-  }, []);
+  // Fetch SEO review pages from backend
+  const { data: seoData, isLoading } = useQuery({
+    queryKey: ["seo-review-pages"],
+    queryFn: async () => {
+      const res = await apiClient.admin.getSeoReviewPages();
+      return res.data;
+    },
+  });
 
-  const publishedCount = pages.filter((p) => p.currentStatus === "published").length;
-  const removedCount = pages.filter((p) => p.currentStatus === "removed").length;
-  const thisMonthCount = pages.filter((p) => p.published_date.includes("May 2026")).length;
+  const pages = useMemo<SEOPage[]>(() => {
+    return ((seoData as any)?.pages ?? []).map((p: any) => ({
+      ...p,
+      currentStatus: p.status,
+    }));
+  }, [seoData]);
 
-  const countries = useMemo(() => [...new Set(seoPagesData.pages.map((p) => p.country))].sort(), []);
-  const procedures = useMemo(() => [...new Set(seoPagesData.pages.map((p) => p.procedure))].sort(), []);
+  const metaMetrics = (seoData as any)?.meta ?? {
+    total: 0,
+    published: 0,
+    removed: 0,
+    this_month: 0,
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "published" | "removed" }) => {
+      return apiClient.admin.updateSeoReviewPage(id, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["seo-review-pages"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+    },
+  });
+
+  const publishedCount = metaMetrics.published;
+  const removedCount = metaMetrics.removed;
+  const thisMonthCount = metaMetrics.this_month;
+
+  const countries = useMemo<string[]>(() => [...new Set(pages.map((p: SEOPage) => p.country))].sort(), [pages]);
+  const procedures = useMemo<string[]>(() => [...new Set(pages.map((p: SEOPage) => p.procedure))].sort(), [pages]);
   const statusOptions = ["Published", "Removed"];
 
-  const filtered = useMemo(() => {
+  const filtered = useMemo<SEOPage[]>(() => {
     let list = pages;
-    if (activeTab === "published") list = list.filter((p) => p.currentStatus === "published");
-    if (activeTab === "removed") list = list.filter((p) => p.currentStatus === "removed");
+    if (activeTab === "published") list = list.filter((p: SEOPage) => p.currentStatus === "published");
+    if (activeTab === "removed") list = list.filter((p: SEOPage) => p.currentStatus === "removed");
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter((p) =>
+      list = list.filter((p: SEOPage) =>
         p.dentist_name.toLowerCase().includes(q) ||
         p.patient_name.toLowerCase().includes(q) ||
         p.procedure.toLowerCase().includes(q)
       );
     }
-    if (countryFilter) list = list.filter((p) => p.country === countryFilter);
-    if (procedureFilter) list = list.filter((p) => p.procedure === procedureFilter);
-    if (statusFilter) list = list.filter((p) =>
+    if (countryFilter) list = list.filter((p: SEOPage) => p.country === countryFilter);
+    if (procedureFilter) list = list.filter((p: SEOPage) => p.procedure === procedureFilter);
+    if (statusFilter) list = list.filter((p: SEOPage) =>
       statusFilter === "Published" ? p.currentStatus === "published" : p.currentStatus === "removed"
     );
     return list;
@@ -183,16 +232,12 @@ export default function SEOReviewPage() {
 
   const handleConfirmRemove = () => {
     if (!pendingRemoveId) return;
-    const updated = pages.map((p) => p.id === pendingRemoveId ? { ...p, currentStatus: "removed" as const } : p);
-    setPages(updated);
-    localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(updated));
+    updateMutation.mutate({ id: pendingRemoveId, status: "removed" });
     setPendingRemoveId(null);
   };
 
   const handleRestore = (id: string) => {
-    const updated = pages.map((p) => p.id === id ? { ...p, currentStatus: "published" as const } : p);
-    setPages(updated);
-    localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(updated));
+    updateMutation.mutate({ id, status: "published" });
   };
 
   const resetFilters = () => {
@@ -285,6 +330,14 @@ export default function SEOReviewPage() {
       ),
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A2E] border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <>
