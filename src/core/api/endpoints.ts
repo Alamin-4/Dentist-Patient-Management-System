@@ -70,6 +70,11 @@ export const endpoints = {
     patientDetail: (id: string | number) => `/admin/patients/${id}`,
     overview: "/admin/overview",
     addUser: "/admin/users",
+    antiCollusion: "/admin/anti-collusion",
+    updateAntiCollusion: (id: string | number) => `/admin/anti-collusion/${id}`,
+    seoReviewPages: "/admin/seo-review-pages",
+    seoReviewPageDetail: (id: string | number) => `/admin/seo-review-pages/${id}`,
+    updateSeoReviewPage: (id: string | number) => `/admin/seo-review-pages/${id}`,
   },
   specialties: {
     getSpecialties: "/specialties",
@@ -111,6 +116,8 @@ export const endpoints = {
   },
   stripe: {
     confirmPayment: "/stripe/confirm-payment",
+    connectOnboard: "/stripe/connect/onboard",
+    connectStatus: "/stripe/connect/status",
   },
   treatmentBookings: {
     base: "/treatment-bookings",

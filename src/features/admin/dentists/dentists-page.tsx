@@ -74,23 +74,24 @@ export default function DentistsPage() {
 
   const {
     dentists: apiDentists,
+    meta: apiMeta,
     isLoading,
     isError,
   } = useAdminDentists({
-    params: { limit: 100 },
+    params: { limit: 1000 },
   });
 
   const mappedDentists = useMemo(() => {
     return (apiDentists || []).map(mapApiDentistToUIDentist);
   }, [apiDentists]);
 
-  // Derive Statistics & Count Totals
   const meta = useMemo(() => {
     const total = mappedDentists.length;
     const active = mappedDentists.filter((d) => d.status === "active").length;
     const pending = mappedDentists.filter((d) => d.status === "pending").length;
     const suspended = mappedDentists.filter((d) => d.status === "suspended").length;
     const rejected = mappedDentists.filter((d) => d.status === "rejected").length;
+    const unclaimed = mappedDentists.filter((d) => d.status === "unclaimed").length;
 
     return {
       total_dentists: total,
@@ -99,21 +100,24 @@ export default function DentistsPage() {
       pending_verification: pending,
       suspended,
       suspended_pct: total > 0 ? `${Math.round((suspended / total) * 100)}%` : "0%",
-      tab_counts: { all: total, active, pending, suspended, rejected },
+      tab_counts: { all: total, active, pending, suspended, rejected, unclaimed },
     };
   }, [mappedDentists]);
 
   const stats = [
-    { label: "Total Dentists", value: meta.total_dentists.toLocaleString(), sub: "Registered on platform" },
+    { label: "Total Dentists", value: (apiMeta?.total_verifications ?? 0).toLocaleString(), sub: "Registered on platform" },
     { label: "Active", value: meta.active.toLocaleString(), sub: meta.active_pct },
-    { label: "Pending Verification", value: meta.pending_verification.toString(), sub: "Awaiting review", valueColor: "text-amber-500" },
+    { label: "Pending Verification", value: (apiMeta?.pending_review ?? 0).toLocaleString(), sub: "Awaiting review", valueColor: "text-amber-500" },
     { label: "Suspended", value: meta.suspended.toString(), sub: meta.suspended_pct },
+    { label: "Directory Entries", value: (apiMeta?.totalDirectory ?? 0).toLocaleString(), sub: "Imported via CSV" },
+    { label: "Subscribed Members", value: (apiMeta?.totalSubscribed ?? 0).toLocaleString(), sub: "Active paid plans" },
   ];
 
   const tabs = [
-    { key: "all", label: "All", count: meta.tab_counts.all },
+    { key: "all", label: "All", count: (apiMeta?.total_verifications ?? 0) + (apiMeta?.totalDirectory ?? 0) },
     { key: "active", label: "Active", count: meta.tab_counts.active },
-    { key: "pending", label: "Pending", count: meta.tab_counts.pending },
+    { key: "pending", label: "Pending", count: apiMeta?.pending_review ?? 0 },
+    { key: "unclaimed", label: "Unclaimed Directory", count: apiMeta?.totalDirectory ?? 0 },
     { key: "suspended", label: "Suspended", count: meta.tab_counts.suspended },
     { key: "rejected", label: "Rejected", count: meta.tab_counts.rejected },
   ];
@@ -227,7 +231,7 @@ export default function DentistsPage() {
       </div>
 
       {/* Stats Cards */}
-      <CustomStats stats={stats} />
+      <CustomStats stats={stats} className="grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" />
 
       {/* Main Table Card */}
       <div className="rounded-lg border border-gray-100 bg-white shadow-sm">

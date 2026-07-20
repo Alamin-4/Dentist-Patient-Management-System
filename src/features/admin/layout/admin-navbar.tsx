@@ -1,6 +1,6 @@
 "use client";
 
-import { HelpCircle, Bell, Menu, LogOut, User, Settings } from "lucide-react";
+import { HelpCircle, Bell, Menu, LogOut, User, Settings, BarChart2, ChevronRight } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,15 +10,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/sidebar-context";
 import { useLogout, useMe } from "@/hooks/auth/useAuth";
+import Link from "next/link";
 
 export function AdminNavbar() {
   const { toggle } = useSidebar();
-  const { mutate: logout } = useLogout()
-  const { user } = useMe()
+  const { mutate: logout } = useLogout();
+  const { user } = useMe();
 
   const userInitials = (
-    (user?.name?.charAt(0) || "") + 
-    (user?.email?.split("@")[0]?.charAt(0) || "")
+    (user?.name?.split(" ")[0]?.charAt(0) || "") +
+    (user?.name?.split(" ")[1]?.charAt(0) || user?.email?.charAt(0) || "")
   ).toUpperCase() || "A";
 
   return (
@@ -34,7 +35,7 @@ export function AdminNavbar() {
             <Menu className="h-5 w-5" />
           </button>
 
-          {/* Mobile logo — only shows on small screens when sidebar is hidden */}
+          {/* Mobile logo */}
           <div className="flex items-center gap-2 ml-2 lg:hidden">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#C9963F]">
               <svg
@@ -65,15 +66,17 @@ export function AdminNavbar() {
             <HelpCircle className="h-4 w-4" />
           </button>
 
-          {/* Notifications */}
-          <button
+          {/* Notifications bell — links to /admin/notifications */}
+          <Link
+            href="/admin/notifications"
             aria-label="Notifications"
             className="relative flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
           >
             <Bell className="h-4 w-4" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-1 ring-white" />
-          </button>
+          </Link>
 
+          {/* User dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -83,31 +86,68 @@ export function AdminNavbar() {
                 {userInitials}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 p-2 mt-1">
-              <div className="px-2 py-1.5 mb-1">
-                <p className="text-sm font-semibold text-[#1A1A2E]">
-                  {user?.name} {user?.email?.split("@")[0]}
+
+            <DropdownMenuContent align="end" className="w-56 p-2 mt-1">
+              {/* User info header */}
+              <div className="px-2 py-2 mb-1">
+                <p className="text-sm font-semibold text-[#1A1A2E] truncate">
+                  {user?.name || "Admin"}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 mt-0.5 truncate">
                   {user?.email}
                 </p>
+                <span className="mt-1.5 inline-flex items-center rounded-full bg-[#0D2B3E]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0D2B3E]">
+                  Admin
+                </span>
               </div>
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 text-[13px] cursor-pointer">
-                <User className="h-3.5 w-3.5 text-gray-500" />
-                Profile
+
+              {/* My Profile → /admin/profile */}
+              <DropdownMenuItem asChild className="gap-2 text-[13px] cursor-pointer">
+                <Link href="/admin/profile">
+                  <User className="h-3.5 w-3.5 text-gray-500" />
+                  My Profile
+                  <ChevronRight className="h-3 w-3 text-gray-300 ml-auto" />
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2 text-[13px] cursor-pointer">
-                <Settings className="h-3.5 w-3.5 text-gray-500" />
-                Settings
+
+              {/* Settings → /admin/settings */}
+              <DropdownMenuItem asChild className="gap-2 text-[13px] cursor-pointer">
+                <Link href="/admin/settings">
+                  <Settings className="h-3.5 w-3.5 text-gray-500" />
+                  Settings
+                  <ChevronRight className="h-3 w-3 text-gray-300 ml-auto" />
+                </Link>
               </DropdownMenuItem>
+
+              {/* Notifications → /admin/notifications */}
+              <DropdownMenuItem asChild className="gap-2 text-[13px] cursor-pointer">
+                <Link href="/admin/notifications">
+                  <Bell className="h-3.5 w-3.5 text-gray-500" />
+                  Notifications
+                  <ChevronRight className="h-3 w-3 text-gray-300 ml-auto" />
+                </Link>
+              </DropdownMenuItem>
+
+              {/* Reports → /admin/reports */}
+              <DropdownMenuItem asChild className="gap-2 text-[13px] cursor-pointer">
+                <Link href="/admin/reports">
+                  <BarChart2 className="h-3.5 w-3.5 text-gray-500" />
+                  Reports
+                  <ChevronRight className="h-3 w-3 text-gray-300 ml-auto" />
+                </Link>
+              </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
+              {/* Sign out */}
               <DropdownMenuItem
                 className="gap-2 text-[13px] text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50"
                 onClick={() => logout()}
               >
                 <LogOut className="h-3.5 w-3.5" />
-                Logout
+                Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

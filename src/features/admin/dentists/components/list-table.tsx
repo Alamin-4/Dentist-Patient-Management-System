@@ -103,7 +103,7 @@ export function DentistsTable({
                   className="rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
                 />
               </th>
-              {["Dentist", "Specialty", "Location", "Status", "Rating", "Bookings", "Joined", ""].map((h, i) => (
+              {["Dentist", "Specialty", "Location", "Status", "Rating", "Bookings", "Membership", "Joined", ""].map((h, i) => (
                 <th
                   key={i}
                   className="px-4 py-3 text-left text-sm font-normal text-gray-400"
@@ -201,6 +201,17 @@ export function DentistsTable({
                   <td className="px-4 py-3.5 text-sm text-gray-600">
                     {dentist.bookings != null ? (
                       dentist.bookings.toLocaleString()
+                    ) : (
+                      <span className="text-gray-300">—</span>
+                    )}
+                  </td>
+
+                  {/* Membership */}
+                  <td className="px-4 py-3.5 text-sm">
+                    {(dentist as any).membershipPlan ? (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 uppercase">
+                        {(dentist as any).membershipPlan.replace("_", " ")}
+                      </span>
                     ) : (
                       <span className="text-gray-300">—</span>
                     )}
