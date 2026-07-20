@@ -1,12 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ArrowLeft, MapPin, Star, ThumbsUp, ThumbsDown, ShieldCheck, CheckCircle2, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import seoPagesData from "@/lib/seo-pages-data";
 import { cn } from "@/lib/utils";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
 
-type SEOPage = (typeof seoPagesData.pages)[number];
+export type SEOPage = {
+  id: string;
+  dentist_name: string;
+  dentist_initials: string;
+  dentist_avatar_color: string;
+  dentist_title: string;
+  dentist_specialty: string;
+  dentist_location: string;
+  dentist_rating: number;
+  dentist_review_count: number;
+  dentist_verified: boolean;
+  patient_name: string;
+  patient_initials: string;
+  patient_avatar_color: string;
+  patient_location: string;
+  patient_verified: boolean;
+  procedure: string;
+  city: string;
+  country: string;
+  rating: number;
+  review_content: string;
+  helpful_yes: number;
+  helpful_no: number;
+  has_photos: boolean;
+  published_date: string;
+  status: "published" | "removed";
+  ratings_breakdown: Array<{ label: string; rating: number }>;
+};
 
 interface SEOPageDetailProps {
   page: SEOPage;
@@ -128,50 +156,56 @@ function RelatedReviewCard({ page }: { page: SEOPage }) {
 
 /* ─── Main detail component ──────────────────────────────────────────────── */
 export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps) {
-  const [page, setPage] = useState<SEOPage>(initialPage);
+  const queryClient = useQueryClient();
   const [helpful, setHelpful] = useState<"yes" | "no" | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("rateddocs_seopages_v2");
-    if (saved) {
-      try {
-        const list = JSON.parse(saved);
-        const found = list.find((p: any) => p.id === initialPage.id);
-        if (found) {
-          setPage(found);
-        }
-      } catch (e) { }
-    }
-  }, [initialPage]);
+  const { data: page = initialPage } = useQuery({
+    queryKey: ["seo-review-page-detail", initialPage.id],
+    queryFn: async () => {
+      const res = await apiClient.admin.getSeoReviewPageDetail(initialPage.id);
+      return res.data;
+    },
+    initialData: initialPage,
+  });
 
-  const yesCount = page.helpful_yes + (helpful === "yes" ? 1 : 0);
-  const noCount = page.helpful_no + (helpful === "no" ? 1 : 0);
+  const { data: allSeoData } = useQuery({
+    queryKey: ["seo-review-pages"],
+    queryFn: async () => {
+      const res = await apiClient.admin.getSeoReviewPages();
+      return res.data;
+    },
+  });
 
-  const relatedPages = seoPagesData.pages
-    .filter((p) => p.id !== page.id && p.status === "published")
-    .slice(0, 3);
+  const relatedPages = useMemo(() => {
+    const list = ((allSeoData as any)?.pages ?? []) as SEOPage[];
+    return list.filter((p) => p.id !== page.id && p.status === "published").slice(0, 3);
+  }, [allSeoData, page.id]);
 
+  const updateMutation = useMutation({
+    mutationFn: async (payload: { helpfulYes?: number; helpfulNo?: number }) => {
+      return apiClient.admin.updateSeoReviewPage(page.id, payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["seo-review-page-detail", page.id] });
+      queryClient.invalidateQueries({ queryKey: ["seo-review-pages"] });
+    },
+  });
+
+  const yesCount = page.helpful_yes;
+  const noCount = page.helpful_no;
   const reviewMonth = page.published_date.split(" ").slice(0, 2).join(" ");
 
   const handleHelpful = (type: "yes" | "no") => {
+    if (helpful) return;
     setHelpful(type);
-    const saved = localStorage.getItem("rateddocs_seopages_v2");
-    if (saved) {
-      try {
-        const list = JSON.parse(saved);
-        const updated = list.map((p: any) => {
-          if (p.id === page.id) {
-            return {
-              ...p,
-              helpful_yes: p.helpful_yes + (type === "yes" ? 1 : 0),
-              helpful_no: p.helpful_no + (type === "no" ? 1 : 0),
-            };
-          }
-          return p;
-        });
-        localStorage.setItem("rateddocs_seopages_v2", JSON.stringify(updated));
-      } catch (e) { }
+
+    const payload: any = {};
+    if (type === "yes") {
+      payload.helpfulYes = page.helpful_yes + 1;
+    } else {
+      payload.helpfulNo = page.helpful_no + 1;
     }
+    updateMutation.mutate(payload);
   };
 
   return (
@@ -235,7 +269,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
 
             {/* Ratings breakdown */}
             <div className="mt-4 space-y-2.5">
-              {page.ratings_breakdown.map((r) => (
+              {page.ratings_breakdown.map((r: { label: string; rating: number }) => (
                 <div key={r.label} className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">{r.label}</span>
                   <div className="flex items-center gap-2">

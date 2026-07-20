@@ -11,6 +11,8 @@ import { CustomTab } from "@/app/(admin-dashboard)/modules/shared/custom-tab";
 import { InvestigationDrawer } from "./components/investigation-drawer";
 import { ArchiveConfirmModal } from "./components/archive-confirm-modal";
 import { ReactivateConfirmModal } from "./components/reactivate-confirm-modal";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
 
 /* ─── Types ───────────────────────────────────────────────────────────────── */
 export type DentistStatus = "suspended" | "warning" | "clean" | "cleared" | "removed";
@@ -50,11 +52,6 @@ export type Dentist = {
   investigation_notes: string;
   flags: Flag[];
 };
-
-type TabKey = "all" | "warning" | "suspended" | "archive";
-
-/* ─── Initial Cohort Data ────────────────────────────────────────────────── */
-const DEFAULT_COHORT: Dentist[] = [];
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
 function Avatar({ initials, color, size = "md" }: { initials: string; color: string; size?: "sm" | "md" }) {
@@ -213,9 +210,12 @@ function DentistCard({ dentist, onView }: { dentist: Dentist; onView: () => void
   );
 }
 
+type TabKey = "all" | "warning" | "suspended" | "archive";
+
 /* ─── Main Page ───────────────────────────────────────────────────────────── */
 export default function AntiCollusion() {
-  const [dentists, setDentists] = useState<Dentist[]>([]);
+  const queryClient = useQueryClient();
+
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
   const [countryFilter, setCountryFilter] = useState("");
@@ -224,58 +224,56 @@ export default function AntiCollusion() {
   const [archiveTarget, setArchiveTarget] = useState<Dentist | null>(null);
   const [reactivateTarget, setReactivateTarget] = useState<Dentist | null>(null);
 
-  // Load state from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("rateddocs_anticollusion_v2");
-    if (saved) {
-      try {
-        setDentists(JSON.parse(saved));
-      } catch (e) {
-        setDentists(DEFAULT_COHORT);
-      }
-    } else {
-      setDentists(DEFAULT_COHORT);
-      localStorage.setItem("rateddocs_anticollusion_v2", JSON.stringify(DEFAULT_COHORT));
-    }
-  }, []);
+  // Fetch collusion data from backend
+  const { data: collusionData, isLoading } = useQuery({
+    queryKey: ["anti-collusion"],
+    queryFn: async () => {
+      const res = await apiClient.admin.getAntiCollusionList();
+      return res.data;
+    },
+  });
 
-  // Compute live metrics dynamically
-  const metaMetrics = useMemo(() => {
-    let totalFlags = 0;
-    let activeInvestigations = 0;
-    let suspendedCount = 0;
-    let flagsThisMonth = 0;
+  const dentists = collusionData?.dentists ?? [];
+  const metaMetrics = collusionData?.meta ?? {
+    total_flags: 0,
+    active_investigations: 0,
+    suspended_dentists: 0,
+    flags_this_month: 0,
+  };
 
-    dentists.forEach((d) => {
-      totalFlags += d.flag_count;
-      if (d.status === "suspended") {
-        suspendedCount++;
-        activeInvestigations++;
-      } else if (d.status === "warning") {
-        activeInvestigations++;
-      }
+  const activeDrawerDentist = useMemo(() => {
+    if (!drawerDentist) return null;
+    return dentists.find((d: any) => d.id === drawerDentist.id) || drawerDentist;
+  }, [drawerDentist, dentists]);
+
+  // Mutation to update collusion state on the backend
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, patch }: { id: string; patch: any }) => {
+      const payload: any = {};
+      if (patch.status !== undefined) payload.status = patch.status;
+      if (patch.investigation_notes !== undefined) payload.investigationNotes = patch.investigation_notes;
+      if (patch.investigation_opened !== undefined) payload.investigationOpened = patch.investigation_opened;
+      if (patch.suspended_date !== undefined) payload.suspendedDate = patch.suspended_date;
+      if (patch.archived_date !== undefined) payload.archivedDate = patch.archived_date;
       
-      d.flags.forEach((f) => {
-        if (f.flagged_date.includes("Apr 2026") || f.flagged_date.includes("May 2026")) {
-          flagsThisMonth++;
-        }
-      });
-    });
+      return apiClient.admin.updateAntiCollusion(id, payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["anti-collusion"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+    },
+  });
 
-    return {
-      total_flags: totalFlags,
-      active_investigations: activeInvestigations,
-      suspended_dentists: suspendedCount,
-      flags_this_month: flagsThisMonth || 3,
-    };
-  }, [dentists]);
+  const updateDentist = (id: string, patch: Partial<Dentist>) => {
+    updateMutation.mutate({ id, patch });
+  };
 
   /* live counts from state */
-  const warningCount = dentists.filter((d) => d.status === "warning").length;
-  const suspendedCount = dentists.filter((d) => d.status === "suspended").length;
-  const archiveCount = dentists.filter((d) => d.status === "removed").length;
+  const warningCount = dentists.filter((d: Dentist) => d.status === "warning").length;
+  const suspendedCount = dentists.filter((d: Dentist) => d.status === "suspended").length;
+  const archiveCount = dentists.filter((d: Dentist) => d.status === "removed").length;
 
-  const allCountries = useMemo(() => [...new Set(dentists.map((d) => d.country))].sort(), [dentists]);
+  const allCountries = useMemo<string[]>(() => [...new Set<string>(dentists.map((d: Dentist) => d.country))].sort(), [dentists]);
 
   const tabs = [
     { key: "all", label: "All", count: dentists.length },
@@ -284,27 +282,21 @@ export default function AntiCollusion() {
     { key: "archive", label: "Archive", count: archiveCount },
   ];
 
-  const filtered = useMemo(() => {
+  const filtered = useMemo<Dentist[]>(() => {
     let list = dentists;
-    if (activeTab === "warning") list = list.filter((d) => d.status === "warning");
-    else if (activeTab === "suspended") list = list.filter((d) => d.status === "suspended");
-    else if (activeTab === "archive") list = list.filter((d) => d.status === "removed");
+    if (activeTab === "warning") list = list.filter((d: Dentist) => d.status === "warning");
+    else if (activeTab === "suspended") list = list.filter((d: Dentist) => d.status === "suspended");
+    else if (activeTab === "archive") list = list.filter((d: Dentist) => d.status === "removed");
 
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(
-        (d) => d.name.toLowerCase().includes(q) || d.dentist_id.toLowerCase().includes(q) || d.country.toLowerCase().includes(q)
+        (d: Dentist) => d.name.toLowerCase().includes(q) || d.dentist_id.toLowerCase().includes(q) || d.country.toLowerCase().includes(q)
       );
     }
-    if (countryFilter) list = list.filter((d) => d.country === countryFilter);
+    if (countryFilter) list = list.filter((d: Dentist) => d.country === countryFilter);
     return list;
   }, [dentists, activeTab, search, countryFilter]);
-
-  const updateDentist = (id: string, patch: Partial<Dentist>) => {
-    const updated = dentists.map((d) => (d.id === id ? { ...d, ...patch } : d));
-    setDentists(updated);
-    localStorage.setItem("rateddocs_anticollusion_v2", JSON.stringify(updated));
-  };
 
   /* handlers */
   const handleSaveNotes = (dentist: Dentist, notes: string) => {
@@ -314,7 +306,6 @@ export default function AntiCollusion() {
 
   const handleReinstate = (dentist: Dentist) => {
     updateDentist(dentist.id, { status: "warning", suspended_date: null, investigation_opened: null });
-    setDrawerDentist((prev) => prev ? { ...prev, status: "warning", suspended_date: null, investigation_opened: null } : null);
     toast.success(`${dentist.name} has been reinstated.`);
   };
 
@@ -326,11 +317,6 @@ export default function AntiCollusion() {
     if (!archiveTarget) return;
     const today = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     updateDentist(archiveTarget.id, { status: "removed", suspended_date: null, archived_date: today });
-    setDrawerDentist((prev) =>
-      prev?.id === archiveTarget.id
-        ? { ...prev, status: "removed", suspended_date: null, archived_date: today }
-        : prev
-    );
     toast.success(`${archiveTarget.name} has been archived.`);
     setArchiveTarget(null);
   };
@@ -342,14 +328,17 @@ export default function AntiCollusion() {
   const handleReactivateConfirm = () => {
     if (!reactivateTarget) return;
     updateDentist(reactivateTarget.id, { status: "clean", archived_date: null });
-    setDrawerDentist((prev) =>
-      prev?.id === reactivateTarget.id
-        ? { ...prev, status: "clean", archived_date: null }
-        : prev
-    );
     toast.success(`${reactivateTarget.name} has been reactivated.`);
     setReactivateTarget(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A2E] border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -432,12 +421,22 @@ export default function AntiCollusion() {
               <tbody className="divide-y divide-gray-50">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-14 text-center text-sm text-gray-400">
-                      No dentists match your filters.
+                    <td colSpan={7} className="px-4 py-16 text-center">
+                      {dentists.length === 0 ? (
+                        <div className="flex flex-col items-center gap-3">
+                          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50">
+                            <OctagonAlert className="h-6 w-6 text-emerald-400" />
+                          </span>
+                          <p className="text-sm font-semibold text-gray-600">All clear — no flags raised yet</p>
+                          <p className="text-xs text-gray-400">When price variance violations are detected, flagged dentists will appear here.</p>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-400">No dentists match your filters.</p>
+                      )}
                     </td>
                   </tr>
                 ) : (
-                  filtered.map((d) => (
+                  filtered.map((d: Dentist) => (
                     <tr key={d.id} className="transition-colors hover:bg-gray-50/60">
                       {/* Dentist */}
                       <td className="px-4 py-3.5">
@@ -503,9 +502,21 @@ export default function AntiCollusion() {
           {/* Mobile cards */}
           <div className="flex flex-col gap-3 p-4 md:hidden">
             {filtered.length === 0 ? (
-              <p className="py-8 text-center text-sm text-gray-400">No dentists match your filters.</p>
+              <div className="py-12 text-center">
+                {dentists.length === 0 ? (
+                  <div className="flex flex-col items-center gap-3">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50">
+                      <OctagonAlert className="h-6 w-6 text-emerald-400" />
+                    </span>
+                    <p className="text-sm font-semibold text-gray-600">All clear — no flags raised yet</p>
+                    <p className="text-xs text-gray-400">Flagged dentists will appear here when violations are detected.</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400">No dentists match your filters.</p>
+                )}
+              </div>
             ) : (
-              filtered.map((d) => (
+              filtered.map((d: Dentist) => (
                 <DentistCard key={d.id} dentist={d} onView={() => setDrawerDentist(d)} />
               ))
             )}
@@ -522,7 +533,7 @@ export default function AntiCollusion() {
 
       {/* Drawer */}
       <InvestigationDrawer
-        dentist={drawerDentist}
+        dentist={activeDrawerDentist}
         onClose={() => setDrawerDentist(null)}
         onArchive={handleArchiveRequest}
         onReinstate={handleReinstate}

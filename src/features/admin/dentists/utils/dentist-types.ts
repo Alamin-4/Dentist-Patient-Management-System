@@ -6,6 +6,9 @@ export type Dentist = Omit<
   "profile"
 > & {
   slug?: string | null;
+  membershipPlan?: string | null;
+  membershipPaidAt?: string | null;
+  stripeSubscriptionId?: string | null;
   profile: Omit<
     (typeof dentistsData.dentists)[number]["profile"],
     "verification"
@@ -33,7 +36,8 @@ export type StatusFilter =
   | "active"
   | "pending"
   | "suspended"
-  | "rejected";
+  | "rejected"
+  | "unclaimed";
 
 export const PAGE_SIZE = 8;
 
@@ -42,6 +46,7 @@ export const STATUS_BADGE: Record<string, string> = {
   pending: "bg-amber-50 text-amber-600",
   suspended: "bg-red-50 text-red-500",
   rejected: "bg-gray-100 text-gray-500",
+  unclaimed: "bg-[#F3F4F6] text-[#4B5563]", // clean gray look for unclaimed/imported
 };
 
 export const STATUS_DOT: Record<string, string> = {
@@ -49,6 +54,7 @@ export const STATUS_DOT: Record<string, string> = {
   pending: "bg-amber-500",
   suspended: "bg-red-500",
   rejected: "bg-gray-400",
+  unclaimed: "bg-gray-400",
 };
 
 export const STATUS_LABEL: Record<string, string> = {
@@ -56,6 +62,7 @@ export const STATUS_LABEL: Record<string, string> = {
   pending: "Pending",
   suspended: "Suspended",
   rejected: "Rejected",
+  unclaimed: "Unclaimed Directory",
 };
 
 export const SPECIALTIES = [
@@ -130,7 +137,9 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   }
 
   let status: StatusFilter = "pending";
-  if (d.is_verified) {
+  if (d.is_directory_only) {
+    status = "unclaimed";
+  } else if (d.is_verified) {
     status = "active";
   } else if (
     d.dentist_verification?.license_verification === "REJECTED" ||
@@ -267,6 +276,9 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
       : "0",
     rdv_score: d.rdv_score || 0,
     rdv_verified: d.is_verified,
+    membershipPlan: anyD.membershipPlan || null,
+    membershipPaidAt: anyD.membershipPaidAt || null,
+    stripeSubscriptionId: anyD.stripeSubscriptionId || null,
     profile: {
       stats: {
         total_bookings: { count: 0, growth_this_month: 0 },

@@ -27,14 +27,15 @@ export interface SEOPage {
   has_photos: boolean;
 }
 
-const seoPagesData = {
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const seoPagesData = require("../../../public/demo/admin/seo-pages.json") as {
   meta: {
-    total: 0,
-    published: 0,
-    removed: 0,
-    this_month: 0
-  },
-  pages: [] as SEOPage[]
+    total: number;
+    published: number;
+    removed: number;
+    this_month: number;
+  };
+  pages: SEOPage[];
 };
 
 export default seoPagesData;

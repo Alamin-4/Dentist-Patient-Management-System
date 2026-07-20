@@ -22,6 +22,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/context/sidebar-context";
+import { useState, useEffect } from "react";
+import useOverview from "@/hooks/admin/overview/useOverview";
 
 interface NavItem {
   icon: LucideIcon;
@@ -35,83 +37,86 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const adminNav: NavGroup[] = [
-  {
-    label: "OVERVIEW",
-    items: [{ icon: LayoutDashboard, label: "Dashboard", href: "/admin" }],
-  },
-  {
-    label: "PRACTICE",
-    items: [
-      { icon: Stethoscope, label: "Dentists", href: "/admin/dentists" },
-      { icon: Users, label: "Patients", href: "/admin/patients" },
-      { icon: Calendar, label: "Bookings", href: "/admin/bookings" },
-      {
-        icon: ShieldCheck,
-        label: "Verification Queue",
-        href: "/admin/verification-queue",
-        badge: 0,
-      },
-      {
-        icon: Stethoscope,
-        label: "Specialty",
-        href: "/admin/specialty",
-      },
-      {
-        icon: Stethoscope,
-        label: "Procedures",
-        href: "/admin/procedures",
-      }
-    ],
-  },
-  {
-    label: "ENGAGEMENT",
-    items: [
-      { icon: Star, label: "Reviews & Ratings", href: "/admin/reviews" },
-      // { icon: Bell, label: "Notifications", href: "/admin/notifications" },
-    ],
-  },
-  {
-    label: "FINANCE",
-    items: [
-      {
-        icon: CreditCard,
-        label: "Payments & Escrow",
-        href: "/admin/payments",
-      },
-      { icon: BarChart3, label: "Reports", href: "/admin/reports" },
-    ],
-  },
-
-  {
-    label: "TRUST & SAFETY",
-    items: [
-      {
-        icon: ShieldAlert,
-        label: "Anti-Collusion",
-        href: "/admin/anti-collusion",
-        badge: 7,
-      },
-      {
-        icon: Globe,
-        label: "SEO Review Pages",
-        href: "/admin/seo-review-pages",
-        badge: 4,
-      },
-    ],
-  },
-  {
-    label: "SYSTEM",
-    items: [{ icon: Settings, label: "Settings", href: "/admin/settings" }],
-  },
-];
-
 const ADMIN_ROOT = "/admin";
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { close } = useSidebar();
+
+  const { data: overviewData } = useOverview();
+  const verificationQueueCount = overviewData?.verificationQueue?.total ?? 0;
+  const antiCollusionCount = (overviewData as any)?.antiCollusionCount ?? 0;
+  const seoCount = (overviewData as any)?.seoPagesCount ?? 0;
+
+  const adminNav: NavGroup[] = [
+    {
+      label: "OVERVIEW",
+      items: [{ icon: LayoutDashboard, label: "Dashboard", href: "/admin" }],
+    },
+    {
+      label: "PRACTICE",
+      items: [
+        { icon: Stethoscope, label: "Dentists", href: "/admin/dentists" },
+        { icon: Users, label: "Patients", href: "/admin/patients" },
+        { icon: Calendar, label: "Bookings", href: "/admin/bookings" },
+        {
+          icon: ShieldCheck,
+          label: "Verification Queue",
+          href: "/admin/verification-queue",
+          badge: verificationQueueCount,
+        },
+        {
+          icon: Stethoscope,
+          label: "Specialty",
+          href: "/admin/specialty",
+        },
+        {
+          icon: Stethoscope,
+          label: "Procedures",
+          href: "/admin/procedures",
+        }
+      ],
+    },
+    {
+      label: "ENGAGEMENT",
+      items: [
+        { icon: Star, label: "Reviews & Ratings", href: "/admin/reviews" },
+      ],
+    },
+    {
+      label: "FINANCE",
+      items: [
+        {
+          icon: CreditCard,
+          label: "Payments & Escrow",
+          href: "/admin/payments",
+        },
+        { icon: BarChart3, label: "Reports", href: "/admin/reports" },
+      ],
+    },
+    {
+      label: "TRUST & SAFETY",
+      items: [
+        {
+          icon: ShieldAlert,
+          label: "Anti-Collusion",
+          href: "/admin/anti-collusion",
+          badge: antiCollusionCount,
+        },
+        {
+          icon: Globe,
+          label: "SEO Review Pages",
+          href: "/admin/seo-review-pages",
+          badge: seoCount,
+        },
+      ],
+    },
+    {
+      label: "SYSTEM",
+      items: [{ icon: Settings, label: "Settings", href: "/admin/settings" }],
+    },
+  ];
 
   function isActive(href: string) {
     if (href === ADMIN_ROOT) return pathname === href;

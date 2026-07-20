@@ -12,6 +12,10 @@ export interface PaginationMeta {
   page?: number;
   limit?: number;
   totalPages?: number;
+  totalDirectory?: number;
+  totalSubscribed?: number;
+  total_verifications?: number;
+  pending_review?: number;
 }
 
 export interface ApiResponse<T = unknown> {
@@ -509,6 +513,26 @@ export const apiClient = {
       const response = await api.get(endpoints.admin.overview);
       return response.data;
     },
+    getAntiCollusionList: async () => {
+      const response = await api.get(endpoints.admin.antiCollusion);
+      return response.data;
+    },
+    updateAntiCollusion: async (id: string | number, payload: any) => {
+      const response = await api.patch(endpoints.admin.updateAntiCollusion(id), payload);
+      return response.data;
+    },
+    getSeoReviewPages: async () => {
+      const response = await api.get(endpoints.admin.seoReviewPages);
+      return response.data;
+    },
+    getSeoReviewPageDetail: async (id: string | number) => {
+      const response = await api.get(endpoints.admin.seoReviewPageDetail(id));
+      return response.data;
+    },
+    updateSeoReviewPage: async (id: string | number, payload: any) => {
+      const response = await api.patch(endpoints.admin.updateSeoReviewPage(id), payload);
+      return response.data;
+    },
   },
   specialties: {
     getSpecialties: async (search?: string) => {
@@ -688,6 +712,16 @@ export const apiClient = {
     },
     confirmEscrowPayment: async (sessionId: string) => {
       const response = await api.post(endpoints.stripe.confirmPayment, { sessionId });
+      return response.data;
+    },
+  },
+  stripe: {
+    connectOnboard: async () => {
+      const response = await api.post(endpoints.stripe.connectOnboard);
+      return response.data;
+    },
+    connectStatus: async () => {
+      const response = await api.get(endpoints.stripe.connectStatus);
       return response.data;
     },
   },

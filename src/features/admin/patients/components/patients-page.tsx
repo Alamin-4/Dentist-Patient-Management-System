@@ -84,14 +84,14 @@ export default function PatientsPage() {
         setTableSearch(query);
         setPage(1);
     };
-
+    console.log(patientslistData)
     return (
         <div className="flex flex-col gap-5">
             <PatientsHeader headerSearch={headerSearch} setHeaderSearch={(val) => {
                 setHeaderSearch(val);
                 setPage(1);
             }} />
-            
+
             <CustomStats stats={stats} />
 
             <div className="rounded-lg border border-gray-100 bg-white shadow-sm">

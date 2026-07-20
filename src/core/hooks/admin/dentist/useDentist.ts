@@ -135,6 +135,7 @@ export interface AdminDentist {
   dentist_verification: DentistVerification | null;
   created_at: string;
   updated_at: string;
+  is_directory_only?: boolean;
 }
 
 interface UseAdminDentistsOptions {

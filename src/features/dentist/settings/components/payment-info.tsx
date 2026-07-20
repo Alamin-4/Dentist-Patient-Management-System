@@ -1,83 +1,163 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { CreditCard, Pencil } from "lucide-react";
-
-interface CardInfo {
-  brand: string;
-  last4: string;
-  expiry: string;
-}
+import { useState } from "react";
+import { CreditCard, ShieldCheck, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { apiClient } from "@/api/client";
 
 interface PaymentInfoProps {
   connected?: boolean;
-  card?: CardInfo | null;
+  chargesEnabled?: boolean;
+  payoutsEnabled?: boolean;
+  refetch?: () => void;
 }
 
-export default function PaymentInfo({ connected = true, card = null }: PaymentInfoProps) {
-  const [isConnected, setIsConnected] = useState(connected);
-  const [isEditing, setIsEditing] = useState(false);
+export default function PaymentInfo({
+  connected = false,
+  chargesEnabled = false,
+  payoutsEnabled = false,
+  refetch,
+}: PaymentInfoProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  useEffect(() => {
-    setIsConnected(connected);
-  }, [connected]);
+  const handleConnect = async () => {
+    setIsLoading(true);
+    const toastId = toast.loading("Initializing Stripe onboarding...");
+    try {
+      const response = await apiClient.stripe.connectOnboard();
+      if (response?.success && response?.data?.url) {
+        toast.success("Redirecting to Stripe...", { id: toastId });
+        window.location.href = response.data.url;
+      } else {
+        toast.error("Failed to start Stripe onboarding. Please try again.", { id: toastId });
+      }
+    } catch (err: any) {
+      console.error(err);
+      const errMsg = err?.response?.data?.message || "An error occurred during Stripe Connect initialization.";
+      toast.error(errMsg, { id: toastId });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSyncStatus = async () => {
+    setIsSyncing(true);
+    const toastId = toast.loading("Syncing status with Stripe...");
+    try {
+      const response = await apiClient.stripe.connectStatus();
+      if (response?.success) {
+        toast.success("Payout status synced successfully!", { id: toastId });
+        if (refetch) refetch();
+      } else {
+        toast.error("Failed to sync payout status.", { id: toastId });
+      }
+    } catch (err: any) {
+      console.error(err);
+      const errMsg = err?.response?.data?.message || "An error occurred while syncing Stripe status.";
+      toast.error(errMsg, { id: toastId });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const isFullyOnboarded = connected && chargesEnabled && payoutsEnabled;
 
   return (
     <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between border-b border-[#EEF2F7] pb-4 mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-[#0E3E65]">Payment Information</h2>
+          <h2 className="text-lg font-semibold text-[#0E3E65]">Payout Settings</h2>
           <span className="text-xs text-[#475569] bg-slate-100 px-2 py-0.5 rounded-full font-medium">Stripe Connect</span>
         </div>
-        <button
-          type="button"
-          onClick={() => setIsEditing(!isEditing)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
-            ? "text-red-500 hover:bg-red-50 border-red-200"
-            : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
-            }`}
-        >
-          <Pencil className="h-3.5 w-3.5" />
-          {isEditing ? "Cancel" : "Edit"}
-        </button>
+        {connected && (
+          <button
+            type="button"
+            onClick={handleSyncStatus}
+            disabled={isSyncing}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border text-[#0F3659] hover:bg-slate-50 border-slate-200 disabled:opacity-60"
+          >
+            {isSyncing ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Syncing...
+              </>
+            ) : (
+              "Sync Status"
+            )}
+          </button>
+        )}
       </div>
 
-      <div className="mt-4 space-y-4">
-        {!isConnected ? (
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <p className="text-sm text-[#6B7280]">No payment method connected.</p>
+      <div className="mt-4">
+        {!connected ? (
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-slate-800">Set Up Payout Account</p>
+              <p className="text-sm text-[#6B7280]">
+                Connect your Stripe account to receive patient booking fees directly.
+              </p>
+            </div>
             <button
-              onClick={() => isConnected && setIsConnected(true)}
-              disabled={!isEditing}
-              className="ml-auto rounded-md bg-[#0F3659] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              onClick={handleConnect}
+              disabled={isLoading}
+              className="ml-auto flex items-center gap-2 rounded-md bg-[#0F3659] hover:bg-[#0a2640] px-4 py-2 text-sm font-semibold text-white transition-colors cursor-pointer disabled:opacity-60"
             >
-              Connect Stripe
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                "Connect Stripe"
+              )}
             </button>
           </div>
         ) : (
-          <div className="rounded-lg border border-slate-100 p-4 flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-14 rounded-md bg-linear-to-r from-[#FF8A65] to-[#F44336] flex items-center justify-center text-white">
-                <CreditCard className="size-5" />
+          <div className="rounded-lg border border-slate-100 p-4 flex flex-col md:flex-row md:items-center gap-4 bg-slate-50/50">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                {isFullyOnboarded ? (
+                  <ShieldCheck className="size-6" />
+                ) : (
+                  <CreditCard className="size-5" />
+                )}
               </div>
-              <div>
-                <div className="text-sm font-semibold text-slate-800">{card ? `${card.brand} **** ${card.last4}` : 'Mastercard **** 3800'}</div>
-                <div className="text-xs text-[#6B7280] mt-1">Expiry: {card ? card.expiry : '12/12/2026'}</div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-800">
+                    Stripe Account Linked
+                  </span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${isFullyOnboarded
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-amber-100 text-amber-800"
+                      }`}
+                  >
+                    {isFullyOnboarded ? "Active Payouts" : "Setup Incomplete"}
+                  </span>
+                </div>
+                <p className="text-xs text-[#6B7280]">
+                  {isFullyOnboarded
+                    ? "Your banking details are verified. Payouts will automatically transfer upon treatment completion."
+                    : "Please finish your onboarding registration with Stripe to enable card charges and payouts."}
+                </p>
               </div>
             </div>
 
-            <div className="ml-auto flex items-center gap-3">
+            <div className="md:ml-auto flex items-center gap-3 shrink-0">
               <button
-                disabled={!isEditing}
-                className="rounded-md border border-slate-200 px-3 py-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer text-slate-700 hover:bg-slate-50 transition-colors"
+                onClick={handleConnect}
+                disabled={isLoading}
+                className="flex items-center gap-1 rounded-md bg-[#0F3659] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0a2640] transition-colors cursor-pointer disabled:opacity-60"
               >
-                Replace
-              </button>
-              <button
-                disabled={!isEditing}
-                className="rounded-md bg-[#0F3659] px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:bg-[#0a2640] transition-colors"
-              >
-                Manage
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isFullyOnboarded ? (
+                  "Manage Stripe"
+                ) : (
+                  "Complete Setup"
+                )}
               </button>
             </div>
           </div>
