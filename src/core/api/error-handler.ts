@@ -15,6 +15,16 @@ export interface AppError {
 }
 
 export function normalizeApiError(error: unknown): AppError {
+  if (
+    error &&
+    typeof error === "object" &&
+    "success" in error &&
+    (error as any).success === false &&
+    "message" in error
+  ) {
+    return error as AppError;
+  }
+
   if (error && typeof error === "object" && "response" in error) {
     const axiosError = error as AxiosError<any>;
     const responseData = axiosError.response?.data;

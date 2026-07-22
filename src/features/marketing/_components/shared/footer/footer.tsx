@@ -1,15 +1,13 @@
 "use client";
 
-
-import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const quickLinks = [
   { name: "Home", href: "/" },
-  { name: "Find a Dentist", href: "/find" },
-  { name: "About", href: "/about" },
+  { name: "Find a Dentist", href: "/find-dentists" },
+  { name: "About", href: "/about-us" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ];
@@ -44,20 +42,21 @@ export default function Footer() {
               protection. Book your dental care with confidence today.
             </p>
 
-            {/* Social Icons */}
             <div className="flex gap-4">
               {[
-                { icon: <FaFacebook size={20} />, href: "#" },
+                { icon: <FaFacebook size={20} />, href: "https://facebook.com" },
                 {
                   icon: <span className="font-bold text-lg italic">X</span>,
-                  href: "#",
+                  href: "https://x.com",
                 },
-                { icon: <FaInstagram size={20} />, href: "#" },
-                { icon: <FaLinkedin size={20} />, href: "#" },
+                { icon: <FaInstagram size={20} />, href: "https://instagram.com" },
+                { icon: <FaLinkedin size={20} />, href: "https://linkedin.com" },
               ].map((social, idx) => (
                 <Link
                   key={idx}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-11 h-11 flex items-center justify-center rounded-lg bg-white/10 border border-white/10 hover:bg-[#E3A32A] transition-all duration-300"
                 >
                   {social.icon}
@@ -66,7 +65,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div className="space-y-6">
             <h3 className="text-xl font-bold">Quick Links</h3>
             <ul className="space-y-2">
