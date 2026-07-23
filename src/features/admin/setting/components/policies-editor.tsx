@@ -6,18 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RichDocumentEditor } from "@/components/ui/rich-document-editor";
 import { policySchema, type PolicyFormValues } from "@/validation/settings-schemas";
 import { bindServerErrors, useSavePolicy } from "@/core/hooks/admin/settings/useAdminSettings";
-import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-
-/**
- * =============================================================================
- * INSTRUCTION: POLICIES & LEGAL DOCUMENTS EDITOR
- * =============================================================================
- * - Uses `react-hook-form` integrated with `zodResolver(policySchema)`.
- * - In-field error messages are displayed directly under target fields.
- * - API error responses bind to form fields via `bindServerErrors(err, setError)`.
- * =============================================================================
- */
 
 type PolicyType = "privacy" | "terms" | "cookies";
 
@@ -60,7 +49,6 @@ export function PoliciesEditor() {
   const contentValue = watch("content");
   const titleValue = watch("title");
 
-  // Load policy text from storage/API on tab change
   useEffect(() => {
     const saved =
       localStorage.getItem(`policy_${activeTab}`) || POLICY_METADATA[activeTab].defaultText;
@@ -71,19 +59,19 @@ export function PoliciesEditor() {
 
   const onSubmit = async (data: PolicyFormValues) => {
     try {
+      localStorage.setItem(`policy_${activeTab}`, data.content);
       await savePolicyMutation.mutateAsync({
         type: activeTab,
         content: data.content,
       });
     } catch (err: any) {
-      // Bind server validation errors to React Hook Form fields
       bindServerErrors(err, setError);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      {/* Policy Selector Tabs */}
+      
       <div className="flex gap-2 border-b border-slate-200 pb-3 overflow-x-auto">
         {(Object.keys(POLICY_METADATA) as PolicyType[]).map((tab) => (
           <button
@@ -102,7 +90,6 @@ export function PoliciesEditor() {
         ))}
       </div>
 
-      {/* Field Level Errors */}
       {errors.title && (
         <p className="text-xs text-red-500 font-bold bg-red-50 p-2 rounded border border-red-200">
           Title Error: {errors.title.message}
@@ -114,7 +101,6 @@ export function PoliciesEditor() {
         </p>
       )}
 
-      {/* Visual Rich Document Editor */}
       <RichDocumentEditor
         categoryName="POLICIES & LEGAL"
         title={titleValue}

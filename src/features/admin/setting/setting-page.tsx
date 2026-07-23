@@ -86,7 +86,7 @@ export default function SettingPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-8 text-slate-800">
-      {/* Page header */}
+   
       <div className="border-b border-slate-200 pb-4">
         <h1 className="text-2xl font-black tracking-tight text-[#1A1A2E]">Admin Settings & Content Manager</h1>
         <p className="mt-1 text-xs md:text-sm text-slate-500">
@@ -94,16 +94,13 @@ export default function SettingPage() {
         </p>
       </div>
 
-      {/* Two-column / Mobile Custom Dropdown layout */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
 
-        {/* Custom Styled Mobile Dropdown Selector (visible < lg) */}
         <div ref={dropdownRef} className="w-full lg:hidden relative z-20 space-y-1.5">
           <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block px-1">
             Navigation Menu
           </label>
 
-          {/* Active Item Dropdown Trigger Button */}
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
@@ -123,7 +120,6 @@ export default function SettingPage() {
             />
           </button>
 
-          {/* Floating Dropdown Options Panel */}
           {isMobileMenuOpen && (
             <div className="absolute top-full left-0 right-0 mt-1.5 rounded-xl border border-slate-200 bg-white p-2 shadow-lg animate-in fade-in-50 duration-150 z-50 max-h-80 overflow-y-auto">
               <div className="flex flex-col gap-1">
@@ -169,7 +165,6 @@ export default function SettingPage() {
           )}
         </div>
 
-        {/* Desktop Sidebar Nav (visible lg and up) */}
         <aside className="hidden lg:block w-full shrink-0 rounded-xl border border-slate-200 bg-white p-3 lg:w-60 xl:w-64">
           <p className="mb-2.5 px-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
             Navigation Menu

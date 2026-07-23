@@ -223,6 +223,33 @@ export const useDentistFilters = () => {
         availableCities: cityOptions,
     };
 
+    const hasActiveFilters = useMemo(() => {
+        return (
+            query.trim() !== "" ||
+            city !== DEFAULT_FILTERS.city ||
+            country !== DEFAULT_FILTERS.country ||
+            procedure !== DEFAULT_FILTERS.procedure ||
+            priceRange[0] !== DEFAULT_PRICE_RANGE[0] ||
+            priceRange[1] !== DEFAULT_PRICE_RANGE[1] ||
+            showVerifiedOnly ||
+            selectedRatings.length > 0 ||
+            selectedScoreRanges.length > 0 ||
+            selectedLanguages.length > 0 ||
+            selectedAvailabilityDate !== null
+        );
+    }, [
+        query,
+        city,
+        country,
+        procedure,
+        priceRange,
+        showVerifiedOnly,
+        selectedRatings,
+        selectedScoreRanges,
+        selectedLanguages,
+        selectedAvailabilityDate,
+    ]);
+
     return {
         query,
         setQuery,
@@ -237,6 +264,7 @@ export const useDentistFilters = () => {
         page,
         setPage,
         serverParams,
+        hasActiveFilters,
         resetAll,
         sharedFilterProps,
     };

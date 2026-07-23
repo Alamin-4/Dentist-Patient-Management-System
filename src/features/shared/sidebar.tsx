@@ -125,7 +125,6 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-full w-64 flex-col pt-4 bg-white">
-      {/* Mobile close button */}
       <div className="flex items-center justify-end px-4 pt-4 pb-2 lg:hidden">
         <button
           onClick={close}
@@ -136,7 +135,6 @@ export function Sidebar() {
         </button>
       </div>
 
-      {/* Nav groups */}
       <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5">
         {navGroups.map((group, gi) => (
           <div key={gi} className={cn(gi > 0 && "mt-4", "space-y-3")}>
@@ -180,7 +178,6 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* User Section (Direct Logout) */}
       <div className="border-t border-slate-100 p-3 shrink-0">
         <button 
           onClick={handleLogout}

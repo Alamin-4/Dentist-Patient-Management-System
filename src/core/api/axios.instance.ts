@@ -76,13 +76,19 @@ api.interceptors.response.use(
         // Clear local session cookies
         deleteCookie("accessToken", { path: "/" });
         deleteCookie("better-auth.session_token", { path: "/" });
+        deleteCookie("refreshToken", { path: "/" });
+        document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 
         const pathname = window.location.pathname;
 
-        // Route admins, dentists, or patients to the home page sign-in
+        if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+          window.location.href = "/admin-login";
+          return Promise.reject(apiError);
+        }
+
         if (
-          pathname === "/admin" ||
-          pathname.startsWith("/admin/") ||
           pathname.startsWith("/dentist") ||
           pathname.startsWith("/patient")
         ) {

@@ -11,7 +11,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import SearchInput from "./SearchInput";
 import AuthButtons from "./AuthButtons";
 import UserMenu from "./UserMenu";
@@ -23,6 +23,7 @@ interface NavItem {
     label: string;
     href: string;
     hasDropdown?: boolean;
+    dropdownItems?: Array<{ label: string; href: string }>;
 }
 
 interface MobileMenuProps {
@@ -47,6 +48,7 @@ export default function MobileMenu({
     onLogout,
 }: MobileMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const headerRef = useRef<HTMLDivElement>(null);
 
     const handleClose = () => setIsOpen(false);
 
@@ -62,9 +64,13 @@ export default function MobileMenu({
             </SheetTrigger>
             <SheetContent
                 side="right"
+                onOpenAutoFocus={(e) => {
+                    e.preventDefault();
+                    headerRef.current?.focus();
+                }}
                 className="w-75 sm:w-87.5 p-6 bg-white flex flex-col gap-6 overflow-y-auto border-l border-gray-100 shadow-xl"
             >
-                <SheetHeader className="p-0 border-b border-gray-100 pb-4" >
+                <SheetHeader ref={headerRef} tabIndex={-1} className="p-0 border-b border-gray-100 pb-4 outline-none" >
                     <SheetTitle className="text-left font-semibold text-lg text-[#10436B] flex items-center gap-2">
                         <Image
                             src="/logos/mainlogo.png"
@@ -76,7 +82,6 @@ export default function MobileMenu({
                     </SheetTitle>
                 </SheetHeader>
 
-                {/* Search */}
                 <SearchInput
                     value={searchQuery}
                     onChange={onSearchChange}

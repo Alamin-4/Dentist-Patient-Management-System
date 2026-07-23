@@ -32,9 +32,40 @@ export async function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get("better-auth.session_token")?.value;
 
   let user: any = null;
+  let hasInvalidCookies = false;
 
-  // 1. Try decoding the user locally from JWT token (super fast, zero network overhead)
-  if (accessToken) {
+  // 1. Verify session against the backend DB if sessionToken or accessToken is present
+  if (sessionToken || accessToken) {
+    try {
+      const baseUrl = env.NEXT_PUBLIC_API_BASE_URL;
+
+      // Forward headers to retain session integrity
+      const response = await fetch(`${baseUrl}/auth/current-user-session`, {
+        headers: {
+          Cookie: request.headers.get("cookie") || "",
+          "User-Agent": request.headers.get("user-agent") || "",
+          "X-Forwarded-For":
+            request.headers.get("x-forwarded-for") ||
+            request.headers.get("x-real-ip") ||
+            (request as any).ip ||
+            "",
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        user = result?.user || result?.data?.user;
+      } else if (response.status === 401 || response.status === 403 || response.status === 404) {
+        // Backend DB rejected the token (e.g., database reset or session revoked)
+        hasInvalidCookies = true;
+      }
+    } catch (e) {
+      console.error("Session verification failed in middleware:", e);
+    }
+  }
+
+  // 2. Fallback: If backend fetch did not explicitly reject the cookie (e.g. offline) but token exists, decode locally
+  if (!user && accessToken && !hasInvalidCookies) {
     const decoded = decodeJwt(accessToken);
     if (decoded && decoded.exp * 1000 > Date.now()) {
       user = {
@@ -45,49 +76,33 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Fall back to calling the backend session API if JWT isn't present/expired.
-  // IMPORTANT: After Google OAuth, no custom accessToken cookie is set — only the
-  // Better-Auth session cookie. So we trigger the fallback on sessionToken alone too.
-  if (!user && (sessionToken || accessToken)) {
-    try {
-      const baseUrl = env.NEXT_PUBLIC_API_BASE_URL;
-
-      // CRITICAL: We forward User-Agent and IP headers to avoid triggering the backend
-      // session fingerprint mismatch security check which deletes the user's session!
-      const response = await fetch(`${baseUrl}/auth/current-user-session`, {
-        headers: {
-          Cookie: request.headers.get("cookie") || "",
-          "User-Agent": request.headers.get("user-agent") || "",
-          "X-Forwarded-For": request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || (request as any).ip || "",
-        },
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        user = result?.user || result?.data?.user;
-      }
-    } catch (e) {
-      console.error("Session verification failed in middleware:", e);
+  // Helper to purge invalid session cookies from the response headers
+  const attachCookieCleanup = (res: NextResponse) => {
+    if (hasInvalidCookies) {
+      res.cookies.delete("accessToken");
+      res.cookies.delete("refreshToken");
+      res.cookies.delete("better-auth.session_token");
     }
-  }
+    return res;
+  };
 
   const userRole = user?.role;
 
   // 1. Admin Portal Protection
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     if (!user) {
-      const url = new URL("/unauthorized", request.url);
-      return NextResponse.rewrite(url);
+      const url = new URL("/admin-login", request.url);
+      return attachCookieCleanup(NextResponse.redirect(url));
     }
     if (userRole !== UserRole.ADMIN && userRole !== UserRole.SUPER_ADMIN) {
       if (userRole === UserRole.DENTIST) {
-        return NextResponse.redirect(new URL("/dentist", request.url));
+        return attachCookieCleanup(NextResponse.redirect(new URL("/dentist", request.url)));
       }
       if (userRole === UserRole.PATIENT) {
-        return NextResponse.redirect(new URL("/patient", request.url));
+        return attachCookieCleanup(NextResponse.redirect(new URL("/patient", request.url)));
       }
       const url = new URL("/unauthorized", request.url);
-      return NextResponse.rewrite(url);
+      return attachCookieCleanup(NextResponse.rewrite(url));
     }
   }
 
@@ -95,17 +110,17 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/dentist" || pathname.startsWith("/dentist/")) {
     if (!user) {
       const url = new URL("/unauthorized", request.url);
-      return NextResponse.rewrite(url);
+      return attachCookieCleanup(NextResponse.rewrite(url));
     }
     if (userRole !== UserRole.DENTIST) {
       if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
-        return NextResponse.redirect(new URL("/admin", request.url));
+        return attachCookieCleanup(NextResponse.redirect(new URL("/admin", request.url)));
       }
       if (userRole === UserRole.PATIENT) {
-        return NextResponse.redirect(new URL("/patient", request.url));
+        return attachCookieCleanup(NextResponse.redirect(new URL("/patient", request.url)));
       }
       const url = new URL("/unauthorized", request.url);
-      return NextResponse.rewrite(url);
+      return attachCookieCleanup(NextResponse.rewrite(url));
     }
   }
 
@@ -113,17 +128,17 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/patient" || pathname.startsWith("/patient/")) {
     if (!user) {
       const url = new URL("/unauthorized", request.url);
-      return NextResponse.rewrite(url);
+      return attachCookieCleanup(NextResponse.rewrite(url));
     }
     if (userRole !== UserRole.PATIENT) {
       if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
-        return NextResponse.redirect(new URL("/admin", request.url));
+        return attachCookieCleanup(NextResponse.redirect(new URL("/admin", request.url)));
       }
       if (userRole === UserRole.DENTIST) {
-        return NextResponse.redirect(new URL("/dentist", request.url));
+        return attachCookieCleanup(NextResponse.redirect(new URL("/dentist", request.url)));
       }
       const url = new URL("/unauthorized", request.url);
-      return NextResponse.rewrite(url);
+      return attachCookieCleanup(NextResponse.rewrite(url));
     }
   }
 
@@ -132,33 +147,33 @@ export async function middleware(request: NextRequest) {
     if (pathname === "/admin-login") {
       if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
         const url = new URL("/admin", request.url);
-        return NextResponse.redirect(url);
+        return attachCookieCleanup(NextResponse.redirect(url));
       } else if (userRole === UserRole.DENTIST) {
         const url = new URL("/dentist", request.url);
-        return NextResponse.redirect(url);
+        return attachCookieCleanup(NextResponse.redirect(url));
       } else if (userRole === UserRole.PATIENT) {
         const url = new URL("/patient", request.url);
-        return NextResponse.redirect(url);
+        return attachCookieCleanup(NextResponse.redirect(url));
       }
     }
     if (pathname === "/register-doctor") {
       if (userRole === UserRole.PATIENT) {
         const url = new URL("/patient", request.url);
-        return NextResponse.redirect(url);
+        return attachCookieCleanup(NextResponse.redirect(url));
       } else if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
         const url = new URL("/admin", request.url);
-        return NextResponse.redirect(url);
+        return attachCookieCleanup(NextResponse.redirect(url));
       } else if (userRole === UserRole.DENTIST) {
         const dentistStep = request.nextUrl.searchParams.get("dentist");
         if (dentistStep !== "professional-info") {
           const url = new URL("/dentist/profile", request.url);
-          return NextResponse.redirect(url);
+          return attachCookieCleanup(NextResponse.redirect(url));
         }
       }
     }
   }
 
-  return NextResponse.next();
+  return attachCookieCleanup(NextResponse.next());
 }
 
 export const config = {

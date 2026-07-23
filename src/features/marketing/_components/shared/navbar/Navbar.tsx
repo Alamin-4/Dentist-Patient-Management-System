@@ -40,7 +40,6 @@ export default function NavbarPublic() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-md py-4 lg:py-6">
       <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between gap-4">
-        {/* Logo */}
         <Link href="/" onClick={handleLogoClick} className="flex shrink-0 items-center">
           <Image
             src="/logos/mainlogo.png"
@@ -53,7 +52,6 @@ export default function NavbarPublic() {
           />
         </Link>
 
-        {/* Desktop Navigation Links */}
         <div className="hidden lg:flex gap-8">
           {navConfig.map((item) => (
             <Link
@@ -71,14 +69,12 @@ export default function NavbarPublic() {
           ))}
         </div>
 
-        {/* Desktop Search */}
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
           variant="desktop"
         />
 
-        {/* Desktop Actions */}
         <div className="hidden lg:flex items-center gap-4">
           {isAuthenticated ? (
             <UserMenu user={user!} onLogout={() => logout()} />
@@ -92,7 +88,6 @@ export default function NavbarPublic() {
           <LanguageSelector />
         </div>
 
-        {/* Mobile Menu */}
         <MobileMenu
           navConfig={navConfig}
           pathname={pathname}

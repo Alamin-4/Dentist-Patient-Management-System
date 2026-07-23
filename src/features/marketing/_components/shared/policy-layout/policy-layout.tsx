@@ -197,6 +197,9 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
       </div>
 
       <style jsx global>{`
+        .policy-rendered-content font[color] {
+          color: attr(color, color);
+        }
         .policy-rendered-content h1 {
           font-size: 1.85rem;
           font-weight: 900;

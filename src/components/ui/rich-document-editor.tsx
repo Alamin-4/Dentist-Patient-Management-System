@@ -56,11 +56,9 @@ export function RichDocumentEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const isUpdatingRef = useRef(false);
 
-  // Sync content prop to contentEditable div innerHTML on mount or external changes
   useEffect(() => {
     if (!editorRef.current) return;
 
-    // Convert markdown content to html if content looks like raw markdown
     const formattedHtml = formatContentToHtml(content);
 
     if (editorRef.current.innerHTML !== formattedHtml && !isUpdatingRef.current) {
@@ -78,11 +76,17 @@ export function RichDocumentEditor({
     }, 50);
   };
 
-  // Format command handlers using document.execCommand for true WYSIWYG
   const execCmd = (command: string, value: string | undefined = undefined) => {
     if (readOnly || activeTab === "preview") return;
     if (editorRef.current) {
       editorRef.current.focus();
+    }
+    // Force browsers to output inline CSS styles (<span style="color: ...">)
+    // instead of legacy presentational tags (<font color="...">) which CSS overrides
+    try {
+      document.execCommand("styleWithCSS", false, "true");
+    } catch (e) {
+      // fallback
     }
     document.execCommand(command, false, value);
     handleInput();
@@ -114,10 +118,20 @@ export function RichDocumentEditor({
   };
 
   const handleHighlightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    execCmd("hiliteColor", e.target.value);
+    if (readOnly || activeTab === "preview") return;
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    try {
+      document.execCommand("styleWithCSS", false, "true");
+    } catch (e) {}
+
+    if (!document.execCommand("hiliteColor", false, e.target.value)) {
+      document.execCommand("backColor", false, e.target.value);
+    }
+    handleInput();
   };
 
-  // Real-time calculation of statistics & outline
   const stats = useMemo(() => {
     const text = content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     const wordCount = text ? text.split(" ").filter(Boolean).length : 0;
@@ -127,12 +141,10 @@ export function RichDocumentEditor({
     return { wordCount, charCount, readTime };
   }, [content]);
 
-  // Extract outline headings from content
   const outline = useMemo(() => {
     const headings: { text: string; level: number }[] = [];
     if (!content) return headings;
 
-    // Matches <h1>, <h2>, <h3> tag contents or markdown # headings
     const parser = typeof window !== "undefined" ? new DOMParser() : null;
     if (parser) {
       const doc = parser.parseFromString(content, "text/html");
@@ -147,7 +159,6 @@ export function RichDocumentEditor({
     }
 
     if (headings.length === 0) {
-      // Fallback markdown line parsing
       const lines = content.split("\n");
       lines.forEach((line) => {
         const match = line.match(/^(#{1,3})\s+(.*)$/);
@@ -165,10 +176,9 @@ export function RichDocumentEditor({
 
   return (
     <div className="flex flex-col gap-5 w-full text-slate-800">
-      {/* Top Header Bar: Breadcrumb, Title & Main Actions */}
-      <div className="border border-slate-200 bg-white rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1 flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+      <div className="border border-slate-200 bg-white rounded-sm p-4 flex flex-wrap md:items-center justify-between gap-4">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
             <span>EDITOR</span>
             <span>&rsaquo;</span>
             <span className="text-[#10436B]">{categoryName}</span>
@@ -188,9 +198,8 @@ export function RichDocumentEditor({
           )}
         </div>
 
-        {/* View Mode & Save Actions */}
-        <div className="flex items-center gap-3 shrink-0 flex-wrap">
-          <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200/60">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap shrink-0 items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
             <button
               type="button"
               onClick={() => setActiveTab("edit")}
@@ -233,16 +242,14 @@ export function RichDocumentEditor({
         </div>
       </div>
 
-      {/* Main Canvas + Outline Layout */}
       <div className="flex flex-col xl:flex-row gap-6 items-start">
-        {/* Left Side: Document Outline */}
-        <div className="w-full xl:w-60 shrink-0 rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="w-full xl:w-60 shrink-0 rounded-sm border border-slate-200 bg-white p-4 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <h4 className="text-xs font-medium text-slate-400 flex items-center gap-2">
               <List className="h-4 w-4 text-[#10436B]" />
               Document Outline
             </h4>
-            <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-sm">
               {outline.length} sections
             </span>
           </div>
@@ -252,7 +259,7 @@ export function RichDocumentEditor({
               No headings found. Add Heading 1 or Heading 2 to generate outline structure automatically.
             </p>
           ) : (
-            <ul className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+            <ul className="space-y-2 max-h-75 overflow-y-auto pr-1">
               {outline.map((item, idx) => (
                 <li
                   key={idx}
@@ -269,7 +276,6 @@ export function RichDocumentEditor({
             </ul>
           )}
 
-          {/* Quick Reading Stats */}
           <div className="border-t border-slate-100 pt-3 space-y-2 text-xs text-slate-500">
             <div className="flex justify-between items-center">
               <span>Word Count:</span>
@@ -286,15 +292,12 @@ export function RichDocumentEditor({
           </div>
         </div>
 
-        {/* Center Paper Sheet Document Container */}
-        <div className="flex-1 w-full bg-slate-100/70 border border-slate-200 rounded-xl p-3 md:p-6 flex justify-center min-h-[600px]">
-          <div className="w-full max-w-[780px] bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden">
+        <div className="flex-1 w-full border border-slate-200 rounded-sm flex justify-center min-h-75">
+          <div className="w-full max-w-full bg-white flex rounded-sm flex-col overflow-hidden">
             
-            {/* Rich Formatting Toolbar (Visible in Edit Mode) */}
             {activeTab === "edit" && !readOnly && (
               <div className="bg-slate-50 border-b border-slate-200 p-2.5 flex flex-wrap items-center gap-1 md:gap-2">
                 
-                {/* Paragraph/Heading Style Selector */}
                 <select
                   onChange={(e) => handleBlockFormat(e.target.value)}
                   defaultValue="p"
@@ -308,9 +311,8 @@ export function RichDocumentEditor({
                   <option value="blockquote">Blockquote</option>
                 </select>
 
-                <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                <div className="h-4 w-px bg-slate-200 mx-1" />
 
-                {/* Inline Styling Controls */}
                 <button
                   type="button"
                   onClick={() => execCmd("bold")}
@@ -344,7 +346,7 @@ export function RichDocumentEditor({
                   <Strikethrough className="h-4 w-4" />
                 </button>
 
-                <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                <div className="h-4 w-px bg-slate-200 mx-1" />
 
                 {/* Text & Highlight Color */}
                 <label className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors cursor-pointer relative" title="Text Color">
@@ -364,7 +366,7 @@ export function RichDocumentEditor({
                   />
                 </label>
 
-                <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                <div className="h-4 w-px bg-slate-200 mx-1" />
 
                 {/* Text Alignment Controls */}
                 <button
@@ -400,7 +402,7 @@ export function RichDocumentEditor({
                   <AlignJustify className="h-4 w-4" />
                 </button>
 
-                <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                <div className="h-4 w-px bg-slate-200 mx-1" />
 
                 {/* Lists & Quotes */}
                 <button
@@ -428,7 +430,7 @@ export function RichDocumentEditor({
                   <LinkIcon className="h-4 w-4" />
                 </button>
 
-                <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                <div className="h-4 w-px bg-slate-200 mx-1" />
 
                 {/* Undo / Redo & Clear */}
                 <button
@@ -466,12 +468,12 @@ export function RichDocumentEditor({
                   ref={editorRef}
                   contentEditable={!readOnly}
                   onInput={handleInput}
-                  className="rich-editor-content flex-1 w-full outline-none text-[15px] font-normal leading-relaxed text-slate-800 focus:ring-0 min-h-[420px]"
+                  className="rich-editor-content flex-1 w-full outline-none text-[15px] font-normal leading-relaxed text-slate-800 focus:ring-0 min-h-105"
                   style={{ whiteSpace: "pre-wrap" }}
                 />
               ) : (
                 <div
-                  className="rich-editor-content prose prose-slate max-w-none text-slate-800 text-[15px] leading-relaxed min-h-[420px]"
+                  className="rich-editor-content prose prose-slate max-w-none text-slate-800 text-[15px] leading-relaxed min-h-105"
                   dangerouslySetInnerHTML={{ __html: formatContentToHtml(content) }}
                 />
               )}
@@ -495,8 +497,10 @@ export function RichDocumentEditor({
 
       </div>
 
-      {/* Editor CSS styles for contentEditable elements */}
       <style jsx global>{`
+        .rich-editor-content font[color] {
+          color: attr(color, color);
+        }
         .rich-editor-content h1 {
           font-size: 1.75rem;
           font-weight: 900;
@@ -555,16 +559,13 @@ export function RichDocumentEditor({
   );
 }
 
-// Helper to convert markdown content string into HTML for visual editor rendering
 function formatContentToHtml(raw: string): string {
   if (!raw) return "<p><br></p>";
 
-  // If already HTML, return directly
   if (/<[a-z][\s\S]*>/i.test(raw)) {
     return raw;
   }
 
-  // Basic markdown to HTML converter for initial loading
   const lines = raw.split("\n");
   const htmlLines = lines.map((line) => {
     if (line.startsWith("# ")) {
