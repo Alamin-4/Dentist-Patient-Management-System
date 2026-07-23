@@ -2,7 +2,7 @@
 
 export const PAGE_SIZE = 20;
 
-export const DEFAULT_PRICE_RANGE: [number, number] = [50, 1800];
+export const DEFAULT_PRICE_RANGE: [number, number] = [0, 1800];
 export const MAX_PRICE = 1800;
 
 export const DEBOUNCE_DELAYS = {
