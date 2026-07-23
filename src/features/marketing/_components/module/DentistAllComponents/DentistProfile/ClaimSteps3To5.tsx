@@ -103,7 +103,7 @@ export function ClaimStep3({
           onClick={handleNextStep}
           className={`${user ? "w-full" : ""} flex items-center justify-center gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer text-sm`}
         >
-          Continue to Payment
+          Claim Profile & Verify →
         </button>
       </div>
     </div>
@@ -195,19 +195,19 @@ export function ClaimStep5({ dentist, queryClient, router, onOpenChange }: any) 
       <div className="space-y-1">
         <h4 className="text-lg font-bold text-slate-900">Congratulations, Dr. {dentist.name}!</h4>
         <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
-          Your profile claim was registered, and membership status has been successfully updated via Stripe.
+          Your profile has been successfully claimed. Please log in to your dashboard to complete document verification.
         </p>
       </div>
 
       <div className="p-4 rounded-lg bg-slate-50 border border-slate-150 inline-block text-left text-xs space-y-2 text-slate-600">
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          <Check className="size-4 text-emerald-500 stroke-3" /> Credentials registered successfully
+          <Check className="size-4 text-emerald-500 stroke-3" /> Profile claimed successfully
         </p>
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          <Check className="size-4 text-emerald-500 stroke-3" /> Stripe signature and payment verified
+          <Check className="size-4 text-emerald-500 stroke-3" /> Dentist account promoted
         </p>
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          <Check className="size-4 text-emerald-500 stroke-3" /> Email notifications dispatched
+          <Check className="size-4 text-emerald-500 stroke-3" /> Onboarding emails dispatched
         </p>
       </div>
 

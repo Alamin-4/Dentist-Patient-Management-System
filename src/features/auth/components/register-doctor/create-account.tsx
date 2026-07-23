@@ -27,6 +27,7 @@ interface CreateAccountFormProps {
 
 export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [needVerifyEmail, setNeedVerifyEmail] = useState<string | null>(null);
   const { user } = useMe()
 
@@ -67,6 +68,11 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
       confirmPassword: "",
     },
   });
+
+  // Manually register custom select fields to avoid state mapping bugs in React Hook Form
+  useEffect(() => {
+    register("gender");
+  }, [register]);
 
   const handleSendVerificationOtp = () => {
     if (!needVerifyEmail) return;
@@ -214,7 +220,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           <Label htmlFor="gender" className="text-sm font-medium text-gray-700">Gender</Label>
           <Select
             onValueChange={(val) => {
-              setValue("gender", val as "MALE" | "FEMALE" | "OTHER");
+              setValue("gender", val as "MALE" | "FEMALE" | "OTHER", { shouldValidate: true });
               clearErrors("gender");
             }}
           >
@@ -246,25 +252,13 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
 
       <div className="grid gap-2">
         <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          {...register("password", { onChange: () => clearErrors("password") })}
-          placeholder="••••••••"
-          className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.password ? "border-red-500" : ""}`}
-        />
-        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm Password</Label>
         <div className="relative">
           <Input
-            id="confirmPassword"
+            id="password"
             type={showPassword ? "text" : "password"}
-            {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
+            {...register("password", { onChange: () => clearErrors("password") })}
             placeholder="••••••••"
-            className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirmPassword ? "border-red-500" : ""}`}
+            className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.password ? "border-red-500" : ""}`}
           />
           <button
             type="button"
@@ -273,6 +267,28 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        </div>
+        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+        <div className="relative">
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
+            placeholder="••••••••"
+            className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirmPassword ? "border-red-500" : ""}`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+          >
+            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
         {errors.confirmPassword && <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>}

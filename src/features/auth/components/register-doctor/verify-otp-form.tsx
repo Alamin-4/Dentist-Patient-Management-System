@@ -41,6 +41,8 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<OtpFormData>({
     resolver: zodResolver(otpSchema),
     defaultValues: {
@@ -90,6 +92,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
   const onSubmit = async (data: OtpFormData) => {
     if (typeof window === "undefined") return;
 
+    clearErrors("otp");
     const registerEmail = localStorage.getItem("registerEmail");
 
     if (!registerEmail) {
@@ -110,7 +113,10 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       onError: (error: any) => {
         const errorMessage =
           error?.response?.data?.message || "Invalid OTP. Please try again.";
-        toast.error(errorMessage);
+        setError("otp", {
+          type: "manual",
+          message: errorMessage,
+        });
       },
 
     });
@@ -128,7 +134,10 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
                 <InputOTP
                   maxLength={6}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(val) => {
+                    field.onChange(val);
+                    clearErrors("otp");
+                  }}
                   containerClassName="group flex items-center justify-between w-full gap-2 lg:gap-4"
                 >
                   <InputOTPGroup className="flex w-full justify-between gap-2 lg:gap-3">

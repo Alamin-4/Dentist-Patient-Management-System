@@ -19,6 +19,10 @@ export interface DentistVerificationProgress {
   step_two_note?: string | null;
   step_three_note?: string | null;
   is_verified?: boolean;
+  is_docs_verified?: boolean;
+  is_membership_paid?: boolean;
+  show_membership_purchase?: boolean;
+  dentist_directory_id?: string | null;
   verification_phase?: string | null;
   progress_percentage?: number | null;
   score?: number | null;

@@ -181,6 +181,19 @@ export default function Phase1() {
             }
           }
 
+          // 4. Map file size limit errors from backend if not mapped to a specific field
+          if (
+            Object.keys(newErrors).length === 0 &&
+            (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size is too large") || msg.toLowerCase().includes("multer"))
+          ) {
+            if (licenseFile && licenseFile.size > 5 * 1024 * 1024) {
+              newErrors["licenseDocument"] = "File size is too large. Maximum allowed size is 5MB.";
+            }
+            if (headshotFile && headshotFile.size > 5 * 1024 * 1024) {
+              newErrors["profilePicture"] = "File size is too large. Maximum allowed size is 5MB.";
+            }
+          }
+
           if (Object.keys(newErrors).length > 0) {
             setServerErrors(newErrors);
           } else {
@@ -251,8 +264,16 @@ export default function Phase1() {
               <VerificationResult
                 status="no-match"
                 onFileSelect={(file) => {
-                  setLicenseFile(file);
-                  setServerErrors((prev) => ({ ...prev, licenseDocument: "" }));
+                  if (file && file.size > 5 * 1024 * 1024) {
+                    setServerErrors((prev) => ({
+                      ...prev,
+                      licenseDocument: "File size is too large. Maximum allowed size is 5MB.",
+                    }));
+                    setLicenseFile(null);
+                  } else {
+                    setLicenseFile(file);
+                    setServerErrors((prev) => ({ ...prev, licenseDocument: "" }));
+                  }
                 }}
                 existingFileUrl={
                   (progressData?.data as LicenseProgressData | undefined)
@@ -280,8 +301,16 @@ export default function Phase1() {
               <HeadshotUpload
                 disabled={isFormLocked}
                 onChange={(file) => {
-                  setHeadshotFile(file);
-                  setServerErrors((prev) => ({ ...prev, profilePicture: "" }));
+                  if (file && file.size > 5 * 1024 * 1024) {
+                    setServerErrors((prev) => ({
+                      ...prev,
+                      profilePicture: "File size is too large. Maximum allowed size is 5MB.",
+                    }));
+                    setHeadshotFile(null);
+                  } else {
+                    setHeadshotFile(file);
+                    setServerErrors((prev) => ({ ...prev, profilePicture: "" }));
+                  }
                 }}
                 existingImageUrl={
                   (progressData?.data as LicenseProgressData | undefined)
