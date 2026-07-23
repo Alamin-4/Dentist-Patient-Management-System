@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { apiClient } from "@/core/api/client";
 
 const quickLinks = [
   { name: "Home", href: "/" },
@@ -31,28 +32,26 @@ export default function Footer() {
   });
 
   useEffect(() => {
-    const savedFooter = localStorage.getItem("cms_footer_text");
-    if (savedFooter) setFooterText(savedFooter);
-
-    const savedSocials = localStorage.getItem("cms_socials");
-    if (savedSocials) {
+    const loadFooterSettings = async () => {
       try {
-        setSocials(JSON.parse(savedSocials));
-      } catch (e) {}
-    }
-
-    const handler = () => {
-      const savedF = localStorage.getItem("cms_footer_text");
-      if (savedF) setFooterText(savedF);
-      const savedS = localStorage.getItem("cms_socials");
-      if (savedS) {
-        try {
-          setSocials(JSON.parse(savedS));
-        } catch (e) {}
+        const response = await apiClient.settings.get();
+        if (response?.data) {
+          if (response.data.footerText) {
+            setFooterText(response.data.footerText);
+          }
+          setSocials({
+            facebook: response.data.facebook || "",
+            twitter: response.data.twitter || "",
+            instagram: response.data.instagram || "",
+            linkedin: response.data.linkedin || "",
+          });
+        }
+      } catch (e) {
+        console.error("Failed to load footer settings:", e);
       }
     };
-    window.addEventListener("cms_settings_updated", handler);
-    return () => window.removeEventListener("cms_settings_updated", handler);
+
+    loadFooterSettings();
   }, []);
 
   return (

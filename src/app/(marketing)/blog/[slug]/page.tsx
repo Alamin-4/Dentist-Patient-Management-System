@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, User, Calendar, BookOpen, Clock } from "lucide-react";
+import { apiClient } from "@/core/api/client";
 
 interface BlogPost {
   id: string;
@@ -18,52 +19,26 @@ interface BlogPost {
   createdAt: string;
 }
 
-const DEFAULT_POSTS: BlogPost[] = [
-  {
-    id: "blog-1",
-    title: "How Escrow Payment Guarantees Confident Patient Bookings",
-    slug: "how-escrow-payment-guarantees-confident-bookings",
-    summary: "Understand how Escrow keeps patient money safe and guarantees that dentist clinics deliver on their promised treatment plans.",
-    content: `<h1>How Escrow Payment Guarantees Confident Patient Bookings</h1><p>Last updated: July 23, 2026</p><h2>Why Patient Confidence Matters</h2><p>In medical travel and private dental care, patients face enormous anxiety concerning billing and clinical quality. Escrow bridges this gap.</p><h2>The Surprise Guarantee Structure</h2><p>When patients book consultations on RatedDocs, their payments are held securely in escrow. Payouts are not released to the dentist until:</p><ul><li>The consultation is marked active and completed.</li><li>A signed treatment contract is uploaded and validated.</li></ul><h2>Long-Term Accountability</h2><p>By maintaining escrow release metrics, RatedDocs aligns dentist incentives directly with clinical excellence.</p>`,
-    coverImage: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=60",
-    author: "Dr. Alexander Cross",
-    isPublished: true,
-    publishedAt: "2026-07-20T08:00:00Z",
-    createdAt: "2026-07-20T08:00:00Z",
-  },
-  {
-    id: "blog-2",
-    title: "Understanding the Dentist Licensing & Verification Progress",
-    slug: "understanding-dentist-licensing-verification-progress",
-    summary: "A deep dive into our multi-phase verification queue structure: license validations, operations checks, and clinical depth scoring.",
-    content: `<h1>Understanding Dentist Verification Progress</h1><p>Last updated: July 23, 2026</p><h2>Phase 1: License Verification</h2><p>We cross-verify dental registries across multiple states to confirm active practice credentials.</p><h2>Phase 2: Operations Check</h2><p>Clinics must upload sterilization checklists and device logs.</p><h2>Phase 3: Clinic Depth & RDV</h2><p>We calculate an objective score based on actual patient feedback.</p>`,
-    coverImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&auto=format&fit=crop&q=60",
-    author: "Audit Committee",
-    isPublished: true,
-    publishedAt: "2026-07-18T12:30:00Z",
-    createdAt: "2026-07-18T12:30:00Z",
-  },
-];
-
 export default function BlogPostPage() {
   const { slug } = useParams() as { slug: string };
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("cms_blog_posts");
-    let blogList = DEFAULT_POSTS;
-    if (saved) {
+    const loadBlogPost = async () => {
       try {
-        blogList = JSON.parse(saved);
-      } catch (e) {}
-    }
+        const response = await apiClient.blogs.getBySlug(slug);
+        if (response?.data) {
+          setPost(response.data);
+        }
+      } catch (e) {
+        console.error("Error loading blog post from database:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const matched = blogList.find((p) => p.slug === slug);
-    if (matched) {
-      setPost(matched);
-    }
-    setLoading(false);
+    loadBlogPost();
   }, [slug]);
 
   const wordCount = useMemo(() => {
@@ -106,7 +81,7 @@ export default function BlogPostPage() {
   return (
     <div className="bg-slate-50 min-h-screen py-16 px-6 md:px-12 text-left">
       <div className="max-w-3xl mx-auto space-y-8">
-        
+
         {/* Navigation */}
         <Link
           href="/blog"
@@ -116,8 +91,7 @@ export default function BlogPostPage() {
           Back to Resource Center
         </Link>
 
-        {/* Cover Image */}
-        <div className="w-full h-64 sm:h-[380px] rounded-3xl overflow-hidden border border-[#CEE0F4] relative bg-slate-200">
+        <div className="w-full h-64 sm:h-95 rounded-3xl overflow-hidden border border-[#CEE0F4] relative bg-slate-200">
           <img
             src={post.coverImage}
             alt={post.title}
@@ -125,10 +99,8 @@ export default function BlogPostPage() {
           />
         </div>
 
-        {/* Article Container Card */}
         <div className="bg-white border border-[#CEE0F4] rounded-3xl p-6 md:p-12 space-y-8">
-          
-          {/* Header Metadata */}
+
           <div className="border-b border-slate-100 pb-6 space-y-4">
             <h1 className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tight leading-snug">
               {post.title}

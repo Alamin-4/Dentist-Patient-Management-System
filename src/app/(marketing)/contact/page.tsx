@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Mail, Phone, MapPin, Send, HelpCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
+import { apiClient } from "@/core/api/client";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -20,23 +20,28 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 export default function ContactPage() {
   const [contactInfo, setContactInfo] = useState({
     email: "support@rateddocs.com",
-    phone: "+1 (800) 555-0199",
-    address: "123 Dental Plaza, Suite 400, New York, NY 10001",
+    phone: "",
+    address: "",
   });
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const savedContact = localStorage.getItem("cms_contact");
-    if (savedContact) {
+    const loadContactInfo = async () => {
       try {
-        const parsed = JSON.parse(savedContact);
-        setContactInfo({
-          email: parsed.email || "support@rateddocs.com",
-          phone: parsed.phone || "+1 (800) 555-0199",
-          address: parsed.address || "123 Dental Plaza, Suite 400, New York, NY 10001",
-        });
-      } catch (e) {}
-    }
+        const response = await apiClient.settings.get();
+        if (response?.data) {
+          setContactInfo({
+            email: response.data.email || "",
+            phone: response.data.phone || "",
+            address: response.data.address || "",
+          });
+        }
+      } catch (e) {
+        console.error("Error loading contact info from database:", e);
+      }
+    };
+
+    loadContactInfo();
   }, []);
 
   const {
@@ -50,39 +55,28 @@ export default function ContactPage() {
 
   const onSubmit = async (data: ContactFormValues) => {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 800));
+    try {
+      await apiClient.contact.sendInquiry({
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+      });
 
-    // Append to localStorage contact messages
-    const saved = localStorage.getItem("cms_contact_messages");
-    let messages = [];
-    if (saved) {
-      try {
-        messages = JSON.parse(saved);
-      } catch (e) {}
+      toast.success("Thank you! Your message has been sent successfully.");
+      reset();
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.message || "Something went wrong. Please try again.";
+      toast.error(errorMsg);
+    } finally {
+      setSubmitting(false);
     }
-
-    const newMessage = {
-      id: `msg-${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      subject: data.subject,
-      message: data.message,
-      isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    messages = [newMessage, ...messages];
-    localStorage.setItem("cms_contact_messages", JSON.stringify(messages));
-
-    toast.success("Thank you! Your message has been sent successfully.");
-    reset();
-    setSubmitting(false);
   };
 
   return (
     <div className="bg-slate-50 min-h-screen py-16 px-6 md:px-12">
       <div className="max-w-400 w-11/12 mx-auto space-y-12">
-        
+
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <h1 className="text-4xl font-black text-[#10436B] tracking-tight">Contact Our Support Team</h1>
@@ -93,10 +87,10 @@ export default function ContactPage() {
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-          
+
           {/* Left: Contact Info (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Info Cards */}
             <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
@@ -111,31 +105,34 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
-                <Phone className="h-6 w-6 text-[#10436B]" />
+            {contactInfo.phone && (
+              <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
+                  <Phone className="h-6 w-6 text-[#10436B]" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-[#1A1A2E] text-base">Hotline Phone</h4>
+                  <a href={`tel:${contactInfo.phone}`} className="text-sm font-semibold text-[#10436B] hover:underline block pt-1">
+                    {contactInfo.phone}
+                  </a>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h4 className="font-bold text-[#1A1A2E] text-base">Hotline Phone</h4>
-                <p className="text-xs text-gray-400">Mon-Fri from 9am to 6pm</p>
-                <a href={`tel:${contactInfo.phone}`} className="text-sm font-semibold text-[#10436B] hover:underline block pt-1">
-                  {contactInfo.phone}
-                </a>
-              </div>
-            </div>
+            )}
 
-            <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
-                <MapPin className="h-6 w-6 text-[#10436B]" />
+            {contactInfo.address && (
+              <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
+                  <MapPin className="h-6 w-6 text-[#10436B]" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-[#1A1A2E] text-base">Headquarters</h4>
+                  <p className="text-xs text-gray-400">Global Operations Center</p>
+                  <p className="text-sm font-medium text-slate-600 leading-relaxed pt-1">
+                    {contactInfo.address}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h4 className="font-bold text-[#1A1A2E] text-base">Headquarters</h4>
-                <p className="text-xs text-gray-400">Global Operations Center</p>
-                <p className="text-sm font-medium text-slate-600 leading-relaxed pt-1">
-                  {contactInfo.address}
-                </p>
-              </div>
-            </div>
+            )}
 
           </div>
 
@@ -147,7 +144,7 @@ export default function ContactPage() {
             </h3>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Your Name</label>

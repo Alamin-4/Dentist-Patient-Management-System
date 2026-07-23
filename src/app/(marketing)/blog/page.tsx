@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Search, Calendar, User, BookOpen, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { apiClient } from "@/core/api/client";
 
 interface BlogPost {
   id: string;
@@ -18,50 +19,23 @@ interface BlogPost {
   createdAt: string;
 }
 
-const DEFAULT_POSTS: BlogPost[] = [
-  {
-    id: "blog-1",
-    title: "How Escrow Payment Guarantees Confident Patient Bookings",
-    slug: "how-escrow-payment-guarantees-confident-bookings",
-    summary: "Understand how Escrow keeps patient money safe and guarantees that dentist clinics deliver on their promised treatment plans.",
-    content: ``,
-    coverImage: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=60",
-    author: "Dr. Alexander Cross",
-    isPublished: true,
-    publishedAt: "2026-07-20T08:00:00Z",
-    createdAt: "2026-07-20T08:00:00Z",
-  },
-  {
-    id: "blog-2",
-    title: "Understanding the Dentist Licensing & Verification Progress",
-    slug: "understanding-dentist-licensing-verification-progress",
-    summary: "A deep dive into our multi-phase verification queue structure: license validations, operations checks, and clinical depth scoring.",
-    content: ``,
-    coverImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&auto=format&fit=crop&q=60",
-    author: "Audit Committee",
-    isPublished: true,
-    publishedAt: "2026-07-18T12:30:00Z",
-    createdAt: "2026-07-18T12:30:00Z",
-  },
-];
-
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("cms_blog_posts");
-    if (saved) {
+    const loadBlogPosts = async () => {
       try {
-        const parsed = JSON.parse(saved);
-        // Only show published articles in marketing view
-        setPosts(parsed.filter((p: BlogPost) => p.isPublished));
+        const response = await apiClient.blogs.getPublished();
+        if (response?.data) {
+          setPosts(response.data);
+        }
       } catch (e) {
-        setPosts(DEFAULT_POSTS);
+        console.error("Error loading blog posts from database:", e);
       }
-    } else {
-      setPosts(DEFAULT_POSTS);
-    }
+    };
+
+    loadBlogPosts();
   }, []);
 
   const filteredPosts = useMemo(() => {

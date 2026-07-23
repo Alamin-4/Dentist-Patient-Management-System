@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormSetError, FieldValues, Path } from "react-hook-form";
 import toast from "react-hot-toast";
+import { apiClient } from "@/core/api/client";
 
 /**
  * =============================================================================
@@ -93,8 +94,8 @@ export function useBlogPosts() {
   return useQuery({
     queryKey: ["admin-blog-posts"],
     queryFn: async () => {
-      const saved = localStorage.getItem("cms_blog_posts");
-      return saved ? JSON.parse(saved) : [];
+      const response = await apiClient.blogs.getAdminAll();
+      return response.data;
     },
     staleTime: 1000 * 30,
   });
@@ -104,31 +105,13 @@ export function useSaveBlogPost() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (postData: any) => {
-      await new Promise((r) => setTimeout(r, 400));
-      const saved = localStorage.getItem("cms_blog_posts");
-      let posts = saved ? JSON.parse(saved) : [];
-
-      let slug =
-        postData.slug ||
-        postData.title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "");
-
       if (postData.id) {
-        posts = posts.map((p: any) => (p.id === postData.id ? { ...p, ...postData, slug } : p));
+        const response = await apiClient.blogs.update(postData.id, postData);
+        return response.data;
       } else {
-        const newPost = {
-          ...postData,
-          id: `blog-${Date.now()}`,
-          slug,
-          createdAt: new Date().toISOString(),
-        };
-        posts = [newPost, ...posts];
+        const response = await apiClient.blogs.create(postData);
+        return response.data;
       }
-
-      localStorage.setItem("cms_blog_posts", JSON.stringify(posts));
-      return posts;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
@@ -141,15 +124,38 @@ export function useDeleteBlogPost() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const saved = localStorage.getItem("cms_blog_posts");
-      let posts = saved ? JSON.parse(saved) : [];
-      posts = posts.filter((p: any) => p.id !== id);
-      localStorage.setItem("cms_blog_posts", JSON.stringify(posts));
+      await apiClient.blogs.delete(id);
       return id;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
       toast.success("Article deleted.");
+    },
+  });
+}
+
+// 3. System Settings & Branding Hooks
+export function useSystemSettings() {
+  return useQuery({
+    queryKey: ["system-settings"],
+    queryFn: async () => {
+      const response = await apiClient.settings.get();
+      return response.data;
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
+export function useUpdateSystemSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await apiClient.settings.update(payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["system-settings"] });
+      toast.success("Branding and socials updated successfully.");
     },
   });
 }

@@ -97,7 +97,8 @@ export default function OtpVerifyModal({
           });
         },
         onError: (error: any) => {
-          // toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
+          const errMsg = error?.response?.data?.message || "Failed to resend verification code. Please try again.";
+          toast.error(errMsg, { style: TOAST_STYLE });
         },
       },
     );

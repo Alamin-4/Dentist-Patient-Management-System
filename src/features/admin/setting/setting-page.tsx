@@ -17,7 +17,6 @@ type Section =
   | "announcements"
   | "general-socials"
   | "policies-editor"
-  | "contact-messages"
   | "blog-manager";
 
 const NAV_ITEMS: { id: Section; icon: React.ReactNode; label: string; sub: string }[] = [
@@ -39,12 +38,12 @@ const NAV_ITEMS: { id: Section; icon: React.ReactNode; label: string; sub: strin
     label: "General & Socials",
     sub: "Branding, social profiles & contact info",
   },
-  {
-    id: "contact-messages",
-    icon: <Mail className="h-4 w-4" />,
-    label: "Contact Messages",
-    sub: "Inquiries from the website",
-  },
+  // {
+  //   id: "contact-messages",
+  //   icon: <Mail className="h-4 w-4" />,
+  //   label: "Contact Messages",
+  //   sub: "Inquiries from the website",
+  // },
   {
     id: "rdv-weights",
     icon: <Shield className="h-4 w-4" />,
@@ -97,13 +96,13 @@ export default function SettingPage() {
 
       {/* Two-column / Mobile Custom Dropdown layout */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        
+
         {/* Custom Styled Mobile Dropdown Selector (visible < lg) */}
         <div ref={dropdownRef} className="w-full lg:hidden relative z-20 space-y-1.5">
           <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block px-1">
             Navigation Menu
           </label>
-          
+
           {/* Active Item Dropdown Trigger Button */}
           <button
             type="button"
@@ -225,7 +224,7 @@ export default function SettingPage() {
           {active === "announcements" && <Announcements />}
           {active === "general-socials" && <GeneralSocials />}
           {active === "policies-editor" && <PoliciesEditor />}
-          {active === "contact-messages" && <ContactMessagesTable />}
+          {/* {active === "contact-messages" && <ContactMessagesTable />} */}
           {active === "blog-manager" && <BlogManager />}
         </div>
       </div>

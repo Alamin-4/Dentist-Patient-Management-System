@@ -10,6 +10,7 @@ export const endpoints = {
     getSession: "/auth/current-user-session",
     logout: "/auth/logout",
     forgotPassword: "/auth/forgot-password",
+    verifyResetOtp: "/auth/verify-reset-otp",
     resetPassword: "/auth/reset-password",
   },
   patients: {
@@ -118,6 +119,14 @@ export const endpoints = {
     confirmPayment: "/stripe/confirm-payment",
     connectOnboard: "/stripe/connect/onboard",
     connectStatus: "/stripe/connect/status",
+  },
+  contact: "/contact",
+  settings: "/settings",
+  blogs: {
+    base: "/blogs",
+    admin: "/blogs/admin",
+    bySlug: (slug: string) => `/blogs/${slug}`,
+    byId: (id: string) => `/blogs/${id}`,
   },
   treatmentBookings: {
     base: "/treatment-bookings",

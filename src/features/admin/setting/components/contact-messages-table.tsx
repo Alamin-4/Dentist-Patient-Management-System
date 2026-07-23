@@ -159,7 +159,7 @@ export function ContactMessagesTable() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 relative min-h-[400px]">
+    <div className="flex flex-col gap-6 relative min-h-100">
       {/* Header */}
       <div className="border-b border-slate-200 pb-4 flex items-center justify-between gap-4">
         <div>
@@ -235,9 +235,9 @@ export function ContactMessagesTable() {
               <h4 className="text-sm font-bold text-[#1A1A2E] leading-snug">
                 {selectedMessage.subject}
               </h4>
-              
-              <div className="h-[1px] bg-slate-200 my-3" />
-              
+
+              <div className="h-px bg-slate-200 my-3" />
+
               <p className="text-[10px] uppercase font-bold text-slate-400">Message Body</p>
               <p className="text-xs text-slate-700 leading-relaxed bg-slate-50/50 p-4 border border-slate-200 rounded-xl whitespace-pre-wrap">
                 {selectedMessage.message}

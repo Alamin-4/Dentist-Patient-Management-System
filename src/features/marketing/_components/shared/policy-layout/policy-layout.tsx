@@ -77,7 +77,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
           {/* Mobile Section Selector */}
           {outline.length > 0 && (
             <div className="w-full xl:hidden mb-4 bg-white border border-[#CEE0F4] rounded-2xl p-4">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 items-center gap-2">
                 <List className="h-4 w-4 text-[#10436B]" />
                 Jump to Section
               </label>

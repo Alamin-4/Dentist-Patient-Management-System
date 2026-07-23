@@ -143,6 +143,14 @@ export function useForgotPassword() {
     });
 }
 
+export function useVerifyResetOtp() {
+    return useMutation({
+        mutationFn: async (payload: { email: string; otp: string }) => {
+            return await apiClient.auth.verifyResetOtp(payload);
+        },
+    });
+}
+
 export function useResetPassword() {
     return useMutation({
         mutationFn: async (payload: ResetPasswordPayload) => {
@@ -194,6 +202,9 @@ export default function useAuth() {
     const otpVerifyMutation = useOtpVerify();
     const resendOtpMutation = useResendOtp();
     const logoutMutation = useLogout();
+    const forgotPasswordMutation = useForgotPassword();
+    const verifyResetOtpMutation = useVerifyResetOtp();
+    const resetPasswordMutation = useResetPassword();
     const sessionQuery = useSession();
 
     return {
@@ -204,6 +215,9 @@ export default function useAuth() {
         otpVerifyMutation,
         resendOtpMutation,
         logoutMutation,
+        forgotPasswordMutation,
+        verifyResetOtpMutation,
+        resetPasswordMutation,
         sessionQuery,
 
         // register loading

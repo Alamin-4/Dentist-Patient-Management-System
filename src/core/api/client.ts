@@ -80,6 +80,10 @@ export const apiClient = {
       const response = await api.post(endpoints.auth.forgotPassword, payload);
       return response.data;
     },
+    verifyResetOtp: async (payload: { email: string; otp: string }) => {
+      const response = await api.post(endpoints.auth.verifyResetOtp, payload);
+      return response.data;
+    },
     resetPassword: async (payload: ResetPasswordPayload) => {
       const response = await api.post(endpoints.auth.resetPassword, payload);
       return response.data;
@@ -722,6 +726,48 @@ export const apiClient = {
     },
     connectStatus: async () => {
       const response = await api.get(endpoints.stripe.connectStatus);
+      return response.data;
+    },
+  },
+  contact: {
+    sendInquiry: async (payload: { name: string; email: string; subject: string; message: string }) => {
+      const response = await api.post(endpoints.contact, payload);
+      return response.data;
+    },
+  },
+  settings: {
+    get: async () => {
+      const response = await api.get(endpoints.settings);
+      return response.data;
+    },
+    update: async (payload: any) => {
+      const response = await api.post(endpoints.settings, payload);
+      return response.data;
+    },
+  },
+  blogs: {
+    getPublished: async () => {
+      const response = await api.get(endpoints.blogs.base);
+      return response.data;
+    },
+    getAdminAll: async () => {
+      const response = await api.get(endpoints.blogs.admin);
+      return response.data;
+    },
+    getBySlug: async (slug: string) => {
+      const response = await api.get(endpoints.blogs.bySlug(slug));
+      return response.data;
+    },
+    create: async (payload: any) => {
+      const response = await api.post(endpoints.blogs.base, payload);
+      return response.data;
+    },
+    update: async (id: string, payload: any) => {
+      const response = await api.patch(endpoints.blogs.byId(id), payload);
+      return response.data;
+    },
+    delete: async (id: string) => {
+      const response = await api.delete(endpoints.blogs.byId(id));
       return response.data;
     },
   },

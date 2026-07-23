@@ -50,7 +50,7 @@ export function RdvScoreWeights() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center">
+      <div className="flex min-h-50 items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
       </div>
     );
@@ -58,7 +58,7 @@ export function RdvScoreWeights() {
 
   if (isError) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center text-red-500 font-semibold text-xs">
+      <div className="flex min-h-50 items-center justify-center text-red-500 font-semibold text-xs">
         Failed to load score weights.
       </div>
     );

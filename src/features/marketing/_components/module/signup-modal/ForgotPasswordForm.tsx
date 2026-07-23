@@ -66,10 +66,10 @@ export default function ForgotPasswordForm({ onBack, onSuccess }: ForgotPassword
           {forgotPasswordMutation.isPending ? (
             <>
               <Loader2 className="size-5 animate-spin" />
-              Sending Link...
+              Sending otp...
             </>
           ) : (
-            "Send Reset Link"
+            "Send OTP"
           )}
         </button>
       </form>

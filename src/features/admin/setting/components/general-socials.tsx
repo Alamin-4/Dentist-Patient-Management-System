@@ -6,97 +6,61 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { generalSocialsSchema, type GeneralSocialsFormValues } from "@/validation/settings-schemas";
-import { bindServerErrors } from "@/core/hooks/admin/settings/useAdminSettings";
-import toast from "react-hot-toast";
+import { bindServerErrors, useSystemSettings, useUpdateSystemSettings } from "@/core/hooks/admin/settings/useAdminSettings";
 import { cn } from "@/lib/utils";
 
-/**
- * =============================================================================
- * INSTRUCTION: GENERAL & SOCIAL BRANDING WITH ZOD VALIDATION & FIELD ERRORS
- * =============================================================================
- * - Uses `react-hook-form` + `zodResolver(generalSocialsSchema)`.
- * - Validation errors are rendered underneath each individual input field.
- * - API error responses bind to form fields via `bindServerErrors(err, setError)`.
- * =============================================================================
- */
-
 export function GeneralSocials() {
+  const { data: settingsData, isLoading } = useSystemSettings();
+  const updateMutation = useUpdateSystemSettings();
+
   const {
     register,
     handleSubmit,
     setValue,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<GeneralSocialsFormValues>({
     resolver: zodResolver(generalSocialsSchema),
     defaultValues: {
-      footerText:
-        "Access fully-vetted dentists with clear pricing and guaranteed protection. Book your dental care with confidence today.",
-      email: "support@rateddocs.com",
-      phone: "+1 (800) 555-0199",
-      address: "123 Dental Plaza, Suite 400, New York, NY 10001",
-      facebook: "https://facebook.com",
-      twitter: "https://x.com",
-      instagram: "https://instagram.com",
-      linkedin: "https://linkedin.com",
+      footerText: "",
+      email: "",
+      phone: "",
+      address: "",
+      facebook: "",
+      twitter: "",
+      instagram: "",
+      linkedin: "",
     },
   });
 
   useEffect(() => {
-    const savedFooter = localStorage.getItem("cms_footer_text");
-    if (savedFooter) setValue("footerText", savedFooter);
-
-    const savedSocials = localStorage.getItem("cms_socials");
-    if (savedSocials) {
-      try {
-        const parsed = JSON.parse(savedSocials);
-        if (parsed.facebook) setValue("facebook", parsed.facebook);
-        if (parsed.twitter) setValue("twitter", parsed.twitter);
-        if (parsed.instagram) setValue("instagram", parsed.instagram);
-        if (parsed.linkedin) setValue("linkedin", parsed.linkedin);
-      } catch (e) {}
+    if (settingsData) {
+      if (settingsData.footerText !== undefined) setValue("footerText", settingsData.footerText);
+      if (settingsData.email !== undefined) setValue("email", settingsData.email);
+      if (settingsData.phone !== undefined) setValue("phone", settingsData.phone);
+      if (settingsData.address !== undefined) setValue("address", settingsData.address);
+      if (settingsData.facebook !== undefined) setValue("facebook", settingsData.facebook);
+      if (settingsData.twitter !== undefined) setValue("twitter", settingsData.twitter);
+      if (settingsData.instagram !== undefined) setValue("instagram", settingsData.instagram);
+      if (settingsData.linkedin !== undefined) setValue("linkedin", settingsData.linkedin);
     }
-
-    const savedContact = localStorage.getItem("cms_contact");
-    if (savedContact) {
-      try {
-        const parsed = JSON.parse(savedContact);
-        if (parsed.email) setValue("email", parsed.email);
-        if (parsed.phone) setValue("phone", parsed.phone);
-        if (parsed.address) setValue("address", parsed.address);
-      } catch (e) {}
-    }
-  }, [setValue]);
+  }, [settingsData, setValue]);
 
   const onSubmit = async (data: GeneralSocialsFormValues) => {
     try {
-      await new Promise((r) => setTimeout(r, 400)); // Simulating API POST request
-
-      localStorage.setItem("cms_footer_text", data.footerText);
-      localStorage.setItem(
-        "cms_socials",
-        JSON.stringify({
-          facebook: data.facebook,
-          twitter: data.twitter,
-          instagram: data.instagram,
-          linkedin: data.linkedin,
-        })
-      );
-      localStorage.setItem(
-        "cms_contact",
-        JSON.stringify({
-          email: data.email,
-          phone: data.phone,
-          address: data.address,
-        })
-      );
-
-      window.dispatchEvent(new Event("cms_settings_updated"));
-      toast.success("Branding and socials updated successfully.");
+      await updateMutation.mutateAsync(data);
     } catch (err: any) {
       bindServerErrors(err, setError);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-50 items-center justify-center">
+        <div className="h-6 w-6 animate-spin text-slate-400 border-2 border-slate-200 border-t-[#10436B] rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -290,11 +254,11 @@ export function GeneralSocials() {
       <div className="flex justify-end border-t border-slate-200 pt-4">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={updateMutation.isPending}
           className="flex items-center gap-2 rounded-lg bg-[#10436B] hover:bg-[#0d3656] text-white px-6 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
         >
           <Save className="h-4 w-4" />
-          {isSubmitting ? "Saving..." : "Save Branding"}
+          {updateMutation.isPending ? "Saving..." : "Save Branding"}
         </button>
       </div>
     </form>

@@ -42,13 +42,13 @@ export default function SearchBar() {
       params.append("procedure", selectedProcedure);
     }
 
-    const minPrice = Math.max(50, budget.min ? Number(budget.min) : 50);
+    const minPrice = budget.min ? Number(budget.min) : undefined;
     const maxPrice = budget.max ? Number(budget.max) : undefined;
 
-    if (!isNaN(minPrice) && minPrice > 0) {
+    if (minPrice !== undefined && !isNaN(minPrice) && minPrice >= 0) {
       params.append("price[min]", minPrice.toString());
     }
-    if (maxPrice !== undefined && !isNaN(maxPrice) && maxPrice > 0) {
+    if (maxPrice !== undefined && !isNaN(maxPrice) && maxPrice >= 0) {
       params.append("price[max]", maxPrice.toString());
     }
 

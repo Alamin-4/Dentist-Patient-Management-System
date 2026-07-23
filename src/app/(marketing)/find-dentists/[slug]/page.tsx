@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
 import ProfilePageSkeleton from "@/features/marketing/_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
+import DentistNotFound from "./not-found";
 
 const DentistProfile = dynamic(
   () =>
@@ -76,12 +77,8 @@ export default function ViewDentistProfile() {
     return <ProfilePageSkeleton />;
   }
 
-  if (isError || !mappedDentist) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-white">
-        <h1 className="text-2xl font-bold text-[#003366]">Dentist Not Found</h1>
-      </div>
-    );
+  if (isError || !mappedDentist || !mappedDentist.verified) {
+    return <DentistNotFound />;
   }
 
   return (
