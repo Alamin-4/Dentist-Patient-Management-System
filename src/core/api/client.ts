@@ -505,6 +505,10 @@ export const apiClient = {
       });
       return response.data;
     },
+    bulkDentistAction: async (ids: string[], action: "suspend" | "unsuspend" | "delete") => {
+      const response = await api.post(endpoints.admin.bulkDentistAction, { ids, action });
+      return response.data;
+    },
     getPatientsList: async (params?: { status?: string; city?: string; search?: string; page?: number; limit?: number }) => {
       const response = await api.get(endpoints.admin.patients, { params });
       return response.data;

@@ -2,7 +2,6 @@ import { AdminNavbar } from "@/app/modules/admin/layout/admin-navbar";
 import { AdminSidebar } from "@/app/modules/admin/layout/admin-sidebar";
 import { AdminMobileSidebarDrawer } from "@/app/modules/admin/layout/admin-mobile-sidebar-drawer";
 import { SidebarProvider } from "@/context/sidebar-context";
-import { Toaster } from "react-hot-toast";
 
 export default function AdminDashboardLayout({
   children,
@@ -22,7 +21,7 @@ export default function AdminDashboardLayout({
           <section className="flex-1 h-screen overflow-y-auto">
             <AdminNavbar />
             <main className="overflow-y-auto">
-              <div className="min-h-full p-4 sm:p-6 overflow-y-auto">{children}</div>
+              <div className="min-h-full overflow-y-auto">{children}</div>
             </main>
           </section>
         </div>

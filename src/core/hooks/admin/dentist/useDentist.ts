@@ -232,3 +232,15 @@ export function useUploadDentistDirectory() {
     },
   });
 }
+
+export function useBulkDentistAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ ids, action }: { ids: string[]; action: "suspend" | "unsuspend" | "delete" }) =>
+      adminApi.bulkDentistAction(ids, action),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
+    },
+  });
+}

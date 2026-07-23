@@ -64,6 +64,7 @@ export const endpoints = {
     verifyPhase: (id: string | number) => `/admin/verify-phase/${id}`,
     verificationWeights: "/admin/verification-weights",
     dentists: "/admin/dentists",
+    bulkDentistAction: "/admin/dentists/bulk-action",
     dentistProfile: (id: string | number) => `/admin/dentists/${id}`,
     dentistVerificationPhases: (id: string | number) => `/admin/dentist-verification/${id}`,
     uploadDentistDirectory: "/admin/dentist-directory/upload",
