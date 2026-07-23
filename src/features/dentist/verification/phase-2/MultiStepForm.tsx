@@ -188,7 +188,7 @@ export default function MultiStepForm() {
 
   const onInvalid = (errors: any) => {
     console.warn("Validation failed for Phase 2 Form:", errors);
-    toast.error("Please fill all required fields correctly.");
+    // toast.error("Please fill all required fields correctly.");
   };
 
   // While waiting for admin review — show status screen only

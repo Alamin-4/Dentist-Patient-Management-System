@@ -50,7 +50,7 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
           return (
             <div
               key={field.id}
-              className="grid grid-cols-1 gap-3 md:grid-cols-[1.5fr_1fr_2fr_auto] md:items-end"
+              className="grid grid-cols-1 gap-3 md:grid-cols-[1.5fr_1fr_2fr_auto] items-start"
             >
               <div className="space-y-2 relative">
                 <label className="inline-block text-xs font-medium text-muted-foreground">
@@ -76,7 +76,7 @@ export const ProcedurePricingSection = ({ disabled }: ProcedurePricingSectionPro
                   <ul className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-lg">
                     {suggestions.map((suggestion) => (
                       <li
-                         key={suggestion.id}
+                        key={suggestion.id}
                         onMouseDown={() => {
                           setValue(`procedures.${index}.name`, suggestion.name);
                           setValue(`procedures.${index}.id`, suggestion.id);

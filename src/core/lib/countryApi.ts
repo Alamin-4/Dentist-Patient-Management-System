@@ -1,8 +1,3 @@
-import { env } from "@/config/env";
-
-const API_KEY = env.NEXT_PUBLIC_COUNTRY_API_KEY;
-const BASE_URL = "https://api.countrystatecity.in/v1";
-
 export interface CSCCountry {
   id: number;
   name: string;
@@ -32,6 +27,9 @@ const FALLBACK_COUNTRIES: CSCCountry[] = [
   { id: 15, name: "India", iso2: "IN" },
   { id: 16, name: "Vietnam", iso2: "VN" },
   { id: 17, name: "Philippines", iso2: "PH" },
+  { id: 18, name: "Bangladesh", iso2: "BD" },
+  { id: 19, name: "United Kingdom", iso2: "GB" },
+  { id: 20, name: "Canada", iso2: "CA" },
 ];
 
 const FALLBACK_CITIES: Record<string, CSCCity[]> = {
@@ -133,78 +131,37 @@ const FALLBACK_CITIES: Record<string, CSCCity[]> = {
     { id: 1701, name: "Manila" },
     { id: 1702, name: "Quezon City" },
   ],
+  BD: [
+    { id: 1801, name: "Dhaka" },
+    { id: 1802, name: "Chittagong" },
+    { id: 1803, name: "Sylhet" },
+  ],
+  GB: [
+    { id: 1901, name: "London" },
+    { id: 1902, name: "Manchester" },
+    { id: 1903, name: "Birmingham" },
+  ],
+  CA: [
+    { id: 2001, name: "Toronto" },
+    { id: 2002, name: "Vancouver" },
+    { id: 2003, name: "Montreal" },
+  ],
 };
 
 /**
- * Fetches all countries from CSC API and caches them in localStorage.
+ * Returns available countries directly without third-party API key dependencies.
  */
 export async function getCountries(): Promise<CSCCountry[]> {
-  if (typeof window === "undefined") return FALLBACK_COUNTRIES;
-
-  const cached = localStorage.getItem("csc_countries");
-  if (cached) {
-    try {
-      return JSON.parse(cached);
-    } catch (e) {
-      // Ignore parse error
-    }
-  }
-
-  try {
-    const res = await fetch(`${BASE_URL}/countries`, {
-      headers: {
-        "X-CSCAPI-KEY": API_KEY,
-      },
-    });
-    if (!res.ok) {
-      console.warn("Countries API not accessible, returning fallback list");
-      return FALLBACK_COUNTRIES;
-    }
-    const data: CSCCountry[] = await res.json();
-    
-    // Cache the result
-    localStorage.setItem("csc_countries", JSON.stringify(data));
-    return data;
-  } catch (error) {
-    console.warn("Error calling Country API, returning fallback list");
-    return FALLBACK_COUNTRIES;
-  }
+  return FALLBACK_COUNTRIES;
 }
 
 /**
- * Fetches cities of a specific country by its ISO2 code and caches them.
+ * Returns available cities of a specific country by ISO2 code.
  */
 export async function getCities(countryIso2: string): Promise<CSCCity[]> {
   if (!countryIso2) return [];
-  if (typeof window === "undefined") return FALLBACK_CITIES[countryIso2] || [];
-
-  const cacheKey = `csc_cities_${countryIso2}`;
-  const cached = localStorage.getItem(cacheKey);
-  if (cached) {
-    try {
-      return JSON.parse(cached);
-    } catch (e) {
-      // Ignore parse error
-    }
-  }
-
-  try {
-    const res = await fetch(`${BASE_URL}/countries/${countryIso2}/cities`, {
-      headers: {
-        "X-CSCAPI-KEY": API_KEY,
-      },
-    });
-    if (!res.ok) {
-      console.warn(`Cities API not accessible for ${countryIso2}, returning fallback list`);
-      return FALLBACK_CITIES[countryIso2] || [];
-    }
-    const data: CSCCity[] = await res.json();
-
-    // Cache the result
-    localStorage.setItem(cacheKey, JSON.stringify(data));
-    return data;
-  } catch (error) {
-    console.warn(`Error calling Cities API for ${countryIso2}, returning fallback list`);
-    return FALLBACK_CITIES[countryIso2] || [];
-  }
+  return FALLBACK_CITIES[countryIso2] || [
+    { id: 9901, name: "Central City" },
+    { id: 9902, name: "Metropolitan Area" },
+  ];
 }

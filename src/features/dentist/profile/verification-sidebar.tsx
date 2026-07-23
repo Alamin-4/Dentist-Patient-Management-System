@@ -15,7 +15,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 export function VerificationSidebar() {
   const router = useRouter();
   const { data: progressData } = useDentistProgress();
-  const { nextIncompleteStep } = useVerificationProgress();
+  const { nextIncompleteStep, allSubmittedOrApproved, allApproved } = useVerificationProgress();
 
   const progress = progressData?.data as any;
 
@@ -58,19 +58,17 @@ export function VerificationSidebar() {
     router.push(`/dentist/verification?phase=${phase}`);
   };
 
-  const allDone = step1Done && step2Done && step3Done;
-
   const renderIcon = (status: string, done: boolean) => {
     if (status === "APPROVED" || done) {
       return (
-        <div className="flex p-1 items-center justify-center rounded-full bg-green-500 text-white">
+        <div className="flex p-1 items-center justify-center rounded-full bg-emerald-500 text-white">
           <Check className="h-3 w-3 stroke-3" />
         </div>
       );
     }
     if (status === "SUBMITTED") {
       return (
-        <div className="flex p-1 items-center justify-center rounded-full bg-yellow-500 text-white animate-pulse">
+        <div className="flex p-1 items-center justify-center rounded-full bg-amber-500 text-white animate-pulse">
           <Clock className="h-3 w-3 stroke-3" />
         </div>
       );
@@ -92,7 +90,7 @@ export function VerificationSidebar() {
 
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-      <h3 className="mb-6 font-bold text-gray-900 text-sm tracking-wide">Verification Prgress</h3>
+      <h3 className="mb-6 font-bold text-gray-900 text-sm tracking-wide">Verification Progress</h3>
 
       <div className="space-y-8 relative">
         {/* Connecting timeline line */}
@@ -117,11 +115,24 @@ export function VerificationSidebar() {
         })}
       </div>
 
-      {/* Show action button only when verification is incomplete */}
-      {!allDone && (
+      {/* Show status or start action button */}
+      {allApproved ? (
+        <div className="mt-8 flex items-center justify-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 py-3 px-4 text-xs font-bold text-emerald-700">
+          <FaCircleCheck className="h-4 w-4" />
+          Verification Approved
+        </div>
+      ) : allSubmittedOrApproved ? (
+        <div className="mt-8 flex flex-col items-center justify-center gap-1 rounded-lg bg-amber-50 border border-amber-200 p-3 text-center">
+          <span className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+            <Clock className="h-4 w-4 text-amber-600 animate-pulse" />
+            Admin Review
+          </span>
+
+        </div>
+      ) : (
         <Button
           onClick={handleStart}
-          className="mt-8 h-11 w-full bg-[#163E5C] hover:bg-[#113149] text-white font-semibold rounded-lg text-sm transition-colors"
+          className="mt-8 h-11 w-full bg-[#163E5C] hover:bg-[#113149] text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer"
         >
           Start Phase {nextIncompleteStep}
           <ArrowRight className="ml-2 h-4 w-4" />

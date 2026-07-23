@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import LicenceForm from "./licence-form";
 import { HeadshotUpload } from "./headshot-upload";
 import { cn } from "@/lib/utils";
@@ -41,7 +41,7 @@ export default function Phase1() {
     setVerificationCompletedStep,
     setVerificationStep,
   } = useVerificationStore();
-  const router = useRouter()
+  const router = useRouter();
 
   const [submittedLicence, setSubmittedLicence] =
     useState<SubmittedLicence | null>(null);
@@ -75,7 +75,7 @@ export default function Phase1() {
     };
   }, [progressData]);
 
-  const handleVerify = async (data: SubmittedLicence) => {
+  const handleVerify = useCallback(async (data: SubmittedLicence) => {
     setVerificationStatus("VERIFYING");
     setSubmittedLicence(data);
     try {
@@ -88,10 +88,10 @@ export default function Phase1() {
       setVerificationStatus("SUCCESS");
       toast.success("License matched and verified successfully via registry!");
     } catch {
-      // The check endpoint always returns 404 — this is expected; fall through to manual upload
+      // The check endpoint returns 404 if not found in auto-registry; fall through to manual upload
       setVerificationStatus("FAILED");
     }
-  };
+  }, []);
 
   const hasHeadshot = Boolean(
     headshotFile ||
@@ -110,10 +110,10 @@ export default function Phase1() {
     return Boolean(submittedLicence && hasLicenseVerified && hasHeadshot);
   }, [isFormLocked, verificationStatus, licenseFile, submittedLicence, hasHeadshot]);
 
-
+  // Fix: depend only on boolean isStepReady primitive to prevent re-render loop
   useEffect(() => {
     setVerificationStepReady(1, isStepReady);
-  }, [isStepReady, setVerificationStepReady]);
+  }, [isStepReady]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,21 +148,17 @@ export default function Phase1() {
       {
         onSuccess: () => {
           router.push("/dentist/verification?phase=operations-verify");
-          // setVerificationCompletedStep(1);
-          // setVerificationStep(2);
         },
         onError: (error: any) => {
           const resData = error?.response?.data;
           const newErrors: Record<string, string> = {};
 
-          // 1. Check if there is an errorDetails.field
           const field = resData?.errorDetails?.field || resData?.field;
           const msg = resData?.message || error?.message || "Something went wrong. Please try again.";
           if (field) {
             newErrors[field] = msg;
           }
 
-          // 2. Check if there is an errors array
           if (Array.isArray(resData?.errors)) {
             for (const errObj of resData.errors) {
               if (errObj.field) {
@@ -171,7 +167,6 @@ export default function Phase1() {
             }
           }
 
-          // 3. Check if there are ZodIssues
           if (Array.isArray(resData?.errorDetails)) {
             for (const issue of resData.errorDetails) {
               const fieldName = issue.path?.[issue.path.length - 1];
@@ -181,7 +176,6 @@ export default function Phase1() {
             }
           }
 
-          // 4. Map file size limit errors from backend if not mapped to a specific field
           if (
             Object.keys(newErrors).length === 0 &&
             (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size is too large") || msg.toLowerCase().includes("multer"))
@@ -216,7 +210,7 @@ export default function Phase1() {
 
   return (
     <div className="space-y-6">
-      {/* Rejection banner — shown above the form so dentist knows to resubmit */}
+      {/* Rejection banner */}
       {step1Status === "REJECTED" && (
         <VerificationStatusScreen
           status="REJECTED"

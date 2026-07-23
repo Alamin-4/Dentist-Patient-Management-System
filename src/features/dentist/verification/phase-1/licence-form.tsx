@@ -99,7 +99,7 @@ export default function LicenceForm({
         regNo: defaultValues.regNo || "",
       });
     }
-  }, [defaultValues, form]);
+  }, [defaultValues]);
 
   // Handle server errors
   useEffect(() => {
@@ -119,14 +119,14 @@ export default function LicenceForm({
         }
       });
     }
-  }, [serverErrors, form]);
+  }, [serverErrors]);
 
   // Automatically trigger verification when parent form submission is attempted
   useEffect(() => {
     if (submissionAttempted) {
       form.handleSubmit(onVerify)();
     }
-  }, [submissionAttempted, form, onVerify]);
+  }, [submissionAttempted]);
 
   return (
     <form onSubmit={form.handleSubmit(onVerify)} className="space-y-6">

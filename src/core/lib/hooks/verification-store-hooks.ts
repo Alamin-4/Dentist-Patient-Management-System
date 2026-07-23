@@ -2,7 +2,7 @@
 
 import { useAppStore } from "@/store/useAppStore";
 
-// Verification-related states hook
+// Verification-related states hook with stable selectors
 export const useVerificationStore = () => {
   const verificationStatus = useAppStore((state) => state.verificationStatus);
   const setVerificationStatus = useAppStore((state) => state.setVerificationStatus);
@@ -66,7 +66,6 @@ export const useUiStoreForVerification = () => {
   const compareModalPurpose = useAppStore((state) => state.compareModalPurpose);
   const setCompareModalPurpose = useAppStore((state) => state.setCompareModalPurpose);
 
-
   const showSignupModal = activeModal === "signup";
   const showSigninModal = activeModal === "signin";
   const showPersonalizeModal = activeModal === "personalize";
@@ -74,13 +73,10 @@ export const useUiStoreForVerification = () => {
   const showBookingModal = activeModal === "booking" ? activeModal : null;
 
   return {
-    // Direct store values
     activeModal,
     compareModalPurpose,
     setCompareModalPurpose,
 
-
-    // Computed values for compatibility
     showSignupModal,
     showSigninModal,
     showPersonalizeModal,
