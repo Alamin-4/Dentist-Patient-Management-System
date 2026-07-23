@@ -150,12 +150,6 @@ export default function FindDentist() {
     return min > 0 ? min : undefined;
   }, [selectedScoreRanges]);
 
-  // Star ratings ([3, 4, 5]) → minimum selected star = ratingMin
-  const ratingMin = useMemo(
-    () => (selectedRatings.length > 0 ? Math.min(...selectedRatings) : undefined),
-    [selectedRatings],
-  );
-
   // ── Build API params object ───────────────────────────────────────────────
   const serverParams = useMemo(() => {
     const params: Record<string, any> = { page, limit: PAGE_SIZE };
@@ -169,11 +163,13 @@ export default function FindDentist() {
     }
     if (showVerifiedOnly) params.verified = "true";
     if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
-    if (ratingMin !== undefined) params.ratingMin = ratingMin;
+    if (selectedRatings.length > 0) {
+      params.ratings = selectedRatings.join(",");
+    }
     return params;
   }, [
     page, debouncedQuery, city, country, procedure,
-    debouncedPrice, showVerifiedOnly, rdvScoreMin, ratingMin,
+    debouncedPrice, showVerifiedOnly, rdvScoreMin, selectedRatings,
   ]);
 
   const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(serverParams);
@@ -300,6 +296,7 @@ export default function FindDentist() {
     setCompareList((prev) => prev.filter((item) => item.id !== id));
 
   const handleCompareSubmit = () => {
+    if (compareList.length < 2) return;
     setDentistsToCompare(compareList);
     if (user) {
       const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);

@@ -201,14 +201,14 @@ export function AdminSidebar() {
                         : "text-slate-400 hover:bg-white/10 hover:text-white",
                     )}
                   >
-                    <item.icon className="h-[18px] w-[18px] shrink-0" />
+                    <item.icon className="h-4.5 w-4.5 shrink-0" />
                     <span className="flex-1 truncate text-[13px]">
                       {item.label}
                     </span>
                     {item.badge !== undefined && (
                       <span
                         className={cn(
-                          "flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-semibold",
+                          "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold",
                           active
                             ? "bg-white text-[#0D2B3E]"
                             : "bg-white/20 text-white",

@@ -21,7 +21,11 @@ export default function StartBookingModal() {
       open={showBookingModal === "startBooking"}
       onOpenChange={() => setShowBookingModal(null)}
     >
-      <DialogContent className="sm:max-w-190 w-full p-0 border-none rounded-lg overflow-hidden bg-white">
+      <DialogContent
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        className="sm:max-w-190 w-full p-0 border-none rounded-lg overflow-hidden bg-white"
+      >
         <div className="px-8 py-6 border-b border-[#F3F4F6]">
           <DialogTitle className="text-[24px] font-bold text-[#1A1A2E]">
             {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}

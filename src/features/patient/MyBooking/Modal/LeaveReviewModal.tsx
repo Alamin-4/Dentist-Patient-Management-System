@@ -134,8 +134,8 @@ export function LeaveReviewModal({
                     >
                       <Star
                         className={`size-6 ${star <= (ratings as any)[cat.id]
-                            ? "fill-[#FBBF24] text-[#FBBF24]"
-                            : "text-slate-200"
+                          ? "fill-[#FBBF24] text-[#FBBF24]"
+                          : "text-slate-200"
                           }`}
                       />
                     </button>

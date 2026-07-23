@@ -66,7 +66,7 @@ function Stars({ rating, small }: { rating: number; small?: boolean }) {
 function ConfidenceBadge({ label }: { label: string }) {
   const isHigh = label === "High confidence" || label === "Auto-approved";
   return (
-    <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold border", 
+    <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold border",
       isHigh ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200"
     )}>
       {label}
@@ -429,7 +429,7 @@ export default function Reviews() {
 
   const reviewsList = useMemo(() => {
     if (!bookingsResponse?.data) return [];
-    
+
     const list: Review[] = [];
     bookingsResponse.data.forEach((b: any) => {
       const reviewData = b.metadata?.review;
@@ -438,8 +438,8 @@ export default function Reviews() {
       const mapped = mapDbBookingToUiBooking(b);
       if (!mapped) return;
       const rating = (Number(reviewData.ratingCommunication || 5) +
-                     Number(reviewData.ratingValueForMoney || 5) +
-                     Number(reviewData.ratingFollowThrough || 5)) / 3;
+        Number(reviewData.ratingValueForMoney || 5) +
+        Number(reviewData.ratingFollowThrough || 5)) / 3;
 
       const savedStatus = moderations[b.id];
       const defaultStatus = rating < 3.5 ? "flagged" : "published";
@@ -469,9 +469,9 @@ export default function Reviews() {
         ai_flag: rating < 3.5 ? { reason: "Low overall rating flagged for moderation review." } : null,
         review_content: reviewData.comments || "",
         ratings_breakdown: [
-          { label: "Communication", rating: Number(reviewData.ratingCommunication || 5) },
-          { label: "Value for Money", rating: Number(reviewData.ratingValueForMoney || 5) },
-          { label: "Follow Through", rating: Number(reviewData.ratingFollowThrough || 5) }
+          { label: "Communication", rating: Number(reviewData.ratingCommunication || 0) },
+          { label: "Value for Money", rating: Number(reviewData.ratingValueForMoney || 0) },
+          { label: "Follow Through", rating: Number(reviewData.ratingFollowThrough || 0) }
         ],
         submission_context: {
           submitted: dateStr,

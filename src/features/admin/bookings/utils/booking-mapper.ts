@@ -479,9 +479,9 @@ export function mapDbBookingToUiBooking(dbBooking: DbBooking | null | undefined)
           rating: Number(c.rating || 5),
         }))
         : [
-          { name: "Communication", rating: Number(reviewData.ratingCommunication || 5) },
-          { name: "Value for money", rating: Number(reviewData.ratingValueForMoney || 5) },
-          { name: "Follow through", rating: Number(reviewData.ratingFollowThrough || 5) },
+          { name: "Communication", rating: Number(reviewData.ratingCommunication || 0) },
+          { name: "Value for money", rating: Number(reviewData.ratingValueForMoney || 0) },
+          { name: "Follow through", rating: Number(reviewData.ratingFollowThrough || 0) },
         ],
       written_review: String(reviewData.comments || ""),
       procedure: procedure,

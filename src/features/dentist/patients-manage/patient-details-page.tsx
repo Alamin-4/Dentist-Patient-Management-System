@@ -200,8 +200,8 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
       {patient.treatmentNote && (
         <div
           className={`rounded-lg border px-4 py-3 text-sm font-medium ${patient.treatmentPlan === "rejected"
-              ? "border-rose-200 bg-rose-50 text-rose-600"
-              : "border-amber-200 bg-amber-50 text-amber-700"
+            ? "border-rose-200 bg-rose-50 text-rose-600"
+            : "border-amber-200 bg-amber-50 text-amber-700"
             }`}
         >
           {patient.treatmentNote}

@@ -127,7 +127,6 @@ export default function DentistScheduleCard({
             selected={selection.date}
             fullWidth={true}
             onSelect={(date) => {
-              // 🔥 FIX: Reset selected date to midnight so it matches backend expectations
               if (date) {
                 const normalizedDate = new Date(date);
                 normalizedDate.setHours(0, 0, 0, 0);

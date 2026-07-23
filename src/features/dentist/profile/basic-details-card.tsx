@@ -54,7 +54,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
   }
 
   const experienceYears = dentist?.dentistProfessionalData?.yearsOfExperience;
-  const experience = experienceYears ? `${experienceYears} Years` : "N/A";
+  const experience = experienceYears ? `${experienceYears} Years` : "0";
 
   const details = [
     { icon: Mail, label: "Email", value: email },

@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { apiClient } from "@/api/client";
 import toast from "react-hot-toast";
 import { Plus, Upload, X, Loader2 } from "lucide-react";
@@ -10,24 +13,127 @@ import ResultCardSkeleton from "./Result-card-skeleton";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useDentistPatients, useDentistProceduresList } from "@/core/hooks/dentist/useDentist";
+
+const resultSchema = z.object({
+  title: z.string().min(1, "Treatment title is required"),
+  patientName: z.string().min(1, "Patient name is required"),
+  date: z.string().min(1, "Date is required"),
+  location: z.string().min(1, "Location is required"),
+  beforeImage: z.any().refine((val) => val instanceof File || typeof val === "string", "Before image is required"),
+  afterImage: z.any().refine((val) => val instanceof File || typeof val === "string", "After image is required"),
+});
+
+type ResultFormValues = z.infer<typeof resultSchema>;
 
 export default function Result() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Form states
-  const [title, setTitle] = useState("");
-  const [patientName, setPatientName] = useState("");
-  const [date, setDate] = useState("");
-  const [location, setLocation] = useState("");
-  
-  const [beforeFile, setBeforeFile] = useState<File | null>(null);
   const [beforePreview, setBeforePreview] = useState<string | null>(null);
-  
-  const [afterFile, setAfterFile] = useState<File | null>(null);
   const [afterPreview, setAfterPreview] = useState<string | null>(null);
-
   const [isUploading, setIsUploading] = useState(false);
+
+  // Queries for DB Dropdowns
+  const { data: patientsData } = useDentistPatients();
+  const { data: proceduresData } = useDentistProceduresList();
+
+  const patients = useMemo(() => patientsData?.data || [], [patientsData]);
+  const procedures = useMemo(() => proceduresData?.data || [], [proceduresData]);
+
+  // Form setup
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm<ResultFormValues>({
+    resolver: zodResolver(resultSchema),
+    defaultValues: {
+      title: "",
+      patientName: "",
+      date: "",
+      location: "",
+      beforeImage: null,
+      afterImage: null,
+    },
+  });
+
+  const selectedPatientName = watch("patientName");
+
+  const selectedPatient = useMemo(() => {
+    return patients.find((p: any) => p.name === selectedPatientName);
+  }, [selectedPatientName, patients]);
+
+  // Derive unique Dates, Locations & Treatment Titles for the selected patient
+  const dateOptions = useMemo(() => {
+    if (!selectedPatient) return [];
+    const opts = new Set<string>();
+    if (selectedPatient.appointmentDate) opts.add(selectedPatient.appointmentDate);
+    if (selectedPatient.schedule?.date && selectedPatient.schedule.date !== "Not Scheduled") {
+      opts.add(selectedPatient.schedule.date);
+    }
+    if (selectedPatient.travelingDates && selectedPatient.travelingDates !== "TBD") {
+      opts.add(selectedPatient.travelingDates);
+    }
+    return Array.from(opts);
+  }, [selectedPatient]);
+
+  const locationOptions = useMemo(() => {
+    if (!selectedPatient) return [];
+    const opts = new Set<string>();
+    if (selectedPatient.country) opts.add(selectedPatient.country);
+    return Array.from(opts);
+  }, [selectedPatient]);
+
+  const treatmentTitleOptions = useMemo(() => {
+    if (!selectedPatient) return [];
+    const opts = new Set<string>();
+    if (selectedPatient.procedure) {
+      selectedPatient.procedure.split(",").forEach((p: string) => {
+        const trimmed = p.trim();
+        if (trimmed) opts.add(trimmed);
+      });
+    }
+    if (Array.isArray(selectedPatient.estimateBreakdown)) {
+      selectedPatient.estimateBreakdown.forEach((item: any) => {
+        if (item.label) opts.add(item.label.trim());
+      });
+    }
+    if (opts.size === 0) {
+      opts.add("Dental Treatment");
+    }
+    return Array.from(opts);
+  }, [selectedPatient]);
+
+  // Automatically update the Date, Location and Treatment selections when the patient is selected
+  useEffect(() => {
+    if (selectedPatient) {
+      if (dateOptions.length > 0) {
+        setValue("date", dateOptions[0], { shouldValidate: true });
+      } else {
+        setValue("date", "");
+      }
+      if (locationOptions.length > 0) {
+        setValue("location", locationOptions[0], { shouldValidate: true });
+      } else {
+        setValue("location", "");
+      }
+      if (treatmentTitleOptions.length > 0) {
+        setValue("title", treatmentTitleOptions[0], { shouldValidate: true });
+      } else {
+        setValue("title", "");
+      }
+    } else {
+      setValue("date", "");
+      setValue("location", "");
+      setValue("title", "");
+    }
+  }, [selectedPatient, dateOptions, locationOptions, treatmentTitleOptions, setValue]);
 
   const { data: results = [], isLoading } = useQuery({
     queryKey: ["dentist-results"],
@@ -37,7 +143,6 @@ export default function Result() {
         const apiData = response?.data || response;
         return Array.isArray(apiData) ? apiData : [];
       } catch (err) {
-        // Quietly log error in development, fall back to empty state
         console.warn("Results API route not ready or found:", err);
         return [];
       }
@@ -69,7 +174,12 @@ export default function Result() {
   const handleBeforeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setBeforeFile(file);
+      if (file.size > 5 * 1024 * 1024) {
+        setError("beforeImage", { type: "manual", message: "Maximum allowed image size is 5MB" });
+        return;
+      }
+      setValue("beforeImage", file, { shouldValidate: true });
+      clearErrors("beforeImage");
       setBeforePreview(URL.createObjectURL(file));
     }
   };
@@ -77,33 +187,30 @@ export default function Result() {
   const handleAfterFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setAfterFile(file);
+      if (file.size > 5 * 1024 * 1024) {
+        setError("afterImage", { type: "manual", message: "Maximum allowed image size is 5MB" });
+        return;
+      }
+      setValue("afterImage", file, { shouldValidate: true });
+      clearErrors("afterImage");
       setAfterPreview(URL.createObjectURL(file));
     }
   };
 
   const resetForm = () => {
-    setTitle("");
-    setPatientName("");
-    setDate("");
-    setLocation("");
-    setBeforeFile(null);
+    reset({
+      title: "",
+      patientName: "",
+      date: "",
+      location: "",
+      beforeImage: null,
+      afterImage: null,
+    });
     setBeforePreview(null);
-    setAfterFile(null);
     setAfterPreview(null);
   };
 
-  const handleUploadAndSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !patientName || !date || !location) {
-      toast.error("Please fill in all textual fields");
-      return;
-    }
-    if (!beforeFile || !afterFile) {
-      toast.error("Please provide both before and after images");
-      return;
-    }
-
+  const onSubmit = async (data: ResultFormValues) => {
     setIsUploading(true);
     let beforeUrl = "";
     let afterUrl = "";
@@ -111,24 +218,24 @@ export default function Result() {
     try {
       // 1. Upload Before Image
       toast.loading("Uploading before image...", { id: "upload-progress" });
-      const beforeUploadRes = await apiClient.files.upload(beforeFile);
+      const beforeUploadRes = await apiClient.files.upload(data.beforeImage);
       beforeUrl = beforeUploadRes?.data?.secure_url || beforeUploadRes?.secure_url;
       if (!beforeUrl) throw new Error("Failed to upload before image");
 
       // 2. Upload After Image
       toast.loading("Uploading after image...", { id: "upload-progress" });
-      const afterUploadRes = await apiClient.files.upload(afterFile);
+      const afterUploadRes = await apiClient.files.upload(data.afterImage);
       afterUrl = afterUploadRes?.data?.secure_url || afterUploadRes?.secure_url;
       if (!afterUrl) throw new Error("Failed to upload after image");
 
       toast.loading("Saving result details...", { id: "upload-progress" });
-      
+
       // 3. Submit payload
       await createResultMutation.mutateAsync({
-        title,
-        patientName,
-        date,
-        location,
+        title: data.title,
+        patientName: data.patientName,
+        date: data.date,
+        location: data.location,
         beforeImage: beforeUrl,
         afterImage: afterUrl,
       });
@@ -192,7 +299,7 @@ export default function Result() {
             </DialogTitle>
           </div>
 
-          <form onSubmit={handleUploadAndSubmit} className="p-8 space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
             <div className="space-y-3">
               <label className="block text-sm font-semibold text-[#1A1A2E]">Images</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -209,7 +316,7 @@ export default function Result() {
                       <button
                         type="button"
                         onClick={() => {
-                          setBeforeFile(null);
+                          setValue("beforeImage", null, { shouldValidate: true });
                           setBeforePreview(null);
                         }}
                         className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
@@ -231,6 +338,11 @@ export default function Result() {
                       />
                     </label>
                   )}
+                  {errors.beforeImage && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {String(errors.beforeImage.message)}
+                    </p>
+                  )}
                 </div>
 
                 {/* After Image Upload */}
@@ -246,7 +358,7 @@ export default function Result() {
                       <button
                         type="button"
                         onClick={() => {
-                          setAfterFile(null);
+                          setValue("afterImage", null, { shouldValidate: true });
                           setAfterPreview(null);
                         }}
                         className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
@@ -268,6 +380,11 @@ export default function Result() {
                       />
                     </label>
                   )}
+                  {errors.afterImage && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {String(errors.afterImage.message)}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -275,58 +392,111 @@ export default function Result() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-[#1A1A2E]">
-                  Treatment Title
+                  Patient Name
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Invisalign Treatment"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659]"
-                />
+                <select
+                  {...register("patientName")}
+                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground"
+                >
+                  <option value="">Select Patient</option>
+                  {patients.map((pat: any) => (
+                    <option key={pat.id} value={pat.name}>
+                      {pat.name} ({pat.patientCode})
+                    </option>
+                  ))}
+                </select>
+                {errors.patientName && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.patientName.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-[#1A1A2E]">
-                  Patient Name
+                  Treatment Title
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Sophia D."
-                  value={patientName}
-                  onChange={(e) => setPatientName(e.target.value)}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659]"
-                />
+                <select
+                  {...register("title")}
+                  disabled={!selectedPatientName}
+                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {!selectedPatientName ? (
+                    <option value="">Select patient first</option>
+                  ) : (
+                    <>
+                      <option value="">Select Treatment Title</option>
+                      {treatmentTitleOptions.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
+                {errors.title && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.title.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-[#1A1A2E]">
                   Date
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. May 2026"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659]"
-                />
+                <select
+                  {...register("date")}
+                  disabled={!selectedPatientName}
+                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {!selectedPatientName ? (
+                    <option value="">Select patient first</option>
+                  ) : (
+                    <>
+                      <option value="">Select Date</option>
+                      {dateOptions.map((d) => (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
+                {errors.date && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.date.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-[#1A1A2E]">
                   Location
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Istanbul, Turkey"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659]"
-                />
+                <select
+                  {...register("location")}
+                  disabled={!selectedPatientName}
+                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {!selectedPatientName ? (
+                    <option value="">Select patient first</option>
+                  ) : (
+                    <>
+                      <option value="">Select Location</option>
+                      {locationOptions.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
+                {errors.location && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.location.message}
+                  </p>
+                )}
               </div>
             </div>
 

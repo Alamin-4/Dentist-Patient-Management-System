@@ -255,9 +255,8 @@ export default function ScheduleContent() {
           )}
         </div>
 
-        {/* Content wrapper */}
         <div className={dentists.length === 1 ? "max-w-3xl mx-auto space-y-8" : "space-y-8"}>
-          {/* Dentist cards grid */}
+
           <div className={dentists.length === 1 ? "w-full" : "grid grid-cols-1 lg:grid-cols-2 gap-6"}>
             {dentists.map((doc, i) => (
               <DentistScheduleCard
@@ -269,7 +268,6 @@ export default function ScheduleContent() {
             ))}
           </div>
 
-          {/* Error Message */}
           {errorMsg && (
             <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-750 flex items-start gap-2 max-w-xl ml-auto">
               <span className="font-semibold shrink-0">Error:</span>
@@ -277,7 +275,6 @@ export default function ScheduleContent() {
             </div>
           )}
 
-          {/* Confirm button */}
           <div className="flex justify-end">
             <button
               type="button"

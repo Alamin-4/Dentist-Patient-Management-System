@@ -90,7 +90,7 @@ export function DentistsTable({
 
   return (
     <>
-      <div className="overflow-x-auto min-h-[350px]">
+      <div className="overflow-x-auto min-h-87.5">
         <table className="min-w-full">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/40">
@@ -227,8 +227,8 @@ export function DentistsTable({
                     <ActionMenu
                       dentist={dentist}
                       onViewProfile={() => router.push(`/admin/dentists/${dentist.slug}`)}
-                      onSuspend={() => {}}
-                      onDelete={() => {}}
+                      onSuspend={() => { }}
+                      onDelete={() => { }}
                     />
                   </td>
                 </tr>

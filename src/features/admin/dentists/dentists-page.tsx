@@ -183,7 +183,7 @@ export default function DentistsPage() {
 
   if (isError) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center text-red-500 font-semibold">
+      <div className="flex min-h-100 items-center justify-center text-red-500 font-semibold">
         Failed to load dentists directory. Please try again.
       </div>
     );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
@@ -19,6 +20,41 @@ const resources = [
 ];
 
 export default function Footer() {
+  const [footerText, setFooterText] = useState(
+    "Access fully-vetted dentists with clear pricing and guaranteed protection. Book your dental care with confidence today."
+  );
+  const [socials, setSocials] = useState({
+    facebook: "https://facebook.com",
+    twitter: "https://x.com",
+    instagram: "https://instagram.com",
+    linkedin: "https://linkedin.com",
+  });
+
+  useEffect(() => {
+    const savedFooter = localStorage.getItem("cms_footer_text");
+    if (savedFooter) setFooterText(savedFooter);
+
+    const savedSocials = localStorage.getItem("cms_socials");
+    if (savedSocials) {
+      try {
+        setSocials(JSON.parse(savedSocials));
+      } catch (e) {}
+    }
+
+    const handler = () => {
+      const savedF = localStorage.getItem("cms_footer_text");
+      if (savedF) setFooterText(savedF);
+      const savedS = localStorage.getItem("cms_socials");
+      if (savedS) {
+        try {
+          setSocials(JSON.parse(savedS));
+        } catch (e) {}
+      }
+    };
+    window.addEventListener("cms_settings_updated", handler);
+    return () => window.removeEventListener("cms_settings_updated", handler);
+  }, []);
+
   return (
     <footer className="bg-[#10436B] pt-20 pb-10 px-6 md:px-12 text-white">
       <div className="max-w-400 w-11/12 mx-auto">
@@ -38,30 +74,31 @@ export default function Footer() {
             </div>
 
             <p className="max-w-sm text-gray-300 text-[16px] leading-relaxed">
-              Access fully-vetted dentists with clear pricing and guaranteed
-              protection. Book your dental care with confidence today.
+              {footerText}
             </p>
 
             <div className="flex gap-4">
               {[
-                { icon: <FaFacebook size={20} />, href: "https://facebook.com" },
+                { icon: <FaFacebook size={20} />, href: socials.facebook },
                 {
                   icon: <span className="font-bold text-lg italic">X</span>,
-                  href: "https://x.com",
+                  href: socials.twitter,
                 },
-                { icon: <FaInstagram size={20} />, href: "https://instagram.com" },
-                { icon: <FaLinkedin size={20} />, href: "https://linkedin.com" },
-              ].map((social, idx) => (
-                <Link
-                  key={idx}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-11 h-11 flex items-center justify-center rounded-lg bg-white/10 border border-white/10 hover:bg-[#E3A32A] transition-all duration-300"
-                >
-                  {social.icon}
-                </Link>
-              ))}
+                { icon: <FaInstagram size={20} />, href: socials.instagram },
+                { icon: <FaLinkedin size={20} />, href: socials.linkedin },
+              ]
+                .filter((s) => s.href)
+                .map((social, idx) => (
+                  <Link
+                    key={idx}
+                    href={social.href || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-11 h-11 flex items-center justify-center rounded-lg bg-white/10 border border-white/10 hover:bg-[#E3A32A] transition-all duration-300"
+                  >
+                    {social.icon}
+                  </Link>
+                ))}
             </div>
           </div>
 

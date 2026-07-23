@@ -48,6 +48,7 @@ export interface DentistSpecialty {
 
 export interface DentistProfileData {
   id: string;
+  slug?: string | null;
   country?: string | null;
   phoneNumber?: string | null;
   user?: DentistProfileUser | null;

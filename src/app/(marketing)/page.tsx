@@ -15,7 +15,6 @@ export default function HomePage() {
       {/* <SmileTransformations /> */}
       <AiSmilePreview />
       <CtaSearchSection />
-
     </div>
   );
 }

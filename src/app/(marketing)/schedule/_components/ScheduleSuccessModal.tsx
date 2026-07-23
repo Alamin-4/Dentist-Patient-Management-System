@@ -92,9 +92,9 @@ export default function ScheduleSuccessModal({
           <button
             type="button"
             onClick={onGoToBookings}
-            className="mt-6 px-8 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all"
+            className="mt-6 px-6 py-2 lg:px-8 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-medium rounded-lg active:scale-95 transition-all"
           >
-            Go to my Bookings
+            Go to My Consultation
           </button>
         </div>
       </DialogContent>

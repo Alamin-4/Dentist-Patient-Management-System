@@ -35,8 +35,10 @@ export default function DocumentsPage() {
   });
 
   const filteredDocuments = documents.filter((doc) => {
-    // Both treatment documents and custom documents will render dynamically
-    return true;
+    if (activeTab === "treatment") {
+      return doc.category?.toLowerCase() === "treatment";
+    }
+    return doc.category?.toLowerCase() !== "treatment";
   });
 
   return (
@@ -60,9 +62,8 @@ export default function DocumentsPage() {
         <div className="flex gap-12 border-b border-gray-200 mb-8 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab("treatment")}
-            className={`pb-4 font-medium transition-all relative cursor-pointer ${
-              activeTab === "treatment" ? "text-[#113254]" : "text-[#9CA3AF]"
-            }`}
+            className={`pb-4 font-medium transition-all relative cursor-pointer ${activeTab === "treatment" ? "text-[#113254]" : "text-[#9CA3AF]"
+              }`}
           >
             Treatment Document
             {activeTab === "treatment" && (
@@ -71,9 +72,8 @@ export default function DocumentsPage() {
           </button>
           <button
             onClick={() => setActiveTab("my-docs")}
-            className={`pb-4 font-medium transition-all relative cursor-pointer ${
-              activeTab === "my-docs" ? "text-[#113254]" : "text-[#9CA3AF]"
-            }`}
+            className={`pb-4 font-medium transition-all relative cursor-pointer ${activeTab === "my-docs" ? "text-[#113254]" : "text-[#9CA3AF]"
+              }`}
           >
             My Documents
             {activeTab === "my-docs" && (
@@ -93,8 +93,8 @@ export default function DocumentsPage() {
             <FileText className="w-12 h-12 text-slate-300 mb-3" />
             <p className="text-base font-semibold text-slate-500">No documents found</p>
             <p className="text-xs text-slate-400 mt-1">
-              {activeTab === "my-docs" 
-                ? "Click 'Add Document' to upload your records." 
+              {activeTab === "my-docs"
+                ? "Click 'Add Document' to upload your records."
                 : "No treatment documents have been shared by your dentist yet."}
             </p>
           </div>

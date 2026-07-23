@@ -201,6 +201,7 @@ export default function FindDentistComponents() {
 
     // ── Handlers ───────────────────────────────────────────────────────────
     const handleCompareSubmit = () => {
+        if (compare.compareList.length < 2) return;
         setDentistsToCompare(compare.compareList);
         if (user) {
             const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);

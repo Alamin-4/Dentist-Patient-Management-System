@@ -15,7 +15,7 @@ import {
 import { useStepTwoMutation } from "@/hooks/dentist/useDentist";
 import { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, XCircle } from "lucide-react";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import { VerificationStatusScreen } from "../VerificationStatusScreen";
 
@@ -132,6 +132,27 @@ export default function MultiStepForm() {
           }
         }
 
+        const getFileObj = (fileValue: any): File | null => {
+          if (fileValue instanceof File) return fileValue;
+          if (fileValue instanceof FileList && fileValue.length > 0) return fileValue[0];
+          return null;
+        };
+
+        // 4. Map file size limit errors from backend if not mapped to a specific field
+        if (
+          Object.keys(newErrors).length === 0 &&
+          (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size is too large") || msg.toLowerCase().includes("multer"))
+        ) {
+          const jci = getFileObj(methods.watch("jciCertificate"));
+          const video = getFileObj(methods.watch("videoWalkthrough"));
+          if (jci && jci.size > 5 * 1024 * 1024) {
+            newErrors["jciCertificate"] = "File size is too large. Maximum allowed size is 5MB.";
+          }
+          if (video && video.size > 5 * 1024 * 1024) {
+            newErrors["walkthroughVideo"] = "File size is too large. Maximum allowed size is 5MB.";
+          }
+        }
+
         if (Object.keys(newErrors).length > 0) {
           Object.entries(newErrors).forEach(([fieldName, message]) => {
             // Map backend fields to frontend form names
@@ -139,20 +160,19 @@ export default function MultiStepForm() {
             if (fieldName === "signerName") mappedName = "signerFullName";
             if (fieldName === "signature") mappedName = "typedSignature";
             if (fieldName === "agreedToGuarantee") mappedName = "agreeToGuarantee";
+            if (fieldName === "walkthroughVideo") mappedName = "videoWalkthrough";
 
             methods.setError(mappedName, {
-              type: "server",
+              type: "manual",
               message,
             });
           });
-        } else {
-          toast.error(msg);
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }
       },
     });
   };
 
-  // Expose helpers on window for easy developer debugging in console
   useEffect(() => {
     if (typeof window !== "undefined") {
       (window as any).getFormErrors = () => methods.formState.errors;
@@ -201,6 +221,15 @@ export default function MultiStepForm() {
           <SterilizationSection disabled={formLocked} />
           <ProcedurePricingSection disabled={formLocked} />
           <GuaranteeSection disabled={formLocked} />
+
+          {stepTwoMutation.error && (
+            <div className="p-4 mt-6 rounded-lg border border-red-200 bg-red-50 text-red-600 text-sm font-semibold flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-1">
+              <XCircle className="h-5 w-5 shrink-0 text-red-500" />
+              <span>
+                {(stepTwoMutation.error as any)?.response?.data?.message || stepTwoMutation.error?.message || "Operations verification submission failed. Please try again."}
+              </span>
+            </div>
+          )}
         </form>
       </FormProvider>
     </div>

@@ -15,7 +15,13 @@ type ProcedureOption = {
 };
 
 
-export default function ProcedureSelectionForm() {
+export default function ProcedureSelectionForm({
+  errors,
+  setErrors,
+}: {
+  errors?: Record<string, string>;
+  setErrors?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+}) {
 
   const [selectedIds, setSelectedIds] = useState<string[]>(
     () => getBookingData().procedureIds,
@@ -37,6 +43,14 @@ export default function ProcedureSelectionForm() {
       procedure: selectedTitles.join(", "),
       procedureIds: nextIds,
     });
+
+    if (nextIds.length > 0 && setErrors) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.procedures;
+        return next;
+      });
+    }
   };
 
   return (
@@ -45,6 +59,12 @@ export default function ProcedureSelectionForm() {
         What procedure are you interested in?
       </h2>
 
+      {errors?.procedures && (
+        <p className="p-3 mb-4 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-destructive animate-in fade-in slide-in-from-top-1">
+          {errors.procedures}
+        </p>
+      )}
+
       {isLoading && (
         <div className="mb-4 flex items-center gap-2 text-sm font-medium text-[#6B7280]">
           <Loader2 className="size-4 animate-spin" />
@@ -52,7 +72,7 @@ export default function ProcedureSelectionForm() {
         </div>
       )}
 
-      <div className="space-y-4 max-h-[400px] overflow-y-scroll">
+      <div className="space-y-4 max-h-100 overflow-y-scroll">
         {procedureOptions.map((item: any) => {
           const isSelected = selectedIds.includes(item.id);
           return (

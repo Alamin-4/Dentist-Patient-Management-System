@@ -68,6 +68,8 @@ export default function AddPricing() {
     reset,
     watch,
     setError,
+    setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -107,10 +109,10 @@ export default function AddPricing() {
         agreeToGuarantee: ops.agreedToGuarantee || false,
         procedures: proceduresList.length > 0
           ? proceduresList.map((p: any) => ({
-              name: p.procedureName,
-              price: String(p.price),
-              notes: p.notes || "",
-            }))
+            name: p.procedureName,
+            price: String(p.price),
+            notes: p.notes || "",
+          }))
           : [{ name: "", price: "", notes: "" }],
         jciCertificate: ops.jciCertificate || null,
         videoWalkthrough: ops.walkthroughVideo || null,
@@ -184,6 +186,27 @@ export default function AddPricing() {
           }
         }
 
+        const getFileObj = (fileValue: any): File | null => {
+          if (fileValue instanceof File) return fileValue;
+          if (fileValue instanceof FileList && fileValue.length > 0) return fileValue[0];
+          return null;
+        };
+
+        // 4. Map file size limit errors from backend if not mapped to a specific field
+        if (
+          Object.keys(newErrors).length === 0 &&
+          (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size is too large") || msg.toLowerCase().includes("multer"))
+        ) {
+          const jci = getFileObj(jciCertificateFile);
+          const video = getFileObj(videoWalkthroughFile);
+          if (jci && jci.size > 5 * 1024 * 1024) {
+            newErrors["jciCertificate"] = "File size is too large. Maximum allowed size is 5MB.";
+          }
+          if (video && video.size > 5 * 1024 * 1024) {
+            newErrors["walkthroughVideo"] = "File size is too large. Maximum allowed size is 5MB.";
+          }
+        }
+
         if (Object.keys(newErrors).length > 0) {
           Object.entries(newErrors).forEach(([fieldName, message]) => {
             // Map backend fields to frontend form names
@@ -191,14 +214,16 @@ export default function AddPricing() {
             if (fieldName === "signerName") mappedName = "signerFullName";
             if (fieldName === "signature") mappedName = "typedSignature";
             if (fieldName === "agreedToGuarantee") mappedName = "agreeToGuarantee";
+            if (fieldName === "walkthroughVideo") mappedName = "videoWalkthrough";
 
             setError(mappedName, {
-              type: "server",
+              type: "manual",
               message,
             });
           });
+          window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-          toast.error(msg);
+          // toast.error(msg);
         }
       },
     });
@@ -275,7 +300,21 @@ export default function AddPricing() {
                 <input
                   type="file"
                   accept=".pdf,.png,.jpg,.jpeg"
-                  {...register("jciCertificate")}
+                  {...register("jciCertificate", {
+                    onChange: (e) => {
+                      const file = e.target.files?.[0];
+                      if (file && file.size > 5 * 1024 * 1024) {
+                        setError("jciCertificate", {
+                          type: "manual",
+                          message: "File size is too large. Maximum allowed size is 5MB.",
+                        });
+                        setValue("jciCertificate", null);
+                        e.target.value = "";
+                      } else {
+                        clearErrors(["jciCertificate", "videoWalkthrough"]);
+                      }
+                    }
+                  })}
                   className="absolute inset-0 cursor-pointer opacity-0"
                 />
                 <Upload className="h-5 w-5 shrink-0 text-muted-foreground" />
@@ -317,7 +356,21 @@ export default function AddPricing() {
                 <input
                   type="file"
                   accept="video/*"
-                  {...register("videoWalkthrough")}
+                  {...register("videoWalkthrough", {
+                    onChange: (e) => {
+                      const file = e.target.files?.[0];
+                      if (file && file.size > 5 * 1024 * 1024) {
+                        setError("videoWalkthrough", {
+                          type: "manual",
+                          message: "File size is too large. Maximum allowed size is 5MB.",
+                        });
+                        setValue("videoWalkthrough", null);
+                        e.target.value = "";
+                      } else {
+                        clearErrors(["videoWalkthrough", "jciCertificate"]);
+                      }
+                    }
+                  })}
                   className="absolute inset-0 cursor-pointer opacity-0"
                 />
                 <Upload className="h-5 w-5 shrink-0 text-muted-foreground" />
@@ -540,14 +593,21 @@ export default function AddPricing() {
 
       {/* ─── Sticky Save Bar ─── */}
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card px-6 py-4">
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="h-11 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer disabled:opacity-60"
-          >
-            {isSubmitting ? "Saving..." : "Save"}
-          </button>
+        <div className="flex flex-col items-end gap-2">
+          {stepTwoMutation.error && (
+            <p className="text-sm font-semibold text-red-500 animate-in fade-in slide-in-from-bottom-1">
+              {(stepTwoMutation.error as any)?.response?.data?.message || stepTwoMutation.error?.message || "Failed to save pricing protocols. Please try again."}
+            </p>
+          )}
+          <div className="flex justify-end w-full">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="h-11 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer disabled:opacity-60"
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+          </div>
         </div>
       </div>
     </form>

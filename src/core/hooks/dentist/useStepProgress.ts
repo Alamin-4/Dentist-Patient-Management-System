@@ -67,6 +67,8 @@ export default function useVerificationProgress() {
                 ? {
                     signer_name: progressData.dentistOperations.signerName,
                     accepted_terms: progressData.dentistOperations.agreedToGuarantee,
+                    jci_certificate: progressData.dentistOperations.jciCertificate,
+                    walkthrough_video: progressData.dentistOperations.walkthroughVideo,
                 }
                 : {},
         } : undefined,
@@ -122,9 +124,15 @@ export default function useVerificationProgress() {
             ? 2
             : 3;
 
-    const rdvScore = (Object.entries(submittedByStep) as [string, boolean][])
-        .reduce((score, [step, submitted]) => {
-            if (!submitted) return score;
+    const approvedByStep: Record<VerificationPhaseStep, boolean> = useMemo(() => ({
+        1: step1Status === "APPROVED",
+        2: step2Status === "APPROVED",
+        3: step3Status === "APPROVED",
+    }), [step1Status, step2Status, step3Status]);
+
+    const rdvScore = (Object.entries(approvedByStep) as [string, boolean][])
+        .reduce((score, [step, approved]) => {
+            if (!approved) return score;
             return score + RDV_SCORE_BY_STEP[Number(step) as VerificationPhaseStep];
         }, 0);
 

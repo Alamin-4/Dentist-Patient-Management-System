@@ -4,6 +4,7 @@ import {
   Check,
   AlertCircle,
   ArrowRight,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -60,16 +61,26 @@ export function VerificationSidebar() {
   const allDone = step1Done && step2Done && step3Done;
 
   const renderIcon = (status: string, done: boolean) => {
-
-    if (status === "APPROVED" || status === "SUBMITTED" || done) {
+    if (status === "APPROVED" || done) {
       return (
-        <div className="flex p-1 items-center justify-center rounded-full bg-[#4ADE80] text-white">
-          <FaCircleCheck className="" />
+        <div className="flex p-1 items-center justify-center rounded-full bg-green-500 text-white">
+          <Check className="h-3 w-3 stroke-3" />
+        </div>
+      );
+    }
+    if (status === "SUBMITTED") {
+      return (
+        <div className="flex p-1 items-center justify-center rounded-full bg-yellow-500 text-white animate-pulse">
+          <Clock className="h-3 w-3 stroke-3" />
         </div>
       );
     }
     if (status === "REJECTED") {
-      return <AlertCircle className="h-5 w-5 text-red-500 bg-white" />;
+      return (
+        <div className="flex p-1 items-center justify-center rounded-full bg-red-500 text-white">
+          <AlertCircle className="h-3.5 w-3.5" />
+        </div>
+      );
     }
 
     return (
@@ -85,7 +96,7 @@ export function VerificationSidebar() {
 
       <div className="space-y-8 relative">
         {/* Connecting timeline line */}
-        <div className="absolute left-[9px] top-2.5 bottom-2.5 w-0.5 bg-gray-100" />
+        <div className="absolute left-2.25 top-2.5 bottom-2.5 w-0.5 bg-gray-100" />
 
         {steps.map((step, i) => {
           return (

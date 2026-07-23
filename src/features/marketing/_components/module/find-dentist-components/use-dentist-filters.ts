@@ -36,14 +36,14 @@ export const useDentistFilters = () => {
     const initialCity = searchParams.get("city") || DEFAULT_FILTERS.city;
     const initialCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
     const initialProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
-    
-    const initialMinPrice = searchParams.get("price[min]") 
-        ? Number(searchParams.get("price[min]")) 
+
+    const initialMinPrice = searchParams.get("price[min]")
+        ? Number(searchParams.get("price[min]"))
         : DEFAULT_PRICE_RANGE[0];
-    const initialMaxPrice = searchParams.get("price[max]") 
-        ? Number(searchParams.get("price[max]")) 
+    const initialMaxPrice = searchParams.get("price[max]")
+        ? Number(searchParams.get("price[max]"))
         : DEFAULT_PRICE_RANGE[1];
-        
+
     const initialVerified = searchParams.get("verified") === "true";
     const initialPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
 
@@ -93,7 +93,7 @@ export const useDentistFilters = () => {
 
         const queryStr = params.toString();
         const nextUrl = queryStr ? `${pathname}?${queryStr}` : pathname;
-        
+
         router.replace(nextUrl, { scroll: false });
     }, [debouncedQuery, city, country, procedure, showVerifiedOnly, page, router, pathname]);
 
@@ -124,11 +124,6 @@ export const useDentistFilters = () => {
         return min > 0 ? min : undefined;
     }, [selectedScoreRanges]);
 
-    const ratingMin = useMemo(
-        () => (selectedRatings.length > 0 ? Math.min(...selectedRatings) : undefined),
-        [selectedRatings],
-    );
-
     // Build API params
     const serverParams = useMemo(() => {
         const params: Record<string, any> = { page };
@@ -138,11 +133,12 @@ export const useDentistFilters = () => {
         if (procedure !== DEFAULT_FILTERS.procedure) params.procedure = procedure;
         if (showVerifiedOnly) params.verified = "true";
         if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
-        if (ratingMin !== undefined) params.ratingMin = ratingMin;
+        if (selectedRatings.length > 0) {
+            params.ratings = selectedRatings.join(",");
+        }
         return params;
-    }, [page, debouncedQuery, city, country, procedure, showVerifiedOnly, rdvScoreMin, ratingMin]);
+    }, [page, debouncedQuery, city, country, procedure, showVerifiedOnly, rdvScoreMin, selectedRatings]);
 
-    // Toggle helpers
     const toggleRating = (rating: number) =>
         setSelectedRatings((prev) =>
             prev.includes(rating) ? prev.filter((v) => v !== rating) : [...prev, rating],
@@ -172,7 +168,7 @@ export const useDentistFilters = () => {
         setSelectedAvailabilityDate(null);
         setShowVerifiedOnly(false);
         setPage(1);
-        
+
         router.replace(pathname, { scroll: false });
     };
 

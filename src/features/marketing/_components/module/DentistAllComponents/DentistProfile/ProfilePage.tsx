@@ -84,6 +84,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
                       googleReviewCount={dentist.googleReviewCount}
                       isReviewModalOpen={isReviewModalOpen}
                       setIsReviewModalOpen={setIsReviewModalOpen}
+                      onSeeAllReviews={() => setActiveTab("reviews")}
                     />
 
                     {dentist.verified && (
