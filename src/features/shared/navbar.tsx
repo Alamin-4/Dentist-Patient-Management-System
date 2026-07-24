@@ -48,6 +48,7 @@ export function Navbar() {
       <nav className="px-4 lg:px-8 flex h-20 items-center justify-between">
         <div className="flex items-center gap-3">
           <HamburgerButton />
+         <Link href={"/"}>
           <Image
             src={"/logos/mainlogo.png"}
             alt="Website logo"
@@ -55,7 +56,7 @@ export function Navbar() {
             width={400}
             loading="eager"
             className="w-43 h-auto object-contain"
-          />
+          /></Link>
         </div>
         <div className="flex items-center gap-6">
           <DropdownMenu>
