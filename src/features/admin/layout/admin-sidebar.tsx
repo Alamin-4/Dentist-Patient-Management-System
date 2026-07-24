@@ -133,7 +133,7 @@ export function AdminSidebar() {
       {/* Logo header */}
       <div className="flex items-center justify-between px-5 py-5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2.5">
-          <Link href={"/"}>
+          <Link href={"/"} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C9963F] shrink-0">
             <svg
               viewBox="0 0 24 24"
