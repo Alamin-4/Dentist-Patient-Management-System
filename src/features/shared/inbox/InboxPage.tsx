@@ -71,16 +71,14 @@ export function InboxPage() {
     return ["ACCEPTED", "SCHEDULED", "ACTIVE", "COMPLETED", "MISSED"].includes(item.requestStatus);
   });
 
-  // Deduplicate conversations so we only show one thread per user pair,
-  // but always preserve the selected/active chat if one is specified.
   const uniqueActiveChats = (() => {
     const groupedChatsMap = new Map<string, any>();
-    
+
     activeChats.forEach((item: any) => {
-      const key = isDentist 
-        ? (item.patientId || item.intake?.email || item.id) 
+      const key = isDentist
+        ? (item.patientId || item.intake?.email || item.id)
         : (item.dentistId || item.directoryEntryId || item.id);
-        
+
       const existing = groupedChatsMap.get(key);
       if (!existing) {
         groupedChatsMap.set(key, item);
@@ -96,7 +94,7 @@ export function InboxPage() {
         }
       }
     });
-    
+
     return Array.from(groupedChatsMap.values());
   })();
 

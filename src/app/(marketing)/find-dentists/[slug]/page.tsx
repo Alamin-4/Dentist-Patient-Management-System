@@ -17,7 +17,6 @@ export default function ViewDentistProfile() {
   const params = useParams();
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch by waiting for mount
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -57,11 +56,7 @@ export default function ViewDentistProfile() {
       profileType: d.profileType || "CLAIMABLE",
       procedures: d.procedures || [],
       languages: d.languages || [],
-      bio: d.description || d.bio || (
-        d.specialty
-          ? `Dr. ${d.name} is a dedicated professional specializing in ${d.specialty}${d.clinicName ? ` at ${d.clinicName}` : ""}.${d.city || d.country ? ` Located in ${[d.city, d.country].filter(Boolean).join(", ")}.` : ""}`
-          : `Dr. ${d.name} is a dedicated professional dentist${d.clinicName ? ` at ${d.clinicName}` : ""}.${d.city || d.country ? ` Located in ${[d.city, d.country].filter(Boolean).join(", ")}.` : ""}`
-      ),
+      bio: d.description || d.bio || "N/A",
       googleRating: googleRating ?? combinedRating ?? 0,
       googleReviewCount: reviewCount,
       dentistLicense: d.dentistLicense,

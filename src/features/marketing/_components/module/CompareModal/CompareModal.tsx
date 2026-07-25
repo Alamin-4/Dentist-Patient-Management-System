@@ -386,7 +386,7 @@ export default function CompareModal() {
                   <Row
                     label="LANGUAGES"
                     colCount={colCount}
-                    values={dentists.map((d) => d.languages && d.languages.length > 0 ? langAbbr(d.languages) : "0")}
+                    values={dentists.map((d) => d.languages && d.languages.length > 0 ? langAbbr(d.languages) : "N/A")}
                   />
                   <Row
                     label="ESTIMATE RANGE"
@@ -450,9 +450,9 @@ export default function CompareModal() {
               ) : (
                 <p className="text-sm text-muted-foreground text-center">
                   By continuing you are agree with our{" "}
-                  <button className="text-primary underline underline-offset-2 hover:opacity-80 transition-opacity">
+                  <a href="/terms" className="text-primary underline underline-offset-2 hover:opacity-80 transition-opacity">
                     terms and Conditions
-                  </button>
+                  </a>
                 </p>
               )}
             </div>

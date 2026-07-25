@@ -85,7 +85,14 @@ const INITIAL_BOOKING_DRAFT: BookingDraft = {
   bookingMode: "book",
 };
 
-let frontSmileFile: File | null = null;
+let dentalPhotos: Record<string, File | null> = {
+  frontSmile: null,
+  wideSmile: null,
+  upperArch: null,
+  lowerArch: null,
+  leftSide: null,
+  rightSide: null,
+};
 let xrayFile: File | null = null;
 
 const canUseStorage = () => typeof window !== "undefined";
@@ -94,7 +101,7 @@ function stripFiles(draft: BookingDraft): BookingFormData {
   return {
     ...draft,
     photos: {
-      required: frontSmileFile ? [frontSmileFile] : [],
+      required: getDentalPhotosList(),
       recommended: [],
     },
     xray: xrayFile,
@@ -287,12 +294,28 @@ export function setSelectedDentistsForBooking(
   });
 }
 
+export function setDentalPhoto(key: string, file: File | null) {
+  dentalPhotos[key] = file;
+}
+
+export function getDentalPhoto(key: string) {
+  return dentalPhotos[key];
+}
+
+export function getAllDentalPhotos() {
+  return dentalPhotos;
+}
+
+export function getDentalPhotosList(): File[] {
+  return Object.values(dentalPhotos).filter((f): f is File => f instanceof File);
+}
+
 export function setFrontSmileFile(file: File | null) {
-  frontSmileFile = file;
+  dentalPhotos.frontSmile = file;
 }
 
 export function getFrontSmileFile() {
-  return frontSmileFile;
+  return dentalPhotos.frontSmile;
 }
 
 export function setXrayFile(file: File | null) {
@@ -308,7 +331,14 @@ export function updateXrayNotes(notes: string) {
 }
 
 export function clearBookingData() {
-  frontSmileFile = null;
+  dentalPhotos = {
+    frontSmile: null,
+    wideSmile: null,
+    upperArch: null,
+    lowerArch: null,
+    leftSide: null,
+    rightSide: null,
+  };
   xrayFile = null;
 
   if (canUseStorage()) {

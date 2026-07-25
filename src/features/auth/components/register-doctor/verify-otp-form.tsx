@@ -29,8 +29,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
   const [resendCountdown, setResendCountdown] = useState(60);
 
   const router = useRouter();
-  const pathName = usePathname()
-
+  const pathName = usePathname();
 
   const { otpVerifyMutation, resendOtpMutation, isOtpVerifyLoading } = useAuth();
   const isResending = resendOtpMutation.isPending;
@@ -60,12 +59,13 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-
   }, [resendCountdown]);
 
   const handleResendOtp = () => {
-    if (typeof window === "undefined" || resendCountdown > 0 || isResending)
+    // Prevent action if already resending or countdown is active
+    if (typeof window === "undefined" || resendCountdown > 0 || isResending) {
       return;
+    }
 
     const registerEmail = localStorage.getItem("registerEmail");
     if (!registerEmail) {
@@ -77,17 +77,19 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       { email: registerEmail },
       {
         onSuccess: () => {
+          // ✅ Show success toast ONLY after API confirms
+          toast.success("OTP sent successfully!");
           setResendCountdown(60);
         },
         onError: (error: any) => {
           const errorMessage =
             error?.response?.data?.message ||
-            "Failed to resend OTP. Try again.";
+            "Failed to resend OTP. Please try again.";
           toast.error(errorMessage);
         },
-      },
+      }
     );
-  }
+  };
 
   const onSubmit = async (data: OtpFormData) => {
     if (typeof window === "undefined") return;
@@ -118,7 +120,6 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
           message: errorMessage,
         });
       },
-
     });
   };
 
@@ -136,7 +137,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
                   value={field.value}
                   onChange={(val) => {
                     field.onChange(val);
-                    clearErrors("otp");
+                    clearErrors("otp"); // Clear error immediately when user types
                   }}
                   containerClassName="group flex items-center justify-between w-full gap-2 lg:gap-4"
                 >
@@ -166,11 +167,18 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
             Didn’t receive OTP?{" "}
             <button
               type="button"
-              disabled={isResending}
-              className="font-bold text-[#163E5C] cursor-pointer hover:underline transition-all focus:outline-none disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+              disabled={isResending || resendCountdown > 0}
+              className={`font-bold transition-all focus:outline-none px-2 py-1 ${isResending || resendCountdown > 0
+                ? "text-gray-400 cursor-not-allowed no-underline"
+                : "text-[#163E5C] border-[#163E5C] cursor-pointer hover:underline hover:bg-[#163E5C]/5"
+                }`}
               onClick={handleResendOtp}
             >
-              Resend OTP
+              {isResending
+                ? "Sending..."
+                : resendCountdown > 0
+                  ? `OTP Sent (Resend in ${resendCountdown}s)`
+                  : "Resend OTP"}
             </button>
           </div>
         </div>

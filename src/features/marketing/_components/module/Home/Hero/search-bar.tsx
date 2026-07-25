@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, Stethoscope, DollarSign, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
@@ -9,21 +9,28 @@ import { proceduresLists } from "@/lib/location-data";
 
 export default function SearchBar() {
   const router = useRouter();
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedProcedure, setSelectedProcedure] = useState("");
-  const [budget, setBudget] = useState({ min: "", max: "" });
+  const searchParams = useSearchParams();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 300);
-    return () => clearTimeout(t);
-  }, [search]);
+  const [search, setSearch] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { data: procedures = proceduresLists, isLoading: proceduresLoading } = useGlobalProcedures(debouncedSearch);
+  // Initialize and sync with URL params
+  const [selectedProcedure, setSelectedProcedure] = useState(() => searchParams.get("procedure") || "");
+  const [budget, setBudget] = useState(() => ({
+    min: searchParams.get("price[min]") || "",
+    max: searchParams.get("price[max]") || "",
+  }));
+
+  useEffect(() => {
+    setSelectedProcedure(searchParams.get("procedure") || "");
+    setBudget({
+      min: searchParams.get("price[min]") || "",
+      max: searchParams.get("price[max]") || "",
+    });
+  }, [searchParams]);
+
+  const { data: procedures = proceduresLists, isLoading: proceduresLoading } = useGlobalProcedures(search);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

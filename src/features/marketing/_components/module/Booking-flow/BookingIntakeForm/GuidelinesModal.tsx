@@ -1,42 +1,43 @@
 "use client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import Image from "next/image";
 
 const GUIDELINES = [
   {
     num: 1,
     title: "Front Smile",
     hint: "Teeth together, lips relaxed",
-    bg: "bg-rose-100",
+    bg: "/images/front-smile.png",
   },
   {
     num: 2,
     title: "Wide Smile",
     hint: "Smile as wide as possible",
-    bg: "bg-amber-100",
+    bg: "/images/wide-smile.png",
   },
   {
     num: 3,
     title: "Upper Arch",
     hint: "Tilt head back, mouth wide open",
-    bg: "bg-sky-100",
+    bg: "/images/upper-arach.png",
   },
   {
     num: 1,
     title: "Lower Arch",
     hint: "Chin down, mouth wide open",
-    bg: "bg-emerald-100",
+    bg: "/images/lower-arch.png",
   },
   {
     num: 2,
     title: "Left Side",
     hint: "Turn head right, show left teeth",
-    bg: "bg-violet-100",
+    bg: "/images/left-side.png",
   },
   {
     num: 3,
     title: "Right Side",
     hint: "Turn head left, show right teeth",
-    bg: "bg-orange-100",
+    bg: "/images/right-side.png",
   },
 ];
 
@@ -60,16 +61,15 @@ export default function GuidelinesModal({
           {GUIDELINES.map((item, index) => (
             <div key={index} className="flex flex-col gap-3">
               <div
-                className={`relative aspect-square rounded-lg overflow-hidden ${item.bg} flex items-center justify-center`}
+                className={`relative aspect-square rounded-lg overflow-hidden flex items-center justify-center`}
               >
+                <Image src={item.bg} fill alt={item.title} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
                   <span className="text-[#113254] font-bold text-sm">
                     {item.num}
                   </span>
                 </div>
-                <p className="text-[#374151] text-xs font-medium text-center px-4 opacity-60">
-                  {item.hint}
-                </p>
+
               </div>
               <span className="text-[#113254] font-bold text-[15px]">
                 {item.title}

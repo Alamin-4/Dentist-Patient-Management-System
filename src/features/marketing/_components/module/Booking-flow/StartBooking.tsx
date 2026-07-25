@@ -68,11 +68,11 @@ export default function StartBookingModal() {
               className="text-[15px] text-[#1A1A2E] font-medium cursor-pointer leading-snug"
             >
               I have read and agree to the{" "}
-              <a href="#" className="text-[#113254] underline underline-offset-4">
+              <a href="/terms" className="text-[#113254] underline underline-offset-4">
                 Terms &amp; Conditions
               </a>{" "}
               and{" "}
-              <a href="#" className="text-[#113254] underline underline-offset-4">
+              <a href="/privacy" className="text-[#113254] underline underline-offset-4">
                 Privacy Policy
               </a>
               , and Consent to Share Records.

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { TabType } from "./type";
 import { ConsultationCard } from "./ConsultationCard";
 import { ConsultationDetailsSidebar } from "./ConsultationDetailSidebar";
 import CreateTreatmentPlanModal from "./TreatmentModal";
+import { RescheduleConsultationModal } from "@/features/patient/Overview/RescheduleConsultationModal";
 import CustomTabs from "../../shared/custom-tabs/custom-tabs";
 import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-page-header";
 import { useDentistConsultations, useUpdateConsultationStatus } from "@/hooks/consultation/useConsultation";
@@ -38,26 +39,46 @@ const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
   return 0;
 };
 
-// True if the consultation is today in its own stored timezone
-const isToday = (item: any): boolean => {
-  if (!item?.scheduledDate) return false;
-  const offset = parseTimezoneOffsetMinutes(item.timezone);
-  const scheduledUtc = new Date(item.scheduledDate).getTime();
-  const localScheduled = new Date(scheduledUtc + offset * 60 * 1000);
-  const scheduledDay = `${localScheduled.getUTCFullYear()}-${String(localScheduled.getUTCMonth() + 1).padStart(2, "0")}-${String(localScheduled.getUTCDate()).padStart(2, "0")}`;
-  const nowLocal = new Date(Date.now() + offset * 60 * 1000);
-  const todayDay = `${nowLocal.getUTCFullYear()}-${String(nowLocal.getUTCMonth() + 1).padStart(2, "0")}-${String(nowLocal.getUTCDate()).padStart(2, "0")}`;
-  return scheduledDay === todayDay;
+const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
+  const dObj = new Date(scheduledDate);
+  const year = dObj.getUTCFullYear();
+  const month = dObj.getUTCMonth();
+  const day = dObj.getUTCDate();
+
+  const timeParts = scheduledTime.split(":");
+  let hours = parseInt(timeParts[0], 10);
+  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+
+  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
+    hours += 12;
+  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
+    hours = 0;
+  }
+
+  if (isNaN(hours)) hours = 0;
+  if (isNaN(minutes)) minutes = 0;
+
+  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
+  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
+  return localUtcMs - offsetMinutes * 60 * 1000;
 };
 
 // True if now is within the 5-min-early → end-of-duration join window
 const isWithinMeetingWindow = (item: any): boolean => {
-  if (!item?.scheduledDate) return false;
-  const scheduledUtc = new Date(item.scheduledDate).getTime();
+  if (!item?.scheduledDate || !item?.scheduledTime) return false;
+  const startUtcMs = getConsultationStartUtcMs(item.scheduledDate, item.scheduledTime, item.timezone);
   const duration = (item.durationMinutes || 15) * 60 * 1000;
   const earlyMs = 5 * 60 * 1000;
   const nowUtc = Date.now();
-  return nowUtc >= scheduledUtc - earlyMs && nowUtc <= scheduledUtc + duration;
+  return nowUtc >= startUtcMs - earlyMs && nowUtc <= startUtcMs + duration;
+};
+
+const isPast = (item: any): boolean => {
+  if (!item?.scheduledDate || !item?.scheduledTime) return false;
+  const startUtcMs = getConsultationStartUtcMs(item.scheduledDate, item.scheduledTime, item.timezone);
+  const duration = (item.durationMinutes || 15) * 60 * 1000;
+  const nowUtc = Date.now();
+  return nowUtc > startUtcMs + duration;
 };
 
 export default function ConsultationPage() {
@@ -69,31 +90,52 @@ export default function ConsultationPage() {
   const [selectedConsultation, setSelectedConsultation] = useState<any>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTreatmentModalOpen, setIsTreatmentModalOpen] = useState(false);
+  const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
 
   const queryTab = searchParams ? searchParams.get("tab") : null;
   const [activeTab, setActiveTab] = useState<TabType>((queryTab as TabType) || "Upcoming");
 
+  const handleTabChange = useCallback((id: string) => {
+    setActiveTab(id as TabType);
+  }, []);
+
   const consultations = consultationsResponse?.data || [];
+
+  const createPlanFor = searchParams ? searchParams.get("createPlanFor") : null;
+
+  useEffect(() => {
+    if (createPlanFor && consultations.length > 0) {
+      const target = consultations.find((c: any) => c.id === createPlanFor);
+      if (target) {
+        setSelectedConsultation(target);
+        setIsTreatmentModalOpen(true);
+        // Clean URL parameter
+        const newParams = new URLSearchParams(searchParams?.toString() || "");
+        newParams.delete("createPlanFor");
+        const query = newParams.toString();
+        router.replace(query ? `/dentist/consultations?${query}` : `/dentist/consultations`);
+      }
+    }
+  }, [createPlanFor, consultations, searchParams, router]);
 
   const filteredConsultations = consultations.filter((item: any) => {
     if (item.treatmentPlan?.treatmentBooking) {
       return false;
     }
 
-    const isPast = item.scheduledDate ? new Date(item.scheduledDate).getTime() <= Date.now() : false;
-
     if (activeTab === "Upcoming") {
       return (
         item.requestStatus === "PENDING" ||
         item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item) && !isPast)
+        (item.requestStatus === "SCHEDULED" && !isPast(item) && !isWithinMeetingWindow(item))
       );
     }
     if (activeTab === "Active") {
       return (
         item.requestStatus === "ACTIVE" ||
         item.requestStatus === "MISSED" ||
-        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item) || isPast))
+        (item.requestStatus === "SCHEDULED" && isWithinMeetingWindow(item)) ||
+        ((item.requestStatus === "SCHEDULED" || item.requestStatus === "ACTIVE") && isPast(item))
       );
     }
     if (activeTab === "Treatment Estimate") {
@@ -132,8 +174,8 @@ export default function ConsultationPage() {
       <CustomTabs
         tabs={tabs}
         activeTab={activeTab}
-        onTabChange={(id) => setActiveTab(id as TabType)}
-        storageKey={tabs[0].id}
+        onTabChange={handleTabChange}
+        storageKey="dentist-consultation-active-tab"
       />
 
       {isLoading ? (
@@ -166,7 +208,11 @@ export default function ConsultationPage() {
               onMarkComplete={() => handleMarkAsComplete(item)}
               onAction={() => {
                 setSelectedConsultation(item);
-                setIsTreatmentModalOpen(true);
+                if (item.requestStatus === "MISSED") {
+                  setIsRescheduleModalOpen(true);
+                } else {
+                  setIsTreatmentModalOpen(true);
+                }
               }}
             />
           ))}
@@ -194,6 +240,17 @@ export default function ConsultationPage() {
         isOpen={isTreatmentModalOpen}
         consultation={selectedConsultation}
       />
+
+      {selectedConsultation && (
+        <RescheduleConsultationModal
+          open={isRescheduleModalOpen}
+          onClose={() => {
+            setIsRescheduleModalOpen(false);
+            setSelectedConsultation(null);
+          }}
+          consultation={selectedConsultation}
+        />
+      )}
     </div>
   );
 }

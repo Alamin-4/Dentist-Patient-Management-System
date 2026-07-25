@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, List, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMe } from "@/hooks/auth/useAuth";
@@ -35,7 +35,17 @@ export default function TopBar({
 }: TopBarProps) {
   const { user } = useMe();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [localQuery, setLocalQuery] = useState(query);
   const showJoinButton = !user || user.role !== "DENTIST";
+
+  useEffect(() => {
+    setLocalQuery(query);
+  }, [query]);
+
+  const handleQueryInputChange = (val: string) => {
+    setLocalQuery(val);
+    onQueryChange(val);
+  };
 
   const handleJoinAsDentistClick = (e: React.MouseEvent) => {
     if (user && user.role !== "DENTIST") {
@@ -71,8 +81,8 @@ export default function TopBar({
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
           <div className="relative flex-1">
             <input
-              value={query}
-              onChange={(e) => onQueryChange(e.target.value)}
+              value={localQuery}
+              onChange={(e) => handleQueryInputChange(e.target.value)}
               placeholder="Search Dentist"
               className="h-14 w-full rounded-lg border border-slate-200 bg-[#F8F9FB] pl-5 pr-12 text-[14px] font-medium text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-100"
             />

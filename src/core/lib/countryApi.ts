@@ -156,6 +156,13 @@ export async function getCountries(): Promise<CSCCountry[]> {
 }
 
 /**
+ * Returns all available cities across all countries.
+ */
+export async function getAllCities(): Promise<CSCCity[]> {
+  return Object.values(FALLBACK_CITIES).flat();
+}
+
+/**
  * Returns available cities of a specific country by ISO2 code.
  */
 export async function getCities(countryIso2: string): Promise<CSCCity[]> {
@@ -165,3 +172,4 @@ export async function getCities(countryIso2: string): Promise<CSCCity[]> {
     { id: 9902, name: "Metropolitan Area" },
   ];
 }
+

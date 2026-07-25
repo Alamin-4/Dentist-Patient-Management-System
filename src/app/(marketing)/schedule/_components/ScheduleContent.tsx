@@ -280,7 +280,7 @@ export default function ScheduleContent() {
               type="button"
               onClick={handleConfirm}
               disabled={isConfirming}
-              className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+              className="px-8 py-4 bg-[#113254] hover:bg-[#0d2844] cursor-pointer text-white font-semibold text-[15px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isConfirming ? "Confirming..." : "Confirm Video Consultation"}
             </button>

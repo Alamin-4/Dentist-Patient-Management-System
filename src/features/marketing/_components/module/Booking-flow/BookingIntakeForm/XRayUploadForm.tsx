@@ -1,11 +1,38 @@
 "use client";
-import { useState, useRef } from "react";
+
+import { useEffect, useState, useRef } from "react";
 import { Upload, FileText, X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
   getBookingData,
   setXrayFile,
   updateXrayNotes,
+  getXrayFile,
 } from "@/lib/storage/bookingService";
+
+export const xrayUploadSchema = z.object({
+  file: z
+    .any()
+    .optional()
+    .nullable()
+    .refine(
+      (file) => !file || (file instanceof File && file.size <= 5 * 1024 * 1024),
+      { message: "File size exceeds 5MB limit. Please choose a smaller file." }
+    )
+    .refine(
+      (file) =>
+        !file ||
+        (file instanceof File &&
+          (file.type.startsWith("image/") ||
+            /\.(jpg|jpeg|png|dcm|dicom)$/i.test(file.name))),
+      { message: "Only JPG, PNG, and DICOM files are allowed." }
+    ),
+  notes: z.string().optional(),
+});
+
+type XRayUploadFormValues = z.infer<typeof xrayUploadSchema>;
 
 interface XRayUploadFormProps {
   errors?: Record<string, string>;
@@ -13,49 +40,63 @@ interface XRayUploadFormProps {
 }
 
 export default function XRayUploadForm({
-  errors = {},
+  errors: parentErrors = {},
   setErrors,
 }: XRayUploadFormProps) {
-  const [file, setFile] = useState<File | null>(null);
-  const [notes, setNotes] = useState(() => getBookingData().xrayNotes);
+  const initialData = getBookingData();
+  const initialFile = getXrayFile();
+
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors: formErrors },
+  } = useForm<XRayUploadFormValues>({
+    resolver: zodResolver(xrayUploadSchema),
+    mode: "onChange",
+    defaultValues: {
+      file: initialFile || null,
+      notes: initialData.xrayNotes || "",
+    },
+  });
+
+  const file = watch("file");
+  const notes = watch("notes");
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (selectedFile: File | null) => {
+  useEffect(() => {
+    setXrayFile(file || null);
+  }, [file]);
+
+  useEffect(() => {
+    updateXrayNotes(notes || "");
+  }, [notes]);
+
+  // Sync local errors to parent
+  useEffect(() => {
     if (setErrors) {
       setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy.file;
-        return copy;
+        const next = { ...prev };
+        delete next.file;
+        delete next.notes;
+        Object.entries(formErrors).forEach(([key, err]) => {
+          if (err?.message) {
+            next[key] = String(err.message);
+          }
+        });
+        if (JSON.stringify(prev) !== JSON.stringify(next)) {
+          return next;
+        }
+        return prev;
       });
     }
-    if (selectedFile) {
-      setFile(selectedFile);
-      setXrayFile(selectedFile);
-    }
-  };
+  }, [formErrors, setErrors]);
 
-  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const onDragLeave = () => setIsDragging(false);
-
-  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFile = e.dataTransfer.files[0];
-    handleFile(droppedFile);
-  };
+  const activeErrors = { ...formErrors, ...parentErrors };
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
-      {errors.file && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 font-semibold text-sm mb-6 animate-in fade-in slide-in-from-top-1">
-          {errors.file}
-        </div>
-      )}
       <div className="mb-8">
         <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-2">
           Do you have recent dental X-rays?
@@ -68,22 +109,36 @@ export default function XRayUploadForm({
 
       {/* Upload Area */}
       <div
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragging(false);
+          const droppedFile = e.dataTransfer.files[0];
+          if (droppedFile) {
+            setValue("file", droppedFile, { shouldValidate: true });
+          }
+        }}
         onClick={() => fileInputRef.current?.click()}
         className={`
           relative flex flex-col items-center justify-center w-full py-16 border-2 border-dashed rounded-3xl cursor-pointer transition-all
           ${isDragging ? "border-[#113254] bg-[#F0F9FF]" : "border-[#E5E7EB] hover:border-[#113254] bg-white"}
           ${file ? "border-solid border-[#113254] bg-[#F8FAFC]" : ""}
+          ${activeErrors.file ? "border-red-500 bg-red-50/10" : ""}
         `}
       >
         <input
           type="file"
           ref={fileInputRef}
           className="hidden"
-          accept=".jpg,.png,.dicom,image/*"
-          onChange={(e) => handleFile(e.target.files?.[0] || null)}
+          accept=".jpg,.jpeg,.png,.dicom,.dcm,image/*"
+          onChange={(e) => {
+            const selectedFile = e.target.files?.[0] || null;
+            setValue("file", selectedFile, { shouldValidate: true });
+          }}
         />
 
         {file ? (
@@ -91,17 +146,11 @@ export default function XRayUploadForm({
             <div className="relative p-4 bg-white rounded-lg shadow-sm mb-4">
               <FileText className="w-10 h-10 text-[#113254]" />
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setFile(null);
-                  setXrayFile(null);
-                  if (setErrors) {
-                    setErrors((prev) => {
-                      const copy = { ...prev };
-                      delete copy.file;
-                      return copy;
-                    });
-                  }
+                  setValue("file", null, { shouldValidate: true });
+                  if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
               >
@@ -124,16 +173,18 @@ export default function XRayUploadForm({
         )}
       </div>
 
+      {activeErrors.file && (
+        <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+          {String(activeErrors.file.message || activeErrors.file)}
+        </p>
+      )}
+
       <div className="mt-6">
         <label className="mb-2 block text-[15px] font-medium text-[#4B5563]">
           Notes for your dentist
         </label>
         <textarea
-          value={notes}
-          onChange={(event) => {
-            setNotes(event.target.value);
-            updateXrayNotes(event.target.value);
-          }}
+          {...register("notes")}
           placeholder="Add any context about this file"
           className="w-full min-h-28 rounded-lg border border-[#E5E7EB] p-4 text-[#1A1A2E] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#113254]"
         />

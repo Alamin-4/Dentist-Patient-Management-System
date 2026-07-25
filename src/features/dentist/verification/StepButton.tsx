@@ -20,7 +20,7 @@ const PHASE_BY_STEP: Record<number, VerificationPhase> = {
 
 export default function StepButton() {
   const router = useRouter();
-  const { verificationStep } = useVerificationStore();
+  const { verificationStep, verificationStepReady } = useVerificationStore();
   const { data: progressData, isLoading } = useDentistProgress();
 
   // Check if any verification mutation is in progress
@@ -109,13 +109,16 @@ export default function StepButton() {
     };
 
 
+  const isStepReady = verificationStepReady[verificationStep];
+  const isDisabled = isSubmitting || (!isAlreadySubmitted && !isStepReady);
+
   return (
     <div className="flex w-full justify-end px-4 sm:px-6 lg:px-8">
       <Button
         {...buttonProps}
         // onClick={handleClick}
         size="lg"
-        disabled={isSubmitting}
+        disabled={isDisabled}
         className="h-12 rounded-lg px-10 font-semibold bg-[#0E3E65] text-white hover:bg-[#0E3E65]/90 disabled:opacity-50"
       >
         {isSubmitting ? (

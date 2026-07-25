@@ -179,7 +179,7 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-slate-100 p-3 shrink-0">
-        <button 
+        <button
           onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-red-50 focus:outline-none transition-colors border border-transparent hover:border-red-100 cursor-pointer group"
           title="Click to Log Out"

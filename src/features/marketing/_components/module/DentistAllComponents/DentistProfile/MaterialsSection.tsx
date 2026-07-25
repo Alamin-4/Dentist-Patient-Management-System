@@ -1,4 +1,16 @@
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, FileText, Image as ImageIcon, File, ExternalLink } from "lucide-react";
+
+// Helper to determine file type and get the appropriate icon & label
+const getDocumentInfo = (url: string) => {
+  const ext = url.split('.').pop()?.toLowerCase();
+  if (ext === 'pdf') {
+    return { icon: FileText, label: "View PDF" };
+  }
+  if (['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(ext || '')) {
+    return { icon: ImageIcon, label: "View Image" };
+  }
+  return { icon: File, label: "View Document" };
+};
 
 export default function MaterialsSection({
   procedures = [],
@@ -29,33 +41,36 @@ export default function MaterialsSection({
     );
   }
 
-  // Parse materials list to matching Figma representation
   const items = materials
     .map((mat) => {
       const proc = procedures.find(p => String(p.id) === String(mat.dentistProcedureId));
       const procName = proc?.name || "Certified material";
       const brand = mat.materialBrands || "Certified Material";
 
-      // Match Figma specification:
-      // Row 1 (Implants): Top line (bold) is Brand ("Straumann BLX"), Bottom line (gray) is Category ("Implant system")
-      // Row 2 (Veneers): Top line (bold) is Category ("Veneer material"), Bottom line (gray) is Brand ("Emax — Ivoclar")
       const isVeneer = procName.toLowerCase().includes("veneer") ||
         brand.toLowerCase().includes("emax") ||
         brand.toLowerCase().includes("ivoclar");
 
-      if (isVeneer) {
-        return {
-          topLine: "Veneer material",
-          bottomLine: brand.toLowerCase().includes("emax") ? "Emax — Ivoclar" : brand,
-        };
-      } else {
-        return {
-          topLine: brand.toLowerCase().includes("straumann") ? "Straumann BLX" : brand,
-          bottomLine: procName.toLowerCase().includes("implant") ? "Implant system" : procName,
-        };
-      }
+      const title = isVeneer
+        ? (brand.toLowerCase().includes("emax") ? "Emax — Ivoclar" : brand)
+        : (brand.toLowerCase().includes("straumann") ? "Straumann BLX" : brand);
+
+      const subtitle = isVeneer
+        ? "Veneer material"
+        : (procName.toLowerCase().includes("implant") ? "Implant system" : procName);
+
+      const docs = [];
+      if (mat.ceCertificate) docs.push({ url: mat.ceCertificate, name: "CE Certificate" });
+      if (mat.protocolPdf) docs.push({ url: mat.protocolPdf, name: "Protocol" });
+      if (mat.invoice) docs.push({ url: mat.invoice, name: "Invoice" });
+
+      return {
+        title,
+        subtitle,
+        docs,
+      };
     })
-    .filter((item) => item.topLine);
+    .filter((item) => item.title);
 
   return (
     <section id="materials" className="rounded-lg border border-slate-200 bg-white p-6 space-y-4">
@@ -67,18 +82,40 @@ export default function MaterialsSection({
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="py-4 flex justify-between items-center first:pt-0 last:pb-0"
+            className="py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4 first:pt-0 last:pb-0"
           >
-            <div className="space-y-0.5">
-              <p className="text-xs text-slate-500 font-medium">{item.bottomLine}</p>
-              <p className="text-[15px] font-semibold text-slate-900">{item.topLine}</p>
-            </div>
-            <div className="flex items-center gap-1.5 text-[#4CA30D]">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.9066 3.08988L9.78156 1.54488C9.35406 1.38738 8.65656 1.38738 8.22906 1.54488L4.10406 3.08988C3.30906 3.38988 2.66406 4.31988 2.66406 5.16738V11.2424C2.66406 11.8499 3.06156 12.6524 3.54906 13.0124L7.67406 16.0949C8.40156 16.6424 9.59406 16.6424 10.3216 16.0949L14.4466 13.0124C14.9341 12.6449 15.3316 11.8499 15.3316 11.2424V5.16738C15.3391 4.31988 14.6941 3.38988 13.9066 3.08988ZM11.6116 7.28988L8.38656 10.5149C8.27406 10.6274 8.13156 10.6799 7.98906 10.6799C7.84656 10.6799 7.70406 10.6274 7.59156 10.5149L6.39156 9.29988C6.17406 9.08238 6.17406 8.72238 6.39156 8.50488C6.60906 8.28738 6.96906 8.28738 7.18656 8.50488L7.99656 9.31488L10.8241 6.48738C11.0416 6.26988 11.4016 6.26988 11.6191 6.48738C11.8366 6.70488 11.8366 7.07238 11.6116 7.28988Z" fill="#4CA30D" />
-              </svg>
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-xs font-medium text-slate-500 wrap-break-word">
+                {item.subtitle}
+              </p>
 
-              <span className="text-sm font-medium text-[#1A1A2E]">Supplier verified</span>
+              {item.docs.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {item.docs.map((doc, docIdx) => {
+                    const { icon: Icon, label } = getDocumentInfo(doc.url);
+                    return (
+                      <a
+                        key={docIdx}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all"
+                      >
+                        <Icon className="w-4 h-4 text-slate-500 group-hover:text-blue-600" />
+                        <span>{doc.name}</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500" />
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1.5 bg-green-50 text-[#4CA30D] px-3 py-1.5 rounded-full border border-green-100">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="text-xs font-semibold text-[#1A1A2E]">
+                Supplier verified
+              </span>
             </div>
           </div>
         ))}

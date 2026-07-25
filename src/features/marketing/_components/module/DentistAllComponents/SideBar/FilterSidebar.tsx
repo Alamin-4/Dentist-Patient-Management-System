@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, ChevronDown, Star } from "lucide-react";
+import { ChevronDown, Star } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import SearchableDropdown from "@/components/ui/SearchableDropdown";
-import { getCountries, getCities, type CSCCountry, type CSCCity } from "@/lib/countryApi";
+import { getCountries, getCities, getAllCities, type CSCCountry, type CSCCity } from "@/lib/countryApi";
+import MiniCalendar from "@/app/(marketing)/schedule/_components/MiniCalendar";
 
 export interface FilterSidebarProps {
   procedure: string;
@@ -14,8 +15,6 @@ export interface FilterSidebarProps {
   onCountryChange: (value: string) => void;
   city: string;
   onCityChange: (value: string) => void;
-  priceRange: [number, number];
-  onPriceRangeChange: (value: [number, number]) => void;
   selectedRatings: number[];
   onRatingToggle: (rating: number) => void;
   selectedScoreRanges: string[];
@@ -28,44 +27,11 @@ export interface FilterSidebarProps {
   onShowVerifiedOnlyChange: (value: boolean) => void;
   onClear: () => void;
   availableProcedures: string[];
-  availableCountries: string[];
-  availableCities: string[];
 }
 
 const scoreRanges = ["0-25", "25-50", "50-75", "75-100"];
 const languages = ["English", "Spanish", "Turkish"];
 
-function formatMonth(date: Date) {
-  return new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date);
-}
-
-function buildCalendar(date: Date) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const prevDaysInMonth = new Date(year, month, 0).getDate();
-
-  const cells: { day: number; muted: boolean; date: Date }[] = [];
-
-  for (let index = firstDay - 1; index >= 0; index -= 1) {
-    const day = prevDaysInMonth - index;
-    cells.push({ day, muted: true, date: new Date(year, month - 1, day) });
-  }
-
-  for (let day = 1; day <= daysInMonth; day += 1) {
-    cells.push({ day, muted: false, date: new Date(year, month, day) });
-  }
-
-  while (cells.length < 42) {
-    const day = cells.length - (firstDay + daysInMonth) + 1;
-    cells.push({ day, muted: true, date: new Date(year, month + 1, day) });
-  }
-
-  return cells;
-}
-
-// 📦 Reusable Collapsible Section for Mobile & Desktop
 function FilterSection({ title, children, defaultOpen = true }: { title: string, children: React.ReactNode, defaultOpen?: boolean }) {
   const [isOpen, setIsOpen] = React.useState(defaultOpen);
   return (
@@ -80,7 +46,6 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string,
         </h3>
         <ChevronDown className={cn("size-4 text-slate-400 transition-transform", isOpen && "rotate-180")} />
       </button>
-      {/* Smooth height animation trick */}
       <div className={cn("grid transition-all duration-200 ease-out", isOpen ? "grid-rows-[1fr] opacity-100 mt-3" : "grid-rows-[0fr] opacity-0")}>
         <div className={cn(isOpen ? "overflow-visible" : "overflow-hidden")}>
           {children}
@@ -94,22 +59,17 @@ export default function FilterSidebar({
   procedure, onProcedureChange,
   country, onCountryChange,
   city, onCityChange,
-  priceRange, onPriceRangeChange,
   selectedRatings, onRatingToggle,
   selectedScoreRanges, onScoreToggle,
   selectedLanguages, onLanguageToggle,
   selectedAvailabilityDate, onAvailabilityDateChange,
   showVerifiedOnly, onShowVerifiedOnlyChange,
   onClear,
-  availableProcedures, availableCountries, availableCities,
+  availableProcedures,
 }: FilterSidebarProps) {
-  const [calendarMonth, setCalendarMonth] = React.useState(() => new Date());
-  const calendarCells = React.useMemo(() => buildCalendar(calendarMonth), [calendarMonth]);
-
   const [countriesList, setCountriesList] = React.useState<CSCCountry[]>([]);
   const [citiesList, setCitiesList] = React.useState<CSCCity[]>([]);
 
-  // Load countries on mount
   React.useEffect(() => {
     async function loadCountries() {
       const list = await getCountries();
@@ -118,33 +78,28 @@ export default function FilterSidebar({
     loadCountries();
   }, []);
 
-  // Fetch cities when country changes
   React.useEffect(() => {
-    if (!country || country === "All Countries") {
-      setCitiesList([]);
-      return;
-    }
     async function loadCities() {
-      const countryObj = countriesList.find(
-        (c) => c.name.toLowerCase() === country.toLowerCase()
-      );
-      if (countryObj) {
-        const list = await getCities(countryObj.iso2);
+      if (!country || country === "All Countries") {
+        const list = await getAllCities();
         setCitiesList(list);
       } else {
-        setCitiesList([]);
+        const countryObj = countriesList.find(
+          (c) => c.name.toLowerCase() === country.toLowerCase()
+        );
+        if (countryObj) {
+          const list = await getCities(countryObj.iso2);
+          setCitiesList(list);
+        } else {
+          setCitiesList([]);
+        }
       }
     }
-    if (countriesList.length > 0) {
-      loadCities();
-    }
+    loadCities();
   }, [country, countriesList]);
-
-
 
   return (
     <aside className="flex w-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:min-h-[calc(100vh-8rem)] lg:sticky lg:top-8">
-      {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-extrabold tracking-tight text-slate-900">Filters</h2>
         <button
@@ -156,16 +111,13 @@ export default function FilterSidebar({
         </button>
       </div>
 
-      {/* Scrollable Content Area */}
       <div
         className={cn(
           "flex-1 overflow-y-auto pr-2 -mr-1 lg:max-h-[calc(100vh-12rem)]",
-          // WebKit browsers (Chrome, Safari, Edge)
           "[&::-webkit-scrollbar]:w-1",
           "[&::-webkit-scrollbar-track]:bg-transparent",
           "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200",
           "[&::-webkit-scrollbar-thumb:hover]:bg-slate-300",
-          // Firefox
           "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200"
         )}
       >
@@ -187,7 +139,7 @@ export default function FilterSidebar({
             value={country}
             onChange={(val) => {
               onCountryChange(val);
-              onCityChange("All Cities"); // Reset city to All Cities when country changes
+              onCityChange("All Cities");
             }}
             options={["All Countries", ...countriesList.map((c) => c.name)]}
             placeholder="Select Country"
@@ -198,7 +150,6 @@ export default function FilterSidebar({
         {/* City */}
         <FilterSection title="City">
           <SearchableDropdown
-            disabled={!country || country === "All Countries"}
             value={city}
             onChange={onCityChange}
             options={["All Cities", ...citiesList.map((c) => c.name)]}
@@ -301,59 +252,11 @@ export default function FilterSidebar({
 
         {/* Availability */}
         <FilterSection title="Availability" defaultOpen={false}>
-          <div className="mb-3 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}
-              className="grid size-7 place-items-center rounded-full bg-[#003366] text-white transition-transform hover:scale-105"
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-            <div className="text-[14px] font-bold text-slate-800">
-              {formatMonth(calendarMonth)}
-            </div>
-            <button
-              type="button"
-              onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}
-              className="grid size-7 place-items-center rounded-full bg-[#003366] text-white transition-transform hover:scale-105"
-            >
-              <ChevronRight className="size-4" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-slate-400">
-            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-              <div key={day} className="py-1">{day}</div>
-            ))}
-            {calendarCells.map((cell, index) => {
-              const isSelected = selectedAvailabilityDate && new Date(selectedAvailabilityDate).toDateString() === cell.date.toDateString();
-              const isToday = new Date().toDateString() === cell.date.toDateString();
-
-              return (
-                <button
-                  key={`${cell.date.toISOString()}-${index}`}
-                  type="button"
-                  disabled={cell.muted}
-                  onClick={() => onAvailabilityDateChange(cell.date.toISOString())}
-                  className={cn(
-                    "mx-auto grid size-7 place-items-center rounded-full text-[12px] transition-all",
-                    cell.muted && "text-slate-300 cursor-default",
-                    !cell.muted && !isSelected && "text-slate-700 hover:bg-slate-100 cursor-pointer",
-                    isSelected && "bg-[#003366] text-white hover:bg-[#003366] shadow-sm",
-                    isToday && !isSelected && "font-bold text-[#003366]"
-                  )}
-                >
-                  {cell.day}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center text-[13px] font-medium text-slate-700">
-            {selectedAvailabilityDate
-              ? new Date(selectedAvailabilityDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
-              : "Any date"}
-          </div>
+          <MiniCalendar
+            selected={selectedAvailabilityDate ? new Date(selectedAvailabilityDate) : null}
+            onSelect={(date) => onAvailabilityDateChange(date ? date.toISOString() : null)}
+            fullWidth
+          />
         </FilterSection>
       </div>
     </aside>

@@ -16,6 +16,7 @@ import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import { normalizeApiError } from "@/api/error-handler";
+import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
 
 interface AddPhotoModalProps {
   isOpen: boolean;
@@ -27,14 +28,54 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
   const [beforePreview, setBeforePreview] = useState<string | null>(null);
   const [afterFile, setAfterFile] = useState<File | null>(null);
   const [afterPreview, setAfterPreview] = useState<string | null>(null);
+  const [selectedDentistId, setSelectedDentistId] = useState("");
   const [treatment, setTreatment] = useState("");
-  const [doctor, setDoctor] = useState("");
-  const [location, setLocation] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
   // Validation and Error states
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
+
+  const { data: treatmentPlansResponse } = usePatientTreatmentPlans();
+  const treatmentPlans = treatmentPlansResponse?.data || [];
+
+  // Extract unique dentists from the patient's treatment plans
+  const uniqueDentists = React.useMemo(() => {
+    const map = new Map();
+    treatmentPlans.forEach((plan: any) => {
+      const dentist = plan.dentist;
+      if (plan.status === "ACTIVE" || plan.status === "COMPLETED") {
+        if (dentist) {
+          const id = dentist.id;
+          const name = dentist.user
+            ? `Dr. ${dentist.user.firstName} ${dentist.user.lastName}`.trim()
+            : dentist.dentistDirectory?.name || "Dentist";
+          
+          const city = dentist.dentistDirectory?.city || "";
+          const country = dentist.dentistDirectory?.country || dentist.user?.country || "";
+          const location = city && country ? `${city}, ${country}` : city || country || "N/A";
+          map.set(id, { id, name, location });
+        }
+      }
+    });
+    return Array.from(map.values()) as Array<{ id: string; name: string; location: string }>;
+  }, [treatmentPlans]);
+
+  // Extract unique procedures for the selected dentist
+  const uniqueProcedures = React.useMemo(() => {
+    if (!selectedDentistId) return [];
+    const proceduresSet = new Set<string>();
+    treatmentPlans
+      .filter((plan: any) => plan.dentistId === selectedDentistId)
+      .forEach((plan: any) => {
+        plan.lineItems?.forEach((item: any) => {
+          if (item.globalProcedure?.name) {
+            proceduresSet.add(item.globalProcedure.name);
+          }
+        });
+      });
+    return Array.from(proceduresSet);
+  }, [selectedDentistId, treatmentPlans]);
 
   const queryClient = useQueryClient();
 
@@ -62,9 +103,8 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
     setBeforePreview(null);
     setAfterFile(null);
     setAfterPreview(null);
+    setSelectedDentistId("");
     setTreatment("");
-    setDoctor("");
-    setLocation("");
     setFieldErrors({});
     setGeneralError(null);
     onClose();
@@ -79,8 +119,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
     const errors: Record<string, string> = {};
     if (!beforeFile) errors.before = "Before photo is required.";
     if (!afterFile) errors.after = "After photo is required.";
-    if (!doctor.trim()) errors.doctor = "Doctor's name is required.";
-    if (!location.trim()) errors.location = "Location is required.";
+    if (!selectedDentistId) errors.dentist = "Dentist selection is required.";
     if (!treatment) errors.treatment = "Treatment selection is required.";
 
     if (Object.keys(errors).length > 0) {
@@ -93,23 +132,27 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
 
       // 1. Upload before image
       const beforeUploadRes = await apiClient.files.upload(beforeFile!);
-      const beforeImgUrl = beforeUploadRes.data?.secure_url;
+      const beforeImgUrl = beforeUploadRes.data?.secure_url || beforeUploadRes.secure_url;
       if (!beforeImgUrl) {
         throw new Error("Failed to upload before image");
       }
 
       // 2. Upload after image
       const afterUploadRes = await apiClient.files.upload(afterFile!);
-      const afterImgUrl = afterUploadRes.data?.secure_url;
+      const afterImgUrl = afterUploadRes.data?.secure_url || afterUploadRes.secure_url;
       if (!afterImgUrl) {
         throw new Error("Failed to upload after image");
       }
 
+      const dentistObj = uniqueDentists.find((d) => d.id === selectedDentistId);
+      const doctorName = dentistObj ? dentistObj.name : "Dentist";
+      const doctorLocation = dentistObj ? dentistObj.location : "N/A";
+
       // 3. Save patient result metadata
       await apiClient.patients.uploadResult({
         title: treatment,
-        doctor,
-        location,
+        doctor: doctorName,
+        location: doctorLocation,
         beforeImg: beforeImgUrl,
         afterImg: afterImgUrl,
       });
@@ -261,69 +304,69 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Dentist Dropdown */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Doctor's Name</label>
-              <input
-                type="text"
-                value={doctor}
-                onChange={(e) => {
-                  setDoctor(e.target.value);
-                  setFieldErrors((prev) => ({ ...prev, doctor: "" }));
+              <label className="text-sm font-semibold text-gray-700">Select Dentist</label>
+              <Select
+                value={selectedDentistId}
+                onValueChange={(val) => {
+                  setSelectedDentistId(val);
+                  setTreatment("");
+                  setFieldErrors((prev) => ({ ...prev, dentist: "", treatment: "" }));
                 }}
-                placeholder="Dr. John Doe"
-                className={`w-full h-12 rounded-lg border px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F3659]/10 ${
-                  fieldErrors.doctor ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-[#0F3659]"
-                }`}
-              />
-              {fieldErrors.doctor && (
-                <p className="text-xs font-semibold text-red-500 mt-1.5">{fieldErrors.doctor}</p>
+              >
+                <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] bg-white ${
+                  fieldErrors.dentist ? "border-red-500" : "border-slate-200"
+                }`}>
+                  <SelectValue placeholder="Choose your dentist" />
+                </SelectTrigger>
+                <SelectContent className="rounded-lg bg-white">
+                  {uniqueDentists.map((dentist) => (
+                    <SelectItem key={dentist.id} value={dentist.id}>
+                      {dentist.name}
+                    </SelectItem>
+                  ))}
+                  {uniqueDentists.length === 0 && (
+                    <p className="p-2 text-xs text-gray-400 text-center">No dentists found from bookings</p>
+                  )}
+                </SelectContent>
+              </Select>
+              {fieldErrors.dentist && (
+                <p className="text-xs font-semibold text-red-500 mt-1.5">{fieldErrors.dentist}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Location</label>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                  setFieldErrors((prev) => ({ ...prev, location: "" }));
-                }}
-                placeholder="Istanbul, Turkey"
-                className={`w-full h-12 rounded-lg border px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F3659]/10 ${
-                  fieldErrors.location ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-[#0F3659]"
-                }`}
-              />
-              {fieldErrors.location && (
-                <p className="text-xs font-semibold text-red-500 mt-1.5">{fieldErrors.location}</p>
-              )}
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-gray-700">
-              Select Treatment
-            </p>
-            <Select
-              value={treatment}
-              onValueChange={(val) => {
-                setTreatment(val);
-                setFieldErrors((prev) => ({ ...prev, treatment: "" }));
-              }}
-            >
-              <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] ${
-                fieldErrors.treatment ? "border-red-500" : "border-slate-200"
-              }`}>
-                <SelectValue placeholder="Select a treatment" />
-              </SelectTrigger>
-              <SelectContent className="rounded-lg">
-                <SelectItem value="Invisalign Treatment">Invisalign Treatment</SelectItem>
-                <SelectItem value="Dental Veneers">Dental Veneers</SelectItem>
-                <SelectItem value="Teeth Whitening">Teeth Whitening</SelectItem>
-              </SelectContent>
-            </Select>
-            {fieldErrors.treatment && (
-              <p className="text-xs font-semibold text-red-500 mt-1.5">{fieldErrors.treatment}</p>
-            )}
+            {/* Treatment Dropdown */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Select Treatment</label>
+              <Select
+                value={treatment}
+                onValueChange={(val) => {
+                  setTreatment(val);
+                  setFieldErrors((prev) => ({ ...prev, treatment: "" }));
+                }}
+                disabled={!selectedDentistId}
+              >
+                <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] bg-white ${
+                  fieldErrors.treatment ? "border-red-500" : "border-slate-200"
+                }`}>
+                  <SelectValue placeholder={selectedDentistId ? "Choose treatment" : "Select dentist first"} />
+                </SelectTrigger>
+                <SelectContent className="rounded-lg bg-white">
+                  {uniqueProcedures.map((procName) => (
+                    <SelectItem key={procName} value={procName}>
+                      {procName}
+                    </SelectItem>
+                  ))}
+                  {uniqueProcedures.length === 0 && selectedDentistId && (
+                    <p className="p-2 text-xs text-gray-400 text-center">No treatments found for this dentist</p>
+                  )}
+                </SelectContent>
+              </Select>
+              {fieldErrors.treatment && (
+                <p className="text-xs font-semibold text-red-500 mt-1.5">{fieldErrors.treatment}</p>
+              )}
+            </div>
           </div>
         </div>
 

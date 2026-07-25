@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
-import { FileText, Download, Loader2 } from "lucide-react";
+import { FileText, Download, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import UploadDocumentModal from "./AddDocument";
 
 export interface PatientDocument {
@@ -14,11 +15,15 @@ export interface PatientDocument {
   files: string | number;
   date: string;
   fileUrl?: string;
+  procedures?: Array<{ name: string; price: number; quantity: number }>;
+  totalAmount?: number;
+  dentistName?: string;
 }
 
 export default function DocumentsPage() {
   const [activeTab, setActiveTab] = useState("treatment");
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [previewPlan, setPreviewPlan] = useState<PatientDocument | null>(null);
 
   const { data: documents = [], isLoading } = useQuery<PatientDocument[]>({
     queryKey: ["patient-documents"],
@@ -141,20 +146,37 @@ export default function DocumentsPage() {
                         Last updates
                       </span>
                     </div>
-                    {/* Mobile-only Download */}
+                    {/* Mobile-only Download or View */}
                     {doc.fileUrl && (
-                      <a href={doc.fileUrl} download className="md:hidden p-2 text-[#113254]">
-                        <Download className="w-6 h-6" />
-                      </a>
+                      doc.procedures ? (
+                        <button onClick={() => setPreviewPlan(doc)} className="md:hidden p-2 text-[#113254] cursor-pointer">
+                          <Eye className="w-6 h-6" />
+                        </button>
+                      ) : (
+                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="md:hidden p-2 text-[#113254]">
+                          <Eye className="w-6 h-6" />
+                        </a>
+                      )
                     )}
                   </div>
 
-                  {/* Desktop Download */}
-                  <div className="hidden md:flex justify-end md:w-[10%]">
+                  {/* Desktop Download or View */}
+                  <div className="hidden md:flex justify-end md:w-[15%] items-center gap-2">
                     {doc.fileUrl ? (
-                      <a href={doc.fileUrl} download className="p-2 text-[#113254] hover:bg-[#F3F4F6] rounded-full transition-colors">
-                        <Download className="w-6 h-6" />
-                      </a>
+                      doc.procedures ? (
+                        <button onClick={() => setPreviewPlan(doc)} className="p-2 text-[#113254] hover:bg-[#F3F4F6] rounded-full transition-colors cursor-pointer" title="View Treatment Plan">
+                          <Eye className="w-6 h-6" />
+                        </button>
+                      ) : (
+                        <>
+                          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-[#113254] hover:bg-[#F3F4F6] rounded-full transition-colors" title="View Document">
+                            <Eye className="w-6 h-6" />
+                          </a>
+                          <a href={doc.fileUrl} download className="p-2 text-[#113254] hover:bg-[#F3F4F6] rounded-full transition-colors" title="Download Document">
+                            <Download className="w-6 h-6" />
+                          </a>
+                        </>
+                      )
                     ) : (
                       <button className="p-2 text-slate-300 cursor-not-allowed">
                         <Download className="w-6 h-6" />
@@ -171,6 +193,74 @@ export default function DocumentsPage() {
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
       />
+
+      {/* Treatment Plan Preview Modal */}
+      {previewPlan && (
+        <Dialog open={!!previewPlan} onOpenChange={() => setPreviewPlan(null)}>
+          <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-none gap-0 rounded-3xl bg-white">
+            <DialogHeader className="p-6 border-b border-slate-100 flex flex-row items-center justify-between space-y-0">
+              <DialogTitle className="text-2xl font-bold text-[#1A1A2E]">
+                Treatment Plan Preview
+              </DialogTitle>
+            </DialogHeader>
+            <div className="p-6 space-y-6">
+              <div className="border border-slate-100 rounded-2xl p-5 bg-slate-50 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Document Name</span>
+                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Date</span>
+                </div>
+                <div className="flex justify-between items-center gap-4">
+                  <span className="text-base font-bold text-[#1A1A2E]">{previewPlan.title}</span>
+                  <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">{previewPlan.date}</span>
+                </div>
+                {previewPlan.dentistName && (
+                  <div className="pt-2 border-t border-slate-200/60 text-sm font-medium text-slate-600">
+                    Shared by: <span className="font-bold text-[#113254]">{previewPlan.dentistName}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-base font-bold text-[#1A1A2E]">Procedures Breakdown</h4>
+                <div className="border border-slate-100 rounded-2xl overflow-hidden bg-white">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100">
+                        <th className="px-4 py-3 text-xs font-semibold text-slate-500">Name</th>
+                        <th className="px-4 py-3 text-xs font-semibold text-slate-500 text-right">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {previewPlan.procedures?.map((proc, index) => (
+                        <tr key={index} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                          <td className="px-4 py-3.5 text-sm font-semibold text-slate-700">{proc.name}</td>
+                          <td className="px-4 py-3.5 text-sm font-semibold text-slate-900 text-right">
+                            ${proc.price.toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="bg-slate-50 px-4 py-4 flex justify-between items-center border-t border-slate-100">
+                    <span className="text-sm font-bold text-[#113254]">Total Amount</span>
+                    <span className="text-lg font-black text-[#113254]">
+                      ${previewPlan.totalAmount?.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-slate-100 flex gap-4">
+              <Button
+                onClick={() => setPreviewPlan(null)}
+                className="flex-1 h-12 rounded-xl bg-[#113254] text-white hover:bg-[#0a2036] font-semibold cursor-pointer"
+              >
+                Close Preview
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

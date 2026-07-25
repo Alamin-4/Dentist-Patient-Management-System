@@ -40,7 +40,8 @@ export default function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps
     <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
       <div
         ref={scrollRef}
-        className="flex items-center gap-1 px-4 overflow-x-auto scrollbar-hide border-b border-slate-200"
+        className="custom-scrollbar flex items-center gap-1 px-4 overflow-x-auto scroll-smooth border-b border-slate-200"
+
       >
         {tabs.map((tab) => (
           <button

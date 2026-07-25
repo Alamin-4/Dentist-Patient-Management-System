@@ -146,8 +146,7 @@ export default function DentistCard({
       )}
 
       <div className="flex flex-col justify-between gap-4 p-4 xl:flex-row xl:gap-5 xl:p-6">
-        <div className="flex flex-row gap-4 md:max-w-5/8 w-full">
-          {/* ── Avatar + badge + RDV score ────────────────────────────────── */}
+        <div className="flex flex-row gap-4 xl:max-w-5/8 w-full">
           <div className="flex shrink-0 flex-col items-center gap-3 xl:w-35">
             <div className="relative h-15 w-15 md:h-20 md:w-20 overflow-hidden rounded-full bg-slate-100">
               <Image
@@ -189,8 +188,7 @@ export default function DentistCard({
             </div>
           </div>
 
-          {/* ── Main info ──────────────────────────────────────────────────── */}
-          <div className="min-w-0 space-y-3">
+          <div className="min-w-0 w-full space-y-3">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="space-y-1">
                 <h3 className="lg:text-lg font-semibold text-[#1A1A2E]">
@@ -260,7 +258,6 @@ export default function DentistCard({
           </div>
         </div>
 
-        {/* ── Right column: price + actions ───────────────────────────────── */}
         <div className="flex flex-row sm:flex-col items-end justify-between gap-3 xl:min-w-50">
           <div className="text-right">
             <div className="text-[12px] text-[#6B7280]">Starting from</div>

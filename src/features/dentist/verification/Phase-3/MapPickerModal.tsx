@@ -16,6 +16,41 @@ const customIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
+const formatShortAddress = (address: any, displayName: string): string => {
+  if (!address) return displayName;
+  const parts: string[] = [];
+  
+  // 1. Street / Road / Place name
+  const road = address.road || address.pedestrian || address.path || address.footway || address.cycleway;
+  if (road) {
+    const house = address.house_number || address.house_name;
+    parts.push(house ? `${house} ${road}` : road);
+  } else {
+    const building = address.building || address.house_name || address.amenity || address.shop || address.office;
+    if (building) parts.push(building);
+  }
+
+  // 2. Suburb / Quarter / Local Area
+  const suburb = address.suburb || address.neighbourhood || address.quarter || address.residential || address.village;
+  if (suburb && suburb !== road) {
+    parts.push(suburb);
+  }
+
+  // 3. City / Town
+  const city = address.city || address.town || address.municipality || address.local_administrative_area || address.county;
+  if (city) {
+    parts.push(city);
+  }
+
+  // 4. Country
+  const country = address.country;
+  if (country) {
+    parts.push(country);
+  }
+
+  return parts.length === 0 ? displayName : parts.join(", ");
+};
+
 interface MapPickerModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -142,7 +177,7 @@ export default function MapPickerModal({
         },
       );
       const data = await response.json();
-      return data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      return formatShortAddress(data.address, data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
     } catch (error) {
       console.error("Reverse geocoding error:", error);
       return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
@@ -172,7 +207,7 @@ export default function MapPickerModal({
     setSearchError("");
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&q=${encodeURIComponent(
           searchQuery,
         )}&limit=5`,
         {
@@ -205,8 +240,9 @@ export default function MapPickerModal({
     if (!isNaN(lat) && !isNaN(lng)) {
       setPosition([lat, lng]);
       setMapCenter([lat, lng]);
-      setAddress(item.display_name);
-      setSearchQuery(item.display_name);
+      const shortAddr = formatShortAddress(item.address, item.display_name);
+      setAddress(shortAddr);
+      setSearchQuery(shortAddr);
       setShowSuggestions(false);
     }
   };
@@ -226,7 +262,7 @@ export default function MapPickerModal({
 
   return (
     <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative flex flex-col w-full sm:max-w-3xl h-[92vh] sm:h-[80vh] max-h-[850px] bg-white rounded-t-3xl sm:rounded-2xl border border-slate-100 shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
+      <div className="relative flex flex-col w-full sm:max-w-3xl h-[92vh] sm:h-[80vh] max-h-212.5 bg-white rounded-t-3xl sm:rounded-2xl border border-slate-100 shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
 
         <div className="flex justify-center py-2.5 sm:hidden">
           <div className="w-12 h-1 bg-slate-200 rounded-full" />
@@ -337,7 +373,7 @@ export default function MapPickerModal({
                         {item.name || item.display_name.split(",")[0]}
                       </p>
                       <p className="text-xs text-gray-400 line-clamp-1 mt-0.5">
-                        {item.display_name}
+                        {formatShortAddress(item.address, item.display_name)}
                       </p>
                     </div>
                   </button>

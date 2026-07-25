@@ -191,7 +191,6 @@ export default function TreatmentDetailsPage() {
 
   return (
     <div className="pb-24">
-      {/* Modals */}
       <ClinicLocationModal
         isOpen={locationModalOpen}
         onClose={() => setLocationModalOpen(false)}
@@ -232,7 +231,6 @@ export default function TreatmentDetailsPage() {
         }}
       />
 
-      {/* Back */}
       <button
         onClick={() => router.back()}
         className="flex items-center gap-1.5 text-slate-500 mb-4 hover:text-slate-800 transition-colors cursor-pointer"
@@ -250,10 +248,8 @@ export default function TreatmentDetailsPage() {
         )}
       </div>
 
-      {/* Doctor Header Card */}
       <div className="bg-white border border-[#CEE0F4] rounded-lg p-5 md:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
-          {/* Avatar + badges */}
           <div className="flex flex-col items-center gap-1.5 shrink-0">
             <div className="relative w-16 h-16 rounded-full overflow-hidden bg-slate-100">
               <Image
@@ -269,12 +265,11 @@ export default function TreatmentDetailsPage() {
                 <span>VERIFIED</span>
               </div>
             )}
-            <div className="border border-[#1A1A2E] rounded px-2 py-0.5 text-[11px] font-bold text-[#1A1A2E]">
+            <div className="border border-slate-200 rounded px-2 py-0.5 text-[11px] text-[#1A1A2E]">
               {booking.doctor.rdvScore} RDV Score
             </div>
           </div>
 
-          {/* Doctor info */}
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold text-[#1A1A2E]">{booking.doctor.name}</h2>
             <p className="text-sm text-[#475569] mt-0.5">{booking.doctor.specialty}</p>
@@ -558,9 +553,11 @@ export default function TreatmentDetailsPage() {
       {!isCancelled && (
         <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
-              Dispute
-            </button>
+            {plan.treatmentBooking?.status === "IN_PROGRESS" && (
+              <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
+                Dispute
+              </button>
+            )}
 
             <div className="flex items-center gap-3">
               {booking.paymentStatus === "pending" ? (
@@ -573,7 +570,10 @@ export default function TreatmentDetailsPage() {
                 </button>
               ) : isApproved ? (
                 <>
-                  <button className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
+                  <button
+                    onClick={() => router.push("/patient/documents")}
+                    className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
                     View Document
                   </button>
                   {plan.treatmentBooking?.status === "COMPLETED" && !plan.treatmentBooking?.metadata?.review && (

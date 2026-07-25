@@ -7,27 +7,22 @@ import { useRouter } from "next/navigation";
 import { SterilizationSection } from "./SterilizationSection";
 import { ProcedurePricingSection } from "./ProcedurePricingSection";
 import { GuaranteeSection } from "./GuaranteeSection";
-import {
-  formSchema,
-  FormInputValues,
-  FormValues,
-} from "@/validation/Verification-doctor-phase/phase-form";
+import { formSchema, FormValues } from "@/validation/Verification-doctor-phase/phase-form";
 import { useStepTwoMutation } from "@/hooks/dentist/useDentist";
-import { StepTwoI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
-import { Loader2, XCircle } from "lucide-react";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import { VerificationStatusScreen } from "../VerificationStatusScreen";
+import { useVerificationStore } from "@/lib/hooks/verification-store-hooks";
 
 export default function MultiStepForm() {
   const router = useRouter();
   const stepTwoMutation = useStepTwoMutation();
   const { checkPhotoVerifyProgress, step2Status, step2Note } = useVerificationProgress();
-
+  const { setVerificationStepReady } = useVerificationStore();
   const progressData = checkPhotoVerifyProgress?.data;
   const hasServerData = !!progressData?.data;
 
-  const methods = useForm<FormInputValues, unknown, FormValues>({
+  const methods = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
@@ -40,27 +35,15 @@ export default function MultiStepForm() {
     },
   });
 
+  // Populate form with existing server data if available
   useEffect(() => {
     if (hasServerData && progressData?.data) {
       const serverData = progressData.data as any;
-
       let procedures = [];
-      try {
-        procedures = typeof serverData.procedures === "string"
-          ? JSON.parse(serverData.procedures)
-          : serverData.procedures || [];
-      } catch (e) {
-        procedures = serverData.procedures || [];
-      }
+      try { procedures = typeof serverData.procedures === "string" ? JSON.parse(serverData.procedures) : serverData.procedures || []; } catch { procedures = []; }
 
-      let guarantee = {} as any;
-      try {
-        guarantee = typeof serverData.guarantee === "string"
-          ? JSON.parse(serverData.guarantee)
-          : serverData.guarantee || {};
-      } catch (e) {
-        guarantee = serverData.guarantee || {};
-      }
+      let guarantee = {};
+      try { guarantee = typeof serverData.guarantee === "string" ? JSON.parse(serverData.guarantee) : serverData.guarantee || {}; } catch { guarantee = {}; }
 
       methods.reset({
         jciCertificate: serverData.jci_certificate ? new File([], "JCI Certificate") : null,
@@ -71,165 +54,120 @@ export default function MultiStepForm() {
           price: p.price,
           notes: p.option_notes || p.notes || "",
         })),
-        signerFullName: guarantee.signer_name || "",
-        typedSignature: guarantee.typed_signature || "",
-        agreeToGuarantee: guarantee.accepted_terms || false,
+        signerFullName: (guarantee as any).signer_name || "",
+        typedSignature: (guarantee as any).typed_signature || "",
+        agreeToGuarantee: (guarantee as any).accepted_terms || false,
       });
     }
   }, [hasServerData, progressData, methods]);
 
   const onSubmit = (data: FormValues) => {
-    const procedures = data.procedures.map((p) => ({
-      procedureName: p.name,
-      price: Number(p.price),
-      notes: p.notes || "",
-    }));
-
-    const payload: StepTwoI = {
-      jciCertificate: data.jciCertificate || null,
-      walkthroughVideo: data.videoWalkthrough || null,
+    const payload = {
+      jciCertificate: data.jciCertificate instanceof File ? data.jciCertificate : null,
+      walkthroughVideo: data.videoWalkthrough instanceof File ? data.videoWalkthrough : null,
       signerName: data.signerFullName,
       signature: data.typedSignature,
       agreedToGuarantee: data.agreeToGuarantee,
-      procedures,
+      procedures: data.procedures.map((p) => ({
+        procedureName: p.name,
+        price: Number(p.price),
+        notes: p.notes || "",
+      })),
     };
-
-    console.log("clicked")
 
     stepTwoMutation.mutate(payload, {
       onSuccess: () => {
-        setTimeout(() => {
-          router.push("/dentist/verification?phase=clinic-depth-verify");
-        }, 1500);
+        toast.success("Operations verification submitted successfully!");
+        setTimeout(() => router.push("/dentist/verification?phase=clinic-depth-verify"), 1500);
       },
       onError: (error: any) => {
         const resData = error?.response?.data;
         const newErrors: Record<string, string> = {};
 
-        // 1. Check if there is an errorDetails.field
-        const field = resData?.errorDetails?.field || resData?.field;
-        const msg = resData?.message || error?.message || "Operations verification submission failed. Please try again.";
-        if (field) {
-          newErrors[field] = msg;
-        }
+        // 🚨 ROBUST AppError Mapping based on your backend structure
+        const mapError = (path: string | string[] | undefined, message: string) => {
+          if (!path) return;
+          const p = Array.isArray(path) ? path.join(".") : path;
 
-        // 2. Check if there is an errors array
-        if (Array.isArray(resData?.errors)) {
-          for (const errObj of resData.errors) {
-            if (errObj.field) {
-              newErrors[errObj.field] = errObj.message;
-            }
-          }
-        }
+          // Map backend field names to frontend RHF field names
+          let fieldName = p;
+          if (p === "signerName") fieldName = "signerFullName";
+          else if (p === "signature") fieldName = "typedSignature";
+          else if (p === "agreedToGuarantee") fieldName = "agreeToGuarantee";
+          else if (p === "walkthroughVideo") fieldName = "videoWalkthrough";
 
-        // 3. Check if there are ZodIssues
-        if (Array.isArray(resData?.errorDetails)) {
-          for (const issue of resData.errorDetails) {
-            const fieldName = issue.path?.[issue.path.length - 1];
-            if (fieldName) {
-              newErrors[fieldName] = issue.message;
-            }
-          }
-        }
-
-        const getFileObj = (fileValue: any): File | null => {
-          if (fileValue instanceof File) return fileValue;
-          if (fileValue instanceof FileList && fileValue.length > 0) return fileValue[0];
-          return null;
+          newErrors[fieldName] = message;
         };
 
-        // 4. Map file size limit errors from backend if not mapped to a specific field
-        if (
-          Object.keys(newErrors).length === 0 &&
-          (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size is too large") || msg.toLowerCase().includes("multer"))
-        ) {
-          const jci = getFileObj(methods.watch("jciCertificate"));
-          const video = getFileObj(methods.watch("videoWalkthrough"));
-          if (jci && jci.size > 5 * 1024 * 1024) {
-            newErrors["jciCertificate"] = "File size is too large. Maximum allowed size is 5MB.";
-          }
-          if (video && video.size > 5 * 1024 * 1024) {
-            newErrors["walkthroughVideo"] = "File size is too large. Maximum allowed size is 5MB.";
+        // Case 1: Single AppError with path and message
+        if (resData?.path && resData?.message) {
+          mapError(resData.path, resData.message);
+        }
+        // Case 2: Array of AppError in errorDetails
+        else if (Array.isArray(resData?.errorDetails)) {
+          resData.errorDetails.forEach((issue: any) => mapError(issue.path, issue.message));
+        }
+        // Case 3: Standard { errors: [{ field, message }] }
+        else if (Array.isArray(resData?.errors)) {
+          resData.errors.forEach((err: any) => mapError(err.field, err.message));
+        }
+
+        // Case 4: Fallback for generic multer/file size errors
+        if (Object.keys(newErrors).length === 0 && resData?.message) {
+          const msg = resData.message.toLowerCase();
+          if (msg.includes("5mb") || msg.includes("file size") || msg.includes("multer")) {
+            if (data.jciCertificate instanceof File && data.jciCertificate.size > 5 * 1024 * 1024) {
+              newErrors["jciCertificate"] = "File size exceeds 5MB limit.";
+            }
+            if (data.videoWalkthrough instanceof File && data.videoWalkthrough.size > 5 * 1024 * 1024) {
+              newErrors["videoWalkthrough"] = "File size exceeds 5MB limit.";
+            }
           }
         }
 
+        // Apply all mapped errors to React Hook Form
         if (Object.keys(newErrors).length > 0) {
-          Object.entries(newErrors).forEach(([fieldName, message]) => {
-            // Map backend fields to frontend form names
-            let mappedName: any = fieldName;
-            if (fieldName === "signerName") mappedName = "signerFullName";
-            if (fieldName === "signature") mappedName = "typedSignature";
-            if (fieldName === "agreedToGuarantee") mappedName = "agreeToGuarantee";
-            if (fieldName === "walkthroughVideo") mappedName = "videoWalkthrough";
-
-            methods.setError(mappedName, {
-              type: "manual",
-              message,
-            });
+          Object.entries(newErrors).forEach(([field, message]) => {
+            methods.setError(field as any, { type: "server", message });
           });
           window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          toast.error(resData?.message || "Submission failed. Please try again.");
         }
       },
     });
   };
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      (window as any).getFormErrors = () => methods.formState.errors;
-      (window as any).getFormValues = () => methods.getValues();
-    }
-    return () => {
-      if (typeof window !== "undefined") {
-        delete (window as any).getFormErrors;
-        delete (window as any).getFormValues;
-      }
-    };
-  }, [methods]);
-
-  const onInvalid = (errors: any) => {
-    console.warn("Validation failed for Phase 2 Form:", errors);
-    // toast.error("Please fill all required fields correctly.");
-  };
-
-  // While waiting for admin review — show status screen only
-  if (step2Status === "SUBMITTED") {
-    return (
-      <VerificationStatusScreen
-        status="SUBMITTED"
-        phaseName="Operations Verification"
-      />
-    );
-  }
-
   const formLocked = step2Status === "APPROVED";
+  const { isValid } = methods.formState;
+
+  useEffect(() => {
+    if (formLocked) {
+      setVerificationStepReady(2, true);
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      setVerificationStepReady(2, methods.formState.isValid);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [methods.formState.isValid, formLocked, setVerificationStepReady]);
+
+  if (step2Status === "SUBMITTED") {
+    return <VerificationStatusScreen status="SUBMITTED" phaseName="Operations Verification" />;
+  }
 
   return (
     <div className="space-y-6">
       {step2Status === "REJECTED" && (
-        <VerificationStatusScreen
-          status="REJECTED"
-          phaseName="Operations Verification"
-          rejectionNote={step2Note || undefined}
-        />
+        <VerificationStatusScreen status="REJECTED" phaseName="Operations Verification" rejectionNote={step2Note} />
       )}
+
       <FormProvider {...methods}>
-        <form
-          id="phase-2-verification-form"
-          onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
-          className="space-y-0"
-        >
+        <form id="phase-2-verification-form" onSubmit={methods.handleSubmit(onSubmit)} className="space-y-0">
           <SterilizationSection disabled={formLocked} />
           <ProcedurePricingSection disabled={formLocked} />
           <GuaranteeSection disabled={formLocked} />
-
-          {stepTwoMutation.error && (
-            <div className="p-4 mt-6 rounded-lg border border-red-200 bg-red-50 text-red-600 text-sm font-semibold flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-1">
-              <XCircle className="h-5 w-5 shrink-0 text-red-500" />
-              <span>
-                {(stepTwoMutation.error as any)?.response?.data?.message || stepTwoMutation.error?.message || "Operations verification submission failed. Please try again."}
-              </span>
-            </div>
-          )}
         </form>
       </FormProvider>
     </div>

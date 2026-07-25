@@ -847,16 +847,21 @@ export const consultationBookingApi = {
 
   stepFive: async (payload: {
     consultation_id: string | number;
-    front_smile: File;
+    photos: File[];
   }) => {
-    const uploadRes = await apiClient.files.upload(payload.front_smile);
-    const secureUrl = uploadRes.data?.secure_url;
-    if (!secureUrl) throw new Error("Failed to upload front smile photo to Cloudinary");
+    const secureUrls = await Promise.all(
+      payload.photos.map(async (file) => {
+        const uploadRes = await apiClient.files.upload(file);
+        const secureUrl = uploadRes.data?.secure_url;
+        if (!secureUrl) throw new Error(`Failed to upload ${file.name} to Cloudinary`);
+        return secureUrl;
+      })
+    );
 
     const response = await api.patch(
       endpoints.consultations.updateIntake(payload.consultation_id),
       {
-        photos: [secureUrl],
+        photos: secureUrls,
       }
     );
     return response.data;

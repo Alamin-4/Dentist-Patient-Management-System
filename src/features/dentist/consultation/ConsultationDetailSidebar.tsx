@@ -6,6 +6,69 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useRespondToConsultation } from "@/hooks/consultation/useConsultation";
 
+const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
+  if (!tzStr) return 0;
+  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
+  const match = tzStr.match(regex);
+  if (match) {
+    const sign = match[1] === "-" ? -1 : 1;
+    const hours = parseInt(match[2], 10);
+    const minutes = match[3] ? parseInt(match[3], 10) : 0;
+    return sign * (hours * 60 + minutes);
+  }
+  if (tzStr.includes("EST")) return -5 * 60;
+  if (tzStr.includes("CST")) return -6 * 60;
+  if (tzStr.includes("MST")) return -7 * 60;
+  if (tzStr.includes("PST")) return -8 * 60;
+  if (tzStr.includes("CET")) return 1 * 60;
+  if (tzStr.includes("AEST")) return 10 * 60;
+  if (tzStr.includes("BST")) return 6 * 60;
+  return 0;
+};
+
+const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
+  const dObj = new Date(scheduledDate);
+  const year = dObj.getUTCFullYear();
+  const month = dObj.getUTCMonth();
+  const day = dObj.getUTCDate();
+
+  const timeParts = scheduledTime.split(":");
+  let hours = parseInt(timeParts[0], 10);
+  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+
+  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
+    hours += 12;
+  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
+    hours = 0;
+  }
+
+  if (isNaN(hours)) hours = 0;
+  if (isNaN(minutes)) minutes = 0;
+
+  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
+  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
+  return localUtcMs - offsetMinutes * 60 * 1000;
+};
+
+const isPast = (consultation: any): boolean => {
+  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
+  const startUtcMs = getConsultationStartUtcMs(
+    consultation.scheduledDate,
+    consultation.scheduledTime,
+    consultation.timezone
+  );
+  const durationMinutes = consultation.durationMinutes || 15;
+  return Date.now() > startUtcMs + durationMinutes * 60 * 1000;
+};
+
+const isMissed = (consultation: any): boolean => {
+  if (consultation.requestStatus === "MISSED") return true;
+  return (
+    (consultation.requestStatus === "SCHEDULED" || consultation.requestStatus === "ACTIVE") &&
+    isPast(consultation)
+  );
+};
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -74,9 +137,16 @@ export const ConsultationDetailsSidebar = ({
                 {initials || "P"}
               </div>
               <div>
-                <h3 className="text-xl font-bold text-[#111113]">
-                  {patientName || "Patient"}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-[#111113]">
+                    {patientName || "Patient"}
+                  </h3>
+                  {isMissed(data) && (
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-100 uppercase tracking-wider shrink-0">
+                      Missed
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm font-medium text-[#1A1A2E]">
                   {data.intake?.email}
                 </p>
@@ -199,7 +269,7 @@ export const ConsultationDetailsSidebar = ({
               {respondMutation.isPending ? "Processing..." : "Accept"}
             </button>
           </div>
-        ) : (data.requestStatus === "COMPLETED" || data.requestStatus === "ACTIVE" || data.requestStatus === "SCHEDULED") && data.treatmentPlan?.status !== "ACTIVE" && data.treatmentPlan?.status !== "COMPLETED" && onCreateTreatmentPlan ? (
+        ) : data.requestStatus === "COMPLETED" && data.treatmentPlan?.status !== "ACTIVE" && data.treatmentPlan?.status !== "COMPLETED" && onCreateTreatmentPlan ? (
           <div className="p-6 border-t border-[#E5E7EB] flex gap-4">
             <button
               onClick={onCreateTreatmentPlan}

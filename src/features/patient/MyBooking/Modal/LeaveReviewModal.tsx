@@ -102,8 +102,13 @@ export function LeaveReviewModal({
                   {doctor.rating}
                 </span>
                 <div className="flex text-[#FBBF24]">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="size-4 fill-current" />
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`size-4 ${
+                        star <= Math.round(doctor.rating) ? "fill-current" : "text-slate-200"
+                      }`}
+                    />
                   ))}
                 </div>
                 <span className="text-slate-400 text-xs ml-1">

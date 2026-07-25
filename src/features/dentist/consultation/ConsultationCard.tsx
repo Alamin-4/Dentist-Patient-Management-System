@@ -114,9 +114,16 @@ export const ConsultationCard = ({
               {initials || "P"}
             </div>
             <div className="min-w-0">
-              <h3 className="font-bold text-[#1A1A2E] text-[17px] leading-snug truncate">
-                {patientName || "Patient"}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-[#1A1A2E] text-[17px] leading-snug truncate">
+                  {patientName || "Patient"}
+                </h3>
+                {data.requestStatus === "MISSED" && (
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-100 uppercase tracking-wider shrink-0">
+                    Missed
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-gray-500 font-medium truncate">{email}</p>
             </div>
           </div>
@@ -202,20 +209,39 @@ export const ConsultationCard = ({
           </button>
         ) : type === "Active" ? (
           <>
-            <button
-              onClick={onClick}
-              className={`h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${isMeetingActive ? "flex-1" : "w-full"
-                }`}
-            >
-              View Details
-            </button>
-            {isMeetingActive && (
-              <button
-                onClick={onJoinMeeting}
-                className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
-              >
-                Join Consultation
-              </button>
+            {data.requestStatus === "MISSED" ? (
+              <>
+                <button
+                  onClick={onClick}
+                  className="flex-1 h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  View Details
+                </button>
+                <button
+                  onClick={onAction}
+                  className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                >
+                  Reschedule
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={onClick}
+                  className={`h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${isMeetingActive ? "flex-1" : "w-full"
+                    }`}
+                >
+                  View Details
+                </button>
+                {isMeetingActive && (
+                  <button
+                    onClick={onJoinMeeting}
+                    className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                  >
+                    Join Consultation
+                  </button>
+                )}
+              </>
             )}
           </>
         ) : (

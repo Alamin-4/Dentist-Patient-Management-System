@@ -43,24 +43,18 @@ export default function Phase1() {
   } = useVerificationStore();
   const router = useRouter();
 
-  const [submittedLicence, setSubmittedLicence] =
-    useState<SubmittedLicence | null>(null);
-
+  const [submittedLicence, setSubmittedLicence] = useState<SubmittedLicence | null>(null);
   const { checkLicenseVerifyProgress, step1Status, step1Note } = useVerificationProgress();
+
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [submissionAttempted, setSubmissionAttempted] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
 
-  const [verificationStatus, setVerificationStatus] = useState<
-    "IDLE" | "VERIFYING" | "SUCCESS" | "FAILED"
-  >("IDLE");
-
+  const [verificationStatus, setVerificationStatus] = useState<"IDLE" | "VERIFYING" | "SUCCESS" | "FAILED">("IDLE");
   const stepOneMutation = useStepOneMutation();
-
   const progressData = checkLicenseVerifyProgress?.data;
 
-  // Form is re-enabled for PENDING and REJECTED (dentist can resubmit on rejection)
   const isFormLocked = step1Status === "SUBMITTED" || step1Status === "APPROVED";
 
   const serverSubmittedLicence = useMemo<SubmittedLicence | null>(() => {
@@ -76,44 +70,106 @@ export default function Phase1() {
   }, [progressData]);
 
   const handleVerify = useCallback(async (data: SubmittedLicence) => {
+    console.log("🔍 Starting verification for:", data);
     setVerificationStatus("VERIFYING");
     setSubmittedLicence(data);
+    setServerErrors({});
+
     try {
-      await apiClient.dentists.verifyLicenseCheck({
+      const response = await apiClient.dentists.verifyLicenseCheck({
         country: data.country,
         city: data.city,
         registrationAuthority: data.authority,
         registrationNumber: data.regNo,
       });
+
+      // 🚨 CRITICAL: Some API clients resolve 404s instead of throwing. Check payload directly.
+      const resData = response?.data || response;
+      console.log("✅ Verification Response:", resData);
+
+      if (resData?.success === false) {
+        const newErrors: Record<string, string> = {};
+
+        if (resData?.errors && Array.isArray(resData.errors)) {
+          resData.errors.forEach((err: any) => {
+            if (err.field === "registrationNumber" || err.field === "regNo") {
+              newErrors["regNo"] = err.message;
+            } else if (err.field === "registrationAuthority" || err.field === "authority") {
+              newErrors["authority"] = err.message;
+            } else if (err.field) {
+              newErrors[err.field] = err.message;
+            }
+          });
+        }
+
+        if (Object.keys(newErrors).length === 0 && resData?.message) {
+          newErrors["regNo"] = resData.message;
+        }
+
+        console.log("❌ Setting FAILED status with errors:", newErrors);
+        setServerErrors(newErrors);
+        setVerificationStatus("FAILED"); // This guarantees the manual box shows
+        return;
+      }
+
+      console.log("🎉 Verification SUCCESS");
       setVerificationStatus("SUCCESS");
       toast.success("License matched and verified successfully via registry!");
-    } catch {
-      // The check endpoint returns 404 if not found in auto-registry; fall through to manual upload
+
+    } catch (error: any) {
+      console.error("🔥 Verification API threw an error:", error);
+      const resData = error?.response?.data || error;
+
+      const newErrors: Record<string, string> = {};
+      if (resData?.errors && Array.isArray(resData.errors)) {
+        resData.errors.forEach((err: any) => {
+          if (err.field === "registrationNumber" || err.field === "regNo") {
+            newErrors["regNo"] = err.message;
+          } else if (err.field === "registrationAuthority" || err.field === "authority") {
+            newErrors["authority"] = err.message;
+          } else if (err.field) {
+            newErrors[err.field] = err.message;
+          }
+        });
+      }
+
+      if (Object.keys(newErrors).length === 0 && resData?.message) {
+        newErrors["regNo"] = resData.message;
+      }
+
+      console.log("❌ Setting FAILED status from catch block with errors:", newErrors);
+      setServerErrors(newErrors);
       setVerificationStatus("FAILED");
     }
   }, []);
 
+  const handleFormChange = useCallback(() => {
+    if (verificationStatus !== "IDLE") {
+      setVerificationStatus("IDLE");
+      setSubmittedLicence(null);
+      setLicenseFile(null);
+      setServerErrors({});
+    }
+  }, [verificationStatus]);
+
   const hasHeadshot = Boolean(
-    headshotFile ||
-    (progressData?.data as LicenseProgressData | undefined)
-      ?.professional_headshot,
+    headshotFile || (progressData?.data as LicenseProgressData | undefined)?.professional_headshot
   );
 
   const isStepReady = useMemo(() => {
     if (isFormLocked) return true;
+    if (serverErrors.licenseDocument || serverErrors.profilePicture) return false;
 
-    // Must have registry verified OR manual copy uploaded, plus headshot
     const hasLicenseVerified =
       verificationStatus === "SUCCESS" ||
       (verificationStatus === "FAILED" && licenseFile !== null);
 
     return Boolean(submittedLicence && hasLicenseVerified && hasHeadshot);
-  }, [isFormLocked, verificationStatus, licenseFile, submittedLicence, hasHeadshot]);
+  }, [isFormLocked, verificationStatus, licenseFile, submittedLicence, hasHeadshot, serverErrors]);
 
-  // Fix: depend only on boolean isStepReady primitive to prevent re-render loop
   useEffect(() => {
     setVerificationStepReady(1, isStepReady);
-  }, [isStepReady]);
+  }, [isStepReady, setVerificationStepReady]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,12 +185,9 @@ export default function Phase1() {
       return;
     }
 
-    // If verified automatically, generate dummy license PDF; otherwise, use manual file
     const fileToUpload =
       licenseFile ||
-      new File(["verified match"], "license.pdf", {
-        type: "application/pdf",
-      });
+      new File(["verified match"], "license.pdf", { type: "application/pdf" });
 
     stepOneMutation.mutate(
       {
@@ -153,64 +206,67 @@ export default function Phase1() {
           const resData = error?.response?.data;
           const newErrors: Record<string, string> = {};
 
-          const field = resData?.errorDetails?.field || resData?.field;
-          const msg = resData?.message || error?.message || "Something went wrong. Please try again.";
-          if (field) {
-            newErrors[field] = msg;
-          }
+          const normalizeField = (field: string) => {
+            if (field === "registrationNumber") return "regNo";
+            if (field === "registrationAuthority") return "authority";
+            if (field === "profilePicture" || field === "headshot") return "profilePicture";
+            if (field === "licenseDocument" || field === "license") return "licenseDocument";
+            return field;
+          };
 
-          if (Array.isArray(resData?.errors)) {
-            for (const errObj of resData.errors) {
-              if (errObj.field) {
-                newErrors[errObj.field] = errObj.message;
-              }
-            }
+          if (resData?.path && resData?.message) {
+            const fieldName = Array.isArray(resData.path) ? resData.path[resData.path.length - 1] : resData.path;
+            newErrors[normalizeField(fieldName)] = resData.message;
           }
 
           if (Array.isArray(resData?.errorDetails)) {
-            for (const issue of resData.errorDetails) {
-              const fieldName = issue.path?.[issue.path.length - 1];
-              if (fieldName) {
-                newErrors[fieldName] = issue.message;
+            resData.errorDetails.forEach((err: any) => {
+              if (err.path && err.message) {
+                const fieldName = Array.isArray(err.path) ? err.path[err.path.length - 1] : err.path;
+                newErrors[normalizeField(fieldName)] = err.message;
               }
-            }
+            });
           }
 
-          if (
-            Object.keys(newErrors).length === 0 &&
-            (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size is too large") || msg.toLowerCase().includes("multer"))
-          ) {
-            if (licenseFile && licenseFile.size > 5 * 1024 * 1024) {
-              newErrors["licenseDocument"] = "File size is too large. Maximum allowed size is 5MB.";
-            }
-            if (headshotFile && headshotFile.size > 5 * 1024 * 1024) {
-              newErrors["profilePicture"] = "File size is too large. Maximum allowed size is 5MB.";
+          if (Array.isArray(resData?.errors)) {
+            resData.errors.forEach((err: any) => {
+              if (err.field && err.message) {
+                newErrors[normalizeField(err.field)] = err.message;
+              }
+            });
+          }
+
+          if (Object.keys(newErrors).length === 0) {
+            const msg = resData?.message || error?.message || "Something went wrong. Please try again.";
+            if (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size") || msg.toLowerCase().includes("multer")) {
+              if (licenseFile && licenseFile.size > 5 * 1024 * 1024) {
+                newErrors["licenseDocument"] = "File size is too large. Maximum allowed size is 5MB.";
+              }
+              if (headshotFile && headshotFile.size > 5 * 1024 * 1024) {
+                newErrors["profilePicture"] = "File size is too large. Maximum allowed size is 5MB.";
+              }
             }
           }
 
           if (Object.keys(newErrors).length > 0) {
             setServerErrors(newErrors);
           } else {
-            toast.error(msg);
+            toast.error(resData?.message || error?.message || "Something went wrong. Please try again.");
           }
         },
-      },
+      }
     );
   };
 
-  // While waiting for admin review — show status screen only
   if (step1Status === "SUBMITTED") {
-    return (
-      <VerificationStatusScreen
-        status="SUBMITTED"
-        phaseName="License Verification"
-      />
-    );
+    return <VerificationStatusScreen status="SUBMITTED" phaseName="License Verification" />;
   }
+
+  // 🚨 DEBUG: Check console to see if this is actually "FAILED"
+  console.log("📊 Current verificationStatus:", verificationStatus);
 
   return (
     <div className="space-y-6">
-      {/* Rejection banner */}
       {step1Status === "REJECTED" && (
         <VerificationStatusScreen
           status="REJECTED"
@@ -231,7 +287,9 @@ export default function Phase1() {
               isVerifying={verificationStatus === "VERIFYING"}
               serverErrors={serverErrors}
               submissionAttempted={submissionAttempted}
+              onFormChange={handleFormChange}
             />
+
             {submissionAttempted && !submittedLicence && (
               <p className="text-xs font-semibold text-destructive mt-1">
                 Please enter and verify your license registry details above first.
@@ -254,6 +312,7 @@ export default function Phase1() {
               />
             )}
 
+            {/* 🚨 THIS IS THE BLOCK THAT MUST SHOW */}
             {verificationStatus === "FAILED" && (
               <VerificationResult
                 status="no-match"
@@ -269,13 +328,10 @@ export default function Phase1() {
                     setServerErrors((prev) => ({ ...prev, licenseDocument: "" }));
                   }
                 }}
-                existingFileUrl={
-                  (progressData?.data as LicenseProgressData | undefined)
-                    ?.licenseDocument
-                }
+                existingFileUrl={(progressData?.data as LicenseProgressData | undefined)?.licenseDocument}
                 error={
                   serverErrors.licenseDocument ||
-                  (submissionAttempted && !licenseFile && !((progressData?.data as LicenseProgressData | undefined)?.licenseDocument)
+                  (submissionAttempted && !licenseFile && !(progressData?.data as LicenseProgressData | undefined)?.licenseDocument
                     ? "Registration Certificate is required."
                     : undefined)
                 }
@@ -289,9 +345,7 @@ export default function Phase1() {
             <PhaseStep step={2} title="Upload your professional headshot" />
 
             <div className="space-y-4">
-              <p className="text-sm font-semibold text-foreground">
-                Professional headshot
-              </p>
+              <p className="text-sm font-semibold text-foreground">Professional headshot</p>
               <HeadshotUpload
                 disabled={isFormLocked}
                 onChange={(file) => {
@@ -306,15 +360,10 @@ export default function Phase1() {
                     setServerErrors((prev) => ({ ...prev, profilePicture: "" }));
                   }
                 }}
-                existingImageUrl={
-                  (progressData?.data as LicenseProgressData | undefined)
-                    ?.professional_headshot
-                }
+                existingImageUrl={(progressData?.data as LicenseProgressData | undefined)?.professional_headshot}
                 error={
                   serverErrors.profilePicture ||
-                  (submissionAttempted && !hasHeadshot
-                    ? "Professional headshot is required to continue."
-                    : undefined)
+                  (submissionAttempted && !hasHeadshot ? "Professional headshot is required to continue." : undefined)
                 }
               />
               {(serverErrors.profilePicture || (submissionAttempted && !hasHeadshot)) && (
@@ -322,12 +371,7 @@ export default function Phase1() {
                   {serverErrors.profilePicture || "Professional headshot is required to continue."}
                 </p>
               )}
-              <p
-                className={cn(
-                  "text-xs",
-                  isStepReady ? "text-green-600" : "text-muted-foreground",
-                )}
-              >
+              <p className={cn("text-xs", isStepReady ? "text-green-600" : "text-muted-foreground")}>
                 {isStepReady
                   ? "Phase 1 is ready to complete."
                   : "Complete the verification or upload flow and add your headshot to continue."}
@@ -337,11 +381,7 @@ export default function Phase1() {
         </div>
       </div>
 
-      <form
-        id="phase-1-verification-form"
-        onSubmit={onSubmit}
-        className="hidden"
-      />
+      <form id="phase-1-verification-form" onSubmit={onSubmit} className="hidden" />
     </div>
   );
 }

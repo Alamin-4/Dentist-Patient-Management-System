@@ -19,6 +19,9 @@ import {
   useSubmitFinalPlan,
   useVerifyPaymentCode,
 } from "@/hooks/treatment-booking/useTreatmentBooking";
+import { toast } from "react-hot-toast";
+import { apiClient } from "@/api/client";
+import { normalizeApiError } from "@/api/error-handler";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -56,6 +59,7 @@ export default function BookingDetailPage() {
 
   const [paymentCode, setPaymentCode] = useState("");
   const [paymentCodeError, setPaymentCodeError] = useState(false);
+  const [paymentErrorMessage, setPaymentErrorMessage] = useState("");
 
   const [showFinalModal, setShowFinalModal] = useState(false);
   const [treatmentPlanOpen, setTreatmentPlanOpen] = useState(true);
@@ -88,25 +92,25 @@ export default function BookingDetailPage() {
   // Build display data
   const display = booking
     ? {
-        name: `${booking.patient?.user?.firstName || ""} ${booking.patient?.user?.lastName || ""}`,
-        email: booking.patient?.user?.email || "",
-        initials: `${booking.patient?.user?.firstName?.[0] || ""}${booking.patient?.user?.lastName?.[0] || ""}`.toUpperCase(),
-        procedure: booking.treatmentPlan?.lineItems?.[0]?.globalProcedure?.name || "Dental Treatment",
-        budget: `$${Number(booking.escrowAmount).toLocaleString()}`,
-        travelFrom: booking.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString() : "Pending scheduling",
-        lastVisited: "N/A",
-        conditions: "N/A",
-      }
+      name: `${booking.patient?.user?.firstName || ""} ${booking.patient?.user?.lastName || ""}`,
+      email: booking.patient?.user?.email || "",
+      initials: `${booking.patient?.user?.firstName?.[0] || ""}${booking.patient?.user?.lastName?.[0] || ""}`.toUpperCase(),
+      procedure: booking.treatmentPlan?.lineItems?.[0]?.globalProcedure?.name || "Dental Treatment",
+      budget: `$${Number(booking.escrowAmount).toLocaleString()}`,
+      travelFrom: booking.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString() : "Pending scheduling",
+      lastVisited: "N/A",
+      conditions: "N/A",
+    }
     : {
-        name: "",
-        email: "",
-        initials: "",
-        procedure: "",
-        budget: "$0",
-        travelFrom: "",
-        lastVisited: "N/A",
-        conditions: "N/A",
-      };
+      name: "",
+      email: "",
+      initials: "",
+      procedure: "",
+      budget: "$0",
+      travelFrom: "",
+      lastVisited: "N/A",
+      conditions: "N/A",
+    };
 
   const formatDate = (dateInput: any) => {
     if (!dateInput) return "";
@@ -198,14 +202,42 @@ export default function BookingDetailPage() {
   const handleVerifyPayment = async () => {
     if (paymentCode.length !== 4) {
       setPaymentCodeError(true);
+      setPaymentErrorMessage("Please enter a valid 4-digit payment code.");
       return;
     }
     setPaymentCodeError(false);
+    setPaymentErrorMessage("");
     verifyPaymentMutation.mutate(
       { id: id!, paymentCode },
       {
-        onError: () => {
-          setPaymentCodeError(true);
+        onError: async (err: any) => {
+          const apiErr = normalizeApiError(err);
+          const errorMsg = apiErr.message || "An error occurred during payment verification.";
+
+          if (errorMsg.includes("Stripe Connect") || errorMsg.includes("receive payouts")) {
+            const toastId = toast.loading("Stripe Connect required to receive payouts. Initializing onboarding...");
+            try {
+              const response = await apiClient.stripe.connectOnboard();
+              if (response?.data?.url) {
+                toast.success("Redirecting to Stripe onboarding...", { id: toastId });
+                window.location.href = response.data.url;
+              } else {
+                toast.error("Failed to start Stripe onboarding. Redirecting to Settings...", { id: toastId });
+                setTimeout(() => {
+                  router.push("/dentist/settings");
+                }, 2000);
+              }
+            } catch (stripeErr: any) {
+              console.error("Stripe Connect onboarding error:", stripeErr);
+              toast.error("Redirecting to Settings...", { id: toastId });
+              setTimeout(() => {
+                router.push("/dentist/settings");
+              }, 2000);
+            }
+          } else {
+            setPaymentErrorMessage(errorMsg);
+            setPaymentCodeError(true);
+          }
         },
       }
     );
@@ -286,13 +318,12 @@ export default function BookingDetailPage() {
               <div>
                 <div className="font-bold text-lg text-[#0F172A]">{display.name}</div>
                 <div className="text-sm text-slate-500 mb-2">{display.email}</div>
-                <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${
-                  booking?.status === "COMPLETED"
+                <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${booking?.status === "COMPLETED"
                     ? "bg-green-50 text-green-700 border border-green-100"
                     : booking?.status === "CANCELLED"
                       ? "bg-red-50 text-red-700 border border-red-100"
                       : "bg-blue-50 text-blue-700 border border-blue-100"
-                }`}>
+                  }`}>
                   {booking?.status === "CANCELLED" ? "Rejected" : booking?.status}
                 </span>
               </div>
@@ -312,13 +343,12 @@ export default function BookingDetailPage() {
             <div className="sm:text-right">
               <div className="text-xs text-slate-500 mb-1">Estimate Budget</div>
               <div className="text-2xl font-bold text-[#0A2540]">{display.budget}</div>
-              <div className={`text-sm font-semibold ${
-                booking?.paymentStatus === "REFUNDED" 
-                  ? "text-[#0284C7]" 
-                  : booking?.paymentStatus === "PAID" 
-                    ? "text-green-700" 
+              <div className={`text-sm font-semibold ${booking?.paymentStatus === "REFUNDED"
+                  ? "text-[#0284C7]"
+                  : booking?.paymentStatus === "PAID"
+                    ? "text-green-700"
                     : "text-[#D97706]"
-              }`}>
+                }`}>
                 {booking?.paymentStatus === "IN_ESCROW"
                   ? "In Escrow"
                   : booking?.paymentStatus === "PAID"
@@ -402,12 +432,12 @@ export default function BookingDetailPage() {
                             </td>
                           </tr>
                         )) || (
-                          <tr className="border-t border-slate-100">
-                            <td className="px-4 py-3 text-slate-500 text-xs" colSpan={2}>
-                              No procedure breakdown available.
-                            </td>
-                          </tr>
-                        )}
+                            <tr className="border-t border-slate-100">
+                              <td className="px-4 py-3 text-slate-500 text-xs" colSpan={2}>
+                                No procedure breakdown available.
+                              </td>
+                            </tr>
+                          )}
                         <tr className="border-t border-slate-100 bg-slate-50">
                           <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">
                             Estimate amount
@@ -537,8 +567,8 @@ export default function BookingDetailPage() {
                       }}
                       placeholder="e.g. 7429"
                       className={`flex-1 h-12 rounded-lg border px-4 text-base tracking-widest text-center font-mono bg-white focus:outline-none focus:ring-2 transition-all ${codeError
-                          ? "border-red-400 focus:ring-red-200"
-                          : "border-slate-200 focus:ring-[#163E5C]/20 focus:border-[#163E5C]"
+                        ? "border-red-400 focus:ring-red-200"
+                        : "border-slate-200 focus:ring-[#163E5C]/20 focus:border-[#163E5C]"
                         }`}
                     />
                     <button
@@ -643,8 +673,8 @@ export default function BookingDetailPage() {
                       }}
                       placeholder="e.g. 9812"
                       className={`flex-1 h-12 rounded-lg border px-4 text-base tracking-widest text-center font-mono bg-white focus:outline-none focus:ring-2 transition-all ${paymentCodeError
-                          ? "border-red-400 focus:ring-red-200"
-                          : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
+                        ? "border-red-400 focus:ring-red-200"
+                        : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
                         }`}
                     />
                     <button
@@ -659,7 +689,7 @@ export default function BookingDetailPage() {
                   </div>
                   {paymentCodeError && (
                     <p className="text-xs text-red-500 mt-1.5">
-                      Please enter a valid 4-digit payment code.
+                      {paymentErrorMessage || "Please enter a valid 4-digit payment code."}
                     </p>
                   )}
                 </div>

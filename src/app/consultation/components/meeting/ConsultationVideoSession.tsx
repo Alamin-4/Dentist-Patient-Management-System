@@ -251,7 +251,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
                     )}
                 </div>
             </div>
-            
+
             {showCompletedModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
                     <div className="bg-white rounded-2xl p-8 md:p-10 shadow-2xl max-w-md w-full mx-4 flex flex-col items-center text-center space-y-6 animate-in fade-in zoom-in-95 duration-200">
@@ -268,7 +268,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
                         </div>
                         <button
                             type="button"
-                            onClick={() => router.push("/dentist/consultations?tab=Treatment Estimate")}
+                            onClick={() => router.push(`/dentist/consultations?tab=Treatment Estimate&createPlanFor=${consultation.id}`)}
                             className="w-full py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-bold text-[15px] rounded-lg active:scale-[0.98] transition-all cursor-pointer"
                         >
                             Create Treatment Plan

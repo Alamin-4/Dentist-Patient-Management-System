@@ -17,8 +17,8 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
   const avatarSrc = dentistUser?.image || "/images/dentist.png";
 
   const dentistDirectory = plan.dentist?.dentistDirectory;
-  const rating = dentistDirectory?.googleRating || dentistDirectory?.doctoraliaRating || 5;
-  const reviewCount = dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
+  const rating = dentistDirectory?.googleRating ?? dentistDirectory?.doctoraliaRating ?? 0;
+  const reviewCount = dentistDirectory?.googleReviewCount ?? dentistDirectory?.doctoraliaReviewCount ?? 0;
 
   const totalEstimate = plan.lineItems
     ? plan.lineItems.reduce((acc: number, item: any) => acc + Number(item.unitPrice) * (item.quantity || 1), 0)
@@ -56,16 +56,16 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
   // PENDING_PAYMENT, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
   const tbStatus = plan.treatmentBooking?.status || "PENDING_PAYMENT";
   const finalPlanObj = plan.treatmentBooking?.metadata?.finalPlan;
-  
+
   const finalPlan = finalPlanObj
     ? {
-        breakdown: finalPlanObj.procedures.map((p: any) => ({
-          label: p.name,
-          price: Number(p.price),
-        })),
-        finalTotal: Number(finalPlanObj.finalTotal),
-        isWithinLeeway: Number(finalPlanObj.finalTotal) <= totalEstimate * 1.15,
-      }
+      breakdown: finalPlanObj.procedures.map((p: any) => ({
+        label: p.name,
+        price: Number(p.price),
+      })),
+      finalTotal: Number(finalPlanObj.finalTotal),
+      isWithinLeeway: Number(finalPlanObj.finalTotal) <= totalEstimate * 1.15,
+    }
     : null;
 
   const isApproved = !!plan.treatmentBooking?.metadata?.finalPlanApproved || tbStatus === "COMPLETED";
@@ -127,12 +127,12 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
     },
     {
       title: "Final Treatment Plan Confirm",
-      description: isApproved 
-        ? `Confirmed${finalPlanApprovedDate ? ` • ${finalPlanApprovedDate}` : ""}` 
+      description: isApproved
+        ? `Confirmed${finalPlanApprovedDate ? ` • ${finalPlanApprovedDate}` : ""}`
         : tbStatus === "CANCELLED"
           ? `Rejected${finalPlanRejectionDate ? ` • ${finalPlanRejectionDate}` : ""}`
-          : finalPlan 
-            ? "Review final plan" 
+          : finalPlan
+            ? "Review final plan"
             : `Dr. ${dentistUser?.lastName || 'Dentist'} submit final price you confirm via sms`,
       completed: isApproved,
     },
@@ -155,8 +155,8 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
       image: avatarSrc,
       rating,
       reviewCount,
-      rdvScore: plan.dentist?.dentistVerificationProgress?.rvdScore || 95,
-      isVerified: plan.dentist?.dentistVerificationProgress?.isLicenseVerified ?? true,
+      rdvScore: plan.dentist?.dentistVerificationProgress?.rvdScore ?? 0,
+      isVerified: plan.dentist?.dentistVerificationProgress?.isLicenseVerified ?? false,
     },
     procedure: procedureName,
     appointmentDate: scheduledDate,

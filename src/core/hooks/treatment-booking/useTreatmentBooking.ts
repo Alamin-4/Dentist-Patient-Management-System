@@ -109,6 +109,8 @@ export function useSubmitReview() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["treatmentBooking", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["treatmentBookings"] });
+      queryClient.invalidateQueries({ queryKey: ["treatmentPlan"] });
+      queryClient.invalidateQueries({ queryKey: ["patientTreatmentPlans"] });
     },
   });
 }

@@ -12,16 +12,11 @@ import ResultsSection from "./ResultsSection";
 import BookingSidebar from "./BookingSidebar";
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useMe } from "@/hooks/auth/useAuth";
-import WriteReviewDialog from "./WriteReviewDialog";
 
 export default function DentistProfilePage({ dentist }: { dentist: any }) {
-  const { user } = useMe();
   const router = useRouter();
-  const isOwnProfile = user && (user.id === dentist.claimedByUserId || (dentist.userId && user.id === dentist.userId));
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  console.log("show dentist from profile page:", dentist)
 
   const isClaimed = dentist.status === "CLAIMED" || dentist.status === "VERIFIED";
   const showPlaceholder = !dentist.verified && activeTab !== "overview";
@@ -29,8 +24,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
       <div className="mx-auto max-w-400 w-11/12 py-8 lg:py-12">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
-          {/* Left Column */}
+        <div className="flex flex-col-reverse lg:flex-row gap-6 lg:gap-6 items-start">
           <div className="w-full lg:flex-1 min-w-0 space-y-5">
             <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -70,7 +64,6 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
               </div>
             ) : (
               <>
-                {/* 1. Overview Tab -> Stacks all sections */}
                 {activeTab === "overview" && (
                   <div className="space-y-5">
                     {dentist.verified && dentist.procedures && dentist.procedures.length > 0 && dentist.procedures.some((p: any) => p && typeof p === 'object' && 'price' in p) && (
@@ -143,18 +136,11 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
             )}
           </div>
 
-          <div className="w-full lg:w-110 lg:shrink-0">
-            <BookingSidebar dentist={dentist} setIsReviewModalOpen={setIsReviewModalOpen} />
+          <div className="w-full lg:max-w-xs lg:shrink-0">
+            <BookingSidebar dentist={dentist} />
           </div>
         </div>
       </div>
-
-      <WriteReviewDialog
-        isOpen={isReviewModalOpen}
-        onOpenChange={setIsReviewModalOpen}
-        slug={dentist.slug}
-        dentistName={dentist.name}
-      />
     </main>
   );
 }

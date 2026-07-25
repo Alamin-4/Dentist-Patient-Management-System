@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { CalendarDays, ChevronDown } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { getBookingData, updatePersonalInfo } from "@/lib/storage/bookingService";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useGetMe } from "@/hooks/user/useUser";
+import SearchableDropdown from "@/components/ui/SearchableDropdown";
+import { cn } from "@/lib/utils";
 
 const COUNTRIES = [
   "United States",
@@ -180,7 +182,12 @@ export default function PersonalInfoForm({
               placeholder="MM/DD/YYYY"
               value={formData.dateOfBirth || ""}
               onChange={handleChange}
-              className={`${getInputCls("dateOfBirth")} pr-12`}
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker();
+                } catch { }
+              }}
+              className={`${getInputCls("dateOfBirth")} pr-12 cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-0 [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
             />
             <CalendarDays className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280] pointer-events-none" />
           </div>
@@ -196,24 +203,31 @@ export default function PersonalInfoForm({
           <label className={labelCls}>
             Country <span className="text-red-500">*</span>
           </label>
-          <div className="relative">
-            <select
-              name="country"
-              value={formData.country || ""}
-              onChange={handleChange}
-              className={`${getInputCls("country")} appearance-none cursor-pointer pr-12`}
-            >
-              <option value="" disabled>
-                Select Country
-              </option>
-              {COUNTRIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF] pointer-events-none" />
-          </div>
+          <SearchableDropdown
+            value={formData.country || ""}
+            onChange={(val) => {
+              const updated = { ...formData, country: val };
+              setFormData(updated);
+              updatePersonalInfo(updated);
+              if (setErrors) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.country;
+                  return copy;
+                });
+              }
+            }}
+            options={COUNTRIES}
+            placeholder="Select Country"
+            allowClear={false}
+            position="top"
+            triggerClassName={cn(
+              "h-[56px] px-4 text-sm font-normal transition-all",
+              errors.country
+                ? "border-red-500 focus:ring-red-100/50"
+                : "border-[#E5E7EB] focus:ring-[#113254]/10 focus:border-[#113254]"
+            )}
+          />
           {errors.country && (
             <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
               {errors.country}

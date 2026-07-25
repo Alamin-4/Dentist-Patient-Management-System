@@ -12,14 +12,16 @@ import {
   setBookingCurrentStep,
   setConsultationId,
   updateBookingData,
+  getAllDentalPhotos,
+  getDentalPhotosList,
 } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import PersonalInfoForm from "./BookingIntakeForm/PersonalInfoForm";
 import ProcedureSelectionForm from "./BookingIntakeForm/ProcedureSelectionForm";
 import TreatmentDetailsForm, { treatmentDetailsSchema } from "./BookingIntakeForm/TreatmentDetailsForm";
 import DentalHistoryForm from "./BookingIntakeForm/DentalHistoryForm";
-import PhotoUploadForm from "./BookingIntakeForm/PhotoUploadForm";
-import XRayUploadForm from "./BookingIntakeForm/XRayUploadForm";
+import PhotoUploadForm, { photoUploadSchema } from "./BookingIntakeForm/PhotoUploadForm";
+import XRayUploadForm, { xrayUploadSchema } from "./BookingIntakeForm/XRayUploadForm";
 import RequestSuccessModal from "./BookingIntakeForm/RequestSuccessModal";
 import { Loader2 } from "lucide-react";
 import { consultationBookingApi } from "@/api/client";
@@ -47,9 +49,30 @@ export default function IntakeModal() {
   useEffect(() => {
     if (showBookingModal === "book") {
       const draft = getBookingDraft();
+
+      // If step 6 (the final step) is already completed, do not reopen the intake modal.
+      // Redirect directly to the appropriate screen.
+      if (draft.consultationId && draft.completedSteps.includes(TOTAL_STEPS)) {
+        setShowBookingModal(null);
+        if (bookingMode === "request") {
+          setShowSuccessModal(true);
+          return;
+        }
+
+        const params = new URLSearchParams();
+        if (selectedDentistId) {
+          params.set("dentistIds", selectedDentistId);
+        } else if (dentistsToCompare && dentistsToCompare.length > 0) {
+          params.set("dentistIds", dentistsToCompare.map((d) => d.id).join(","));
+        }
+        params.set("consultationId", String(draft.consultationId));
+        router.push(`/schedule?${params.toString()}`);
+        return;
+      }
+
       setStep(draft.currentStep || 1);
     }
-  }, [showBookingModal]);
+  }, [showBookingModal, bookingMode, selectedDentistId, dentistsToCompare, router, setShowBookingModal]);
 
   const progress = (step / TOTAL_STEPS) * 100;
 
@@ -107,14 +130,40 @@ export default function IntakeModal() {
           return false;
         }
         return true;
-      case 5:
-        if (!getFrontSmileFile()) {
-          setFormErrors({ file: "Please upload your front smile photo" });
+      case 5: {
+        const result = photoUploadSchema.safeParse(getAllDentalPhotos());
+        if (!result.success) {
+          const newErrors: Record<string, string> = {};
+          result.error.issues.forEach((issue) => {
+            const path = issue.path[0];
+            if (path !== undefined) {
+              newErrors[String(path)] = issue.message;
+            }
+          });
+          setFormErrors(newErrors);
           return false;
         }
         return true;
-      case 6:
+      }
+      case 6: {
+        const xrayFile = getXrayFile();
+        const result = xrayUploadSchema.safeParse({
+          file: xrayFile,
+          notes: data.xrayNotes,
+        });
+        if (!result.success) {
+          const newErrors: Record<string, string> = {};
+          result.error.issues.forEach((issue) => {
+            const path = issue.path[0];
+            if (path !== undefined) {
+              newErrors[String(path)] = issue.message;
+            }
+          });
+          setFormErrors(newErrors);
+          return false;
+        }
         return true;
+      }
       default:
         return true;
     }
@@ -198,11 +247,10 @@ export default function IntakeModal() {
     }
 
     if (step === 5) {
-      const frontSmile = getFrontSmileFile();
-      if (!frontSmile) throw new Error("Please upload your front smile photo");
+      const photos = getDentalPhotosList();
       await consultationBookingApi.stepFive({
         consultation_id: getRequiredConsultationId(),
-        front_smile: frontSmile,
+        photos,
       });
       return;
     }
@@ -220,9 +268,28 @@ export default function IntakeModal() {
   };
 
   const handleNext = async () => {
+    const draft = getBookingDraft();
+    if (step === TOTAL_STEPS && draft.completedSteps.includes(TOTAL_STEPS)) {
+      setShowBookingModal(null);
+      if (bookingMode === "request") {
+        setShowSuccessModal(true);
+        return;
+      }
+      const params = new URLSearchParams();
+      if (selectedDentistId) {
+        params.set("dentistIds", selectedDentistId);
+      } else if (dentistsToCompare && dentistsToCompare.length > 0) {
+        params.set("dentistIds", dentistsToCompare.map((d) => d.id).join(","));
+      }
+      if (draft.consultationId) {
+        params.set("consultationId", String(draft.consultationId));
+      }
+      router.push(`/schedule?${params.toString()}`);
+      return;
+    }
+
     if (!validateStep()) return;
 
-    const draft = getBookingDraft();
     if (step > 1 && !draft.consultationId) {
       toast.error("Please complete the first step before continuing.");
       return;
@@ -266,7 +333,7 @@ export default function IntakeModal() {
       toast.success("Your consultation details are saved.");
       setShowBookingModal(null);
 
-      if (compareModalPurpose === "compare" && selectedDentistId) {
+      if (selectedDentistId) {
         const draft = getBookingDraft();
         const params = new URLSearchParams();
         params.set("dentistIds", selectedDentistId);
@@ -384,7 +451,7 @@ export default function IntakeModal() {
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={isSubmitting}
+                disabled={isSubmitting || Object.keys(formErrors).length > 0}
                 className="inline-flex items-center justify-center gap-2 px-6 lg:px-12 py-2 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
               >
                 {isSubmitting && <Loader2 className="size-5 animate-spin" />}

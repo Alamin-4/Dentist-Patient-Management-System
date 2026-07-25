@@ -1,29 +1,44 @@
 "use client";
-import { useRef, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { Trash2, Upload } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import GuidelinesModal from "./GuidelinesModal";
-import { setFrontSmileFile } from "@/lib/storage/bookingService";
+import {
+  getAllDentalPhotos,
+  setDentalPhoto,
+} from "@/lib/storage/bookingService";
 
-interface PhotoSlot {
-  file: File | null;
-  preview: string | null;
-}
+const maxFileValidation = (message: string) =>
+  z
+    .any()
+    .refine((file) => file instanceof File, { message })
+    .refine(
+      (file) => !(file instanceof File) || file.size <= 5 * 1024 * 1024,
+      { message: "File size exceeds 5MB limit. Please choose a smaller file." }
+    );
 
-const REQUIRED_LABELS = [
-  "Front smile — mouth wide open",
-  "Wide smile — mouth wide open",
-  "Lower arch — mouth wide open",
-];
+export const photoUploadSchema = z.object({
+  frontSmile: maxFileValidation("Front smile photo is required"),
+  wideSmile: maxFileValidation("Wide smile photo is required"),
+  upperArch: maxFileValidation("Upper arch photo is required"),
+  lowerArch: maxFileValidation("Lower arch photo is required"),
+  leftSide: maxFileValidation("Left side photo is required"),
+  rightSide: maxFileValidation("Right side photo is required"),
+});
 
-const RECOMMENDED_LABELS = [
-  "Upper arch — mouth wide open",
-  "Left side",
-  "Right side",
-];
+type PhotoUploadFormValues = z.infer<typeof photoUploadSchema>;
 
-function makeSlots(count: number): PhotoSlot[] {
-  return Array.from({ length: count }, () => ({ file: null, preview: null }));
-}
+const PHOTO_FIELDS = [
+  { name: "frontSmile", label: "Front Smile" },
+  { name: "wideSmile", label: "Wide Smile" },
+  { name: "upperArch", label: "Upper Arch" },
+  { name: "lowerArch", label: "Lower Arch" },
+  { name: "leftSide", label: "Left Side" },
+  { name: "rightSide", label: "Right Side" },
+] as const;
 
 interface PhotoUploadFormProps {
   errors?: Record<string, string>;
@@ -31,53 +46,73 @@ interface PhotoUploadFormProps {
 }
 
 export default function PhotoUploadForm({
-  errors = {},
+  errors: parentErrors = {},
   setErrors,
 }: PhotoUploadFormProps) {
   const [showGuidelines, setShowGuidelines] = useState(false);
-  const [requiredSlots, setRequiredSlots] = useState<PhotoSlot[]>(
-    makeSlots(REQUIRED_LABELS.length),
-  );
-  const [recommendedSlots, setRecommendedSlots] = useState<PhotoSlot[]>(
-    makeSlots(RECOMMENDED_LABELS.length),
-  );
+  const initialPhotos = getAllDentalPhotos();
 
-  const setSlot = (
-    setter: React.Dispatch<React.SetStateAction<PhotoSlot[]>>,
-    index: number,
-    file: File | null,
-  ) => {
+  const {
+    setValue,
+    watch,
+    formState: { errors: formErrors },
+  } = useForm<PhotoUploadFormValues>({
+    resolver: zodResolver(photoUploadSchema),
+    defaultValues: {
+      frontSmile: initialPhotos.frontSmile || null,
+      wideSmile: initialPhotos.wideSmile || null,
+      upperArch: initialPhotos.upperArch || null,
+      lowerArch: initialPhotos.lowerArch || null,
+      leftSide: initialPhotos.leftSide || null,
+      rightSide: initialPhotos.rightSide || null,
+    },
+    mode: "onChange",
+  });
+
+  const frontSmile = watch("frontSmile");
+  const wideSmile = watch("wideSmile");
+  const upperArch = watch("upperArch");
+  const lowerArch = watch("lowerArch");
+  const leftSide = watch("leftSide");
+  const rightSide = watch("rightSide");
+
+  useEffect(() => {
+    setDentalPhoto("frontSmile", frontSmile);
+    setDentalPhoto("wideSmile", wideSmile);
+    setDentalPhoto("upperArch", upperArch);
+    setDentalPhoto("lowerArch", lowerArch);
+    setDentalPhoto("leftSide", leftSide);
+    setDentalPhoto("rightSide", rightSide);
+  }, [frontSmile, wideSmile, upperArch, lowerArch, leftSide, rightSide]);
+
+  // Sync local errors to parent
+  useEffect(() => {
     if (setErrors) {
       setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy.file;
-        return copy;
+        const next = { ...prev };
+        PHOTO_FIELDS.forEach((field) => {
+          delete next[field.name];
+        });
+        Object.entries(formErrors).forEach(([key, err]) => {
+          if (err?.message) {
+            next[key] = String(err.message);
+          }
+        });
+        if (JSON.stringify(prev) !== JSON.stringify(next)) {
+          return next;
+        }
+        return prev;
       });
     }
-    setter((prev) => {
-      const next = [...prev];
-      if (prev[index].preview) {
-        URL.revokeObjectURL(prev[index].preview!);
-      }
-      next[index] = {
-        file,
-        preview: file ? URL.createObjectURL(file) : null,
-      };
-      return next;
-    });
-  };
+  }, [formErrors, setErrors]);
+
+  const activeErrors = { ...formErrors, ...parentErrors };
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
       <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-6">
         Upload your dental photos
       </h2>
-
-      {errors.file && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 font-semibold text-sm mb-6 animate-in fade-in slide-in-from-top-1">
-          {errors.file}
-        </div>
-      )}
 
       {/* Tip banner */}
       <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-lg mb-8">
@@ -100,42 +135,28 @@ export default function PhotoUploadForm({
         </button>
       </div>
 
-      {/* Required photos */}
+      {/* Photos upload area */}
       <div className="mb-8">
         <p className="text-[14px] font-semibold text-[#4B5563] mb-4">
-          Required photos <span className="text-red-500">*</span>
+          All 6 photos are required for a precise estimate <span className="text-red-500">*</span>
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {REQUIRED_LABELS.map((label, i) => (
-            <UploadCard
-              key={i}
-              label={label}
-              slot={requiredSlots[i]}
-              onFile={(file) => {
-                setSlot(setRequiredSlots, i, file);
-                if (i === 0) setFrontSmileFile(file);
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Recommended photos */}
-      <div>
-        <p className="text-[14px] font-semibold text-[#4B5563] mb-4">
-          Optional photos{" "}
-          <span className="text-[#9CA3AF] font-normal">
-            (recommended – improves estimate accuracy)
-          </span>
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {RECOMMENDED_LABELS.map((label, i) => (
-            <UploadCard
-              key={i}
-              label={label}
-              slot={recommendedSlots[i]}
-              onFile={(file) => setSlot(setRecommendedSlots, i, file)}
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {PHOTO_FIELDS.map((field) => (
+            <div key={field.name} className="flex flex-col gap-1.5">
+              <UploadCard
+                label={field.label}
+                value={watch(field.name)}
+                onChange={(file) => {
+                  setValue(field.name, file, { shouldValidate: true });
+                }}
+                error={activeErrors[field.name] ? String(activeErrors[field.name]?.message || activeErrors[field.name]) : undefined}
+              />
+              {activeErrors[field.name] && (
+                <p className="text-xs text-red-500 font-semibold mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                  {String(activeErrors[field.name]?.message || activeErrors[field.name])}
+                </p>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -152,26 +173,39 @@ export default function PhotoUploadForm({
 
 interface UploadCardProps {
   label: string;
-  slot: PhotoSlot;
-  onFile: (file: File | null) => void;
+  value: File | null;
+  onChange: (file: File | null) => void;
+  error?: string;
 }
 
-function UploadCard({ label, slot, onFile }: UploadCardProps) {
+function UploadCard({ label, value, onChange, error }: UploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (value instanceof File) {
+      const objectUrl = URL.createObjectURL(value);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setPreview(null);
+    }
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    onFile(file);
+    onChange(file);
   };
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onFile(null);
+    onChange(null);
     if (inputRef.current) inputRef.current.value = "";
   };
 
   return (
-    <div className="relative min-h-40 rounded-lg overflow-hidden border-2 border-dashed border-[#E5E7EB] hover:border-[#113254] transition-colors cursor-pointer group">
+    <div className={`relative min-h-40 rounded-lg overflow-hidden border-2 border-dashed transition-colors cursor-pointer group ${error ? "border-red-500 bg-red-50/10" : "border-[#E5E7EB] hover:border-[#113254]"
+      }`}>
       <input
         ref={inputRef}
         type="file"
@@ -180,11 +214,11 @@ function UploadCard({ label, slot, onFile }: UploadCardProps) {
         onChange={handleChange}
       />
 
-      {slot.preview ? (
+      {preview ? (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={slot.preview}
+            src={preview}
             alt={label}
             className="w-full h-full object-cover absolute inset-0"
           />
@@ -204,7 +238,7 @@ function UploadCard({ label, slot, onFile }: UploadCardProps) {
           onClick={() => inputRef.current?.click()}
           className="flex flex-col items-center justify-center gap-3 w-full h-full min-h-40 p-6 text-center"
         >
-          <Upload className="w-6 h-6 text-[#9CA3AF] group-hover:text-[#113254] transition-colors" />
+          <Upload className={`w-6 h-6 transition-colors ${error ? "text-red-400" : "text-[#9CA3AF] group-hover:text-[#113254]"}`} />
           <span className="text-[13px] font-semibold text-[#1A1A2E] leading-snug">
             {label}
           </span>

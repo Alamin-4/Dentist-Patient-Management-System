@@ -1,230 +1,240 @@
-import { useState, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useRef, useTransition } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { DEFAULT_FILTERS, DEFAULT_PRICE_RANGE, DEBOUNCE_DELAYS } from "./constants";
-import { cityOptions, countryOptions } from "../DentistAllComponents/types"; // ✅ Import করুন
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 
-export interface FilterState {
-    query: string;
-    city: string;
-    country: string;
-    procedure: string;
-    priceRange: [number, number];
-    showVerifiedOnly: boolean;
-    selectedRatings: number[];
-    selectedScoreRanges: string[];
-    selectedLanguages: string[];
-    selectedAvailabilityDate: string | null;
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function parseIntList(raw: string | null): number[] {
+    if (!raw) return [];
+    return raw.split(",").map(Number).filter((n) => !isNaN(n) && n > 0);
 }
+
+function parseStrList(raw: string | null): string[] {
+    if (!raw) return [];
+    return raw.split(",").map((s) => s.trim()).filter(Boolean);
+}
+
+function serializeList(list: (string | number)[]): string {
+    return list.join(",");
+}
+
+// ─── Hook ───────────────────────────────────────────────────────────────────
 
 export const useDentistFilters = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
+    const [, startTransition] = useTransition();
 
+    // Ref-based debounce timers — write directly to URL, never to state
+    const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const priceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // ── Procedures (single source of truth) ─────────────────────────────────
     const { data: globalProcedures } = useGlobalProcedures();
-
     const procedureOptions = useMemo(() => {
         if (!globalProcedures) return ["All Procedures"];
-        const list = Array.isArray(globalProcedures) ? globalProcedures : (globalProcedures as any).data || [];
-        const names = list.map((p: any) => p.name).filter((name: string) => !!name);
+        const list = Array.isArray(globalProcedures)
+            ? globalProcedures
+            : (globalProcedures as any).data || [];
+        const names = list.map((p: any) => p.name).filter(Boolean) as string[];
         return ["All Procedures", ...names];
     }, [globalProcedures]);
 
-    // Read initial values from URL search params
-    const initialQuery = searchParams.get("search") || "";
-    const initialCity = searchParams.get("city") || DEFAULT_FILTERS.city;
-    const initialCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
-    const initialProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
+    // ── Derived filter values — read directly from URL on every render ───────
+    const query = searchParams.get("search") ?? "";
+    const city = searchParams.get("city") ?? DEFAULT_FILTERS.city;
+    const country = searchParams.get("country") ?? DEFAULT_FILTERS.country;
+    const procedure = searchParams.get("procedure") ?? DEFAULT_FILTERS.procedure;
+    const showVerifiedOnly = searchParams.get("verified") === "true";
+    const page = Number(searchParams.get("page") ?? "1") || 1;
 
-    const initialMinPrice = searchParams.get("price[min]")
-        ? Number(searchParams.get("price[min]"))
-        : DEFAULT_PRICE_RANGE[0];
-    const initialMaxPrice = searchParams.get("price[max]")
-        ? Number(searchParams.get("price[max]"))
-        : DEFAULT_PRICE_RANGE[1];
+    const priceMinRaw = searchParams.get("price[min]");
+    const priceMaxRaw = searchParams.get("price[max]");
+    const priceMin = priceMinRaw !== null ? Number(priceMinRaw) : DEFAULT_PRICE_RANGE[0];
+    const priceMax = priceMaxRaw !== null ? Number(priceMaxRaw) : DEFAULT_PRICE_RANGE[1];
+    const priceRange: [number, number] = [
+        isNaN(priceMin) ? DEFAULT_PRICE_RANGE[0] : priceMin,
+        isNaN(priceMax) ? DEFAULT_PRICE_RANGE[1] : priceMax,
+    ];
 
-    const initialVerified = searchParams.get("verified") === "true";
-    const initialPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+    const selectedRatings = parseIntList(searchParams.get("ratings"));
+    const selectedScoreRanges = parseStrList(searchParams.get("rdv"));
+    const selectedLanguages = parseStrList(searchParams.get("langs"));
+    const selectedAvailabilityDate = searchParams.get("date") ?? null;
 
-    const [query, setQuery] = useState(initialQuery);
-    const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
-    const [city, setCity] = useState<string>(initialCity);
-    const [country, setCountry] = useState<string>(initialCountry);
-    const [procedure, setProcedure] = useState<string>(initialProcedure);
-    const [priceRange, setPriceRange] = useState<[number, number]>([initialMinPrice, initialMaxPrice]);
-    const [debouncedPrice, setDebouncedPrice] = useState<[number, number]>([initialMinPrice, initialMaxPrice]);
-    const [showVerifiedOnly, setShowVerifiedOnly] = useState(initialVerified);
-    const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-    const [selectedScoreRanges, setSelectedScoreRanges] = useState<string[]>([]);
-    const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-    const [selectedAvailabilityDate, setSelectedAvailabilityDate] = useState<string | null>(null);
-    const [page, setPage] = useState(initialPage);
+    // ── URL writer ───────────────────────────────────────────────────────────
+    /**
+     * Merges patch into current search params and replaces the URL.
+     * Pass `null` as a value to delete that key.
+     */
+    const setParams = useCallback(
+        (patch: Record<string, string | null>) => {
+            const next = new URLSearchParams(searchParams.toString());
+            for (const [key, value] of Object.entries(patch)) {
+                if (value === null || value === "") {
+                    next.delete(key);
+                } else {
+                    next.set(key, value);
+                }
+            }
+            // Reset page when any filter changes (unless page itself is being set)
+            if (!("page" in patch)) next.delete("page");
+            const qs = next.toString();
+            startTransition(() => {
+                router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+            });
+        },
+        [searchParams, router, pathname],
+    );
 
-    // Sync from URL search params back to state (for external changes, e.g. navbar search)
-    useEffect(() => {
-        const urlSearch = searchParams.get("search") || "";
-        const urlCity = searchParams.get("city") || DEFAULT_FILTERS.city;
-        const urlCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
-        const urlProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
-        const urlVerified = searchParams.get("verified") === "true";
-        const urlPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+    // ── Individual setters ───────────────────────────────────────────────────
 
-        const urlMinPrice = searchParams.get("price[min]")
-            ? Number(searchParams.get("price[min]"))
-            : DEFAULT_PRICE_RANGE[0];
-        const urlMaxPrice = searchParams.get("price[max]")
-            ? Number(searchParams.get("price[max]"))
-            : DEFAULT_PRICE_RANGE[1];
+    const setQuery = useCallback(
+        (value: string) => {
+            if (searchTimer.current) clearTimeout(searchTimer.current);
+            searchTimer.current = setTimeout(() => {
+                setParams({ search: value || null });
+            }, DEBOUNCE_DELAYS.SEARCH);
+        },
+        [setParams],
+    );
 
-        if (urlSearch !== query) {
-            setQuery(urlSearch);
-            setDebouncedQuery(urlSearch);
-        }
-        if (urlCity !== city) setCity(urlCity);
-        if (urlCountry !== country) setCountry(urlCountry);
-        if (urlProcedure !== procedure) setProcedure(urlProcedure);
-        if (urlVerified !== showVerifiedOnly) setShowVerifiedOnly(urlVerified);
-        if (urlPage !== page) setPage(urlPage);
+    const setPriceRange = useCallback(
+        (range: [number, number]) => {
+            if (priceTimer.current) clearTimeout(priceTimer.current);
+            priceTimer.current = setTimeout(() => {
+                setParams({
+                    "price[min]": range[0] !== DEFAULT_PRICE_RANGE[0] ? String(range[0]) : null,
+                    "price[max]": range[1] !== DEFAULT_PRICE_RANGE[1] ? String(range[1]) : null,
+                });
+            }, DEBOUNCE_DELAYS.PRICE);
+        },
+        [setParams],
+    );
 
-        if (urlMinPrice !== priceRange[0] || urlMaxPrice !== priceRange[1]) {
-            setPriceRange([urlMinPrice, urlMaxPrice]);
-            setDebouncedPrice([urlMinPrice, urlMaxPrice]);
-        }
-    }, [searchParams]);
+    const setCity = useCallback(
+        (value: string) => setParams({ city: value !== DEFAULT_FILTERS.city ? value : null }),
+        [setParams],
+    );
 
-    // Sync state changes to URL search params
-    useEffect(() => {
-        const params = new URLSearchParams();
-        if (debouncedQuery) params.set("search", debouncedQuery);
-        if (city !== DEFAULT_FILTERS.city) params.set("city", city);
-        if (country !== DEFAULT_FILTERS.country) params.set("country", country);
-        if (procedure !== DEFAULT_FILTERS.procedure) params.set("procedure", procedure);
-        if (showVerifiedOnly) params.set("verified", "true");
-        if (page > 1) params.set("page", page.toString());
+    const setCountry = useCallback(
+        (value: string) => {
+            // Reset city when country changes
+            setParams({
+                country: value !== DEFAULT_FILTERS.country ? value : null,
+                city: null,
+            });
+        },
+        [setParams],
+    );
 
-        if (debouncedPrice[0] !== DEFAULT_PRICE_RANGE[0]) {
-            params.set("price[min]", debouncedPrice[0].toString());
-        }
-        if (debouncedPrice[1] !== DEFAULT_PRICE_RANGE[1]) {
-            params.set("price[max]", debouncedPrice[1].toString());
-        }
+    const setProcedure = useCallback(
+        (value: string) =>
+            setParams({ procedure: value !== DEFAULT_FILTERS.procedure ? value : null }),
+        [setParams],
+    );
 
-        const queryStr = params.toString();
-        const nextUrl = queryStr ? `${pathname}?${queryStr}` : pathname;
+    const setShowVerifiedOnly = useCallback(
+        (value: boolean) => setParams({ verified: value ? "true" : null }),
+        [setParams],
+    );
 
-        router.replace(nextUrl, { scroll: false });
-    }, [debouncedQuery, city, country, procedure, showVerifiedOnly, page, debouncedPrice, router, pathname]);
+    const setPage = useCallback(
+        (p: number) => {
+            const next = new URLSearchParams(searchParams.toString());
+            if (p > 1) {
+                next.set("page", String(p));
+            } else {
+                next.delete("page");
+            }
+            startTransition(() => {
+                router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+            });
+        },
+        [searchParams, router, pathname],
+    );
 
-    // Debounce search query
-    useEffect(() => {
-        const t = setTimeout(() => {
-            setDebouncedQuery(query);
-            setPage(1);
-        }, DEBOUNCE_DELAYS.SEARCH);
-        return () => clearTimeout(t);
-    }, [query]);
+    const toggleRating = useCallback(
+        (rating: number) => {
+            const next = selectedRatings.includes(rating)
+                ? selectedRatings.filter((v) => v !== rating)
+                : [...selectedRatings, rating];
+            setParams({ ratings: next.length ? serializeList(next) : null });
+        },
+        [selectedRatings, setParams],
+    );
 
-    // Debounce price slider
-    useEffect(() => {
-        const t = setTimeout(() => setDebouncedPrice(priceRange), DEBOUNCE_DELAYS.PRICE);
-        return () => clearTimeout(t);
-    }, [priceRange]);
+    const toggleScore = useCallback(
+        (range: string) => {
+            const next = selectedScoreRanges.includes(range)
+                ? selectedScoreRanges.filter((v) => v !== range)
+                : [...selectedScoreRanges, range];
+            setParams({ rdv: next.length ? serializeList(next) : null });
+        },
+        [selectedScoreRanges, setParams],
+    );
 
-    // Reset page on filter change
-    useEffect(() => {
-        setPage(1);
-    }, [city, country, procedure, showVerifiedOnly, selectedScoreRanges, selectedRatings]);
+    const toggleLanguage = useCallback(
+        (lang: string) => {
+            const next = selectedLanguages.includes(lang)
+                ? selectedLanguages.filter((v) => v !== lang)
+                : [...selectedLanguages, lang];
+            setParams({ langs: next.length ? serializeList(next) : null });
+        },
+        [selectedLanguages, setParams],
+    );
 
-    // Derived numeric params
+    const setAvailabilityDate = useCallback(
+        (value: string | null) => setParams({ date: value }),
+        [setParams],
+    );
+
+    const resetAll = useCallback(() => {
+        startTransition(() => {
+            router.replace(pathname, { scroll: false });
+        });
+    }, [router, pathname]);
+
+    // ── RDV score min (derived from selected ranges) ─────────────────────────
     const rdvScoreMin = useMemo(() => {
         if (selectedScoreRanges.length === 0) return undefined;
-        const min = Math.min(...selectedScoreRanges.map((r) => parseInt(r.split("-")[0], 10)));
+        const min = Math.min(
+            ...selectedScoreRanges.map((r) => parseInt(r.split("-")[0], 10)),
+        );
         return min > 0 ? min : undefined;
     }, [selectedScoreRanges]);
 
-    // Build API params
+    // ── Server params (passed directly to API) ───────────────────────────────
     const serverParams = useMemo(() => {
         const params: Record<string, any> = { page };
-        if (debouncedQuery) params.search = debouncedQuery;
+        if (query) params.search = query;
         if (city !== DEFAULT_FILTERS.city) params.city = city;
         if (country !== DEFAULT_FILTERS.country) params.country = country;
         if (procedure !== DEFAULT_FILTERS.procedure) params.procedure = procedure;
         if (showVerifiedOnly) params.verified = "true";
         if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
-        if (selectedRatings.length > 0) {
-            params.ratings = selectedRatings.join(",");
-        }
-
-        // Pass price parameters to backend API
-        params.price = {
-            min: debouncedPrice[0],
-            max: debouncedPrice[1],
-        };
-
+        if (selectedRatings.length > 0) params.ratings = selectedRatings.join(",");
+        if (selectedLanguages.length > 0) params.languages = selectedLanguages.join(",");
+        params.price = { min: priceRange[0], max: priceRange[1] };
         return params;
-    }, [page, debouncedQuery, city, country, procedure, showVerifiedOnly, rdvScoreMin, selectedRatings, debouncedPrice]);
-
-    const toggleRating = (rating: number) =>
-        setSelectedRatings((prev) =>
-            prev.includes(rating) ? prev.filter((v) => v !== rating) : [...prev, rating],
-        );
-
-    const toggleScore = (range: string) =>
-        setSelectedScoreRanges((prev) =>
-            prev.includes(range) ? prev.filter((v) => v !== range) : [...prev, range],
-        );
-
-    const toggleLanguage = (lang: string) =>
-        setSelectedLanguages((prev) =>
-            prev.includes(lang) ? prev.filter((v) => v !== lang) : [...prev, lang],
-        );
-
-    const resetAll = () => {
-        setQuery("");
-        setDebouncedQuery("");
-        setCountry(DEFAULT_FILTERS.country);
-        setCity(DEFAULT_FILTERS.city);
-        setProcedure(DEFAULT_FILTERS.procedure);
-        setPriceRange(DEFAULT_PRICE_RANGE);
-        setDebouncedPrice(DEFAULT_PRICE_RANGE);
-        setSelectedRatings([]);
-        setSelectedScoreRanges([]);
-        setSelectedLanguages([]);
-        setSelectedAvailabilityDate(null);
-        setShowVerifiedOnly(false);
-        setPage(1);
-
-        router.replace(pathname, { scroll: false });
-    };
-
-    const sharedFilterProps = {
-        procedure,
-        onProcedureChange: (v: string) => setProcedure(v),
-        country,
-        onCountryChange: (v: string) => setCountry(v),
+    }, [
+        page,
+        query,
         city,
-        onCityChange: (v: string) => setCity(v),
-        priceRange,
-        onPriceRangeChange: setPriceRange,
-        selectedRatings,
-        onRatingToggle: toggleRating,
-        selectedScoreRanges,
-        onScoreToggle: toggleScore,
-        selectedLanguages,
-        onLanguageToggle: toggleLanguage,
-        selectedAvailabilityDate,
-        onAvailabilityDateChange: setSelectedAvailabilityDate,
+        country,
+        procedure,
         showVerifiedOnly,
-        onShowVerifiedOnlyChange: setShowVerifiedOnly,
-        onClear: resetAll,
-        availableProcedures: procedureOptions,
-        availableCountries: countryOptions,
-        availableCities: cityOptions,
-    };
+        rdvScoreMin,
+        selectedRatings,
+        selectedLanguages,
+        priceRange,
+    ]);
 
-    const hasActiveFilters = useMemo(() => {
-        return (
+    // ── hasActiveFilters ─────────────────────────────────────────────────────
+    const hasActiveFilters = useMemo(
+        () =>
             query.trim() !== "" ||
             city !== DEFAULT_FILTERS.city ||
             country !== DEFAULT_FILTERS.country ||
@@ -235,37 +245,70 @@ export const useDentistFilters = () => {
             selectedRatings.length > 0 ||
             selectedScoreRanges.length > 0 ||
             selectedLanguages.length > 0 ||
-            selectedAvailabilityDate !== null
-        );
-    }, [
+            selectedAvailabilityDate !== null,
+        [
+            query,
+            city,
+            country,
+            procedure,
+            priceRange,
+            showVerifiedOnly,
+            selectedRatings,
+            selectedScoreRanges,
+            selectedLanguages,
+            selectedAvailabilityDate,
+        ],
+    );
+
+    // ── Shared props for FilterSidebar / FilterSheet ─────────────────────────
+    const sharedFilterProps = {
+        procedure,
+        onProcedureChange: setProcedure,
+        country,
+        onCountryChange: setCountry,
+        city,
+        onCityChange: setCity,
+        priceRange,
+        onPriceRangeChange: setPriceRange,
+        selectedRatings,
+        onRatingToggle: toggleRating,
+        selectedScoreRanges,
+        onScoreToggle: toggleScore,
+        selectedLanguages,
+        onLanguageToggle: toggleLanguage,
+        selectedAvailabilityDate,
+        onAvailabilityDateChange: setAvailabilityDate,
+        showVerifiedOnly,
+        onShowVerifiedOnlyChange: setShowVerifiedOnly,
+        onClear: resetAll,
+        availableProcedures: procedureOptions,
+        // kept for interface compat with FilterSheet
+        availableCountries: [] as string[],
+        availableCities: [] as string[],
+    };
+
+    return {
+        // derived values (read from URL)
         query,
         city,
         country,
         procedure,
         priceRange,
+        debouncedPrice: priceRange, // no separate debounced copy needed
         showVerifiedOnly,
         selectedRatings,
         selectedScoreRanges,
         selectedLanguages,
         selectedAvailabilityDate,
-    ]);
-
-    return {
-        query,
-        setQuery,
-        debouncedQuery,
-        city,
-        country,
-        procedure,
-        priceRange,
-        debouncedPrice,
-        showVerifiedOnly,
-        selectedLanguages,
         page,
+        // setters
+        setQuery,
         setPage,
+        resetAll,
+        // computed
         serverParams,
         hasActiveFilters,
-        resetAll,
+        procedureOptions,
         sharedFilterProps,
     };
 };

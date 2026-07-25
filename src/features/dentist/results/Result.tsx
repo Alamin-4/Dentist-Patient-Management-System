@@ -216,13 +216,11 @@ export default function Result() {
     let afterUrl = "";
 
     try {
-      // 1. Upload Before Image
       toast.loading("Uploading before image...", { id: "upload-progress" });
       const beforeUploadRes = await apiClient.files.upload(data.beforeImage);
       beforeUrl = beforeUploadRes?.data?.secure_url || beforeUploadRes?.secure_url;
       if (!beforeUrl) throw new Error("Failed to upload before image");
 
-      // 2. Upload After Image
       toast.loading("Uploading after image...", { id: "upload-progress" });
       const afterUploadRes = await apiClient.files.upload(data.afterImage);
       afterUrl = afterUploadRes?.data?.secure_url || afterUploadRes?.secure_url;
@@ -230,7 +228,6 @@ export default function Result() {
 
       toast.loading("Saving result details...", { id: "upload-progress" });
 
-      // 3. Submit payload
       await createResultMutation.mutateAsync({
         title: data.title,
         patientName: data.patientName,
@@ -325,7 +322,9 @@ export default function Result() {
                       </button>
                     </div>
                   ) : (
-                    <label className="cursor-pointer border-2 border-dashed border-slate-200 rounded-lg h-44 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors">
+                    <label className={`cursor-pointer border-2 border-dashed rounded-lg h-44 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${
+                      errors.beforeImage ? "border-red-400 bg-red-50/5" : "border-slate-200"
+                    }`}>
                       <Upload className="size-6 text-slate-400" />
                       <span className="text-sm font-semibold text-[#1A1A2E]">
                         Before Image
@@ -367,7 +366,9 @@ export default function Result() {
                       </button>
                     </div>
                   ) : (
-                    <label className="cursor-pointer border-2 border-dashed border-slate-200 rounded-lg h-44 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors">
+                    <label className={`cursor-pointer border-2 border-dashed rounded-lg h-44 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${
+                      errors.afterImage ? "border-red-400 bg-red-50/5" : "border-slate-200"
+                    }`}>
                       <Upload className="size-6 text-slate-400" />
                       <span className="text-sm font-semibold text-[#1A1A2E]">
                         After Image
@@ -396,7 +397,9 @@ export default function Result() {
                 </label>
                 <select
                   {...register("patientName")}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground"
+                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground ${
+                    errors.patientName ? "border-red-500" : "border-slate-200"
+                  }`}
                 >
                   <option value="">Select Patient</option>
                   {patients.map((pat: any) => (
@@ -419,7 +422,9 @@ export default function Result() {
                 <select
                   {...register("title")}
                   disabled={!selectedPatientName}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${
+                    errors.title ? "border-red-500" : "border-slate-200"
+                  }`}
                 >
                   {!selectedPatientName ? (
                     <option value="">Select patient first</option>
@@ -448,7 +453,9 @@ export default function Result() {
                 <select
                   {...register("date")}
                   disabled={!selectedPatientName}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${
+                    errors.date ? "border-red-500" : "border-slate-200"
+                  }`}
                 >
                   {!selectedPatientName ? (
                     <option value="">Select patient first</option>
@@ -477,7 +484,9 @@ export default function Result() {
                 <select
                   {...register("location")}
                   disabled={!selectedPatientName}
-                  className="w-full h-12 rounded-lg border border-slate-200 px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${
+                    errors.location ? "border-red-500" : "border-slate-200"
+                  }`}
                 >
                   {!selectedPatientName ? (
                     <option value="">Select patient first</option>

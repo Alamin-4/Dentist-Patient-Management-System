@@ -29,12 +29,12 @@ export default function EmptyState({
                     <button
                         type="button"
                         onClick={onClearFilters}
-                        className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-[13px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                        className="rounded-lg border-4 border-slate-200 bg-white px-5 py-2.5 text-[13px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500/20"
                     >
                         Clear filters
                     </button>
                 )}
-                
+
             </div>
         </div>
     );

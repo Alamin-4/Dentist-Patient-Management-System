@@ -19,6 +19,7 @@ interface SearchableDropdownProps {
   triggerClassName?: string;
   allowClear?: boolean;
   clearValue?: string;
+  position?: "top" | "bottom";
 }
 
 export default function SearchableDropdown({
@@ -31,6 +32,7 @@ export default function SearchableDropdown({
   triggerClassName,
   allowClear = true,
   clearValue = "",
+  position = "bottom",
 }: SearchableDropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -133,7 +135,14 @@ export default function SearchableDropdown({
 
       {/* Dropdown Content */}
       {isOpen && (
-        <div className="absolute z-50 mt-1.5 w-full rounded-lg border border-slate-100 bg-white p-1.5 shadow-lg animate-in fade-in-50 slide-in-from-top-1 duration-150">
+        <div
+          className={cn(
+            "absolute z-50 w-full rounded-lg border border-slate-100 bg-white p-1.5 shadow-lg animate-in fade-in-50 duration-150",
+            position === "top"
+              ? "bottom-full mb-1.5 slide-in-from-bottom-1"
+              : "top-full mt-1.5 slide-in-from-top-1"
+          )}
+        >
           {/* Search Box */}
           <div className="relative flex items-center border-b border-slate-100 pb-1.5 mb-1 px-1">
             <Search size={14} className="absolute left-2.5 text-slate-400" />

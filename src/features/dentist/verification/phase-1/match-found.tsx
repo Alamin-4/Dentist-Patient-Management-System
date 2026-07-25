@@ -5,6 +5,8 @@ import { UploadCloud, FileText, Loader2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 interface MatchProps {
   status: "match" | "no-match";
   doctorName?: string;
@@ -17,7 +19,7 @@ interface MatchProps {
   } | null;
   onConfirm?: () => void;
   onReject?: () => void;
-  onFileSelect?: (file: File) => void;
+  onFileSelect?: (file: File | null) => void;
   existingFileUrl?: string;
   error?: string;
 }
@@ -33,24 +35,42 @@ export function VerificationResult({
   existingFileUrl,
   error,
 }: MatchProps) {
+  const [localError, setLocalError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      onFileSelect?.(file);
-      setIsUploading(true);
-      setTimeout(() => setIsUploading(false), 800);
+    if (!file) return;
+
+    e.target.value = "";
+
+    if (file.size > MAX_FILE_SIZE) {
+      setLocalError("File size is too large. Maximum allowed size is 5MB.");
+      onFileSelect?.(null);
+      return; // Exit immediately
     }
+
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      setLocalError("Only PDF documents are allowed. Image files are not accepted here.");
+      onFileSelect?.(null);
+      return; // Exit immediately
+    }
+
+    setSelectedFile(file);
+    onFileSelect?.(file);
+
+    setIsUploading(true);
+    setTimeout(() => setIsUploading(false), 800);
   };
 
   const removeFile = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedFile(null);
+    setLocalError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    onFileSelect?.(null);
   };
 
   const getFileNameFromUrl = (url: string) => {
@@ -82,7 +102,6 @@ export function VerificationResult({
         <div className="mt-5 flex flex-col gap-4 rounded-lg border border-success-100 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/doctor-placeholder.png" alt="Doctor" className="h-full w-full object-cover" />
             </div>
             <div className="space-y-0.5">
@@ -105,6 +124,7 @@ export function VerificationResult({
   }
 
   const hasExistingFile = !!existingFileUrl && !selectedFile;
+  const activeError = localError || error;
 
   return (
     <>
@@ -119,32 +139,28 @@ export function VerificationResult({
             onClick={() => fileInputRef.current?.click()}
             className={cn(
               "group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-card p-8 transition-all hover:border-primary hover:bg-background sm:p-10",
-              error ? "border-red-500 bg-red-50/10" : "border-border"
+              activeError ? "border-red-500 bg-red-50/10" : "border-border"
             )}
           >
             <div className="mb-3 rounded-full bg-background p-3 shadow-sm transition-all group-hover:scale-110 group-hover:bg-card">
               <UploadCloud className="h-6 w-6 text-primary" />
             </div>
-            <p className="font-semibold text-foreground">
-              Upload Registration Certificate
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              PDF, PNG or JPG (Max 5MB)
-            </p>
+            <p className="font-semibold text-foreground">Upload Registration Certificate</p>
+            <p className="mt-1 text-xs text-muted-foreground">PDF only (Max 5MB)</p>
 
             <input
               type="file"
               className="hidden"
               ref={fileInputRef}
               onChange={handleFileChange}
-              accept=".pdf,.jpg,.jpeg,.png"
+              accept="application/pdf"
             />
           </div>
         </div>
       ) : (
         <div className={cn(
           "mt-6 flex items-center justify-between rounded-lg border bg-card p-4 animate-in fade-in slide-in-from-bottom-2",
-          error ? "border-red-500 bg-red-50/10" : "border-border"
+          activeError ? "border-red-500 bg-red-50/10" : "border-border"
         )}>
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-warning-50">
@@ -177,9 +193,9 @@ export function VerificationResult({
           )}
         </div>
       )}
-      {error && (
+      {activeError && (
         <p className="text-xs text-red-500 font-semibold mt-2">
-          {error}
+          {activeError}
         </p>
       )}
     </>

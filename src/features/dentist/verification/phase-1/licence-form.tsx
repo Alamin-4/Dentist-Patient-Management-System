@@ -28,6 +28,7 @@ interface LicenceFormProps {
   isVerifying: boolean;
   serverErrors?: Record<string, string>;
   submissionAttempted?: boolean;
+  onFormChange?: () => void;
 }
 
 export default function LicenceForm({
@@ -37,6 +38,7 @@ export default function LicenceForm({
   isVerifying,
   serverErrors,
   submissionAttempted,
+  onFormChange,
 }: LicenceFormProps) {
   const [countriesList, setCountriesList] = useState<CSCCountry[]>([]);
   const [citiesList, setCitiesList] = useState<CSCCity[]>([]);
@@ -44,6 +46,7 @@ export default function LicenceForm({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: {
       country: defaultValues?.country || "",
       city: defaultValues?.city || "",
@@ -55,8 +58,14 @@ export default function LicenceForm({
   const { formState: { errors } } = form;
 
   const selectedCountry = form.watch("country");
+  const watchAll = form.watch();
 
-  // Load countries on mount
+  useEffect(() => {
+    if (form.formState.isDirty) {
+      onFormChange?.();
+    }
+  }, [watchAll.country, watchAll.city, watchAll.authority, watchAll.regNo, form.formState.isDirty, onFormChange]);
+
   useEffect(() => {
     async function loadCountries() {
       setLoadingLocations(true);
@@ -67,7 +76,6 @@ export default function LicenceForm({
     loadCountries();
   }, []);
 
-  // Fetch cities when selected country changes
   useEffect(() => {
     if (!selectedCountry) {
       setCitiesList([]);
@@ -89,7 +97,6 @@ export default function LicenceForm({
     }
   }, [selectedCountry, countriesList]);
 
-  // Handle defaults resetting
   useEffect(() => {
     if (defaultValues) {
       form.reset({
@@ -101,9 +108,10 @@ export default function LicenceForm({
     }
   }, [defaultValues]);
 
-  // Handle server errors
   useEffect(() => {
-    if (serverErrors) {
+    if (serverErrors && Object.keys(serverErrors).length > 0) {
+      form.clearErrors();
+
       Object.entries(serverErrors).forEach(([field, msg]) => {
         let formField: "country" | "city" | "authority" | "regNo" | null = null;
         if (field === "country") formField = "country";
@@ -112,26 +120,26 @@ export default function LicenceForm({
         else if (field === "registrationNumber" || field === "regNo") formField = "regNo";
 
         if (formField) {
-          form.setError(formField, {
-            type: "server",
-            message: msg,
-          });
+          form.setError(formField, { type: "server", message: msg });
         }
       });
     }
-  }, [serverErrors]);
+  }, [serverErrors, form]);
 
-  // Automatically trigger verification when parent form submission is attempted
+  const handleFormSubmit = (data: z.infer<typeof formSchema>) => {
+    form.reset(data);
+    onVerify(data);
+  };
+
   useEffect(() => {
     if (submissionAttempted) {
-      form.handleSubmit(onVerify)();
+      form.handleSubmit(handleFormSubmit)();
     }
   }, [submissionAttempted]);
 
   return (
-    <form onSubmit={form.handleSubmit(onVerify)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* Country Select */}
         <div className="space-y-2">
           <Label className="font-semibold text-muted-foreground">Country</Label>
           <Controller
@@ -158,7 +166,6 @@ export default function LicenceForm({
           )}
         </div>
 
-        {/* City Select */}
         <div className="space-y-2">
           <Label className="font-semibold text-muted-foreground">City</Label>
           <Controller
@@ -182,7 +189,6 @@ export default function LicenceForm({
           )}
         </div>
 
-        {/* Registration Authority (Manual Input) */}
         <div className="space-y-2">
           <Label className="font-semibold text-muted-foreground">
             Registration Authority
@@ -200,7 +206,6 @@ export default function LicenceForm({
           )}
         </div>
 
-        {/* Registration Number */}
         <div className="space-y-2">
           <Label className="font-semibold text-muted-foreground">
             Registration No

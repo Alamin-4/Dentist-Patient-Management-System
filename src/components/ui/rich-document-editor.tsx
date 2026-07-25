@@ -124,7 +124,7 @@ export function RichDocumentEditor({
     }
     try {
       document.execCommand("styleWithCSS", false, "true");
-    } catch (e) {}
+    } catch (e) { }
 
     if (!document.execCommand("hiliteColor", false, e.target.value)) {
       document.execCommand("backColor", false, e.target.value);
@@ -294,10 +294,10 @@ export function RichDocumentEditor({
 
         <div className="flex-1 w-full border border-slate-200 rounded-sm flex justify-center min-h-75">
           <div className="w-full max-w-full bg-white flex rounded-sm flex-col overflow-hidden">
-            
+
             {activeTab === "edit" && !readOnly && (
               <div className="bg-slate-50 border-b border-slate-200 p-2.5 flex flex-wrap items-center gap-1 md:gap-2">
-                
+
                 <select
                   onChange={(e) => handleBlockFormat(e.target.value)}
                   defaultValue="p"

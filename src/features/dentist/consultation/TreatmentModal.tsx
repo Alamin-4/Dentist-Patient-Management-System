@@ -25,11 +25,11 @@ import { useProposeTreatmentPlan } from "@/hooks/treatment-plan/useTreatmentPlan
 const formSchema = z.object({
   procedures: z.array(
     z.object({
-      name: z.string().min(1, "Required"),
-      price: z.coerce.number().min(0),
+      name: z.string().min(1, "Procedure name is required"),
+      price: z.coerce.number().min(0, "Price must be 0 or greater"),
       notes: z.string().optional(),
     }),
-  ),
+  ).min(1, "At least one procedure is required"),
   additionalInfo: z.string().optional(),
 });
 
@@ -64,12 +64,12 @@ export default function CreateTreatmentPlanModal({
         price: Number(item.unitPrice),
         notes: item.notes || "",
       })) || [
-        {
-          name: consultation.intake?.procedureNames?.[0] || "",
-          price: 0,
-          notes: "",
-        }
-      ];
+          {
+            name: "",
+            price: 0,
+            notes: "",
+          }
+        ];
 
       reset({
         procedures: defaultProcedures,
@@ -163,7 +163,6 @@ export default function CreateTreatmentPlanModal({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                  {/* Treatment Details with Vertical Dividers */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 items-center w-full">
                     <div className="space-y-1">
                       <p className="text-xs text-[#777779] font-medium">
@@ -237,8 +236,14 @@ export default function CreateTreatmentPlanModal({
                         </label>
                         <Input
                           {...register(`procedures.${index}.name`)}
-                          className="h-15 text-sm text-[#181D27] border-slate-200 rounded-lg bg-white focus-visible:ring-0"
+                          className={`h-15 text-sm text-[#181D27] border-slate-200 rounded-lg bg-white focus-visible:ring-0 ${errors.procedures?.[index]?.name ? "border-red-500 focus-visible:ring-red-100" : ""
+                            }`}
                         />
+                        {errors.procedures?.[index]?.name && (
+                          <p className="text-xs text-red-500 font-semibold mt-1">
+                            {errors.procedures[index]?.name?.message}
+                          </p>
+                        )}
                       </div>
 
                       <div className="w-full md:w-[50%] space-y-2">
@@ -254,9 +259,15 @@ export default function CreateTreatmentPlanModal({
                             min={0}
                             onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                             {...register(`procedures.${index}.price`)}
-                            className="h-15 pl-12 text-sm text-[#181D27] border-slate-200 overflow-hidden rounded-lg focus-visible:ring-0"
+                            className={`h-15 pl-12 text-sm text-[#181D27] border-slate-200 overflow-hidden rounded-lg focus-visible:ring-0 ${errors.procedures?.[index]?.price ? "border-red-500 focus-visible:ring-red-100" : ""
+                              }`}
                           />
                         </div>
+                        {errors.procedures?.[index]?.price && (
+                          <p className="text-xs text-red-500 font-semibold mt-1">
+                            {errors.procedures[index]?.price?.message}
+                          </p>
+                        )}
                       </div>
 
                       <div className="w-full md:grow space-y-2">

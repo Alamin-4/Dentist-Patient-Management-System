@@ -1,29 +1,20 @@
-"use client";
-
-import { Star, Pen, Loader2, MessageSquare } from "lucide-react";
-import { useMe } from "@/hooks/auth/useAuth";
-import { useStateContext } from "@/providers/StateProvider";
+import { Star, Loader2, MessageSquare } from "lucide-react";
 import { useDentistDirectoryReviews } from "@/hooks/dentist/useDentistDirectory";
-import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 
 export default function ReviewSection({
   slug,
   dentist,
-  setIsReviewModalOpen,
   onSeeAllReviews,
 }: {
   slug: string;
   dentist: any;
   googleRating?: number;
   googleReviewCount?: number;
-  isReviewModalOpen: boolean;
-  setIsReviewModalOpen: (open: boolean) => void;
+  isReviewModalOpen?: boolean;
+  setIsReviewModalOpen?: (open: boolean) => void;
   onSeeAllReviews?: () => void;
 }) {
-  const { user } = useMe();
-  const isOwnProfile = user && (user.id === dentist.claimedByUserId || (dentist.userId && user.id === dentist.userId));
-  const { setShowSigninModal } = useStateContext();
   const { data: reviewsData, isLoading } = useDentistDirectoryReviews(slug);
 
   const reviewsList = reviewsData?.data?.reviews || [];
@@ -38,33 +29,12 @@ export default function ReviewSection({
     ? reviewsList.reduce((acc: number, r: any) => acc + r.rating, 0) / reviewsList.length
     : 0.0;
 
-  const handleWriteReviewClick = () => {
-    if (!user) {
-      toast.error("Please sign in to write a review.");
-      setShowSigninModal(true);
-      return;
-    }
-    if (isOwnProfile) {
-      toast.error("Dentists cannot write a review on their own profile.");
-      return;
-    }
-    setIsReviewModalOpen(true);
-  };
-
   return (
     <section id="reviews" className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <h2 className="text-xl lg:text-2xl font-bold text-[#033355]">
           Reviews & Ratings
         </h2>
-        {!isOwnProfile && (
-          <Button
-            onClick={handleWriteReviewClick}
-            className="bg-[#0E3E65] hover:bg-[#002850] text-white font-semibold flex items-center gap-2 self-start sm:self-auto"
-          >
-            <Pen className="size-4" /> Write a Review
-          </Button>
-        )}
       </div>
 
       {isLoading ? (
@@ -74,9 +44,7 @@ export default function ReviewSection({
         </div>
       ) : (
         <div className="space-y-8">
-          {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8 border-b border-slate-200">
-            {/* Left Card: Average score */}
             <div className="bg-slate-50 rounded-xl p-5 text-center flex flex-col justify-center items-center border border-slate-100">
               <span className="text-4xl lg:text-5xl font-extrabold text-[#033355]">
                 {averageRating.toFixed(1)}
@@ -95,7 +63,6 @@ export default function ReviewSection({
               </span>
             </div>
 
-            {/* Right Card: Metrics details */}
             <div className="md:col-span-2 space-y-3 flex flex-col justify-center">
               <div className="flex justify-between items-center text-sm font-semibold text-slate-705">
                 <span className="text-[#6B7280]">Communication</span>
@@ -147,7 +114,6 @@ export default function ReviewSection({
             </div>
           </div>
 
-          {/* Reviews List */}
           {reviewsList.length === 0 ? (
             <div className="py-8 text-center space-y-2">
               <div className="mx-auto size-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
