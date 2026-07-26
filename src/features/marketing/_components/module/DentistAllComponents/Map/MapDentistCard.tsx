@@ -11,6 +11,7 @@ import type { Dentist } from "../types";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
+import toast from "react-hot-toast";
 
 type MapDentistCardProps = {
   dentist: Dentist;
@@ -32,6 +33,10 @@ export default function MapDentistCard({
   } = useStateContext();
 
   const handleBookConsultation = () => {
+    if (user?.role === "DENTIST") {
+      toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
+      return;
+    }
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("book");
@@ -49,6 +54,10 @@ export default function MapDentistCard({
   };
 
   const handleRequestConsultation = () => {
+    if (user?.role === "DENTIST") {
+      toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
+      return;
+    }
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("request");

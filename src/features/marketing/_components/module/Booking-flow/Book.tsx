@@ -388,7 +388,9 @@ export default function IntakeModal() {
   };
 
   const handleClose = () => {
-    setShowBookingModal(null);
+    if (showBookingModal === "book") {
+      setShowBookingModal(null);
+    }
   };
 
   const handleGoToBookings = () => {

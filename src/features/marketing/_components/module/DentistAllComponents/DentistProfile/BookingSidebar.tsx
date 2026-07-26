@@ -61,6 +61,11 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
   }, [searchParams, router, dentist.slug]);
 
   const initiateBooking = (mode: "book" | "request") => {
+    if (user?.role === "DENTIST") {
+      toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
+      return;
+    }
+
     if (isOwnProfile) {
       toast.error("Dentists cannot book consultations on their own profiles.");
       return;

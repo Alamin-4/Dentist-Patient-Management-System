@@ -19,7 +19,11 @@ export default function StartBookingModal() {
   return (
     <Dialog
       open={showBookingModal === "startBooking"}
-      onOpenChange={() => setShowBookingModal(null)}
+      onOpenChange={(open) => {
+        if (!open && showBookingModal === "startBooking") {
+          setShowBookingModal(null);
+        }
+      }}
     >
       <DialogContent
         onPointerDownOutside={(e) => e.preventDefault()}
