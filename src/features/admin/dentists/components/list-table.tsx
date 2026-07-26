@@ -143,7 +143,6 @@ export function DentistsTable({
                     />
                   </td>
 
-                  {/* Dentist Profile */}
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
                       <Avatar initials={dentist.initials} color={dentist.avatar_color} />
@@ -158,19 +157,16 @@ export function DentistsTable({
                     </div>
                   </td>
 
-                  {/* Specialty */}
                   <td className="px-4 py-3.5">
                     <span className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600">
                       {dentist.specialty}
                     </span>
                   </td>
 
-                  {/* Location */}
                   <td className="px-4 py-3.5 text-sm text-gray-600">
                     {dentist.location}
                   </td>
 
-                  {/* Status */}
                   <td className="px-4 py-3.5">
                     <span
                       className={cn(
@@ -188,7 +184,6 @@ export function DentistsTable({
                     </span>
                   </td>
 
-                  {/* Rating */}
                   <td className="px-4 py-3.5">
                     {dentist.rating != null && dentist.review_count != null ? (
                       <StarRating rating={dentist.rating} count={dentist.review_count} />
@@ -197,7 +192,6 @@ export function DentistsTable({
                     )}
                   </td>
 
-                  {/* Bookings */}
                   <td className="px-4 py-3.5 text-sm text-gray-600">
                     {dentist.bookings != null ? (
                       dentist.bookings.toLocaleString()
@@ -206,7 +200,6 @@ export function DentistsTable({
                     )}
                   </td>
 
-                  {/* Membership */}
                   <td className="px-4 py-3.5 text-sm">
                     {(dentist as any).membershipPlan ? (
                       <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 uppercase">
@@ -217,12 +210,10 @@ export function DentistsTable({
                     )}
                   </td>
 
-                  {/* Joined */}
                   <td className="px-4 py-3.5 text-sm text-gray-600">
                     {dentist.joined}
                   </td>
 
-                  {/* Action Dropdown Menu */}
                   <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
                     <ActionMenu
                       dentist={dentist}
