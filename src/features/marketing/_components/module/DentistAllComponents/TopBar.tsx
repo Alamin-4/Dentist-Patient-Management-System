@@ -36,18 +36,21 @@ export default function TopBar({
 }: TopBarProps) {
   const { user } = useMe();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const searchParams = useSearchParams();
   const src = searchParams.get("src") || "";
   const [localQuery, setLocalQuery] = useState(src === "top" ? query : "");
   const showJoinButton = !user || user.role !== "DENTIST";
 
   useEffect(() => {
+    if (isFocused) return;
+
     if (src === "top") {
       setLocalQuery(query);
     } else {
       setLocalQuery("");
     }
-  }, [query, src]);
+  }, [query, src, isFocused]);
 
   const handleQueryInputChange = (val: string) => {
     setLocalQuery(val);
@@ -89,6 +92,8 @@ export default function TopBar({
           <div className="relative flex-1">
             <input
               value={localQuery}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               onChange={(e) => handleQueryInputChange(e.target.value)}
               placeholder="Search Dentist"
               className="h-14 w-full rounded-lg border border-slate-200 bg-[#F8F9FB] pl-5 pr-12 text-[14px] font-medium text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-100"

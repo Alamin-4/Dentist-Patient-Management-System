@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -23,31 +23,11 @@ function SearchInputContent({
     const pathname = usePathname();
 
     const [localValue, setLocalValue] = useState(propValue || "");
-    const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    const setUrlSearch = (value: string) => {
-        if (searchTimer.current) clearTimeout(searchTimer.current);
-        searchTimer.current = setTimeout(() => {
-            const params = new URLSearchParams(window.location.search);
-            if (value) {
-                params.set("search", value);
-                params.set("src", "nav");
-            } else {
-                params.delete("search");
-                params.delete("src");
-            }
-            params.delete("page");
-            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-        }, 500);
-    };
+    const [isFocused, setIsFocused] = useState(false);
 
     useEffect(() => {
-        return () => {
-            if (searchTimer.current) clearTimeout(searchTimer.current);
-        };
-    }, []);
+        if (isFocused) return;
 
-    useEffect(() => {
         const urlSearch = searchParams.get("search") || "";
         const src = searchParams.get("src") || "";
 
@@ -61,7 +41,7 @@ function SearchInputContent({
             setLocalValue(urlSearch);
             propOnChange(urlSearch);
         }
-    }, [searchParams, pathname]);
+    }, [searchParams, pathname, isFocused]);
 
     useEffect(() => {
         if (pathname === "/find-dentists") {
@@ -72,7 +52,6 @@ function SearchInputContent({
 
     const handleSearchSubmit = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        if (searchTimer.current) clearTimeout(searchTimer.current);
 
         const params = new URLSearchParams(searchParams.toString());
         const textQuery = localValue.trim();
@@ -94,7 +73,6 @@ function SearchInputContent({
     };
 
     const handleClear = () => {
-        if (searchTimer.current) clearTimeout(searchTimer.current);
         setLocalValue("");
         if (pathname !== "/find-dentists") {
             propOnChange("");
@@ -119,13 +97,9 @@ function SearchInputContent({
                 type="text"
                 placeholder={placeholder}
                 value={localValue}
-                onChange={(e) => {
-                    const val = e.target.value;
-                    setLocalValue(val);
-                    if (pathname === "/find-dentists") {
-                        setUrlSearch(val);
-                    }
-                }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                onChange={(e) => setLocalValue(e.target.value)}
                 className={cn(
                     "w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-4 pr-20 text-sm outline-none transition-all duration-200",
                     "focus:bg-white focus:border-[#10436B] focus:ring-4 focus:ring-[#10436B]/10 focus:shadow-sm",
