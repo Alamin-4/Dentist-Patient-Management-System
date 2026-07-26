@@ -8,11 +8,16 @@ import PaymentInfo from "./components/payment-info";
 import PersonalInfo from "./components/personal-info";
 import { useGetMe } from "@/hooks/user/useUser";
 import { apiClient } from "@/api/client";
+import { useDentistProgress } from "@/hooks/dentist/useDentist";
 
 export default function ProfileAndSettings() {
-  const { data: response, isLoading, refetch } = useGetMe();
+  const { data: response, isLoading: isMeLoading, refetch } = useGetMe();
   const user = (response as any)?.data || response;
   const searchParams = useSearchParams();
+
+  const { data: progressResponse, isLoading: isProgressLoading } = useDentistProgress();
+  const progress = progressResponse?.data || progressResponse;
+  const isVerified = !!progress?.is_verified;
 
   const connectSuccess = searchParams.get("connect_success");
   const connectRefresh = searchParams.get("connect_refresh");
@@ -40,6 +45,7 @@ export default function ProfileAndSettings() {
   }, [connectSuccess, connectRefresh, refetch]);
 
   const isConnected = !!user?.dentist?.stripeConnectOnboarded;
+  const isLoading = isMeLoading;
 
   return (
     <div className="space-y-6 lg:space-y-8">
@@ -67,6 +73,8 @@ export default function ProfileAndSettings() {
               chargesEnabled={!!user?.dentist?.stripeConnectChargesEnabled}
               payoutsEnabled={!!user?.dentist?.stripeConnectPayoutsEnabled}
               refetch={refetch}
+              isVerified={isVerified}
+              isProgressLoading={isProgressLoading}
             />
           )}
         </div>
