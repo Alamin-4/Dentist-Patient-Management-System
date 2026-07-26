@@ -26,7 +26,7 @@ interface VerifyOtpFormProps {
 }
 
 export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
-  const [resendCountdown, setResendCountdown] = useState(60);
+  const [resendCountdown, setResendCountdown] = useState(0);
 
   const router = useRouter();
   const pathName = usePathname();
