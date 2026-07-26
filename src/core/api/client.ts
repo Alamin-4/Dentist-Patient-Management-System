@@ -250,12 +250,12 @@ export const apiClient = {
     professionalDetails: async (payload: any) => {
       const response = await api.post(endpoints.dentists.professionalData, {
         legalName: payload.full_name || payload.legal_name || payload.legalName,
-        yearsOfExperience: payload.experience_years !== undefined 
-          ? Number(payload.experience_years) 
-          : payload.years_of_experience !== undefined 
-            ? Number(payload.years_of_experience) 
-            : payload.yearsOfExperience !== undefined 
-              ? Number(payload.yearsOfExperience) 
+        yearsOfExperience: payload.experience_years !== undefined
+          ? Number(payload.experience_years)
+          : payload.years_of_experience !== undefined
+            ? Number(payload.years_of_experience)
+            : payload.yearsOfExperience !== undefined
+              ? Number(payload.yearsOfExperience)
               : undefined,
         primarySpecialty: payload.specialty || payload.primary_specialty || payload.primarySpecialty,
         country: payload.country,
@@ -380,6 +380,7 @@ export const apiClient = {
       const response = await api.get(endpoints.procedures.global, {
         params: search ? { search } : undefined,
       });
+
       return response.data;
     },
     getGlobalBySlug: async (slug: string) => {

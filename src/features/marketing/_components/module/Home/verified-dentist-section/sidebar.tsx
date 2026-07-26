@@ -26,7 +26,6 @@ export default function Sidebar({
     return Array.from(new Set(names)) as string[];
   }, [globalProcedures]);
 
-  // Handle clicks outside to close the mobile dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target as Node)) {
@@ -134,7 +133,7 @@ export default function Sidebar({
 
         <div
           className={cn(
-            "flex flex-col gap-1 max-h-[400px] overflow-y-auto pr-1",
+            "flex flex-col gap-1 max-h-100 overflow-y-auto pr-1",
             "[&::-webkit-scrollbar]:w-1.5",
             "[&::-webkit-scrollbar-track]:bg-transparent",
             "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200",
@@ -146,7 +145,7 @@ export default function Sidebar({
             Array.from({ length: 9 }).map((_, i) => (
               <div
                 key={i}
-                className="h-[44px] w-full bg-gray-100 animate-pulse rounded-lg mb-1"
+                className="h-11 w-full bg-gray-100 animate-pulse rounded-lg mb-1"
               />
             ))
           ) : (

@@ -42,7 +42,7 @@ export default function VerifiedDentists() {
 
   const { data: directoryResponse, isLoading } = useDentistDirectory({
     search: searchQuery || undefined,
-    specialty: procedure && procedure !== "All Procedures" ? procedure : undefined,
+    procedure: procedure && procedure !== "All Procedures" ? procedure : undefined,
     limit: 6,
   });
 

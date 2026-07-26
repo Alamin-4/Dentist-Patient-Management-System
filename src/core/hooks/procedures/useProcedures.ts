@@ -22,6 +22,7 @@ export const PROCEDURE_KEYS = {
 //   const { data, isLoading } = useGlobalProcedures('whitening');
 //   const { data } = useGlobalProcedures(); // all procedures
 // ─────────────────────────────────────────────────────────────────────────────
+
 export function useGlobalProcedures(search?: string) {
   return useQuery({
     queryKey: PROCEDURE_KEYS.global(search),
@@ -29,7 +30,7 @@ export function useGlobalProcedures(search?: string) {
       const res = await apiClient.procedures.getGlobal(search);
       return res?.data ?? res ?? [];
     },
-    staleTime: 5 * 1000, // 5 seconds — fresh enough for QA and active updates
+    staleTime: 5 * 1000,
     gcTime: 20 * 60_000,
     retry: 1,
   });
