@@ -103,8 +103,7 @@ export default function DentistMap({
               <div className="bg-transparent p-0">
                 <MapDentistCard
                   dentist={dentist}
-                  onConsult={onCloseCard}
-                  onViewProfile={onCloseCard}
+                  onCloseCard={onCloseCard}
                 />
               </div>
             </Popup>
