@@ -402,16 +402,16 @@ export default function IntakeModal() {
         <DialogContent
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
-          className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white"
+          className="sm:max-w-212 max-h-[90vh] flex flex-col w-full p-0 border-none rounded-lg bg-white overflow-hidden relative"
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">
+          <div className="relative bg-white pl-8 pr-16 py-6 border-b border-[#F3F4F6] shrink-0">
             <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
               {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
             </DialogTitle>
           </div>
 
-          <div className="p-8">
+          <div className="flex-1 overflow-y-auto p-8 min-h-0">
             {/* Progress bar */}
             <div className="flex items-center gap-4 mb-8">
               <div className="flex-1 h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
@@ -425,7 +425,6 @@ export default function IntakeModal() {
               </span>
             </div>
 
-            {/* Step content */}
             <div>
               {step === 1 && <PersonalInfoForm errors={formErrors} setErrors={setFormErrors} />}
               {step === 2 && <ProcedureSelectionForm errors={formErrors} setErrors={setFormErrors} />}
@@ -435,7 +434,6 @@ export default function IntakeModal() {
               {step === 6 && <XRayUploadForm errors={formErrors} setErrors={setFormErrors} />}
             </div>
 
-            {/* Navigation */}
             <div className="flex justify-between mt-10 pt-6 border-t border-[#F3F4F6]">
               {step > 1 ? (
                 <button
