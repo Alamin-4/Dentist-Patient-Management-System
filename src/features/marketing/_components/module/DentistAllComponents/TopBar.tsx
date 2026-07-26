@@ -5,6 +5,7 @@ import { Search, SlidersHorizontal, List, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMe } from "@/hooks/auth/useAuth";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,7 @@ import {
 
 type TopBarProps = {
   query: string;
-  onQueryChange: (value: string) => void;
+  onQueryChange: (value: string, src?: string) => void;
   viewMode: "list" | "map" | "filter";
   onViewModeChange: (mode: "list" | "map" | "filter") => void;
   showMapFilters: boolean;
@@ -35,16 +36,22 @@ export default function TopBar({
 }: TopBarProps) {
   const { user } = useMe();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [localQuery, setLocalQuery] = useState(query);
+  const searchParams = useSearchParams();
+  const src = searchParams.get("src") || "";
+  const [localQuery, setLocalQuery] = useState(src === "top" ? query : "");
   const showJoinButton = !user || user.role !== "DENTIST";
 
   useEffect(() => {
-    setLocalQuery(query);
-  }, [query]);
+    if (src === "top") {
+      setLocalQuery(query);
+    } else {
+      setLocalQuery("");
+    }
+  }, [query, src]);
 
   const handleQueryInputChange = (val: string) => {
     setLocalQuery(val);
-    onQueryChange(val);
+    onQueryChange(val, "top");
   };
 
   const handleJoinAsDentistClick = (e: React.MouseEvent) => {

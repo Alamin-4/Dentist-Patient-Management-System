@@ -92,10 +92,13 @@ export const useDentistFilters = () => {
     // ── Individual setters ───────────────────────────────────────────────────
 
     const setQuery = useCallback(
-        (value: string) => {
+        (value: string, src?: string) => {
             if (searchTimer.current) clearTimeout(searchTimer.current);
             searchTimer.current = setTimeout(() => {
-                setParams({ search: value || null });
+                setParams({ 
+                    search: value || null,
+                    src: value && src ? src : null
+                });
             }, DEBOUNCE_DELAYS.SEARCH);
         },
         [setParams],
