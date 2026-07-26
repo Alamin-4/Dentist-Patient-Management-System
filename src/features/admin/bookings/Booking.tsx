@@ -299,7 +299,7 @@ export default function Booking() {
                   (h) => (
                     <th
                       key={h}
-                      className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-400"
+                      className="px-4 py-3 text-left text-[11px] truncate font-semibold uppercase tracking-wide text-gray-400"
                     >
                       {h}
                     </th>
@@ -319,7 +319,7 @@ export default function Booking() {
                   <tr
                     key={b.id}
                     onClick={() => router.push(`/admin/bookings/${b.id}`)}
-                    className="cursor-pointer transition-colors hover:bg-gray-50/80"
+                    className="cursor-pointer transition-colors hover:bg-gray-50/80 *:truncate"
                   >
                     {/* Booking ID */}
                     <td className="px-4 py-3.5 text-sm font-semibold text-blue-600">
@@ -332,7 +332,7 @@ export default function Booking() {
                           initials={b.patient.initials}
                           color={b.patient.avatar_color}
                         />
-                        <span className="text-sm font-medium text-[#1A1A2E]">
+                        <span className="text-sm font-medium text-[#1A1A2E] truncate">
                           {b.patient.name}
                         </span>
                       </div>

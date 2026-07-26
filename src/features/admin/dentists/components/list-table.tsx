@@ -126,7 +126,7 @@ export function DentistsTable({
                   key={dentist.id}
                   onClick={() => router.push(`/admin/dentists/${dentist.slug}`)}
                   className={cn(
-                    "cursor-pointer transition-colors hover:bg-gray-50/80",
+                    "cursor-pointer transition-colors hover:bg-gray-50/80 *:truncate",
                     selectedIds.includes(dentist.id) && "bg-indigo-50/40 hover:bg-indigo-50/60"
                   )}
                 >
