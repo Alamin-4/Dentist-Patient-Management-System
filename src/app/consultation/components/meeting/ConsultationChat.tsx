@@ -20,6 +20,7 @@ interface ConsultationChatProps {
   isTyping?: boolean;
   sendMessage?: (text: string) => void;
   sendTyping?: (typingState: boolean) => void;
+  recipientStatus?: "online" | "offline";
 }
 
 export function ConsultationChat({
@@ -35,6 +36,7 @@ export function ConsultationChat({
   isTyping: propIsTyping,
   sendMessage: propSendMessage,
   sendTyping: propSendTyping,
+  recipientStatus: propRecipientStatus,
 }: ConsultationChatProps) {
   // Call useConsultationChat conditionally if props are not provided
   const localChat = useConsultationChat(
@@ -47,6 +49,7 @@ export function ConsultationChat({
   const isTyping = propIsTyping !== undefined ? propIsTyping : localChat.isTyping;
   const sendMessage = propSendMessage !== undefined ? propSendMessage : localChat.sendMessage;
   const sendTyping = propSendTyping !== undefined ? propSendTyping : localChat.sendTyping;
+  const recipientStatus = propRecipientStatus !== undefined ? propRecipientStatus : localChat.recipientStatus;
 
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -148,16 +151,29 @@ export function ConsultationChat({
                 <UserIcon className="size-5" />
               </div>
             )}
-            <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+            {recipientStatus === "online" ? (
+              <span className={`absolute bottom-0 right-0 size-3 rounded-full bg-emerald-500 border-2 animate-pulse ${isLight ? "border-white" : "border-slate-950"}`} />
+            ) : (
+              <span className={`absolute bottom-0 right-0 size-3 rounded-full bg-slate-400 border-2 ${isLight ? "border-white" : "border-slate-950"}`} />
+            )}
           </div>
           <div>
             <h4 className="font-semibold text-sm leading-tight">{recipientName}</h4>
-            <p
-              className={`text-[10px] font-semibold mt-0.5 ${isLight ? "text-emerald-600" : "text-emerald-400"
-                }`}
-            >
-              Live Chat Connected
-            </p>
+            {recipientStatus === "online" ? (
+              <p
+                className={`text-[10px] font-semibold mt-0.5 ${isLight ? "text-emerald-600" : "text-emerald-400"
+                  }`}
+              >
+                Live Chat Connected
+              </p>
+            ) : (
+              <p
+                className={`text-[10px] font-semibold mt-0.5 ${isLight ? "text-slate-400" : "text-slate-550"
+                  }`}
+              >
+                Offline
+              </p>
+            )}
           </div>
         </div>
         {onClose && (
@@ -176,9 +192,8 @@ export function ConsultationChat({
 
       {/* ── MESSAGES PANE ── */}
       <div
-        className={`flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-track-transparent ${
-          isLight ? "scrollbar-thumb-slate-200" : "scrollbar-thumb-slate-800"
-        } ${(loading || messages.length === 0) ? "flex flex-col justify-center items-center" : ""}`}
+        className={`flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-track-transparent ${isLight ? "scrollbar-thumb-slate-200" : "scrollbar-thumb-slate-800"
+          } ${(loading || messages.length === 0) ? "flex flex-col justify-center items-center" : ""}`}
       >
         {loading ? (
           <div
@@ -191,14 +206,12 @@ export function ConsultationChat({
           </div>
         ) : messages.length === 0 ? (
           <div
-            className={`flex flex-col items-center justify-center text-center p-6 max-w-[240px] ${
-              isLight ? "text-slate-400" : "text-slate-500"
-            }`}
+            className={`flex flex-col items-center justify-center text-center p-6 max-w-60 ${isLight ? "text-slate-400" : "text-slate-500"
+              }`}
           >
             <div
-              className={`size-12 rounded-full flex items-center justify-center mb-3 ${
-                isLight ? "bg-slate-100" : "bg-slate-800/40"
-              }`}
+              className={`size-12 rounded-full flex items-center justify-center mb-3 ${isLight ? "bg-slate-100" : "bg-slate-800/40"
+                }`}
             >
               💬
             </div>

@@ -204,10 +204,10 @@ export default function DentistsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleImportCSV}
-            className="flex truncate items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 truncate"
           >
             <Upload className="h-4 w-4" />
-            Import CSV
+            <span className="truncate">Import CSV</span>
           </button>
           <button className="flex truncate items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
             <Download className="h-4 w-4" />
@@ -215,7 +215,7 @@ export default function DentistsPage() {
           </button>
           <button className="flex truncate items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1A1A2E]/90">
             <UserPlus className="h-4 w-4" />
-            Invite dentist
+            <span className="truncate">Invite dentist</span>
           </button>
         </div>
       </div>

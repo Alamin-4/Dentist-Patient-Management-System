@@ -32,7 +32,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [showCompletedModal, setShowCompletedModal] = useState(false);
 
-    const { messages, loading, isTyping, unreadCount, sendMessage, sendTyping } =
+    const { messages, loading, isTyping, unreadCount, sendMessage, sendTyping, recipientStatus } =
         useConsultationChat(consultation.id, userId, showChat);
     const isEndingRef = useRef(false);
 
@@ -246,6 +246,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
                                 isTyping={isTyping}
                                 sendMessage={sendMessage}
                                 sendTyping={sendTyping}
+                                recipientStatus={recipientStatus}
                             />
                         </div>
                     )}

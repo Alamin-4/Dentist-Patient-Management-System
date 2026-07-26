@@ -221,11 +221,6 @@ export function InboxPage() {
                     </p>
 
                     <div className="flex items-center gap-3 mt-1.5">
-                      <span
-                        className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${getStatusBadgeCls(item.requestStatus, isSelected)}`}
-                      >
-                        {getFriendlyStatus(item.requestStatus)}
-                      </span>
                       {item.scheduledTime && (
                         <span
                           className={`text-[10px] flex items-center gap-1 ${isSelected ? "text-white/60" : "text-slate-400"

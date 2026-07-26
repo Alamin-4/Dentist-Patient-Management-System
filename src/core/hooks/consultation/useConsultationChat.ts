@@ -26,6 +26,7 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
+  const [recipientStatus, setRecipientStatus] = useState<"online" | "offline">("offline");
   const socketRef = useRef<Socket | null>(null);
 
   const isChatOpenRef = useRef(isChatOpen);
@@ -97,6 +98,9 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
           console.error("Failed to join chat room:", res?.message);
         } else {
           console.log(`Joined chat room for consultation: ${consultationId}`);
+          if (res.otherUserStatus) {
+            setRecipientStatus(res.otherUserStatus);
+          }
         }
       });
     });
@@ -113,6 +117,12 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     socket.on("typing", (data: { userId: string; isTyping: boolean }) => {
       if (data.userId !== currentUserId) {
         setIsTyping(data.isTyping);
+      }
+    });
+
+    socket.on("user_status", (data: { userId: string; status: "online" | "offline" }) => {
+      if (data.userId !== currentUserId) {
+        setRecipientStatus(data.status);
       }
     });
 
@@ -201,5 +211,6 @@ export function useConsultationChat(consultationId: string, currentUserId?: stri
     sendMessage,
     sendTyping,
     markAsRead,
+    recipientStatus,
   };
 }
