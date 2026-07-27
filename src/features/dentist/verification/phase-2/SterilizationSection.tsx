@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { UploadCloud, Check } from "lucide-react";
+import { UploadCloud, Check, XCircle } from "lucide-react";
 import PhaseStep from "../PhaseStep";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,7 @@ interface SterilizationSectionProps {
 }
 
 export const SterilizationSection = ({ disabled }: SterilizationSectionProps) => {
-  const { setValue, watch, formState: { errors } } = useFormContext();
+  const { setValue, setError, clearErrors, watch, formState: { errors } } = useFormContext();
   const jciFile = watch("jciCertificate");
   const videoFile = watch("videoWalkthrough");
 
@@ -18,11 +18,33 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
 
   const methods = ["Autoclave", "Sealed Pouch", "Ultrasonic"];
 
+  const getFileName = (fileValue: any) => {
+    if (!fileValue) return "";
+    if (fileValue instanceof File) return fileValue.name;
+    if (typeof fileValue === "string") {
+      return fileValue.substring(fileValue.lastIndexOf("/") + 1);
+    }
+    return "";
+  };
+
   return (
     <section className="grid grid-cols-1 gap-8 px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
       <PhaseStep step={1} title="Sterilization" />
 
       <div className="space-y-6">
+        {/* General JCI / Video Upload Error Alert */}
+        {(errors.jciCertificate || errors.videoWalkthrough) && (
+          <div className="p-4 rounded-lg border border-red-200 bg-red-50 text-red-600 text-sm font-semibold flex gap-2.5 animate-in fade-in slide-in-from-top-1">
+            <XCircle className="h-5 w-5 shrink-0 text-red-500 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-bold">Sterilization Document Required</p>
+              <p className="font-normal text-xs mt-0.5 text-red-500">
+                Either JCI Certificate or Walkthrough Video file must be uploaded.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-3">
           <label className="inline-block text-sm font-medium text-foreground">
             Upload JCI Certificate
@@ -34,8 +56,19 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
             disabled={disabled}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file)
-                setValue("jciCertificate", file, { shouldValidate: true });
+              if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                  setError("jciCertificate", {
+                    type: "manual",
+                    message: "File size is too large. Maximum allowed size is 5MB.",
+                  });
+                  setValue("jciCertificate", null, { shouldValidate: true });
+                  if (jciInputRef.current) jciInputRef.current.value = "";
+                } else {
+                  setValue("jciCertificate", file, { shouldValidate: true });
+                  clearErrors(["jciCertificate", "videoWalkthrough"]);
+                }
+              }
             }}
             accept=".pdf,.jpg,.jpeg,.png"
           />
@@ -50,7 +83,7 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
               <span className="text-sm font-medium text-[#0A2533]">
-                {jciFile ? jciFile.name : "Click to upload or drag and drop"}
+                {jciFile ? getFileName(jciFile) : "Click to upload or drag and drop"}
               </span>
             </div>
             {jciFile && (
@@ -83,8 +116,19 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
             disabled={disabled}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file)
-                setValue("videoWalkthrough", file, { shouldValidate: true });
+              if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                  setError("videoWalkthrough", {
+                    type: "manual",
+                    message: "File size is too large. Maximum allowed size is 5MB.",
+                  });
+                  setValue("videoWalkthrough", null, { shouldValidate: true });
+                  if (videoInputRef.current) videoInputRef.current.value = "";
+                } else {
+                  setValue("videoWalkthrough", file, { shouldValidate: true });
+                  clearErrors(["videoWalkthrough", "jciCertificate"]);
+                }
+              }
             }}
             accept="video/*"
           />
@@ -99,7 +143,7 @@ export const SterilizationSection = ({ disabled }: SterilizationSectionProps) =>
             <div className="flex items-center gap-3">
               <UploadCloud className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
               <span className="text-sm font-medium text-[#0A2533]">
-                {videoFile ? videoFile.name : "Upload Video"}
+                {videoFile ? getFileName(videoFile) : "Upload Video"}
               </span>
             </div>
             {videoFile && (

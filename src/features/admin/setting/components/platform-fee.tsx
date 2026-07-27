@@ -1,89 +1,108 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { platformFeeSchema, type PlatformFeeFormValues } from "@/validation/settings-schemas";
+import { bindServerErrors } from "@/core/hooks/admin/settings/useAdminSettings";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
+
+/**
+ * =============================================================================
+ * INSTRUCTION: PLATFORM FEE WITH ZOD VALIDATION & FIELD ERRORS
+ * =============================================================================
+ * - Uses `react-hook-form` + `zodResolver(platformFeeSchema)`.
+ * - Validation errors are rendered underneath the fee rate input.
+ * - API error responses bind to form fields via `bindServerErrors(err, setError)`.
+ * =============================================================================
+ */
 
 export function PlatformFee() {
-  const [rate, setRate] = useState(10);
-  const [saving, setSaving] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<PlatformFeeFormValues>({
+    resolver: zodResolver(platformFeeSchema),
+    defaultValues: {
+      rate: 10,
+    },
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem("rateddocs_platform_fee_rate");
     if (saved) {
-      setRate(Number(saved) || 10);
+      setValue("rate", Number(saved) || 10);
     }
-  }, []);
+  }, [setValue]);
 
-  const isValid = rate >= 0 && rate <= 100;
-
-  const handleSave = async () => {
-    if (!isValid) {
-      toast.error("Fee rate must be between 0 and 100.");
-      return;
+  const onSubmit = async (data: PlatformFeeFormValues) => {
+    try {
+      await new Promise((r) => setTimeout(r, 400)); // Simulating API call
+      localStorage.setItem("rateddocs_platform_fee_rate", String(data.rate));
+      toast.success("Platform fee rate saved successfully.");
+    } catch (err: any) {
+      bindServerErrors(err, setError);
     }
-    setSaving(true);
-    // Simulate API delay
-    await new Promise((r) => setTimeout(r, 600));
-    localStorage.setItem("rateddocs_platform_fee_rate", String(rate));
-    setSaving(false);
-    toast.success("Platform fee saved successfully.");
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {/* Header */}
-      <div className="border-b border-gray-100 pb-5">
+      <div className="border-b border-slate-200 pb-4">
         <h2 className="text-base font-bold text-[#1A1A2E]">Platform Fee</h2>
-        <p className="mt-0.5 text-sm text-gray-500">
+        <p className="mt-0.5 text-xs text-slate-500">
           Set the percentage RatedDocs earns from each successfully completed booking.
         </p>
       </div>
 
       {/* Fee rate */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-[#1A1A2E]">Fee rate</label>
+        <label className="text-xs font-bold text-[#1A1A2E]">Fee rate percentage</label>
         <div className="flex items-center gap-2">
           <div className="relative flex-1 max-w-sm">
             <input
               type="number"
-              min={0}
-              max={100}
               step={0.1}
+              {...register("rate", { valueAsNumber: true })}
               onKeyDown={(e) => {
                 if (e.key === "-" || e.key === "e") e.preventDefault();
               }}
-              value={rate}
-              onChange={(e) => setRate(Math.max(0, Math.min(100, Number(e.target.value) || 0)))}
               className={cn(
-                "h-11 w-full rounded-lg border px-4 pr-10 text-sm font-medium outline-none transition-colors",
-                "border-gray-200 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                "h-10 w-full rounded-lg border px-4 pr-10 text-xs font-semibold outline-none transition-colors bg-white",
+                errors.rate ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-[#10436B]"
               )}
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">%</span>
+            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">%</span>
           </div>
         </div>
-        <p className="flex items-center gap-1.5 text-xs text-gray-400">
+
+        {/* Inline Error Message */}
+        {errors.rate && (
+          <p className="text-[11px] text-red-500 font-semibold">{errors.rate.message}</p>
+        )}
+
+        <p className="flex items-center gap-1.5 text-xs text-slate-400 mt-1">
           <Info className="h-3.5 w-3.5 shrink-0" />
           Applied after successful treatment completion and escrow release.
         </p>
       </div>
 
       {/* Save */}
-      <div className="flex justify-end border-t border-gray-100 pt-5">
+      <div className="flex justify-end border-t border-slate-200 pt-4">
         <button
-          onClick={handleSave}
-          disabled={saving || !isValid}
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95",
-            isValid ? "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90" : "cursor-not-allowed bg-gray-300"
-          )}
+          type="submit"
+          disabled={isSubmitting}
+          className="flex items-center gap-2 rounded-lg bg-[#10436B] hover:bg-[#0d3656] text-white px-5 py-2.5 text-xs font-bold transition-all cursor-pointer disabled:bg-slate-300"
         >
           <Save className="h-4 w-4" />
-          {saving ? "Saving…" : "Save fee"}
+          {isSubmitting ? "Saving…" : "Save Fee Rate"}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

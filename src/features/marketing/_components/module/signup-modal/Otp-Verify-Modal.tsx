@@ -53,6 +53,8 @@ export default function OtpVerifyModal({
     handleSubmit,
     formState: { errors },
     reset,
+    setError,
+    clearErrors,
   } = useForm<OtpVerifyFormData>({
     resolver: zodResolver(otpVerifySchema),
     defaultValues: {
@@ -75,7 +77,11 @@ export default function OtpVerifyModal({
           onVerified();
         },
         onError: (error: any) => {
-          // toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
+          const errMsg = error?.response?.data?.message || "Verification code is incorrect. Please try again.";
+          setError("otp", {
+            type: "server",
+            message: errMsg,
+          });
         },
       },
     );
@@ -91,7 +97,8 @@ export default function OtpVerifyModal({
           });
         },
         onError: (error: any) => {
-          // toast.error(getApiErrorMessage(error), { style: TOAST_STYLE });
+          const errMsg = error?.response?.data?.message || "Failed to resend verification code. Please try again.";
+          toast.error(errMsg, { style: TOAST_STYLE });
         },
       },
     );
@@ -122,7 +129,12 @@ export default function OtpVerifyModal({
                 <InputOTP
                   maxLength={6}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(val) => {
+                    field.onChange(val);
+                    if (errors.otp) {
+                      clearErrors("otp");
+                    }
+                  }}
                   containerClassName="w-full justify-center"
                 >
                   <InputOTPGroup className="w-full justify-between gap-2 border-0">

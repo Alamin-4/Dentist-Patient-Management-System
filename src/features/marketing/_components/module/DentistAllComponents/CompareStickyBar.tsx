@@ -42,7 +42,8 @@ export default function CompareStickyBar({
       <div>
         <Button
           onClick={onCompareSubmit}
-          className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg font-medium hover:bg-[#0d2844] transition-colors"
+          disabled={compareList.length < 2}
+          className="bg-[#0E3E65] text-white h-12 px-6 rounded-lg font-medium hover:bg-[#0d2844] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           Compare Profiles
         </Button>

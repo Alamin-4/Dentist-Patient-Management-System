@@ -1,11 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Search } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Search, Home } from "lucide-react";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      {/* Minimal Header */}
+      <header className="w-full border-b border-gray-100 bg-white py-5 shadow-sm">
+        <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logos/mainlogo.png"
+              alt="RatedDocs"
+              height={200}
+              width={400}
+              className="w-36 h-auto object-contain"
+            />
+          </Link>
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 active:scale-[0.97]"
+          >
+            <Home className="size-4 text-gray-500" />
+            Go to Homepage
+          </Link>
+        </div>
+      </header>
+
       <main className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16 sm:py-24">
         {/* Background blobs */}
         <div className="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-pink-100/70 blur-3xl" />

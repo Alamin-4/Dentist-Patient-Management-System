@@ -17,93 +17,101 @@ export function ClaimStep3({
   handleNextStep,
   user,
   setClaimStep,
+  claimMutation,
+  isLoading,
 }: any) {
+  const isPending = isLoading || claimMutation?.isPending;
+
+  const isAgreed =
+    hasSterilizationDocs &&
+    hasBeforeAfterPhotos &&
+    hasMaterialsDocs &&
+    hasEducationCertificates &&
+    hasGuarantees;
+
+  const handleToggleAll = (checked: boolean) => {
+    setHasSterilizationDocs(checked);
+    setHasBeforeAfterPhotos(checked);
+    setHasMaterialsDocs(checked);
+    setHasEducationCertificates(checked);
+    setHasGuarantees(checked);
+  };
+
+  const PROTOCOLS = [
+    "Detailed sterilization logs maintained for all dental apparatuses & instruments",
+    "Clear, authentic, and verifiable before & after treatment patient photographs",
+    "Exclusive utilization of FDA / CE approved dental implants and restorative materials",
+    "Authentic, accredited certificates of dentistry education and active professional licensing",
+    "Full adherence to the RatedDocs 'No Surprise Price Guarantee' for international patients",
+  ];
+
   return (
     <div className="space-y-4">
-      <div className="rounded-lg bg-amber-50/50 border border-amber-200 p-4 mb-2">
-        <p className="text-amber-800 text-xs font-semibold flex items-center gap-1.5">
-          <AlertCircle className="size-4 shrink-0 text-amber-600" /> Please verify you adhere to RatedDocs medical protocols:
+      <div className="rounded-lg bg-amber-50/60 border border-amber-200 p-4">
+        <p className="text-amber-800 text-xs font-semibold flex items-center gap-1.5 mb-1">
+          <AlertCircle className="size-4 shrink-0 text-amber-600" /> Medical Standards & Compliance Requirements
+        </p>
+        <p className="text-amber-700 text-xs leading-relaxed">
+          To maintain directory trust and protect international patients, all listed dental practices must commit to the following clinical standards:
         </p>
       </div>
 
-      <div className="space-y-4 py-2">
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="steril"
-            checked={hasSterilizationDocs}
-            onCheckedChange={(checked) => setHasSterilizationDocs(!!checked)}
-            className="mt-1 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
-          />
-          <label htmlFor="steril" className="text-sm font-semibold text-slate-700 cursor-pointer select-none leading-none pt-0.5">
-            I maintain detailed sterilization logs for all dental apparatuses
-          </label>
-        </div>
+      {/* Protocol List */}
+      <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 space-y-3">
+        {PROTOCOLS.map((protocol, idx) => (
+          <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium leading-relaxed">
+            <div className="size-4 rounded-full bg-[#113254]/10 text-[#113254] flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">
+              {idx + 1}
+            </div>
+            <span>{protocol}</span>
+          </div>
+        ))}
+      </div>
 
-        <div className="flex items-start gap-3">
+      {/* Single Agreement Checkbox */}
+      <div className="pt-1">
+        <div className="flex items-start gap-3 rounded-lg border border-slate-200 p-3.5 bg-white hover:bg-slate-50/50 transition-colors">
           <Checkbox
-            id="photos"
-            checked={hasBeforeAfterPhotos}
-            onCheckedChange={(checked) => setHasBeforeAfterPhotos(!!checked)}
-            className="mt-1 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
+            id="agree-all-protocols"
+            checked={isAgreed}
+            onCheckedChange={(checked) => handleToggleAll(!!checked)}
+            className="mt-0.5 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
           />
-          <label htmlFor="photos" className="text-sm font-semibold text-slate-700 cursor-pointer select-none leading-none pt-0.5">
-            I possess clear and verifiable before & after treatment photos
-          </label>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="materials"
-            checked={hasMaterialsDocs}
-            onCheckedChange={(checked) => setHasMaterialsDocs(!!checked)}
-            className="mt-1 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
-          />
-          <label htmlFor="materials" className="text-sm font-semibold text-slate-700 cursor-pointer select-none leading-none pt-0.5">
-            I only utilize FDA / CE approved dental implant and crown materials
-          </label>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="education"
-            checked={hasEducationCertificates}
-            onCheckedChange={(checked) => setHasEducationCertificates(!!checked)}
-            className="mt-1 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
-          />
-          <label htmlFor="education" className="text-sm font-semibold text-slate-700 cursor-pointer select-none leading-none pt-0.5">
-            I hold authentic, accredited certificates of dentistry education & license
-          </label>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="guarantees"
-            checked={hasGuarantees}
-            onCheckedChange={(checked) => setHasGuarantees(!!checked)}
-            className="mt-1 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
-          />
-          <label htmlFor="guarantees" className="text-sm font-semibold text-slate-700 cursor-pointer select-none leading-none pt-0.5">
-            I agree to offer the RatedDocs "No Surprise Price Guarantee" for patients
+          <label
+            htmlFor="agree-all-protocols"
+            className="text-xs font-semibold text-slate-800 cursor-pointer select-none leading-relaxed"
+          >
+            I confirm and agree that my dental practice adheres to all the RatedDocs medical protocols listed above.
           </label>
         </div>
       </div>
 
+      {/* Action Buttons */}
       <div className="flex justify-between pt-4 border-t border-slate-100 mt-6">
         {!user && (
           <button
             type="button"
+            disabled={isPending}
             onClick={() => setClaimStep(2)}
-            className="rounded-lg border border-[#E5E7EB] px-5 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer text-sm"
+            className="rounded-lg border border-[#E5E7EB] px-5 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer text-sm disabled:opacity-50"
           >
             Back
           </button>
         )}
         <button
           type="button"
+          disabled={!isAgreed || isPending}
           onClick={handleNextStep}
-          className={`${user ? "w-full" : ""} flex items-center justify-center gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer text-sm`}
+          className={`${user ? "w-full" : ""} flex items-center justify-center gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-sm`}
         >
-          Continue to Payment
+          {isPending ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Saving Application...
+            </>
+          ) : (
+            "Save & Proceed to Payment →"
+          )}
         </button>
       </div>
     </div>
@@ -157,12 +165,12 @@ export function ClaimStep4({
         </span>
       </div>
 
-      <div className="flex justify-between pt-4 border-t border-slate-100 mt-6">
+      <div className="flex items-center justify-center pt-4 border-t border-slate-100 mt-6">
         <button
           type="button"
           onClick={() => setClaimStep(3)}
           disabled={checkoutMutation.isPending}
-          className="rounded-lg border border-[#E5E7EB] px-5 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer text-sm"
+          className="rounded-lg border hidden border-[#E5E7EB] px-5 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer text-sm"
         >
           Back
         </button>
@@ -170,7 +178,7 @@ export function ClaimStep4({
           type="button"
           onClick={handleProceedToPayment}
           disabled={checkoutMutation.isPending}
-          className="flex items-center justify-center gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer text-sm"
+          className="flex items-center justify-center w-full gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer text-sm"
         >
           {checkoutMutation.isPending ? (
             <>
@@ -195,19 +203,19 @@ export function ClaimStep5({ dentist, queryClient, router, onOpenChange }: any) 
       <div className="space-y-1">
         <h4 className="text-lg font-bold text-slate-900">Congratulations, Dr. {dentist.name}!</h4>
         <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
-          Your profile claim was registered, and membership status has been successfully updated via Stripe.
+          Your profile has been successfully claimed. Please log in to your dashboard to complete document verification.
         </p>
       </div>
 
       <div className="p-4 rounded-lg bg-slate-50 border border-slate-150 inline-block text-left text-xs space-y-2 text-slate-600">
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          <Check className="size-4 text-emerald-500 stroke-3" /> Credentials registered successfully
+          <Check className="size-4 text-emerald-500 stroke-3" /> Profile claimed successfully
         </p>
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          <Check className="size-4 text-emerald-500 stroke-3" /> Stripe signature and payment verified
+          <Check className="size-4 text-emerald-500 stroke-3" /> Dentist account promoted
         </p>
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          <Check className="size-4 text-emerald-500 stroke-3" /> Email notifications dispatched
+          <Check className="size-4 text-emerald-500 stroke-3" /> Onboarding emails dispatched
         </p>
       </div>
 

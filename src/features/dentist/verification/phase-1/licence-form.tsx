@@ -14,7 +14,10 @@ import { getCountries, getCities, type CSCCountry, type CSCCity } from "@/lib/co
 const formSchema = z.object({
   country: z.string().min(1, "Country is required"),
   city: z.string().min(1, "City is required"),
-  authority: z.string().min(1, "Registration authority is required"),
+  authority: z
+    .string()
+    .min(1, "Registration authority is required")
+    .refine((val) => /[a-zA-Z]/.test(val), "Registration authority must contain letters (e.g., BMDC)"),
   regNo: z.string().min(1, "Registration number is required"),
 });
 
@@ -96,7 +99,7 @@ export default function LicenceForm({
         regNo: defaultValues.regNo || "",
       });
     }
-  }, [defaultValues, form]);
+  }, [defaultValues]);
 
   // Handle server errors
   useEffect(() => {
@@ -116,14 +119,14 @@ export default function LicenceForm({
         }
       });
     }
-  }, [serverErrors, form]);
+  }, [serverErrors]);
 
-  // Trigger validation when parent form submission is attempted
+  // Automatically trigger verification when parent form submission is attempted
   useEffect(() => {
     if (submissionAttempted) {
-      form.trigger();
+      form.handleSubmit(onVerify)();
     }
-  }, [submissionAttempted, form]);
+  }, [submissionAttempted]);
 
   return (
     <form onSubmit={form.handleSubmit(onVerify)} className="space-y-6">

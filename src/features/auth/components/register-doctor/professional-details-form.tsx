@@ -23,7 +23,7 @@ import { locationData } from "@/lib/location-data";
 const profSchema = z.object({
   full_name: z.string().min(2, "Full legal name is required"),
   specialty: z.string().min(1, "Please select a specialty"),
-  experience_years: z.coerce.number().min(1, "Years of experience is required"),
+  experience_years: z.coerce.number().min(0, "Years of experience must be at least 0"),
   city: z.string().min(1, "Please select a city"),
   country: z.string().min(1, "Please select a country"),
 });

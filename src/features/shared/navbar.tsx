@@ -10,9 +10,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuGroup,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
@@ -23,10 +20,8 @@ import {
   LogOut,
   User,
   Settings,
-  LifeBuoy,
   FolderOpen,
   Activity,
-  Check,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -53,6 +48,7 @@ export function Navbar() {
       <nav className="px-4 lg:px-8 flex h-20 items-center justify-between">
         <div className="flex items-center gap-3">
           <HamburgerButton />
+         <Link href={"/"}>
           <Image
             src={"/logos/mainlogo.png"}
             alt="Website logo"
@@ -60,7 +56,7 @@ export function Navbar() {
             width={400}
             loading="eager"
             className="w-43 h-auto object-contain"
-          />
+          /></Link>
         </div>
         <div className="flex items-center gap-6">
           <DropdownMenu>
@@ -87,7 +83,6 @@ export function Navbar() {
               align="end"
               className="w-64 p-1.5 mt-2 bg-white border border-slate-100 shadow-xl rounded-xl space-y-0.5 z-50"
             >
-              {/* User Details Header */}
               <DropdownMenuLabel className="px-2.5 py-2 text-left border-b border-slate-50 mb-1">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold text-slate-800 truncate">
@@ -109,7 +104,6 @@ export function Navbar() {
 
               <DropdownMenuSeparator />
 
-              {/* Role-specific Relative Actions Section */}
               <DropdownMenuGroup>
                 {role === "dentist" ? (
                   <>

@@ -143,6 +143,14 @@ export function useForgotPassword() {
     });
 }
 
+export function useVerifyResetOtp() {
+    return useMutation({
+        mutationFn: async (payload: { email: string; otp: string }) => {
+            return await apiClient.auth.verifyResetOtp(payload);
+        },
+    });
+}
+
 export function useResetPassword() {
     return useMutation({
         mutationFn: async (payload: ResetPasswordPayload) => {
@@ -152,7 +160,7 @@ export function useResetPassword() {
 }
 
 
-export function useLogout() {
+export function useLogout(options?: { redirectTo?: string | null }) {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async () => {
@@ -167,7 +175,9 @@ export function useLogout() {
                 document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
                 document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
                 queryClient.clear();
-                window.location.href = "/";
+                if (options?.redirectTo !== null) {
+                    window.location.href = options?.redirectTo ?? "/";
+                }
             }
         },
     });
@@ -194,6 +204,9 @@ export default function useAuth() {
     const otpVerifyMutation = useOtpVerify();
     const resendOtpMutation = useResendOtp();
     const logoutMutation = useLogout();
+    const forgotPasswordMutation = useForgotPassword();
+    const verifyResetOtpMutation = useVerifyResetOtp();
+    const resetPasswordMutation = useResetPassword();
     const sessionQuery = useSession();
 
     return {
@@ -204,6 +217,9 @@ export default function useAuth() {
         otpVerifyMutation,
         resendOtpMutation,
         logoutMutation,
+        forgotPasswordMutation,
+        verifyResetOtpMutation,
+        resetPasswordMutation,
         sessionQuery,
 
         // register loading

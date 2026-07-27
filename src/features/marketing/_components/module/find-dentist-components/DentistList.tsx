@@ -15,8 +15,8 @@ interface DentistListProps {
     onCompareToggle: (dentist: Dentist) => void;
     onCardClick: (dentistId: string) => void;
     onClearFilters: () => void;
-    onAddDentistClick: () => void;
     onViewOnMap?: (dentist: Dentist) => void;
+    hasActiveFilters?: boolean;
 }
 
 export default function DentistList({
@@ -27,8 +27,8 @@ export default function DentistList({
     onCompareToggle,
     onCardClick,
     onClearFilters,
-    onAddDentistClick,
     onViewOnMap,
+    hasActiveFilters = true,
 }: DentistListProps) {
     if (isLoading) {
         return (
@@ -41,7 +41,12 @@ export default function DentistList({
     }
 
     if (dentists.length === 0) {
-        return <EmptyState onClearFilters={onClearFilters} onAddDentistClick={onAddDentistClick} />;
+        return (
+            <EmptyState
+                onClearFilters={onClearFilters}
+                hasActiveFilters={hasActiveFilters}
+            />
+        );
     }
 
     return (

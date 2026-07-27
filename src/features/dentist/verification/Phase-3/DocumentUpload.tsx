@@ -12,14 +12,24 @@ interface Props {
 }
 
 export function DocumentUpload({ label, name, error, disabled }: Props) {
-  const { setValue, watch } = useFormContext();
+  const { setValue, setError, clearErrors, watch } = useFormContext();
   const file = watch(name);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      setValue(name, selectedFile, { shouldValidate: true });
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        setError(name, {
+          type: "manual",
+          message: "File size is too large. Maximum allowed size is 5MB.",
+        });
+        setValue(name, null, { shouldValidate: true });
+        if (inputRef.current) inputRef.current.value = "";
+      } else {
+        setValue(name, selectedFile, { shouldValidate: true });
+        clearErrors(name);
+      }
     }
   };
 

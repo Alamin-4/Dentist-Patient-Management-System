@@ -27,11 +27,11 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
     (dentist?.dentistClinicDepthVerification as any)?.clinicAddress ||
     (dentist?.dentistClinicDepthVerification as any)?.clinic_address ||
     (dentist?.dentistClinicDepthVerification as any)?.clinicLocation ||
-    "123 Smile Avenue, Suite 202, Mexico City, Mexico 01010";
+    "";
 
   // Parse address if it is an object
   const formattedAddress = typeof clinicAddress === "object" && clinicAddress !== null
-    ? (clinicAddress as any).address || "123 Smile Avenue, Suite 202, Mexico City, Mexico 01010"
+    ? (clinicAddress as any).address || ""
     : String(clinicAddress);
 
   const procedureDocs = (dentist?.dentistClinicDepthVerification as any)?.procedureDocs || [];
@@ -97,12 +97,17 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
       </div>
 
       {/* Location section */}
-      <div className="py-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-2">Clinic Location</h3>
-        <p className="text-sm text-gray-500 leading-relaxed">
-          {formattedAddress}
-        </p>
-      </div>
+      {
+        formattedAddress && (
+          <div className="py-5">
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Clinic Location</h3>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              {formattedAddress}
+            </p>
+          </div>
+        )
+      }
+
 
       <div className="border-t border-gray-100 pt-5 space-y-4">
         {groupKeys.length === 0 ? (

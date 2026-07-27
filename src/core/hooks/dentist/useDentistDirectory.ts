@@ -132,13 +132,15 @@ export function useCreateDentistDirectoryReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ slug, payload }: { slug: string; payload: {
-      rating: number;
-      communication?: number;
-      valueForMoney?: number;
-      followThrough?: number;
-      text: string;
-    } }) => apiClient.dentists.createDirectoryReview(slug, payload),
+    mutationFn: ({ slug, payload }: {
+      slug: string; payload: {
+        rating: number;
+        communication?: number;
+        valueForMoney?: number;
+        followThrough?: number;
+        text: string;
+      }
+    }) => apiClient.dentists.createDirectoryReview(slug, payload),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["dentistDirectoryReviews", variables.slug] });
       queryClient.invalidateQueries({ queryKey: ["dentistDirectoryDetail", variables.slug] });

@@ -19,6 +19,7 @@ interface SearchableDropdownProps {
   triggerClassName?: string;
   allowClear?: boolean;
   clearValue?: string;
+  showSearch?: boolean;
 }
 
 export default function SearchableDropdown({
@@ -31,6 +32,7 @@ export default function SearchableDropdown({
   triggerClassName,
   allowClear = true,
   clearValue = "",
+  showSearch = true,
 }: SearchableDropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -48,12 +50,12 @@ export default function SearchableDropdown({
 
   // Filter options based on search query
   const filteredOptions = React.useMemo(() => {
-    if (!searchQuery.trim()) return normalizedOptions;
+    if (!showSearch || !searchQuery.trim()) return normalizedOptions;
     const query = searchQuery.toLowerCase();
     return normalizedOptions.filter((opt) =>
       opt.label.toLowerCase().includes(query)
     );
-  }, [searchQuery, normalizedOptions]);
+  }, [searchQuery, normalizedOptions, showSearch]);
 
   // Find the selected option's label
   const selectedLabel = React.useMemo(() => {
@@ -135,17 +137,19 @@ export default function SearchableDropdown({
       {isOpen && (
         <div className="absolute z-50 mt-1.5 w-full rounded-lg border border-slate-100 bg-white p-1.5 shadow-lg animate-in fade-in-50 slide-in-from-top-1 duration-150">
           {/* Search Box */}
-          <div className="relative flex items-center border-b border-slate-100 pb-1.5 mb-1 px-1">
-            <Search size={14} className="absolute left-2.5 text-slate-400" />
-            <input
-              type="text"
-              autoFocus
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-full rounded-md bg-slate-50 pl-8 pr-3 text-[12px] text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-slate-100"
-            />
-          </div>
+          {showSearch && (
+            <div className="relative flex items-center border-b border-slate-100 pb-1.5 mb-1 px-1">
+              <Search size={14} className="absolute left-2.5 text-slate-400" />
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-8 w-full rounded-md bg-slate-50 pl-8 pr-3 text-[12px] text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-slate-100"
+              />
+            </div>
+          )}
 
           {/* Options List */}
           <div className="max-h-56 overflow-y-auto pr-1">

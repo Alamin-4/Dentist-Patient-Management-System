@@ -69,7 +69,7 @@ export default function ConsultationPage() {
   const [selectedConsultation, setSelectedConsultation] = useState<any>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTreatmentModalOpen, setIsTreatmentModalOpen] = useState(false);
-  
+
   const queryTab = searchParams ? searchParams.get("tab") : null;
   const [activeTab, setActiveTab] = useState<TabType>((queryTab as TabType) || "Upcoming");
 

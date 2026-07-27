@@ -1,6 +1,33 @@
 "use client";
 
-import { ShieldCheck, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
+
+function PasswordField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="space-y-2 animate-fadeIn">
+      <label className="text-[14px] font-semibold text-[#1A1A2E] block">Create Password</label>
+      <div className="relative">
+        <input
+          type={show ? "text" : "password"}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Minimum 8 characters"
+          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 pr-10 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+        />
+        <button
+          type="button"
+          onClick={() => setShow((s) => !s)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+          tabIndex={-1}
+        >
+          {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function ClaimStep1({
   dentist,
@@ -38,16 +65,10 @@ export function ClaimStep1({
       </div>
 
       {!user && (
-        <div className="space-y-2 animate-fadeIn">
-          <label className="text-[14px] font-semibold text-[#1A1A2E] block">Create Password</label>
-          <input
-            type="password"
-            value={claimPassword}
-            onChange={(e) => setClaimPassword(e.target.value)}
-            placeholder="Minimum 8 characters"
-            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
-          />
-        </div>
+        <PasswordField
+          value={claimPassword}
+          onChange={setClaimPassword}
+        />
       )}
 
       <div className="grid grid-cols-2 gap-4">
@@ -85,7 +106,7 @@ export function ClaimStep1({
           value={motivation}
           onChange={(e) => setMotivation(e.target.value)}
           placeholder="Tell patients about your dental approach and clinical background..."
-          className="w-full min-h-[80px] rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm text-slate-800"
+          className="w-full min-h-20 rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm text-slate-800"
         />
       </div>
 

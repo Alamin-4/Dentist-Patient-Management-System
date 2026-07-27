@@ -1,5 +1,3 @@
-// modules/find-dentists/components/FindDentist.tsx
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -44,11 +42,9 @@ import { PAGE_SIZE } from "./constants";
 import FilterSidebar from "../DentistAllComponents/SideBar";
 
 export default function FindDentistComponents() {
-    // ── Hooks ──────────────────────────────────────────────────────────────
     const filters = useDentistFilters();
     const compare = useDentistCompare();
 
-    // ── Local UI state ─────────────────────────────────────────────────────
     const [viewMode, setViewMode] = useState<"list" | "map" | "filter">("list");
     const [activeDentistId, setActiveDentistId] = useState<string | null>(null);
     const [showMapFilters, setShowMapFilters] = useState(false);
@@ -57,7 +53,7 @@ export default function FindDentistComponents() {
 
     useEffect(() => {
         const handleResize = () => {
-            setIsMobile(window.innerWidth < 1280); // xl breakpoint is 1280px
+            setIsMobile(window.innerWidth < 1280);
         };
         handleResize();
         window.addEventListener("resize", handleResize);
@@ -69,7 +65,6 @@ export default function FindDentistComponents() {
         setViewMode("map");
     };
 
-    // ── Add a Dentist state & mutation ──────────────────────────────────────
     const router = useRouter();
     const addDentistMutation = useAddDentistToDirectory();
     const [isAddDentistOpen, setIsAddDentistOpen] = useState(false);
@@ -122,7 +117,6 @@ export default function FindDentistComponents() {
     };
 
 
-    // ── Data fetching ──────────────────────────────────────────────────────
     const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(
         filters.serverParams,
     );
@@ -136,7 +130,6 @@ export default function FindDentistComponents() {
         return ["All Procedures", ...names];
     }, [globalProcedures]);
 
-    // ── Map API response to Dentist shape ──────────────────────────────────
     const apiDentists = useMemo<Dentist[]>(() => {
         return (directoryResponse?.data ?? []).map((d: any): Dentist => {
             const google: number | null = d.googleRating ?? null;
@@ -180,7 +173,6 @@ export default function FindDentistComponents() {
         });
     }, [directoryResponse]);
 
-    // Client-side language filter
     const filteredDentists = useMemo<Dentist[]>(() => {
         if (filters.selectedLanguages.length === 0) return apiDentists;
         return apiDentists.filter((d) =>
@@ -188,19 +180,17 @@ export default function FindDentistComponents() {
         );
     }, [apiDentists, filters.selectedLanguages]);
 
-    // ── Meta info ──────────────────────────────────────────────────────────
     const meta = directoryResponse?.meta;
     const totalCount: number = meta?.total ?? meta?.totalCount ?? 0;
     const totalPages: number =
         meta?.totalPages ?? (totalCount > 0 ? Math.ceil(totalCount / PAGE_SIZE) : 0);
 
-    // ── Context & auth ─────────────────────────────────────────────────────
     const { user } = useMe();
     const { setShowSignupModal, setDentistsToCompare, setShowPersonalizeModal, setShowCompareModal } =
         useStateContext();
 
-    // ── Handlers ───────────────────────────────────────────────────────────
     const handleCompareSubmit = () => {
+        if (compare.compareList.length < 2) return;
         setDentistsToCompare(compare.compareList);
         if (user) {
             const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
@@ -226,7 +216,6 @@ export default function FindDentistComponents() {
 
     return (
         <div className="min-h-screen">
-            {/* Top Bar */}
             <TopBar
                 query={filters.query}
                 onQueryChange={filters.setQuery}
@@ -240,7 +229,6 @@ export default function FindDentistComponents() {
                 onOpenMobileFilters={() => setIsMobileFilterOpen(true)}
             />
 
-            {/* Mobile Filter Sheet */}
             <FilterSheet
                 open={isMobileFilterOpen}
                 onClose={() => setIsMobileFilterOpen(false)}
@@ -249,10 +237,8 @@ export default function FindDentistComponents() {
                 availableProcedures={procedureOptions}
             />
 
-            {/* Main Content */}
             <main className="pb-16">
                 <div className="flex gap-4">
-                    {/* Desktop Sidebar */}
                     <AnimatePresence initial={false}>
                         {(viewMode === "list" || (viewMode === "map" && showMapFilters)) && (
                             <motion.aside
@@ -270,7 +256,6 @@ export default function FindDentistComponents() {
                         )}
                     </AnimatePresence>
 
-                    {/* Results Section */}
                     <section className="min-w-0 w-full">
                         <div
                             className={cn(
@@ -280,9 +265,7 @@ export default function FindDentistComponents() {
                                     : "grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]",
                             )}
                         >
-                            {/* Left: List / Right: Map */}
                             <div className={cn("min-w-0", showMapFilters && "hidden")}>
-                                {/* Results Header */}
                                 <ResultsHeader
                                     totalCount={totalCount}
                                     city={filters.city}
@@ -293,7 +276,6 @@ export default function FindDentistComponents() {
                                     onCompareToggle={compare.toggleCompareMode}
                                 />
 
-                                {/* Compare Bar */}
                                 {compare.isCompareMode && (
                                     <CompareStickyBar
                                         compareList={compare.compareList}
@@ -310,11 +292,10 @@ export default function FindDentistComponents() {
                                     onCompareToggle={compare.handleCompareToggle}
                                     onCardClick={setActiveDentistId}
                                     onClearFilters={handleClearAllFilters}
-                                    onAddDentistClick={() => setIsAddDentistOpen(true)}
                                     onViewOnMap={handleViewOnMap}
+                                    hasActiveFilters={filters.hasActiveFilters}
                                 />
 
-                                {/* Pagination */}
                                 {!isDirLoading && totalPages > 1 && (
                                     <Pagination
                                         page={filters.page}
@@ -324,7 +305,6 @@ export default function FindDentistComponents() {
                                 )}
                             </div>
 
-                            {/* Map View (Desktop Only) */}
                             {!isMobile && viewMode === "map" && (
                                 <MapSection
                                     dentists={filteredDentists}

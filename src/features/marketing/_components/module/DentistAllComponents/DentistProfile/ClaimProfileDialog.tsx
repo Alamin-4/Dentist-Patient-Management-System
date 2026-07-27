@@ -69,8 +69,21 @@ export default function ClaimProfileDialog({
   // Authentication & Role verification checks
   const isNotDentist = user && user.role !== "DENTIST";
   const alreadyClaimedDirectoryId = fullUser?.dentist?.dentistDirectoryId;
+  const isProfileVerifiedAndPaid =
+    fullUser?.dentist?.dentistDirectory?.status === "VERIFIED" ||
+    !!fullUser?.dentist?.dentistDirectory?.membershipPaidAt ||
+    dentist?.status === "VERIFIED" ||
+    dentist?.verified;
+
   const hasAlreadyClaimedAnother = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId !== dentist.id;
-  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id;
+  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id && isProfileVerifiedAndPaid;
+  const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id && !isProfileVerifiedAndPaid;
+
+  useEffect(() => {
+    if (isClaimPendingPayment && claimStep < 4) {
+      setClaimStep(4);
+    }
+  }, [isClaimPendingPayment, claimStep]);
 
   // Clear messages when step changes to keep UI clean
   useEffect(() => {
@@ -167,6 +180,11 @@ export default function ClaimProfileDialog({
         return;
       }
 
+      if (claimedDirectoryId) {
+        setClaimStep(4);
+        return;
+      }
+
       claimMutation.mutate(
         {
           slug: dentist.slug,
@@ -191,6 +209,10 @@ export default function ClaimProfileDialog({
           },
           onError: (err: any) => {
             const errMsg = err?.response?.data?.message || err?.message || "Failed to save application.";
+            if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("claimed")) {
+              setClaimStep(4);
+              return;
+            }
             setError(errMsg);
           },
         }
@@ -229,7 +251,7 @@ export default function ClaimProfileDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[540px] max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0 bg-white">
+      <DialogContent className="sm:max-w-135 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0 bg-white">
         <DialogHeader className="mb-6 text-left">
           <DialogTitle className="mb-2 text-2xl font-bold leading-tight text-[#1A1A2E]">
             Claim Dentist Profile
@@ -255,7 +277,7 @@ export default function ClaimProfileDialog({
                   </div>
                   {s < 4 && (
                     <div
-                      className={`w-10 h-[2px] transition-colors duration-300 ${claimStep > s ? "bg-[#4CA30D]" : "bg-slate-200"
+                      className={`w-10 h-0.5 transition-colors duration-300 ${claimStep > s ? "bg-[#4CA30D]" : "bg-slate-200"
                         }`}
                     />
                   )}
@@ -266,7 +288,6 @@ export default function ClaimProfileDialog({
         </DialogHeader>
 
         <div className="mt-2">
-          {/* 1. Account type validation block */}
           {isNotDentist && (
             <div className="text-center py-6 space-y-4 animate-scaleUp">
               <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
@@ -293,7 +314,6 @@ export default function ClaimProfileDialog({
             </div>
           )}
 
-          {/* 2. Dentist owns another profile validation block */}
           {!isNotDentist && hasAlreadyClaimedAnother && (
             <div className="text-center py-6 space-y-4 animate-scaleUp">
               <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
@@ -419,6 +439,7 @@ export default function ClaimProfileDialog({
                   handleNextStep={handleNextStep}
                   user={user}
                   setClaimStep={setClaimStep}
+                  claimMutation={claimMutation}
                 />
               )}
 

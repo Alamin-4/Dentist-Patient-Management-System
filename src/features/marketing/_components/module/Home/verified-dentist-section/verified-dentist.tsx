@@ -159,7 +159,9 @@ export default function VerifiedDentists() {
               </div>
               <div>
                 <Button
+                  disabled={selectedDentists.length < 2}
                   onClick={() => {
+                    if (selectedDentists.length < 2) return;
                     const mappedForCompare = selectedDentists.map((doc: any) => {
                       const raw = directoryResponse?.data?.find((item: any) => item.id === doc.id);
                       return raw ? mapApiDentist(raw) : null;
@@ -176,7 +178,7 @@ export default function VerifiedDentists() {
                       setShowSignupModal(true);
                     }
                   }}
-                  className="bg-[#0E3E65] hover:bg-[#092b47] text-white h-11 px-6 rounded-lg cursor-pointer font-bold transition-colors"
+                  className="bg-[#0E3E65] hover:bg-[#092b47] text-white h-11 px-6 rounded-lg cursor-pointer font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Compare
                 </Button>

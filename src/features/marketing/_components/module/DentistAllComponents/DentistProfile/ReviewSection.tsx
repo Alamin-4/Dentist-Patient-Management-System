@@ -11,6 +11,7 @@ export default function ReviewSection({
   slug,
   dentist,
   setIsReviewModalOpen,
+  onSeeAllReviews,
 }: {
   slug: string;
   dentist: any;
@@ -18,6 +19,7 @@ export default function ReviewSection({
   googleReviewCount?: number;
   isReviewModalOpen: boolean;
   setIsReviewModalOpen: (open: boolean) => void;
+  onSeeAllReviews?: () => void;
 }) {
   const { user } = useMe();
   const isOwnProfile = user && (user.id === dentist.claimedByUserId || (dentist.userId && user.id === dentist.userId));
@@ -25,6 +27,7 @@ export default function ReviewSection({
   const { data: reviewsData, isLoading } = useDentistDirectoryReviews(slug);
 
   const reviewsList = reviewsData?.data?.reviews || [];
+  const displayedReviews = onSeeAllReviews ? reviewsList.slice(0, 5) : reviewsList;
   const metrics = reviewsData?.data?.metrics || {
     communication: 0.0,
     valueForMoney: 0.0,
@@ -157,7 +160,7 @@ export default function ReviewSection({
             </div>
           ) : (
             <div className="divide-y divide-slate-100">
-              {reviewsList.map((review: any) => (
+              {displayedReviews.map((review: any) => (
                 <div key={review.id} className="py-5 first:pt-0 last:pb-0">
                   <div className="flex justify-between items-start gap-4 mb-2">
                     <div className="flex items-center gap-3">
@@ -201,27 +204,28 @@ export default function ReviewSection({
                     </div>
                   </div>
 
-                  <p className="text-sm text-slate-600 mt-2.5 leading-relaxed bg-slate-50/50 rounded-lg p-3 border border-slate-100">
+                  <p className="text-sm text-slate-600 mt-2.5 leading-relaxed">
                     {review.text}
                   </p>
 
-                  {/* Individual Dimension Ratings Badges */}
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    <div className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-150">
-                      Communication: <span className="text-sky-600 font-bold">{review.communication}</span>
-                    </div>
-                    <div className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-150">
-                      Value: <span className="text-sky-600 font-bold">{review.valueForMoney}</span>
-                    </div>
-                    <div className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-150">
-                      Guarantee: <span className="text-sky-600 font-bold">{review.followThrough}</span>
-                    </div>
-                  </div>
+
                 </div>
               ))}
             </div>
           )}
+          {onSeeAllReviews && reviewsList.length > 5 && (
+            <div className="mt-6 flex justify-center pt-5 border-t border-slate-100">
+              <Button
+                type="button"
+                onClick={onSeeAllReviews}
+                className="w-full sm:w-auto h-11 rounded-lg border border-slate-200 bg-white text-[#0E3E65] hover:bg-slate-50 font-bold transition-colors cursor-pointer"
+              >
+                See All Reviews ({reviewsList.length})
+              </Button>
+            </div>
+          )}
         </div>
-      )}    </section>
+      )}
+    </section>
   );
 }

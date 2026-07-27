@@ -84,7 +84,7 @@ export default function VerificationLayout({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-dvh">
       <header className=" border-b pb-2">
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col gap-1">
@@ -105,9 +105,8 @@ export default function VerificationLayout({
         </div>
       </header>
 
-      {/* Middle Part - Changeable Content */}
-      <main className="flex-1 py-10 pb-32">
-        <div className="min-h-full ">
+      <main className="flex-1 py-10">
+        <div >
           <div className="rounded-lg border border-gray-100 bg-white shadow-sm p-6">
             {isProgressLoading ? (
               <div className="flex min-h-80 items-center justify-center">
@@ -120,8 +119,7 @@ export default function VerificationLayout({
         </div>
       </main>
 
-      {/* Bottom Bar - Always visible */}
-      <footer className="fixed bottom-0 left-0 right-0 border-t bg-white py-6 z-50">
+      <footer className="sticky bottom-0 border-t bg-white py-4 z-40 -mx-6 -mb-6 px-6 mt-12">
         <StepButton />
       </footer>
     </div>

@@ -20,11 +20,6 @@ const RDV_SCORE_BY_STEP: Record<VerificationPhaseStep, number> = {
 };
 
 export default function useVerificationProgress() {
-    // `enabled` must be identical between the server render and the client's
-    // first (hydration) render, or React throws a hydration mismatch. Gating
-    // on a `mounted` flag flipped in an effect (instead of `typeof window`,
-    // which is already true during the client's hydration pass) keeps both
-    // renders in sync; the queries simply start one tick later on the client.
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
         setMounted(true);
@@ -67,6 +62,8 @@ export default function useVerificationProgress() {
                 ? {
                     signer_name: progressData.dentistOperations.signerName,
                     accepted_terms: progressData.dentistOperations.agreedToGuarantee,
+                    jci_certificate: progressData.dentistOperations.jciCertificate,
+                    walkthrough_video: progressData.dentistOperations.walkthroughVideo,
                 }
                 : {},
         } : undefined,
@@ -100,31 +97,51 @@ export default function useVerificationProgress() {
     const step2Note = checkPhotoVerifyProgress.data?.note ?? null;
     const step3Note = checkIdVerifyProgress.data?.note ?? null;
 
-    // A step counts as "submitted" for badge/display purposes when SUBMITTED or APPROVED
     const submittedByStep: Record<VerificationPhaseStep, boolean> = useMemo(() => ({
         1: step1Status === "SUBMITTED" || step1Status === "APPROVED",
         2: step2Status === "SUBMITTED" || step2Status === "APPROVED",
         3: step3Status === "SUBMITTED" || step3Status === "APPROVED",
     }), [step1Status, step2Status, step3Status]);
 
-    // Access to the next step unlocks when the previous step is APPROVED or already SUBMITTED
     const canAccessStep = (step: VerificationPhaseStep): boolean => {
         if (step === 1) return true;
         if (step === 2) return step1Status === "APPROVED" || submittedByStep[1];
         return step2Status === "APPROVED" || submittedByStep[2];
     };
 
+    // Helper to check if a step is submitted or approved
+    const isStepFilled = (status: StepStatus) => status === "SUBMITTED" || status === "APPROVED";
 
-    // The next incomplete step is the first step that hasn't been APPROVED yet
-    const nextIncompleteStep: VerificationPhaseStep = step1Status !== "APPROVED"
-        ? 1
-        : step2Status !== "APPROVED"
-            ? 2
-            : 3;
+    // Next step to action: prioritize REJECTED step first, then first PENDING step
+    const nextIncompleteStep: VerificationPhaseStep = useMemo(() => {
+        if (step1Status === "REJECTED") return 1;
+        if (step2Status === "REJECTED") return 2;
+        if (step3Status === "REJECTED") return 3;
 
-    const rdvScore = (Object.entries(submittedByStep) as [string, boolean][])
-        .reduce((score, [step, submitted]) => {
-            if (!submitted) return score;
+        if (!isStepFilled(step1Status)) return 1;
+        if (!isStepFilled(step2Status)) return 2;
+        if (!isStepFilled(step3Status)) return 3;
+
+        return 3;
+    }, [step1Status, step2Status, step3Status]);
+
+    const allSubmittedOrApproved = useMemo(() => {
+        return isStepFilled(step1Status) && isStepFilled(step2Status) && isStepFilled(step3Status);
+    }, [step1Status, step2Status, step3Status]);
+
+    const allApproved = useMemo(() => {
+        return step1Status === "APPROVED" && step2Status === "APPROVED" && step3Status === "APPROVED";
+    }, [step1Status, step2Status, step3Status]);
+
+    const approvedByStep: Record<VerificationPhaseStep, boolean> = useMemo(() => ({
+        1: step1Status === "APPROVED",
+        2: step2Status === "APPROVED",
+        3: step3Status === "APPROVED",
+    }), [step1Status, step2Status, step3Status]);
+
+    const rdvScore = (Object.entries(approvedByStep) as [string, boolean][])
+        .reduce((score, [step, approved]) => {
+            if (!approved) return score;
             return score + RDV_SCORE_BY_STEP[Number(step) as VerificationPhaseStep];
         }, 0);
 
@@ -140,6 +157,8 @@ export default function useVerificationProgress() {
         step3Note,
         submittedByStep,
         nextIncompleteStep,
+        allSubmittedOrApproved,
+        allApproved,
         rdvScore,
         canAccessStep,
         isProgressLoading:

@@ -36,14 +36,14 @@ export const useDentistFilters = () => {
     const initialCity = searchParams.get("city") || DEFAULT_FILTERS.city;
     const initialCountry = searchParams.get("country") || DEFAULT_FILTERS.country;
     const initialProcedure = searchParams.get("procedure") || DEFAULT_FILTERS.procedure;
-    
-    const initialMinPrice = searchParams.get("price[min]") 
-        ? Number(searchParams.get("price[min]")) 
+
+    const initialMinPrice = searchParams.get("price[min]")
+        ? Number(searchParams.get("price[min]"))
         : DEFAULT_PRICE_RANGE[0];
-    const initialMaxPrice = searchParams.get("price[max]") 
-        ? Number(searchParams.get("price[max]")) 
+    const initialMaxPrice = searchParams.get("price[max]")
+        ? Number(searchParams.get("price[max]"))
         : DEFAULT_PRICE_RANGE[1];
-        
+
     const initialVerified = searchParams.get("verified") === "true";
     const initialPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
 
@@ -70,6 +70,13 @@ export const useDentistFilters = () => {
         const urlVerified = searchParams.get("verified") === "true";
         const urlPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
 
+        const urlMinPrice = searchParams.get("price[min]")
+            ? Number(searchParams.get("price[min]"))
+            : DEFAULT_PRICE_RANGE[0];
+        const urlMaxPrice = searchParams.get("price[max]")
+            ? Number(searchParams.get("price[max]"))
+            : DEFAULT_PRICE_RANGE[1];
+
         if (urlSearch !== query) {
             setQuery(urlSearch);
             setDebouncedQuery(urlSearch);
@@ -79,6 +86,11 @@ export const useDentistFilters = () => {
         if (urlProcedure !== procedure) setProcedure(urlProcedure);
         if (urlVerified !== showVerifiedOnly) setShowVerifiedOnly(urlVerified);
         if (urlPage !== page) setPage(urlPage);
+
+        if (urlMinPrice !== priceRange[0] || urlMaxPrice !== priceRange[1]) {
+            setPriceRange([urlMinPrice, urlMaxPrice]);
+            setDebouncedPrice([urlMinPrice, urlMaxPrice]);
+        }
     }, [searchParams]);
 
     // Sync state changes to URL search params
@@ -91,11 +103,18 @@ export const useDentistFilters = () => {
         if (showVerifiedOnly) params.set("verified", "true");
         if (page > 1) params.set("page", page.toString());
 
+        if (debouncedPrice[0] !== DEFAULT_PRICE_RANGE[0]) {
+            params.set("price[min]", debouncedPrice[0].toString());
+        }
+        if (debouncedPrice[1] !== DEFAULT_PRICE_RANGE[1]) {
+            params.set("price[max]", debouncedPrice[1].toString());
+        }
+
         const queryStr = params.toString();
         const nextUrl = queryStr ? `${pathname}?${queryStr}` : pathname;
-        
+
         router.replace(nextUrl, { scroll: false });
-    }, [debouncedQuery, city, country, procedure, showVerifiedOnly, page, router, pathname]);
+    }, [debouncedQuery, city, country, procedure, showVerifiedOnly, page, debouncedPrice, router, pathname]);
 
     // Debounce search query
     useEffect(() => {
@@ -124,11 +143,6 @@ export const useDentistFilters = () => {
         return min > 0 ? min : undefined;
     }, [selectedScoreRanges]);
 
-    const ratingMin = useMemo(
-        () => (selectedRatings.length > 0 ? Math.min(...selectedRatings) : undefined),
-        [selectedRatings],
-    );
-
     // Build API params
     const serverParams = useMemo(() => {
         const params: Record<string, any> = { page };
@@ -138,11 +152,19 @@ export const useDentistFilters = () => {
         if (procedure !== DEFAULT_FILTERS.procedure) params.procedure = procedure;
         if (showVerifiedOnly) params.verified = "true";
         if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
-        if (ratingMin !== undefined) params.ratingMin = ratingMin;
-        return params;
-    }, [page, debouncedQuery, city, country, procedure, showVerifiedOnly, rdvScoreMin, ratingMin]);
+        if (selectedRatings.length > 0) {
+            params.ratings = selectedRatings.join(",");
+        }
 
-    // Toggle helpers
+        // Pass price parameters to backend API
+        params.price = {
+            min: debouncedPrice[0],
+            max: debouncedPrice[1],
+        };
+
+        return params;
+    }, [page, debouncedQuery, city, country, procedure, showVerifiedOnly, rdvScoreMin, selectedRatings, debouncedPrice]);
+
     const toggleRating = (rating: number) =>
         setSelectedRatings((prev) =>
             prev.includes(rating) ? prev.filter((v) => v !== rating) : [...prev, rating],
@@ -172,11 +194,10 @@ export const useDentistFilters = () => {
         setSelectedAvailabilityDate(null);
         setShowVerifiedOnly(false);
         setPage(1);
-        
+
         router.replace(pathname, { scroll: false });
     };
 
-    // ✅ Shared props for filter components - এখানে available options যোগ করুন
     const sharedFilterProps = {
         procedure,
         onProcedureChange: (v: string) => setProcedure(v),
@@ -197,14 +218,39 @@ export const useDentistFilters = () => {
         showVerifiedOnly,
         onShowVerifiedOnlyChange: setShowVerifiedOnly,
         onClear: resetAll,
-        // ✅ এই তিনটা যোগ করুন
         availableProcedures: procedureOptions,
         availableCountries: countryOptions,
         availableCities: cityOptions,
     };
 
+    const hasActiveFilters = useMemo(() => {
+        return (
+            query.trim() !== "" ||
+            city !== DEFAULT_FILTERS.city ||
+            country !== DEFAULT_FILTERS.country ||
+            procedure !== DEFAULT_FILTERS.procedure ||
+            priceRange[0] !== DEFAULT_PRICE_RANGE[0] ||
+            priceRange[1] !== DEFAULT_PRICE_RANGE[1] ||
+            showVerifiedOnly ||
+            selectedRatings.length > 0 ||
+            selectedScoreRanges.length > 0 ||
+            selectedLanguages.length > 0 ||
+            selectedAvailabilityDate !== null
+        );
+    }, [
+        query,
+        city,
+        country,
+        procedure,
+        priceRange,
+        showVerifiedOnly,
+        selectedRatings,
+        selectedScoreRanges,
+        selectedLanguages,
+        selectedAvailabilityDate,
+    ]);
+
     return {
-        // State
         query,
         setQuery,
         debouncedQuery,
@@ -217,9 +263,8 @@ export const useDentistFilters = () => {
         selectedLanguages,
         page,
         setPage,
-        // API
         serverParams,
-        // Helpers
+        hasActiveFilters,
         resetAll,
         sharedFilterProps,
     };

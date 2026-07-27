@@ -226,7 +226,6 @@ export default function FilterSidebar({
           </div>
         </FilterSection>
 
-        {/* Rating */}
         <FilterSection title="Rating">
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map((stars) => (

@@ -12,6 +12,7 @@ import { DentistsPageSkeleton } from "./DentistsPageSkeleton";
 import {
   useAdminDentists,
   useUploadDentistDirectory,
+  useBulkDentistAction,
 } from "@/hooks/admin/dentist/useDentist";
 import { useSpecialties } from "@/hooks/dentist/useSpecialty";
 
@@ -23,14 +24,14 @@ import {
 } from "./utils/dentist-types";
 
 import { ListFilters } from "./components/list-filters";
-import { ListBulkActions } from "./components/list-bulk-actions";
 import { DentistsTable } from "./components/list-table";
+import { ImportModal } from "./components/import-modal";
 
 export default function DentistsPage() {
   const router = useRouter();
   const { data: specialities } = useSpecialties();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadMutation = useUploadDentistDirectory();
+  const bulkActionMutation = useBulkDentistAction();
 
   // Search, Filter & Pagination States
   const [activeTab, setActiveTab] = useState<StatusFilter>("all");
@@ -39,35 +40,36 @@ export default function DentistsPage() {
   const [city, setCity] = useState("All cities");
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
-  const handleImportCSV = () => {
-    fileInputRef.current?.click();
+  const handleBulkAction = (action: "suspend" | "unsuspend" | "delete") => {
+    if (selectedIds.length === 0) return;
+    bulkActionMutation.mutate(
+      { ids: selectedIds, action },
+      {
+        onSuccess: (res: any) => {
+          toast.success(res?.message || `Successfully executed bulk ${action} action.`);
+          setSelectedIds([]);
+        },
+        onError: (err: any) => {
+          const errMsg = err?.response?.data?.message || err?.message || `Failed to perform bulk action.`;
+          toast.error(errMsg);
+        },
+      }
+    );
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImportCSV = () => {
+    setIsImportModalOpen(true);
+  };
 
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    if (ext !== "csv" && ext !== "xlsx" && ext !== "xls") {
-      toast.error("Please upload a valid CSV or Excel file.");
-      return;
-    }
-
-    const toastId = toast.loading("Uploading and importing dentist directory...");
-
+  const handleUploadFile = (file: File, options?: { onSuccess?: (response: any) => void; onError?: (err: any) => void }) => {
     uploadMutation.mutate(file, {
       onSuccess: (response: any) => {
-        toast.success(
-          response?.message || "Dentist directory imported successfully.",
-          { id: toastId }
-        );
-        if (fileInputRef.current) fileInputRef.current.value = "";
+        options?.onSuccess?.(response);
       },
       onError: (err: any) => {
-        const errMsg = err?.response?.data?.message || err?.message || "Failed to import dentist directory.";
-        toast.error(errMsg, { id: toastId });
-        if (fileInputRef.current) fileInputRef.current.value = "";
+        options?.onError?.(err);
       },
     });
   };
@@ -183,16 +185,16 @@ export default function DentistsPage() {
 
   if (isError) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center text-red-500 font-semibold">
+      <div className="flex min-h-100 items-center justify-center text-red-500 font-semibold">
         Failed to load dentists directory. Please try again.
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap gap-4 sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A2E]">Dentists Directory</h1>
           <p className="mt-0.5 text-sm text-gray-500">
@@ -200,42 +202,27 @@ export default function DentistsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept=".csv,.xlsx,.xls"
-            className="hidden"
-          />
           <button
             onClick={handleImportCSV}
-            disabled={uploadMutation.isPending}
-            className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+            className="flex truncate items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
           >
-            {uploadMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Upload className="h-4 w-4" />
-            )}
+            <Upload className="h-4 w-4" />
             Import CSV
           </button>
-          <button className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
+          <button className="flex truncate items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
             <Download className="h-4 w-4" />
             Export
           </button>
-          <button className="flex h-9 items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#1A1A2E]/90">
+          <button className="flex truncate items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1A1A2E]/90">
             <UserPlus className="h-4 w-4" />
             Invite dentist
           </button>
         </div>
       </div>
 
-      {/* Stats Cards */}
       <CustomStats stats={stats} className="grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" />
 
-      {/* Main Table Card */}
       <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
-        {/* Navigation Tabs */}
         <div className="border-b border-gray-100 px-4 overflow-x-auto pt-1">
           <CustomTab tabs={tabs} active={activeTab} onChange={handleTabChange} />
         </div>
@@ -250,6 +237,10 @@ export default function DentistsPage() {
           setCity={setCity}
           setPage={setPage}
           specialities={specialities}
+          selectedCount={selectedIds.length}
+          onBulkAction={handleBulkAction}
+          isBulkPending={bulkActionMutation.isPending}
+          onClearSelection={() => setSelectedIds([])}
         />
 
         {/* Dentists Data Table */}
@@ -265,8 +256,13 @@ export default function DentistsPage() {
         />
       </div>
 
-      {/* Bulk Action Controls */}
-      <ListBulkActions selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
+      {/* Professional Import Drawer/Modal */}
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onUpload={handleUploadFile}
+        isPending={uploadMutation.isPending}
+      />
     </div>
   );
 }

@@ -1,9 +1,12 @@
 "use client";
 
-import { CheckCircle2, Circle, Clock, AlertCircle } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Circle, Clock, AlertCircle, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
+import { useCreateDirectoryCheckoutSession } from "@/hooks/dentist/useDentistDirectory";
 import type {
   DentistVerificationProgress,
   VerificationProgressStep,
@@ -29,6 +32,115 @@ export function VerificationBanner() {
   const progress = progressData?.data as
     | DentistVerificationProgress
     | undefined;
+
+  const [selectedPlan, setSelectedPlan] = useState<string>("6_MONTH");
+  const checkoutMutation = useCreateDirectoryCheckoutSession();
+
+  if (progress?.show_membership_purchase) {
+    const handleProceedToPayment = () => {
+      const directoryId = progress.dentist_directory_id;
+      if (!directoryId) {
+        toast.error("Directory Profile ID not found. Please try again.");
+        return;
+      }
+
+      checkoutMutation.mutate(
+        { dentistDirectoryId: directoryId, membershipPlan: selectedPlan },
+        {
+          onSuccess: (res: any) => {
+            const checkoutUrl = res?.data?.url;
+            if (checkoutUrl) {
+              window.location.href = checkoutUrl;
+            } else {
+              toast.error("Failed to create checkout session. Please try again.");
+            }
+          },
+          onError: (err: any) => {
+            toast.error(err?.response?.data?.message || "Payment setup failed.");
+          },
+        }
+      );
+    };
+
+    return (
+      <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm animate-scaleUp">
+        <div className="flex flex-col items-center text-center">
+          <div className="mx-auto size-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-6">
+            <CheckCircle2 className="size-10" />
+          </div>
+          
+          <h3 className="text-2xl font-bold text-foreground">
+            Documents Verified successfully!
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground max-w-md">
+            All your verification documents have been approved by our admin team. The final step to go live on RatedDocs is to select a membership plan below.
+          </p>
+
+          <div className="mt-8 w-full">
+            <div className="space-y-4 text-left">
+              <label className="text-sm font-semibold text-foreground block">
+                Select Your Membership Plan
+              </label>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div
+                  onClick={() => setSelectedPlan("6_MONTH")}
+                  className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${
+                    selectedPlan === "6_MONTH"
+                      ? "border-[#0e3e65] bg-[#0e3e65]/5 ring-2 ring-[#0e3e65]/10"
+                      : "border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
+                  <span className="block text-2xl font-extrabold text-[#0e3e65] mt-1">$899</span>
+                  <span className="block text-[10px] text-slate-400 mt-1">~$149.83/mo</span>
+                </div>
+                
+                <div
+                  onClick={() => setSelectedPlan("12_MONTH")}
+                  className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${
+                    selectedPlan === "12_MONTH"
+                      ? "border-[#4CA30D] bg-[#4CA30D]/5 ring-2 ring-[#4CA30D]/10"
+                      : "border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#4CA30D] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
+                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
+                  <span className="block text-2xl font-extrabold text-[#0e3e65] mt-1">$1499</span>
+                  <span className="block text-[10px] text-slate-400 mt-1">~$124.92/mo</span>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-blue-50/50 border border-blue-200 p-3.5 text-xs text-blue-800 flex items-start gap-2.5">
+                <ShieldCheck className="size-4 shrink-0 mt-0.5 text-blue-600" />
+                <span>
+                  You will be redirected to Stripe for secure payment. Once checkout is completed successfully, your profile will instantly go live and patient bookings will be enabled.
+                </span>
+              </div>
+
+              <div className="pt-4">
+                <Button
+                  size="lg"
+                  disabled={checkoutMutation.isPending}
+                  className="w-full h-14 rounded-lg bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
+                  onClick={handleProceedToPayment}
+                >
+                  {checkoutMutation.isPending ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                      Redirecting to Payment...
+                    </span>
+                  ) : (
+                    `Purchase Membership & Go Live →`
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const steps = progress?.steps || [];
   const licenseStep = getStepByPhase(steps, "LICENSE");

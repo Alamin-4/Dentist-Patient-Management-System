@@ -171,10 +171,10 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
       lVer === "REJECTED"
         ? (item.license_step?.reviewer_notes || "")
         : oVer === "REJECTED"
-        ? (item.operation_step?.reviewer_notes || "")
-        : cVer === "REJECTED"
-        ? (item.clinical_step?.reviewer_notes || "")
-        : (item.license_step?.reviewer_notes || ""),
+          ? (item.operation_step?.reviewer_notes || "")
+          : cVer === "REJECTED"
+            ? (item.clinical_step?.reviewer_notes || "")
+            : (item.license_step?.reviewer_notes || ""),
     dentist: String(item.dentist?.id || item.dentist || ""),
     verification: String(item.id || ""),
     registration_authority: item.license_step?.registration_authority || "",
@@ -203,10 +203,12 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
       government_id: {
         file_name: getFileNameFromUrl(item.license_step.file, "License document"),
         file_size: "",
+        href: item.license_step.file,
         verified_note: item.license_step.reviewer_notes || "Document is valid",
       },
       selfie: {
         file_name: getFileNameFromUrl(item.license_step.professional_headshot, "Headshot photo"),
+        href: item.license_step.professional_headshot,
         ai_match_score: item.face_match_score || 0,
         confidence: item.face_match_score ? `${item.face_match_score}%` : "N/A",
       }

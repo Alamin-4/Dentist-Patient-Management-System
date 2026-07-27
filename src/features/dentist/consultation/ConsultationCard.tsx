@@ -2,6 +2,69 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { MessageSquare } from "lucide-react";
 
+// Parse a timezone string like "GMT+6 Time Zone (BST, GMT+6)" into offset minutes
+const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
+  if (!tzStr) return 0;
+  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
+  const match = tzStr.match(regex);
+  if (match) {
+    const sign = match[1] === "-" ? -1 : 1;
+    const hours = parseInt(match[2], 10);
+    const minutes = match[3] ? parseInt(match[3], 10) : 0;
+    return sign * (hours * 60 + minutes);
+  }
+  if (tzStr.includes("EST")) return -5 * 60;
+  if (tzStr.includes("CST")) return -6 * 65;
+  if (tzStr.includes("MST")) return -7 * 60;
+  if (tzStr.includes("PST")) return -8 * 60;
+  if (tzStr.includes("CET")) return 1 * 60;
+  if (tzStr.includes("AEST")) return 10 * 60;
+  if (tzStr.includes("BST")) return 6 * 60;
+  return 0;
+};
+
+const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
+  const dObj = new Date(scheduledDate);
+  const year = dObj.getUTCFullYear();
+  const month = dObj.getUTCMonth();
+  const day = dObj.getUTCDate();
+
+  const timeParts = scheduledTime.split(":");
+  let hours = parseInt(timeParts[0], 10);
+  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+
+  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
+    hours += 12;
+  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
+    hours = 0;
+  }
+
+  if (isNaN(hours)) hours = 0;
+  if (isNaN(minutes)) minutes = 0;
+
+  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
+  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
+  return localUtcMs - offsetMinutes * 60 * 1000;
+};
+
+const isWithinMeetingWindow = (consultation: any): boolean => {
+  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
+
+  const startUtcMs = getConsultationStartUtcMs(
+    consultation.scheduledDate,
+    consultation.scheduledTime,
+    consultation.timezone
+  );
+
+  const durationMinutes = consultation.durationMinutes || 15;
+  const now = Date.now();
+  // 5 minutes early buffer, up to end of duration
+  const startBuffer = startUtcMs - 5 * 60 * 1000;
+  const end = startUtcMs + durationMinutes * 60 * 1000;
+
+  return now >= startBuffer && now <= end;
+};
+
 interface CardProps {
   data: any;
   type: string;
@@ -39,9 +102,7 @@ export const ConsultationCard = ({
     }
   }
 
-  const scheduledTimeMs = data.scheduledDate ? new Date(data.scheduledDate).getTime() : 0;
-  const durationMs = (data.durationMinutes || 15) * 60 * 1000;
-  const isExpired = scheduledTimeMs > 0 && scheduledTimeMs + durationMs < Date.now();
+  const isMeetingActive = isWithinMeetingWindow(data);
 
   return (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
@@ -59,7 +120,7 @@ export const ConsultationCard = ({
               <p className="text-sm text-gray-500 font-medium truncate">{email}</p>
             </div>
           </div>
-          
+
           {/* Chat Button */}
           <button
             onClick={(e) => {
@@ -83,12 +144,12 @@ export const ConsultationCard = ({
               </span>
               <span
                 className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${treatmentPlanStatus === "Not Sent"
-                    ? "bg-slate-100 text-[#777779]"
-                    : treatmentPlanStatus === "Rejected"
-                      ? "bg-red-50 text-red-500"
-                      : treatmentPlanStatus === "Accepted"
-                        ? "bg-emerald-50 text-emerald-500"
-                        : "bg-orange-50 text-orange-500"
+                  ? "bg-slate-100 text-[#777779]"
+                  : treatmentPlanStatus === "Rejected"
+                    ? "bg-red-50 text-red-500"
+                    : treatmentPlanStatus === "Accepted"
+                      ? "bg-emerald-50 text-emerald-500"
+                      : "bg-orange-50 text-orange-500"
                   }`}
               >
                 {treatmentPlanStatus}
@@ -143,13 +204,12 @@ export const ConsultationCard = ({
           <>
             <button
               onClick={onClick}
-              className={`h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${
-                isExpired ? "w-full" : "flex-1"
-              }`}
+              className={`h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${isMeetingActive ? "flex-1" : "w-full"
+                }`}
             >
               View Details
             </button>
-            {!isExpired && (
+            {isMeetingActive && (
               <button
                 onClick={onJoinMeeting}
                 className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"

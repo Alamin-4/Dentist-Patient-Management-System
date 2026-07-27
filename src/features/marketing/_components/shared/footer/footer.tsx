@@ -1,15 +1,15 @@
 "use client";
 
-
-import { ArrowUpRight } from "lucide-react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { apiClient } from "@/core/api/client";
 
 const quickLinks = [
   { name: "Home", href: "/" },
-  { name: "Find a Dentist", href: "/find" },
-  { name: "About", href: "/about" },
+  { name: "Find a Dentist", href: "/find-dentists" },
+  { name: "About", href: "/about-us" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ];
@@ -21,6 +21,39 @@ const resources = [
 ];
 
 export default function Footer() {
+  const [footerText, setFooterText] = useState(
+    "Access fully-vetted dentists with clear pricing and guaranteed protection. Book your dental care with confidence today."
+  );
+  const [socials, setSocials] = useState({
+    facebook: "https://facebook.com",
+    twitter: "https://x.com",
+    instagram: "https://instagram.com",
+    linkedin: "https://linkedin.com",
+  });
+
+  useEffect(() => {
+    const loadFooterSettings = async () => {
+      try {
+        const response = await apiClient.settings.get();
+        if (response?.data) {
+          if (response.data.footerText) {
+            setFooterText(response.data.footerText);
+          }
+          setSocials({
+            facebook: response.data.facebook || "",
+            twitter: response.data.twitter || "",
+            instagram: response.data.instagram || "",
+            linkedin: response.data.linkedin || "",
+          });
+        }
+      } catch (e) {
+        console.error("Failed to load footer settings:", e);
+      }
+    };
+
+    loadFooterSettings();
+  }, []);
+
   return (
     <footer className="bg-[#10436B] pt-20 pb-10 px-6 md:px-12 text-white">
       <div className="max-w-400 w-11/12 mx-auto">
@@ -40,33 +73,34 @@ export default function Footer() {
             </div>
 
             <p className="max-w-sm text-gray-300 text-[16px] leading-relaxed">
-              Access fully-vetted dentists with clear pricing and guaranteed
-              protection. Book your dental care with confidence today.
+              {footerText}
             </p>
 
-            {/* Social Icons */}
             <div className="flex gap-4">
               {[
-                { icon: <FaFacebook size={20} />, href: "#" },
+                { icon: <FaFacebook size={20} />, href: socials.facebook },
                 {
                   icon: <span className="font-bold text-lg italic">X</span>,
-                  href: "#",
+                  href: socials.twitter,
                 },
-                { icon: <FaInstagram size={20} />, href: "#" },
-                { icon: <FaLinkedin size={20} />, href: "#" },
-              ].map((social, idx) => (
-                <Link
-                  key={idx}
-                  href={social.href}
-                  className="w-11 h-11 flex items-center justify-center rounded-lg bg-white/10 border border-white/10 hover:bg-[#E3A32A] transition-all duration-300"
-                >
-                  {social.icon}
-                </Link>
-              ))}
+                { icon: <FaInstagram size={20} />, href: socials.instagram },
+                { icon: <FaLinkedin size={20} />, href: socials.linkedin },
+              ]
+                .filter((s) => s.href)
+                .map((social, idx) => (
+                  <Link
+                    key={idx}
+                    href={social.href || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-11 h-11 flex items-center justify-center rounded-lg bg-white/10 border border-white/10 hover:bg-[#E3A32A] transition-all duration-300"
+                  >
+                    {social.icon}
+                  </Link>
+                ))}
             </div>
           </div>
 
-          {/* Quick Links */}
           <div className="space-y-6">
             <h3 className="text-xl font-bold">Quick Links</h3>
             <ul className="space-y-2">

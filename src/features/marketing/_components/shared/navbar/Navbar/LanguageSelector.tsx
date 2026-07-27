@@ -45,8 +45,6 @@ export default function LanguageSelector({
     const handleSelect = (lang: Language) => {
         setSelectedLang(lang);
         onSelect?.(lang);
-
-        // Mobile এ collapse করুন, কিন্তু Sheet close করবেন না
         if (variant === "mobile") {
             setIsExpanded(false);
         } else {
@@ -54,10 +52,10 @@ export default function LanguageSelector({
         }
     };
 
-    // ── MOBILE: Collapsible Accordion Pattern ──────────────────────────────
     if (variant === "mobile") {
         return (
-            <div className="w-full">
+            // todo
+            <div className="w-full hidden">
                 {/* Trigger Button */}
                 <button
                     type="button"
@@ -124,10 +122,10 @@ export default function LanguageSelector({
         );
     }
 
-    // ── DESKTOP: DropdownMenu (stays same) ─────────────────────────────────
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 focus:outline-none transition-colors border border-transparent hover:border-gray-100">
+            {/* todo */}
+            <DropdownMenuTrigger className="flex hidden items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 focus:outline-none transition-colors border border-transparent hover:border-gray-100">
                 <Image
                     src={selectedLang.flag}
                     alt={selectedLang.name}

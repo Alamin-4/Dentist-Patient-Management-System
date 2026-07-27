@@ -8,6 +8,7 @@ import { StatCard } from "@/app/modules/patient/Overview/StatsCard";
 import { ConsultationCard } from "@/app/modules/patient/Overview/ConsultationCard";
 import { RescheduleConsultationModal } from "@/app/modules/patient/Overview/RescheduleConsultationModal";
 import DoctorCard from "@/app/modules/patient/MyBooking/Card";
+import { ConsultationDetailsModal } from "@/app/modules/patient/Overview/ConsultationDetailsModal";
 import { usePatientConsultations } from "@/hooks/consultation/useConsultation";
 import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPlan";
 import { ConsultationItem, TreatmentPlanItem } from "@/types";
@@ -158,6 +159,7 @@ export default function Overview() {
 
   const [activeTab, setActiveTab] = useState<Tab>("upcoming");
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedConsultation, setSelectedConsultation] = useState<ConsultationItem | null>(null);
 
   const consultations: ConsultationItem[] = consultationsResponse?.data || [];
@@ -346,7 +348,8 @@ export default function Overview() {
                       (consultation.requestStatus === "SCHEDULED" || consultation.requestStatus === "ACTIVE") &&
                       !isWithinMeetingWindow(consultation)
                     ) {
-                      router.push(`/consultation/${consultation.id}?mode=details`);
+                      setSelectedConsultation(consultation);
+                      setDetailsOpen(true);
                       return;
                     }
                     // Within 5-min early buffer or during meeting → go to meeting page (lobby or room)
@@ -368,6 +371,18 @@ export default function Overview() {
           consultation={selectedConsultation}
           onConfirmed={() => setActiveTab("active")}
           onAddToCalendar={() => router.push(`/consultation/${selectedConsultation.id}`)}
+        />
+      ) : null}
+
+      {selectedConsultation ? (
+        <ConsultationDetailsModal
+          open={detailsOpen}
+          onClose={() => setDetailsOpen(false)}
+          consultation={selectedConsultation}
+          onChatClick={() => {
+            setDetailsOpen(false);
+            router.push(`/patient/messages?chatId=${selectedConsultation.id}`);
+          }}
         />
       ) : null}
     </div>

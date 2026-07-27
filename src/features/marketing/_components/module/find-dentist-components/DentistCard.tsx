@@ -24,7 +24,6 @@ type DentistCardProps = {
   onViewOnMap?: (dentist: Dentist) => void;
 };
 
-// ── Verification phase dots: 3 phases (License → Operations → Clinic) ────────
 function VerificationDots({ phase }: { phase: Dentist["verificationPhase"] }) {
   if (!phase) return null;
   const states = [
@@ -136,13 +135,12 @@ export default function DentistCard({
         onPrimaryAction && "cursor-pointer",
       )}
     >
-      {isCompareMode && (
+      {isCompareMode && dentist.status === "VERIFIED" && (
         <div className="absolute left-3 top-3 z-20" onClick={(e) => e.stopPropagation()}>
           <Checkbox
             checked={isSelectedForCompare}
             onCheckedChange={onCompareToggle}
-            disabled={isClaimableProfile}
-            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#10436B] disabled:cursor-not-allowed disabled:opacity-50"
+            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#10436B]"
           />
         </div>
       )}

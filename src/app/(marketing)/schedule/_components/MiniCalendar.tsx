@@ -52,10 +52,10 @@ export default function MiniCalendar({
           caption_label: "text-sm font-bold text-slate-800",
           nav: "flex items-center justify-between absolute inset-x-0",
           button_previous: cn(
-            "absolute left-0 top-0 z-10 h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-slate-105 border border-slate-200 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer"
+            "absolute left-14 top-0 z-10 h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-slate-105 border border-slate-200 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer"
           ),
           button_next: cn(
-            "absolute right-0 top-0 z-10 h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-slate-105 border border-slate-200 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer"
+            "absolute right-14 top-0 z-10 h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-slate-105 border border-slate-200 rounded-lg inline-flex items-center justify-center transition-all cursor-pointer"
           ),
           weekdays: "flex w-full justify-between",
           weekday: cn(

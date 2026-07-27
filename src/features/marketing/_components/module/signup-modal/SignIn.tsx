@@ -22,7 +22,8 @@ import { LoginFormData, loginSchema } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import OtpVerifyModal from "./Otp-Verify-Modal";
 import ForgotPasswordForm from "./ForgotPasswordForm";
-import ForgotSuccessView from "./ForgotSuccessView";
+import ForgotOtpForm from "./ForgotOtpForm";
+import ResetPasswordModalForm from "./ResetPasswordModalForm";
 
 export default function SigninModal() {
   const {
@@ -35,8 +36,9 @@ export default function SigninModal() {
   } = useStateContext();
 
   const { user } = useMe()
-  const [authView, setAuthView] = useState<"signin" | "forgot" | "forgot_success">("signin");
+  const [authView, setAuthView] = useState<"signin" | "forgot" | "forgot_otp" | "forgot_reset" | "forgot_success">("signin");
   const [forgotEmail, setForgotEmail] = useState("");
+  const [resetToken, setResetToken] = useState("");
 
   useEffect(() => {
     if (user && showSigninModal) {
@@ -48,6 +50,7 @@ export default function SigninModal() {
     if (!showSigninModal) {
       setAuthView("signin");
       setForgotEmail("");
+      setResetToken("");
     }
   }, [showSigninModal]);
 
@@ -373,18 +376,29 @@ export default function SigninModal() {
               onBack={() => setAuthView("signin")}
               onSuccess={(email) => {
                 setForgotEmail(email);
-                setAuthView("forgot_success");
+                setAuthView("forgot_otp");
               }}
             />
-          ) : (
-            <ForgotSuccessView
+          ) : authView === "forgot_otp" ? (
+            <ForgotOtpForm
               email={forgotEmail}
-              onBack={() => {
+              onBack={() => setAuthView("forgot")}
+              onSuccess={(token) => {
+                setResetToken(token);
+                setAuthView("forgot_reset");
+              }}
+            />
+          ) : authView === "forgot_reset" ? (
+            <ResetPasswordModalForm
+              token={resetToken}
+              onBack={() => setAuthView("forgot_otp")}
+              onSuccess={() => {
                 setForgotEmail("");
+                setResetToken("");
                 setAuthView("signin");
               }}
             />
-          )}
+          ) : null}
         </DialogContent>
       </Dialog>
 

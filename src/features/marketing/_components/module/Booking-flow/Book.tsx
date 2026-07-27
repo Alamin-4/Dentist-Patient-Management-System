@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ import {
 import toast from "react-hot-toast";
 import PersonalInfoForm from "./BookingIntakeForm/PersonalInfoForm";
 import ProcedureSelectionForm from "./BookingIntakeForm/ProcedureSelectionForm";
-import TreatmentDetailsForm from "./BookingIntakeForm/TreatmentDetailsForm";
+import TreatmentDetailsForm, { treatmentDetailsSchema } from "./BookingIntakeForm/TreatmentDetailsForm";
 import DentalHistoryForm from "./BookingIntakeForm/DentalHistoryForm";
 import PhotoUploadForm from "./BookingIntakeForm/PhotoUploadForm";
 import XRayUploadForm from "./BookingIntakeForm/XRayUploadForm";
@@ -28,7 +28,10 @@ const TOTAL_STEPS = 6;
 
 export default function IntakeModal() {
   const router = useRouter();
-  const [step, setStep] = useState(() => getBookingDraft().currentStep);
+  const [step, setStep] = useState(() => {
+    const s = getBookingDraft().currentStep;
+    return typeof s === "number" && s >= 1 && s <= TOTAL_STEPS ? s : 1;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -43,6 +46,15 @@ export default function IntakeModal() {
     compareModalPurpose,
     bookingMode,
   } = useStateContext();
+
+  useEffect(() => {
+    if (showBookingModal === "book") {
+      const draft = getBookingDraft();
+      const s = draft.currentStep;
+      const validStep = typeof s === "number" && s >= 1 && s <= TOTAL_STEPS ? s : 1;
+      setStep(validStep);
+    }
+  }, [showBookingModal]);
 
   const progress = (step / TOTAL_STEPS) * 100;
 
@@ -64,7 +76,7 @@ export default function IntakeModal() {
         if (!lastName) newErrors.lastName = "Last name is required";
         if (!dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
         if (!country) newErrors.country = "Country is required";
-        
+
         if (Object.keys(newErrors).length > 0) {
           setFormErrors(newErrors);
           return false;
@@ -73,17 +85,20 @@ export default function IntakeModal() {
       }
       case 2:
         if (data.procedureIds.length === 0) {
-          toast.error("Please select at least one procedure");
+          setFormErrors({ procedures: "Select your preferable procedure" });
           return false;
         }
         return true;
       case 3: {
-        const newErrors: Record<string, string> = {};
-        if (!data.budget) newErrors.budget = "Budget is required";
-        if (!data.travelFrom) newErrors.travelFrom = "Start travel date is required";
-        if (!data.travelTo) newErrors.travelTo = "End travel date is required";
-        
-        if (Object.keys(newErrors).length > 0) {
+        const result = treatmentDetailsSchema.safeParse(data);
+        if (!result.success) {
+          const newErrors: Record<string, string> = {};
+          result.error.issues.forEach((issue) => {
+            const path = issue.path[0];
+            if (path !== undefined) {
+              newErrors[String(path)] = issue.message;
+            }
+          });
           setFormErrors(newErrors);
           return false;
         }
@@ -99,15 +114,11 @@ export default function IntakeModal() {
         return true;
       case 5:
         if (!getFrontSmileFile()) {
-          toast.error("Please upload your front smile photo");
+          setFormErrors({ file: "Please upload your front smile photo" });
           return false;
         }
         return true;
       case 6:
-        if (!getXrayFile()) {
-          toast.error("Please upload your X-ray file");
-          return false;
-        }
         return true;
       default:
         return true;
@@ -203,12 +214,13 @@ export default function IntakeModal() {
 
     if (step === 6) {
       const file = getXrayFile();
-      if (!file) throw new Error("Please upload your X-ray file");
-      await consultationBookingApi.stepSix({
-        consultation_id: getRequiredConsultationId(),
-        file,
-        notes: data.xrayNotes,
-      });
+      if (file) {
+        await consultationBookingApi.stepSix({
+          consultation_id: getRequiredConsultationId(),
+          file,
+          notes: data.xrayNotes,
+        });
+      }
     }
   };
 
@@ -325,7 +337,11 @@ export default function IntakeModal() {
   return (
     <>
       <Dialog open={showBookingModal === "book"} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white">
+        <DialogContent
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          className="sm:max-w-212.5 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white"
+        >
           {/* Header */}
           <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">
             <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
@@ -350,7 +366,7 @@ export default function IntakeModal() {
             {/* Step content */}
             <div>
               {step === 1 && <PersonalInfoForm errors={formErrors} setErrors={setFormErrors} />}
-              {step === 2 && <ProcedureSelectionForm />}
+              {step === 2 && <ProcedureSelectionForm errors={formErrors} setErrors={setFormErrors} />}
               {step === 3 && <TreatmentDetailsForm errors={formErrors} setErrors={setFormErrors} />}
               {step === 4 && <DentalHistoryForm errors={formErrors} setErrors={setFormErrors} />}
               {step === 5 && <PhotoUploadForm errors={formErrors} setErrors={setFormErrors} />}
@@ -363,7 +379,7 @@ export default function IntakeModal() {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="px-8 py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] font-semibold text-[16px] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all"
+                  className="px-6 lg:px-8 py-2 lg:py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all cursor-pointer"
                 >
                   Back
                 </button>
@@ -374,7 +390,7 @@ export default function IntakeModal() {
                 type="button"
                 onClick={handleNext}
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center gap-2 px-12 py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[16px] rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex items-center justify-center gap-2 px-6 lg:px-12 py-2 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
               >
                 {isSubmitting && <Loader2 className="size-5 animate-spin" />}
                 {step === TOTAL_STEPS

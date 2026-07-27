@@ -156,7 +156,7 @@ export default function Phase3() {
 
   useEffect(() => {
     dentistProcedureList.refetch();
-  }, [dentistProcedureList.refetch]);
+  }, []);
 
   const { control } = methods;
 

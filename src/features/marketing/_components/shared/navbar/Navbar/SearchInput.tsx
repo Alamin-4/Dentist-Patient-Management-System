@@ -114,7 +114,7 @@ export default function SearchInput(props: SearchInputProps) {
             )}>
                 <div className={cn(
                     "w-full rounded-xl border border-gray-200 bg-gray-50/50 animate-pulse",
-                    props.variant === "desktop" ? "h-[42px]" : "h-[38px]"
+                    props.variant === "desktop" ? "h-10.5" : "h-9.5"
                 )} />
             </div>
         }>

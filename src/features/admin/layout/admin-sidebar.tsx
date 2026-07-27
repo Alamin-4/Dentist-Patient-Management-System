@@ -130,9 +130,9 @@ export function AdminSidebar() {
 
   return (
     <aside className="flex h-full w-72 flex-col bg-[#0D2B3E]">
-      {/* Logo header */}
       <div className="flex items-center justify-between px-5 py-5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2.5">
+          <Link href={"/"} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C9963F] shrink-0">
             <svg
               viewBox="0 0 24 24"
@@ -153,9 +153,9 @@ export function AdminSidebar() {
               RatedDocs
             </p>
           </div>
+          </Link>
         </div>
 
-        {/* Mobile close */}
         <button
           onClick={close}
           aria-label="Close sidebar"
@@ -165,17 +165,14 @@ export function AdminSidebar() {
         </button>
       </div>
 
-      {/* Navigation */}
       <nav
         className={cn(
           "flex-1 overflow-y-auto px-3 py-4",
-          // Custom scrollbar — tuned for dark navy sidebar
           "[&::-webkit-scrollbar]:w-1",
           "[&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/4",
           "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/18",
           "[&::-webkit-scrollbar-thumb]:transition-colors",
           "[&::-webkit-scrollbar-thumb:hover]:bg-white/32",
-          // Firefox
           "scrollbar-thin scrollbar-track-transparent",
         )}
       >
@@ -201,14 +198,14 @@ export function AdminSidebar() {
                         : "text-slate-400 hover:bg-white/10 hover:text-white",
                     )}
                   >
-                    <item.icon className="h-[18px] w-[18px] shrink-0" />
+                    <item.icon className="h-4.5 w-4.5 shrink-0" />
                     <span className="flex-1 truncate text-[13px]">
                       {item.label}
                     </span>
                     {item.badge !== undefined && (
                       <span
                         className={cn(
-                          "flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-semibold",
+                          "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold",
                           active
                             ? "bg-white text-[#0D2B3E]"
                             : "bg-white/20 text-white",
@@ -225,7 +222,6 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* User footer */}
       <div className="shrink-0 flex flex-row items-center justify-between border-t border-white/10 p-3">
         <div className="flex items-center gap-3 px-2 py-2 mb-1 rounded-lg">
           <Avatar className="h-8 w-8 shrink-0">

@@ -174,7 +174,7 @@ export default function VerificationQueue() {
 
   if (isVerificationslistLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
+      <div className="flex min-h-100 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#163E5C]" />
       </div>
     );
@@ -182,7 +182,7 @@ export default function VerificationQueue() {
 
   if (isVerificationslistError) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center text-red-500">
+      <div className="flex min-h-100 items-center justify-center text-red-500">
         Failed to load verification queue. Please try again.
       </div>
     );

@@ -63,16 +63,18 @@ export default function DentistCard({
 
   const statusInfo = getStatusInfo();
 
+  const isVerified = dentist.verified === "VERIFIED" || dentist.status === "VERIFIED";
+
   return (
     <div
       className={cn(
         "group relative rounded-xl p-4 sm:p-6 flex flex-col transition-all duration-300 border border-[#CEE0F4] hover:shadow-md bg-white",
         isSelected ? "border-[#10436B] bg-slate-50/20 ring-1 ring-[#10436B]/20" : "",
-        isCompareMode && "pl-10 sm:pl-12"
+        isCompareMode && isVerified && "pl-10 sm:pl-12"
       )}
     >
       {/* Compare Checkbox */}
-      {isCompareMode && (
+      {isCompareMode && isVerified && (
         <button
           onClick={() => onSelect(dentist.id)}
           className={cn(

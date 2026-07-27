@@ -114,10 +114,7 @@ export function OverviewPageSwitcher() {
     );
   }
 
-  const isVerified =
-    progress?.is_verified ||
-    progress?.verification_phase === "COMPLETE" ||
-    (step1Done && step2Done && step3Done);
+  const isVerified = !!progress?.is_verified;
 
   return isVerified ? (
     <MainOverviewPage />
