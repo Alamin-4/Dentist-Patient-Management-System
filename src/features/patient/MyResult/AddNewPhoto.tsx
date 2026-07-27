@@ -84,16 +84,35 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
     type: "before" | "after"
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (type === "before") {
-        setBeforeFile(file);
-        setBeforePreview(URL.createObjectURL(file));
-        setFieldErrors((prev) => ({ ...prev, before: "" }));
-      } else {
-        setAfterFile(file);
-        setAfterPreview(URL.createObjectURL(file));
-        setFieldErrors((prev) => ({ ...prev, after: "" }));
-      }
+    if (!file) return;
+
+    // Size guard (5 MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [type]: `Image is too large (${(file.size / (1024 * 1024)).toFixed(2)} MB). Maximum allowed size is 5 MB.`,
+      }));
+      e.target.value = "";
+      return;
+    }
+    // Type guard
+    if (!file.type.startsWith("image/")) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [type]: "Only image files (JPG, PNG, WEBP) are allowed.",
+      }));
+      e.target.value = "";
+      return;
+    }
+
+    if (type === "before") {
+      setBeforeFile(file);
+      setBeforePreview(URL.createObjectURL(file));
+      setFieldErrors((prev) => ({ ...prev, before: "" }));
+    } else {
+      setAfterFile(file);
+      setAfterPreview(URL.createObjectURL(file));
+      setFieldErrors((prev) => ({ ...prev, after: "" }));
     }
   };
 

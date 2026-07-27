@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, MapPin, Award } from "lucide-react";
+import { Star, MapPin, Award, Globe } from "lucide-react";
 import { GoShieldCheck } from "react-icons/go";
 import { cn } from "@/lib/utils";
 
@@ -158,6 +158,17 @@ export default function DentistCard({
                   : dentist.location || "Location not specified"}
               </span>
             </div>
+
+            {/* Languages */}
+            {dentist.languages && dentist.languages.length > 0 && (
+              <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                <Globe size={12} className="text-[#10436B] shrink-0" />
+                <span className="truncate">
+                  <span className="font-semibold text-slate-800">Languages:</span>{" "}
+                  {dentist.languages.join(", ")}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right: Price */}

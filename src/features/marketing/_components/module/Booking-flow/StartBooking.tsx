@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStateContext } from "@/providers/StateProvider";
 import { setBookingCurrentStep } from "@/lib/storage/bookingService";
+import { useAppStore } from "@/store/useAppStore";
+import { usePathname } from "next/navigation";
 
 const CHECKLIST = [
   "Clear dental photos",
@@ -16,6 +18,28 @@ const CHECKLIST = [
 export default function StartBookingModal() {
   const [agreed, setAgreed] = useState(false);
   const { setShowBookingModal, showBookingModal, bookingMode } = useStateContext();
+  const store = useAppStore();
+  const pathname = usePathname();
+
+  /**
+   * Transition from "startBooking" → "booking" in a single URL replace call.
+   * Using router.replace instead of the default push-based setShowBookingModal
+   * avoids stacking a ?modal=start-booking entry in history that users could
+   * navigate back to, which would leave the backdrop stuck.
+   */
+  const handleContinue = () => {
+    // 1. Update Zustand immediately so Dialog visibility flips atomically.
+    store.openModal("booking");
+    // 2. Replace the URL so the browser history doesn't have start-booking → booking
+    //    as two separate entries. We use window.history directly (synchronous) to
+    //    avoid a Next.js router round-trip that could race with ModalSync.
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      params.set("modal", "booking");
+      const newUrl = pathname + "?" + params.toString();
+      window.history.replaceState(null, "", newUrl);
+    }
+  };
 
   return (
     <Dialog

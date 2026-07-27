@@ -3,9 +3,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Dentist } from "../DentistAllComponents/types";
+import { Dentist } from "../find-dentists-page-components/types";
 
-const DentistMap = dynamic(() => import("../DentistAllComponents/Map/DentistMap"), {
+const DentistMap = dynamic(() => import("../find-dentists-page-components/Map/DentistMap"), {
     ssr: false,
     loading: () => (
         <div className="flex h-full w-full items-center justify-center bg-slate-100">

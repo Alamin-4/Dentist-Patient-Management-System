@@ -7,7 +7,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
-import { Dentist } from "../DentistAllComponents/types";
+import { Dentist } from "../find-dentists-page-components/types";
 import MapSection from "./MapSection";
 
 interface MobileMapDialogProps {

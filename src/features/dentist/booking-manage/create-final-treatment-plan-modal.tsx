@@ -103,12 +103,21 @@ export default function CreateFinalTreatmentPlanModal({
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) setUploadedFile(file);
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) return; // silently ignore oversized drops
+    setUploadedFile(file);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setUploadedFile(file);
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      // reset input so user can try again
+      e.target.value = "";
+      setUploadedFile(null);
+      return;
+    }
+    setUploadedFile(file);
   };
 
   return (

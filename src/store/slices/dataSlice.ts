@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import type { Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
+import type { Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 
 export interface DataSlice {
     selectedDentistId: string | null;

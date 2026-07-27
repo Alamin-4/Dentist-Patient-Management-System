@@ -304,7 +304,7 @@ export default function Phase1() {
                 licenceInfo={{
                   country: submittedLicence.country,
                   city: submittedLicence.city,
-                  authority: 1,
+                  authority: submittedLicence.authority,
                   regNo: submittedLicence.regNo,
                 }}
                 onConfirm={() => toast.success("Confirmed!")}
@@ -325,7 +325,7 @@ export default function Phase1() {
                     setLicenseFile(null);
                   } else {
                     setLicenseFile(file);
-                    setServerErrors((prev) => ({ ...prev, licenseDocument: "" }));
+                    setServerErrors((prev) => ({ ...prev, licenseDocument: "", regNo: "", authority: "" }));
                   }
                 }}
                 existingFileUrl={(progressData?.data as LicenseProgressData | undefined)?.licenseDocument}

@@ -17,18 +17,30 @@ export const xrayUploadSchema = z.object({
     .any()
     .optional()
     .nullable()
-    .refine(
-      (file) => !file || (file instanceof File && file.size <= 5 * 1024 * 1024),
-      { message: "File size exceeds 5MB limit. Please choose a smaller file." }
-    )
-    .refine(
-      (file) =>
-        !file ||
-        (file instanceof File &&
-          (file.type.startsWith("image/") ||
-            /\.(jpg|jpeg|png|dcm|dicom)$/i.test(file.name))),
-      { message: "Only JPG, PNG, and DICOM files are allowed." }
-    ),
+    .superRefine((file, ctx) => {
+      if (!file) return;
+      if (!(file instanceof File)) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `File size is too large (${sizeMB} MB). Maximum allowed size is 5 MB. Please select a smaller file.`,
+        });
+        return;
+      }
+
+      const isValidType =
+        file.type.startsWith("image/") ||
+        /\.(jpg|jpeg|png|dcm|dicom)$/i.test(file.name);
+
+      if (!isValidType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Only JPG, PNG, and DICOM files are allowed.",
+        });
+      }
+    }),
   notes: z.string().optional(),
 });
 
@@ -118,9 +130,12 @@ export default function XRayUploadForm({
           e.preventDefault();
           setIsDragging(false);
           const droppedFile = e.dataTransfer.files[0];
-          if (droppedFile) {
-            setValue("file", droppedFile, { shouldValidate: true });
+          if (!droppedFile) return;
+          if (droppedFile.size > 5 * 1024 * 1024) {
+            setValue("file", null, { shouldValidate: true });
+            return;
           }
+          setValue("file", droppedFile, { shouldValidate: true });
         }}
         onClick={() => fileInputRef.current?.click()}
         className={`

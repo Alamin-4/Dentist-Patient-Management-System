@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Trash2, Upload } from "lucide-react";
+import { Trash2, Upload, AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,14 +11,25 @@ import {
   setDentalPhoto,
 } from "@/lib/storage/bookingService";
 
-const maxFileValidation = (message: string) =>
+const maxFileValidation = (requiredMessage: string) =>
   z
     .any()
-    .refine((file) => file instanceof File, { message })
-    .refine(
-      (file) => !(file instanceof File) || file.size <= 5 * 1024 * 1024,
-      { message: "File size exceeds 5MB limit. Please choose a smaller file." }
-    );
+    .superRefine((file, ctx) => {
+      if (!(file instanceof File)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: requiredMessage,
+        });
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `File size is too large (${sizeMB} MB). Maximum allowed size is 5 MB. Please select a smaller photo.`,
+        });
+      }
+    });
 
 export const photoUploadSchema = z.object({
   frontSmile: maxFileValidation("Front smile photo is required"),
@@ -152,7 +163,8 @@ export default function PhotoUploadForm({
                 error={activeErrors[field.name] ? String(activeErrors[field.name]?.message || activeErrors[field.name]) : undefined}
               />
               {activeErrors[field.name] && (
-                <p className="text-xs text-red-500 font-semibold mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                <p className="flex items-center gap-1.5 text-xs text-red-500 font-semibold mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-500" />
                   {String(activeErrors[field.name]?.message || activeErrors[field.name])}
                 </p>
               )}
@@ -168,8 +180,6 @@ export default function PhotoUploadForm({
     </div>
   );
 }
-
-// ─── UploadCard ───────────────────────────────────────────────────────────────
 
 interface UploadCardProps {
   label: string;
@@ -194,6 +204,11 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+    
+    // Clear input so selecting the same file after an error works
+    e.target.value = "";
+
     onChange(file);
   };
 
@@ -216,7 +231,6 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
 
       {preview ? (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt={label}

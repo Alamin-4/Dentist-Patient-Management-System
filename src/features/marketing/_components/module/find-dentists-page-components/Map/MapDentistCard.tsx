@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { BadgeCheck, ShieldCheck, Star } from "lucide-react";
+import { BadgeCheck, Globe, ShieldCheck, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
@@ -173,6 +173,17 @@ export default function MapDentistCard({
               ({reviewCount})
             </span>
           </div>
+
+          {/* Languages */}
+          {dentist.languages && dentist.languages.length > 0 && (
+            <div className="flex items-center gap-1 text-slate-500">
+              <Globe className="size-3.5 shrink-0 text-[#10436B]" />
+              <span className="truncate text-[11px] text-[#4B5563]">
+                <span className="font-semibold text-[#1A1A2E]">Languages:</span>{" "}
+                {dentist.languages.join(", ")}
+              </span>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-2 w-full">
             {dentist.surpriseGuarantee && (

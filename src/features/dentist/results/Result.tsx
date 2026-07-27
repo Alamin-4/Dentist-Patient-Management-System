@@ -2,17 +2,17 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { apiClient } from "@/api/client";
 import toast from "react-hot-toast";
-import { Plus, Upload, X, Loader2 } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import ResultCard from "./Result-card";
 import ResultCardSkeleton from "./Result-card-skeleton";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { FileUploadField } from "@/components/ui/file-upload-field";
 import { useDentistPatients, useDentistProceduresList } from "@/core/hooks/dentist/useDentist";
 
 const resultSchema = z.object({
@@ -41,17 +41,7 @@ export default function Result() {
   const patients = useMemo(() => patientsData?.data || [], [patientsData]);
   const procedures = useMemo(() => proceduresData?.data || [], [proceduresData]);
 
-  // Form setup
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    setError,
-    clearErrors,
-    reset,
-    formState: { errors },
-  } = useForm<ResultFormValues>({
+  const methods = useForm<ResultFormValues>({
     resolver: zodResolver(resultSchema),
     defaultValues: {
       title: "",
@@ -62,6 +52,17 @@ export default function Result() {
       afterImage: null,
     },
   });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = methods;
 
   const selectedPatientName = watch("patientName");
 
@@ -171,31 +172,29 @@ export default function Result() {
     },
   });
 
-  const handleBeforeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setError("beforeImage", { type: "manual", message: "Maximum allowed image size is 5MB" });
-        return;
-      }
-      setValue("beforeImage", file, { shouldValidate: true });
-      clearErrors("beforeImage");
-      setBeforePreview(URL.createObjectURL(file));
-    }
-  };
+  // Sync file previews whenever the form value changes (set by FileUploadField)
+  const beforeImageValue = watch("beforeImage");
+  const afterImageValue = watch("afterImage");
 
-  const handleAfterFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setError("afterImage", { type: "manual", message: "Maximum allowed image size is 5MB" });
-        return;
-      }
-      setValue("afterImage", file, { shouldValidate: true });
-      clearErrors("afterImage");
-      setAfterPreview(URL.createObjectURL(file));
+  useEffect(() => {
+    if (beforeImageValue instanceof File) {
+      const url = URL.createObjectURL(beforeImageValue);
+      setBeforePreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (!beforeImageValue) {
+      setBeforePreview(null);
     }
-  };
+  }, [beforeImageValue]);
+
+  useEffect(() => {
+    if (afterImageValue instanceof File) {
+      const url = URL.createObjectURL(afterImageValue);
+      setAfterPreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (!afterImageValue) {
+      setAfterPreview(null);
+    }
+  }, [afterImageValue]);
 
   const resetForm = () => {
     reset({
@@ -296,97 +295,56 @@ export default function Result() {
             </DialogTitle>
           </div>
 
+          <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
             <div className="space-y-3">
               <label className="block text-sm font-semibold text-[#1A1A2E]">Images</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Before Image Upload */}
-                <div className="relative animate-in fade-in zoom-in-95 duration-200">
-                  {beforePreview ? (
-                    <div className="relative border rounded-lg h-44 overflow-hidden group">
-                      <Image
-                        src={beforePreview}
-                        alt="Before Preview"
-                        fill
-                        className="object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setValue("beforeImage", null, { shouldValidate: true });
-                          setBeforePreview(null);
-                        }}
-                        className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className={`cursor-pointer border-2 border-dashed rounded-lg h-44 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${
-                      errors.beforeImage ? "border-red-400 bg-red-50/5" : "border-slate-200"
-                    }`}>
-                      <Upload className="size-6 text-slate-400" />
-                      <span className="text-sm font-semibold text-[#1A1A2E]">
-                        Before Image
-                      </span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleBeforeFileChange}
-                      />
-                    </label>
-                  )}
-                  {errors.beforeImage && (
-                    <p className="text-xs text-red-500 mt-1">
-                      {String(errors.beforeImage.message)}
-                    </p>
-                  )}
-                </div>
+                {/* Before Image */}
+                {beforePreview ? (
+                  <div className="relative border rounded-lg h-44 overflow-hidden group">
+                    <img src={beforePreview} alt="Before Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setValue("beforeImage", null, { shouldValidate: true })}
+                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                    >
+                      <span className="text-xs font-bold">✕</span>
+                    </button>
+                  </div>
+                ) : (
+                  <FileUploadField
+                    name="beforeImage"
+                    label="Before Image"
+                    accept="image/*"
+                    maxSizeMB={5}
+                    allowedMimeTypes={["image/"]}
+                    allowedTypesLabel="JPG, PNG, WEBP"
+                  />
+                )}
 
-                {/* After Image Upload */}
-                <div className="relative animate-in fade-in zoom-in-95 duration-200">
-                  {afterPreview ? (
-                    <div className="relative border rounded-lg h-44 overflow-hidden group">
-                      <Image
-                        src={afterPreview}
-                        alt="After Preview"
-                        fill
-                        className="object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setValue("afterImage", null, { shouldValidate: true });
-                          setAfterPreview(null);
-                        }}
-                        className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className={`cursor-pointer border-2 border-dashed rounded-lg h-44 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${
-                      errors.afterImage ? "border-red-400 bg-red-50/5" : "border-slate-200"
-                    }`}>
-                      <Upload className="size-6 text-slate-400" />
-                      <span className="text-sm font-semibold text-[#1A1A2E]">
-                        After Image
-                      </span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleAfterFileChange}
-                      />
-                    </label>
-                  )}
-                  {errors.afterImage && (
-                    <p className="text-xs text-red-500 mt-1">
-                      {String(errors.afterImage.message)}
-                    </p>
-                  )}
-                </div>
+                {/* After Image */}
+                {afterPreview ? (
+                  <div className="relative border rounded-lg h-44 overflow-hidden group">
+                    <img src={afterPreview} alt="After Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setValue("afterImage", null, { shouldValidate: true })}
+                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                    >
+                      <span className="text-xs font-bold">✕</span>
+                    </button>
+                  </div>
+                ) : (
+                  <FileUploadField
+                    name="afterImage"
+                    label="After Image"
+                    accept="image/*"
+                    maxSizeMB={5}
+                    allowedMimeTypes={["image/"]}
+                    allowedTypesLabel="JPG, PNG, WEBP"
+                  />
+                )}
               </div>
             </div>
 
@@ -538,6 +496,7 @@ export default function Result() {
               </Button>
             </div>
           </form>
+          </FormProvider>
         </DialogContent>
       </Dialog>
     </section>

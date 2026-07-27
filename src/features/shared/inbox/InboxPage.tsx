@@ -7,39 +7,6 @@ import { useSession, useMe } from "@/hooks/auth/useAuth";
 import { usePatientConsultations, useDentistConsultations } from "@/hooks/consultation/useConsultation";
 import { ConsultationChat } from "@/app/consultation/components/meeting/ConsultationChat";
 
-const getFriendlyStatus = (status: string) => {
-  switch (status) {
-    case "ACCEPTED":
-    case "SCHEDULED":
-      return "Upcoming";
-    case "ACTIVE":
-      return "Active";
-    case "COMPLETED":
-      return "Completed";
-    case "MISSED":
-      return "Missed";
-    default:
-      return status;
-  }
-};
-
-const getStatusBadgeCls = (status: string, isSelected: boolean) => {
-  if (isSelected) return "bg-white/15 text-white";
-  switch (status) {
-    case "ACCEPTED":
-    case "SCHEDULED":
-      return "bg-blue-50 text-blue-700 border border-blue-100";
-    case "ACTIVE":
-      return "bg-emerald-50 text-emerald-700 border border-emerald-100 animate-pulse";
-    case "COMPLETED":
-      return "bg-slate-100 text-slate-600 border border-slate-200";
-    case "MISSED":
-      return "bg-rose-50 text-rose-700 border border-rose-100";
-    default:
-      return "bg-slate-100 text-slate-600 border border-slate-200";
-  }
-};
-
 export function InboxPage() {
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");

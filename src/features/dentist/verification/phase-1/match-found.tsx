@@ -14,7 +14,7 @@ interface MatchProps {
   licenceInfo?: {
     country: string;
     city: string;
-    authority: number;
+    authority: number | string;
     regNo: string;
   } | null;
   onConfirm?: () => void;

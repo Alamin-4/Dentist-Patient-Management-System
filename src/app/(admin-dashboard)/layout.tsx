@@ -1,13 +1,43 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useMe } from "@/hooks/auth/useAuth";
 import { AdminNavbar } from "@/app/modules/admin/layout/admin-navbar";
 import { AdminSidebar } from "@/app/modules/admin/layout/admin-sidebar";
 import { AdminMobileSidebarDrawer } from "@/app/modules/admin/layout/admin-mobile-sidebar-drawer";
 import { SidebarProvider } from "@/context/sidebar-context";
+import { Loader2 } from "lucide-react";
+import { UserRole } from "@/types/constants";
 
 export default function AdminDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { user, isLoading, isError } = useMe();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isError || !user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {
+        router.replace("/admin-login");
+      }
+    }
+  }, [isLoading, isError, user, router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#F5F7FA]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#0D2B3E]" />
+      </div>
+    );
+  }
+
+  if (isError || !user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {
+    return null;
+  }
+
   return (
     <SidebarProvider>
       <div className="flex h-screen flex-col overflow-hidden bg-[#F5F7FA]">

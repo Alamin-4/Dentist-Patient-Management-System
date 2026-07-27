@@ -139,7 +139,7 @@ export default function FindDentist() {
   // ── Reset page whenever any server-side filter changes ────────────────────
   useEffect(() => { setPage(1); }, [
     city, country, procedure, showVerifiedOnly,
-    selectedScoreRanges, selectedRatings,
+    selectedScoreRanges, selectedRatings, selectedLanguages,
   ]);
 
   // ── Derive numeric params from multi-select filter state ──────────────────
@@ -166,10 +166,13 @@ export default function FindDentist() {
     if (selectedRatings.length > 0) {
       params.ratings = selectedRatings.join(",");
     }
+    if (selectedLanguages.length > 0) {
+      params.languages = selectedLanguages.join(",");
+    }
     return params;
   }, [
     page, debouncedQuery, city, country, procedure,
-    debouncedPrice, showVerifiedOnly, rdvScoreMin, selectedRatings,
+    debouncedPrice, showVerifiedOnly, rdvScoreMin, selectedRatings, selectedLanguages,
   ]);
 
   const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(serverParams);
@@ -361,6 +364,7 @@ export default function FindDentist() {
         open={isMobileFilterOpen}
         onClose={() => setIsMobileFilterOpen(false)}
         {...sharedFilterProps}
+        availableLanguages={directoryResponse?.meta?.facets?.languages}
       />
 
       <main className="pb-16">
@@ -373,7 +377,10 @@ export default function FindDentist() {
                 exit={{ opacity: 0, x: -24 }}
                 className="hidden lg:block max-w-80 w-full"
               >
-                <FilterSidebar {...sharedFilterProps} />
+                <FilterSidebar
+                  {...sharedFilterProps}
+                  availableLanguages={directoryResponse?.meta?.facets?.languages}
+                />
               </motion.aside>
             )}
           </AnimatePresence>
@@ -490,7 +497,7 @@ export default function FindDentist() {
                 </div>
 
                 {/* Server-driven pagination */}
-                {!isDirLoading && totalPages > 1 && (
+                {!isDirLoading && totalPages > 1 && filteredDentists.length > 0 && (
                   <Pagination
                     page={page}
                     totalPages={totalPages}

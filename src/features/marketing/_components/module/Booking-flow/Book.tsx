@@ -14,6 +14,7 @@ import {
   updateBookingData,
   getAllDentalPhotos,
   getDentalPhotosList,
+  clearBookingData,
 } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import PersonalInfoForm from "./BookingIntakeForm/PersonalInfoForm";
@@ -394,6 +395,9 @@ export default function IntakeModal() {
   const handleClose = () => {
     if (showBookingModal === "book") {
       setShowBookingModal(null);
+      // Reset step state so stale step doesn't linger if the user re-opens
+      setStep(1);
+      setFormErrors({});
     }
   };
 
@@ -408,7 +412,7 @@ export default function IntakeModal() {
         <DialogContent
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
-          className="sm:max-w-212 max-h-[90vh] flex flex-col w-full p-0 border-none rounded-lg bg-white overflow-hidden relative"
+          className="sm:max-w-212 max-h-[90vh] flex flex-col w-full p-0 border-none rounded-lg bg-white overflow-hidden"
         >
           {/* Header */}
           <div className="relative bg-white pl-8 pr-16 py-6 border-b border-[#F3F4F6] shrink-0">
@@ -455,8 +459,8 @@ export default function IntakeModal() {
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={isSubmitting || Object.keys(formErrors).length > 0}
-                className="inline-flex items-center justify-center gap-2 px-6 lg:px-12 py-2 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
+                disabled={isSubmitting || Object.values(formErrors).some(Boolean)}
+                className="inline-flex items-center justify-center gap-2 px-6 lg:px-12 py-2 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg active:scale-95 transition-all disabled:opacity-50 disabled:bg-slate-300 disabled:text-slate-500 disabled:border-slate-200 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer"
               >
                 {isSubmitting && <Loader2 className="size-5 animate-spin" />}
                 {step === TOTAL_STEPS

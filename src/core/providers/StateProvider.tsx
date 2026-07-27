@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@/store/useAppStore";
 import { initializeDentistData } from "@/lib/storage/dentistData";
 import { initializeBookingData } from "@/lib/storage/bookingService";
-import type { Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
+import type { Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 import type { AppModalType } from "@/store/slices/uiSlice";
 
 // Re-export store hooks for direct access

@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { BadgeCheck, MapPin, ShieldCheck, Star } from "lucide-react";
+import { BadgeCheck, Globe, MapPin, ShieldCheck, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
-import type { Dentist } from "../DentistAllComponents/types";
+import type { Dentist } from "../find-dentists-page-components/types";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
@@ -252,6 +252,17 @@ export default function DentistCard({
                   </button>
                 )}
               </div>
+
+              {/* Languages Spoken */}
+              {dentist.languages && dentist.languages.length > 0 && (
+                <div className="flex items-center gap-1.5 text-slate-500">
+                  <Globe className="size-4 shrink-0 text-[#10436B]" />
+                  <span className="block truncate text-[13px] text-[#4B5563]">
+                    <span className="font-semibold text-[#1A1A2E]">Languages:</span>{" "}
+                    {dentist.languages.join(", ")}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Tags */}

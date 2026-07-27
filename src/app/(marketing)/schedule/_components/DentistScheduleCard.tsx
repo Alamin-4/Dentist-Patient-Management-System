@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 import MiniCalendar from "./MiniCalendar";
-import type { Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
+import type { Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 import { DoctorProfileHeader } from "./DoctorProfileHeader";
 import { TimezoneSelector } from "./TimezoneSelector";
 import { TimeSlotPicker } from "./TimeSlotPicker";

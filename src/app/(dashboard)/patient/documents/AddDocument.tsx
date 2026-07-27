@@ -43,26 +43,37 @@ export default function UploadDocumentModal({
     e.preventDefault();
     setIsDragging(false);
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      setFile(droppedFile);
-      setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy.file;
-        return copy;
-      });
+    if (!droppedFile) return;
+
+    if (droppedFile.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, file: `File is too large (${(droppedFile.size / (1024 * 1024)).toFixed(2)} MB). Maximum allowed size is 5 MB.` }));
+      return;
     }
+
+    setFile(droppedFile);
+    setErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.file;
+      return copy;
+    });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
-    if (selectedFile) {
-      setFile(selectedFile);
-      setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy.file;
-        return copy;
-      });
+    if (!selectedFile) return;
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, file: `File is too large (${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB). Maximum allowed size is 5 MB.` }));
+      e.target.value = "";
+      return;
     }
+
+    setFile(selectedFile);
+    setErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.file;
+      return copy;
+    });
   };
 
   const handleRemoveFile = (e: React.MouseEvent) => {

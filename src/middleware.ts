@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { UserRole } from "@/types/constants";
 import { env } from "@/config/env";
 
-// Helper to decode JWT token payload in Next.js Edge Runtime
 function decodeJwt(token: string) {
   try {
     const parts = token.split(".");
@@ -26,7 +25,6 @@ function decodeJwt(token: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Retrieve access tokens from cookies
   const accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
   const sessionToken = request.cookies.get("better-auth.session_token")?.value;
@@ -34,12 +32,10 @@ export async function middleware(request: NextRequest) {
   let user: any = null;
   let hasInvalidCookies = false;
 
-  // 1. Verify session against the backend DB if sessionToken or accessToken is present
   if (sessionToken || accessToken) {
     try {
       const baseUrl = env.NEXT_PUBLIC_API_BASE_URL;
 
-      // Forward headers to retain session integrity
       const response = await fetch(`${baseUrl}/auth/current-user-session`, {
         headers: {
           Cookie: request.headers.get("cookie") || "",
@@ -56,7 +52,6 @@ export async function middleware(request: NextRequest) {
         const result = await response.json();
         user = result?.user || result?.data?.user;
       } else if (response.status === 401 || response.status === 403 || response.status === 404) {
-        // Backend DB rejected the token (e.g., database reset or session revoked)
         hasInvalidCookies = true;
       }
     } catch (e) {
@@ -64,7 +59,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Fallback: If backend fetch did not explicitly reject the cookie (e.g. offline) but token exists, decode locally
   if (!user && accessToken && !hasInvalidCookies) {
     const decoded = decodeJwt(accessToken);
     if (decoded && decoded.exp * 1000 > Date.now()) {
@@ -76,19 +70,25 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Helper to purge invalid session cookies from the response headers
+  const setNoCacheHeaders = (res: NextResponse) => {
+    res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    res.headers.set("Pragma", "no-cache");
+    res.headers.set("Expires", "0");
+    return res;
+  };
+
   const attachCookieCleanup = (res: NextResponse) => {
     if (hasInvalidCookies) {
       res.cookies.delete("accessToken");
       res.cookies.delete("refreshToken");
       res.cookies.delete("better-auth.session_token");
+      res.cookies.delete("__Secure-better-auth.session_token");
     }
-    return res;
+    return setNoCacheHeaders(res);
   };
 
   const userRole = user?.role;
 
-  // 1. Admin Portal Protection
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     if (!user) {
       const url = new URL("/admin-login", request.url);
@@ -101,16 +101,15 @@ export async function middleware(request: NextRequest) {
       if (userRole === UserRole.PATIENT) {
         return attachCookieCleanup(NextResponse.redirect(new URL("/patient", request.url)));
       }
-      const url = new URL("/unauthorized", request.url);
-      return attachCookieCleanup(NextResponse.rewrite(url));
+      const url = new URL("/admin-login", request.url);
+      return attachCookieCleanup(NextResponse.redirect(url));
     }
   }
 
-  // 2. Dentist Portal Protection
   if (pathname === "/dentist" || pathname.startsWith("/dentist/")) {
     if (!user) {
-      const url = new URL("/unauthorized", request.url);
-      return attachCookieCleanup(NextResponse.rewrite(url));
+      const url = new URL("/register-doctor", request.url);
+      return attachCookieCleanup(NextResponse.redirect(url));
     }
     if (userRole !== UserRole.DENTIST) {
       if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
@@ -119,16 +118,15 @@ export async function middleware(request: NextRequest) {
       if (userRole === UserRole.PATIENT) {
         return attachCookieCleanup(NextResponse.redirect(new URL("/patient", request.url)));
       }
-      const url = new URL("/unauthorized", request.url);
-      return attachCookieCleanup(NextResponse.rewrite(url));
+      const url = new URL("/register-doctor", request.url);
+      return attachCookieCleanup(NextResponse.redirect(url));
     }
   }
 
-  // 3. Patient Portal Protection
   if (pathname === "/patient" || pathname.startsWith("/patient/")) {
     if (!user) {
-      const url = new URL("/unauthorized", request.url);
-      return attachCookieCleanup(NextResponse.rewrite(url));
+      const url = new URL("/", request.url);
+      return attachCookieCleanup(NextResponse.redirect(url));
     }
     if (userRole !== UserRole.PATIENT) {
       if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
@@ -137,12 +135,11 @@ export async function middleware(request: NextRequest) {
       if (userRole === UserRole.DENTIST) {
         return attachCookieCleanup(NextResponse.redirect(new URL("/dentist", request.url)));
       }
-      const url = new URL("/unauthorized", request.url);
-      return attachCookieCleanup(NextResponse.rewrite(url));
+      const url = new URL("/", request.url);
+      return attachCookieCleanup(NextResponse.redirect(url));
     }
   }
 
-  // 4. Redirect Authenticated Users Away From Guest / Auth Pages
   if (user && userRole) {
     if (pathname === "/admin-login") {
       if (userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) {
@@ -173,7 +170,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return attachCookieCleanup(NextResponse.next());
+  // Create the final response
+  const response = attachCookieCleanup(NextResponse.next());
+
+  // Add headers to completely disable browser caching for protected routes
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+
+  return response;
 }
 
 export const config = {

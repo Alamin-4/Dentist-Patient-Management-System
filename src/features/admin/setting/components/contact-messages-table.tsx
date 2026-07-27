@@ -16,35 +16,7 @@ interface Message {
   createdAt: string;
 }
 
-const INITIAL_MOCK_MESSAGES: Message[] = [
-  {
-    id: "msg-1",
-    name: "Dr. Sarah Connor",
-    email: "sarah.connor@gmail.com",
-    subject: "Escrow surprise guarantee verification question",
-    message: "Hello RatedDocs admin, I would like to clarify if the surprise guarantee covers patient cancellation within 24 hours of booking, or is it only restricted to treatment discrepancies?",
-    isRead: false,
-    createdAt: "2026-07-22T08:45:00Z",
-  },
-  {
-    id: "msg-2",
-    name: "John Miller",
-    email: "john.miller@yahoo.com",
-    subject: "Problem uploading license document",
-    message: "During step 2 (license upload), my verification form times out when uploading a 4.5MB PDF file. Can you assist?",
-    isRead: true,
-    createdAt: "2026-07-20T14:20:00Z",
-  },
-  {
-    id: "msg-3",
-    name: "Clara Bow",
-    email: "clara.b@dentalcare.net",
-    subject: "Partnership opportunity",
-    message: "We run a network of 12 verified dental clinics in Boston and would love to bulk claim our profiles under your clinic depth platform features. Let's schedule a call.",
-    isRead: false,
-    createdAt: "2026-07-19T10:10:00Z",
-  },
-];
+const INITIAL_MESSAGES: Message[] = [];
 
 export function ContactMessagesTable() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -57,11 +29,10 @@ export function ContactMessagesTable() {
       try {
         setMessages(JSON.parse(saved));
       } catch (e) {
-        setMessages(INITIAL_MOCK_MESSAGES);
+        setMessages([]);
       }
     } else {
-      setMessages(INITIAL_MOCK_MESSAGES);
-      localStorage.setItem("cms_contact_messages", JSON.stringify(INITIAL_MOCK_MESSAGES));
+      setMessages([]);
     }
   }, []);
 
