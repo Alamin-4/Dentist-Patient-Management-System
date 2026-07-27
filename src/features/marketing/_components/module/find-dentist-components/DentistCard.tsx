@@ -58,7 +58,6 @@ export default function DentistCard({
   onPrimaryAction,
   onViewOnMap,
 }: DentistCardProps) {
-  console.log(dentist)
 
   const router = useRouter();
   const { user } = useMe();
