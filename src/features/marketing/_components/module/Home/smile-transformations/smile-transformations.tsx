@@ -57,7 +57,7 @@ export default function SmileTransformations() {
         {/* Header Block */}
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
           <div className="max-w-2xl space-y-4">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A2E]">
               Smile Transformations That Matter for Everyone
             </h2>
             <p className="text-sm md:text-base text-gray-400 leading-relaxed max-w-xl">
@@ -83,7 +83,7 @@ export default function SmileTransformations() {
 
                 <div className="relative w-full aspect-4/3 bg-gray-100 overflow-hidden">
 
-                  <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-sm text-black text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                  <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-sm text-[#1A1A2E] text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
                     <CheckCircle2 className="size-3.5 text-[#1570EF] fill-[#EFF8FF]" />
                     {study.patientType}
                   </div>
@@ -145,14 +145,14 @@ export default function SmileTransformations() {
           <div className="inline-flex items-center gap-6 border border-gray-200 p-2 rounded-lg">
             <button
               onClick={handlePrev}
-              className="bg-[#FDB022] hover:bg-[#F79009] text-black p-2 rounded-lg transition-colors duration-150 focus:outline-none"
+              className="bg-[#FDB022] hover:bg-[#F79009] text-[#1A1A2E] p-2 rounded-lg transition-colors duration-150 focus:outline-none"
               aria-label="Previous slide"
             >
               <ArrowLeft className="size-4 stroke-[2.5]" />
             </button>
             <button
               onClick={handleNext}
-              className="bg-[#FDB022] hover:bg-[#F79009] text-black p-2 rounded-lg transition-colors duration-150 focus:outline-none"
+              className="bg-[#FDB022] hover:bg-[#F79009] text-[#1A1A2E] p-2 rounded-lg transition-colors duration-150 focus:outline-none"
               aria-label="Next slide"
             >
               <ArrowRight className="size-4 stroke-[2.5]" />

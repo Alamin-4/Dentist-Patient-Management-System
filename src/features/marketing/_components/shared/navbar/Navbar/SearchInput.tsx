@@ -134,7 +134,7 @@ export default function SearchInput(props: SearchInputProps) {
         <Suspense fallback={
             <div className={cn(
                 "relative flex items-center w-full",
-                props.variant === "desktop" ? "hidden md:flex flex-1 max-w-md" : "md:hidden",
+                props.variant === "desktop" ? "hidden md:flex flex-1 max-w-xs" : "md:hidden",
             )}>
                 <div className={cn(
                     "w-full rounded-xl border border-gray-200 bg-gray-50/50 animate-pulse",
