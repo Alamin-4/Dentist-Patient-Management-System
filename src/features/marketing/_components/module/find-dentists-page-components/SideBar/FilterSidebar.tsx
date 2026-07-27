@@ -140,10 +140,7 @@ export default function FilterSidebar({
         <FilterSection title="Country">
           <SearchableDropdown
             value={country}
-            onChange={(val) => {
-              onCountryChange(val);
-              onCityChange("All Cities");
-            }}
+            onChange={onCountryChange}
             options={["All Countries", ...countriesList.map((c) => c.name)]}
             placeholder="Select Country"
             clearValue="All Countries"

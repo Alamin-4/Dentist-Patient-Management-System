@@ -124,10 +124,10 @@ export const useDentistFilters = () => {
 
     const setCountry = useCallback(
         (value: string) => {
-            // Reset city when country changes
+            // Only update country — city is independent and can be selected
+            // without a country, so we never auto-reset it here.
             setParams({
                 country: value !== DEFAULT_FILTERS.country ? value : null,
-                city: null,
             });
         },
         [setParams],
