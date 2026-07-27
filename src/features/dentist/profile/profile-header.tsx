@@ -21,11 +21,18 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
     .slice(0, 2)
     .toUpperCase() || "DP";
 
+  // ── Primary check: use the DentistDirectory.status set by admin ──────────
+  // This is the authoritative source. Individual sub-verification records
+  // can be inconsistent (e.g., operationsVerification stays PENDING even after
+  // admin approves the whole profile via the directory status).
+  const isDirectoryVerified = dentist?.dentistDirectory?.status === "VERIFIED";
+
+  // ── Fallback: check individual sub-verifications ──────────────────────────
   const isLicenseVerified = dentist?.dentistLicense?.isVerified || dentist?.dentistLicense?.verificationStatus === "APPROVED";
   const isOperationsVerified = dentist?.dentistOperationsVerifications?.[0]?.isVerified || dentist?.dentistOperationsVerifications?.[0]?.isApproved || dentist?.dentistOperationsVerifications?.[0]?.verificationStatus === "APPROVED";
   const isClinicalVerified = dentist?.dentistClinicDepthVerification?.isVerified || dentist?.dentistClinicDepthVerification?.isApproved || dentist?.dentistClinicDepthVerification?.verificationStatus === "APPROVED";
 
-  const isFullyVerified = isLicenseVerified && isOperationsVerified && isClinicalVerified;
+  const isFullyVerified = isDirectoryVerified || (isLicenseVerified && isOperationsVerified && isClinicalVerified);
   const isSearchable = isFullyVerified;
 
   const hasSubmittedAny = !!(dentist?.dentistLicense || (dentist?.dentistOperationsVerifications?.length ?? 0) > 0 || dentist?.dentistClinicDepthVerification);

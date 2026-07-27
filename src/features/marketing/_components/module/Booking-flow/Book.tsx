@@ -338,7 +338,15 @@ export default function IntakeModal() {
       toast.success("Your consultation details are saved.");
       setShowBookingModal(null);
 
-      if (selectedDentistId) {
+      // Multi-dentist compare flow: show postBooking compare modal so the user
+      // can pick their preferred dentist. selectedDentistId is set to the first
+      // selected dentist by CompareModal, but we need the user to choose again.
+      if (dentistsToCompare && dentistsToCompare.length > 1) {
+        setCompareModalPurpose("postBooking");
+        setSchedule(true);
+        setShowCompareModal(true);
+      } else if (selectedDentistId) {
+        // Single-dentist booking: go straight to schedule
         const draft = getBookingDraft();
         const params = new URLSearchParams();
         params.set("dentistIds", selectedDentistId);
@@ -346,16 +354,8 @@ export default function IntakeModal() {
           params.set("consultationId", String(draft.consultationId));
         }
         router.push(`/schedule?${params.toString()}`);
-      } else if (dentistsToCompare && dentistsToCompare.length > 0) {
-        const q = dentistsToCompare.map(d => d.id).join(",");
-        const draft = getBookingDraft();
-        const params = new URLSearchParams();
-        params.set("dentistIds", q);
-        if (draft.consultationId) {
-          params.set("consultationId", String(draft.consultationId));
-        }
-        router.push(`/schedule?${params.toString()}`);
       } else {
+        // Fallback: open postBooking compare to let user pick a dentist
         setCompareModalPurpose("postBooking");
         setSchedule(true);
         setShowCompareModal(true);
