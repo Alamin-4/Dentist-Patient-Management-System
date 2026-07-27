@@ -45,7 +45,7 @@ export default function VerifiedDentists() {
     procedure: procedure && procedure !== "All Procedures" ? procedure : undefined,
     limit: 6,
   });
-
+  // console.log("dentist directory:", directoryResponse)
   const dentists = useMemo(() => {
     const apiList = directoryResponse?.data || [];
     return apiList.map((d: any) => ({

@@ -62,7 +62,7 @@ export default function DentistCard({
   };
 
   const statusInfo = getStatusInfo();
-
+  console.log("dentist from home:", dentist)
   const isVerified = dentist.verified === "VERIFIED" || dentist.status === "VERIFIED";
 
   return (

@@ -58,6 +58,8 @@ export default function DentistCard({
   onPrimaryAction,
   onViewOnMap,
 }: DentistCardProps) {
+  console.log(dentist)
+
   const router = useRouter();
   const { user } = useMe();
   const {
@@ -74,7 +76,6 @@ export default function DentistCard({
       toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
       return;
     }
-    // Clear any stale compare state so postBooking compare doesn't show old dentists
     setDentistsToCompare([]);
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
@@ -114,7 +115,7 @@ export default function DentistCard({
   };
 
   // ── 2-state public badge (VERIFIED or UNVERIFIED) ────────────────────────
-  const badgeConfig = dentist.verificationStatus === 'VERIFIED'
+  const badgeConfig = dentist.status === 'VERIFIED'
     ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED', showIcon: true }
     : { icon: 'text-[#505050]', text: 'text-[#505050]', label: 'UNVERIFIED', showIcon: false };
 

@@ -133,16 +133,16 @@ export function mapApiDentist(d: any): Dentist {
   const hasCoords = typeof d.latitude === "number" && typeof d.longitude === "number";
 
   // ── Verification logic ──────────────────────────────────────────────────
-  // Phase flags come from dentistVerificationProgress on the backend.
-  const isLicenseVerified: boolean = d.isLicenseVerified ?? (d.status === 'VERIFIED');
-  const isOperationsVerified: boolean = d.isOperationsVerified ?? (d.status === 'VERIFIED');
-  const isClinicDepthVerified: boolean = d.isClinicDepthVerified ?? (d.status === 'VERIFIED');
-  // All 3 phases approved = publicly VERIFIED (payment is irrelevant for public badge)
+  // Directory entries with status='VERIFIED' or all 3 phases approved = publicly VERIFIED
+  const isLicenseVerified: boolean = d.isLicenseVerified === true || d.status === 'VERIFIED';
+  const isOperationsVerified: boolean = d.isOperationsVerified === true || d.status === 'VERIFIED';
+  const isClinicDepthVerified: boolean = d.isClinicDepthVerified === true || d.status === 'VERIFIED';
+  
   const isDocsVerified = isLicenseVerified && isOperationsVerified && isClinicDepthVerified;
   const isPaymentPaid = !!(d.membershipPaidAt || d.membershipPlan);
-  // isPaymentPending is PRIVATE — only shown on the dentist's own /dentist/profile page
+  // isPaymentPending is PRIVATE — only shown on dentist's own /dentist/profile page
   const isPaymentPending = isDocsVerified && !isPaymentPaid;
-  // Public badge: VERIFIED (all phases done) or UNVERIFIED
+  // Public badge: VERIFIED (status is VERIFIED or all phases done) or UNVERIFIED
   const verificationStatus: Dentist['verificationStatus'] = isDocsVerified ? 'VERIFIED' : 'UNVERIFIED';
 
   return {
