@@ -37,7 +37,7 @@ export type Dentist = {
   isClaimable: boolean;
   claimedByUserId: string | null;
   membershipPlan: string | null;
-  membershipPaidAt: string | null;  // ISO date string or null
+  membershipPaidAt?: string | null;  // ISO date string or null
   createdAt: string;
   updatedAt: string;
 
@@ -59,16 +59,16 @@ export type Dentist = {
   isClaimed: boolean;  // true when CLAIMABLE profile has been claimed
 
   // Computed verification (public-facing):
-  isDocsVerified: boolean;    // all 3 phases APPROVED — used for public VERIFIED badge
-  isPaymentPaid: boolean;     // membershipPaidAt is set
-  isVerified: boolean;        // = isDocsVerified (public: payment not required for badge)
-  isPaymentPending: boolean;  // docs done but payment missing (PRIVATE: profile page only)
-  verificationStatus: 'VERIFIED' | 'UNVERIFIED'; // public badge: VERIFIED or UNVERIFIED
+  isDocsVerified?: boolean;    // all 3 phases APPROVED — used for public VERIFIED badge
+  isPaymentPaid?: boolean;     // membershipPaidAt is set
+  isVerified?: boolean;        // = isDocsVerified (public: payment not required for badge)
+  isPaymentPending?: boolean;  // docs done but payment missing (PRIVATE: profile page only)
+  verificationStatus?: 'VERIFIED' | 'UNVERIFIED'; // public badge: VERIFIED or UNVERIFIED
 
   // Phase-level flags (from dentistVerificationProgress)
-  isLicenseVerified: boolean;
-  isOperationsVerified: boolean;
-  isClinicDepthVerified: boolean;
+  isLicenseVerified?: boolean;
+  isOperationsVerified?: boolean;
+  isClinicDepthVerified?: boolean;
 
   // Structured rating
   rating: DentistRating;
@@ -82,7 +82,6 @@ export type Dentist = {
   coords?: { lat: number; lng: number };
 };
 
-// Import centralized demo data
 import { DEMO_DENTISTS } from "@/lib/storage/dentistData";
 
 export const dentists: Dentist[] = DEMO_DENTISTS;
