@@ -1,9 +1,8 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useStateContext } from "@/providers/StateProvider";
+import { useMe } from "@/hooks/auth/useAuth";
 import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 import DentistScheduleCard, {
   type DentistSelection,
@@ -53,6 +52,29 @@ export default function ScheduleContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { setShowCompareModal } = useStateContext();
+  const { user } = useMe();
+
+  // ── Dentist role guard ───────────────────────────────────────────
+  if (user?.role === "DENTIST") {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
+        <div className="text-5xl">🦷</div>
+        <h2 className="text-2xl font-bold text-[#1A1A2E]">
+          Dentists cannot book consultations
+        </h2>
+        <p className="text-[#6B7280] text-sm max-w-sm">
+          Your account is registered as a <strong>Dentist</strong>. Only patients can book consultation appointments. If you need help, please contact support.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push("/find-dentists")}
+          className="px-6 py-3 bg-[#113254] text-white font-semibold rounded-lg hover:bg-[#0d2844] transition-colors"
+        >
+          Back to Directory
+        </button>
+      </div>
+    );
+  }
 
   const dentistIdsParam = searchParams.get("dentistIds") ?? "";
   const consultationIdParam = searchParams.get("consultationId");
@@ -217,9 +239,20 @@ export default function ScheduleContent() {
       clearBookingData();
       setShowSuccess(true);
     } catch (error) {
-      const errMsg = normalizeApiError(error).message;
-      setErrorMsg(errMsg);
-      toast.error(errMsg);
+      const normalized = normalizeApiError(error);
+      // 403 = role restriction — show a friendly message instead of the raw API error
+      const isForbidden =
+        (error as any)?.status === 403 ||
+        (error as any)?.response?.status === 403 ||
+        normalized.message.toLowerCase().includes("forbidden") ||
+        normalized.message.toLowerCase().includes("permission");
+
+      const friendlyMsg = isForbidden
+        ? "Only patients can book consultations. Dentist accounts are not permitted to make bookings."
+        : normalized.message;
+
+      setErrorMsg(friendlyMsg);
+      toast.error(friendlyMsg);
     } finally {
       setIsConfirming(false);
     }
