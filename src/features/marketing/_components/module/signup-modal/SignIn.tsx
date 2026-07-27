@@ -7,6 +7,8 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebook } from "react-icons/fa";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import z from "zod";
 
 import {
   Dialog,
@@ -17,9 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
 import { useGoogleLogin, useLogin, useMe, useResendOtp } from "@/hooks/auth/useAuth";
-import z from "zod";
 import { LoginFormData, loginSchema } from "@/hooks/dentist/dentist.interface";
-import toast from "react-hot-toast";
 import OtpVerifyModal from "./Otp-Verify-Modal";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import ForgotOtpForm from "./ForgotOtpForm";
@@ -35,7 +35,7 @@ export default function SigninModal() {
     dentistsToCompare,
   } = useStateContext();
 
-  const { user } = useMe()
+  const { user } = useMe();
   const [authView, setAuthView] = useState<"signin" | "forgot" | "forgot_otp" | "forgot_reset" | "forgot_success">("signin");
   const [forgotEmail, setForgotEmail] = useState("");
   const [resetToken, setResetToken] = useState("");
@@ -60,8 +60,8 @@ export default function SigninModal() {
   const [emailToVerify, setEmailToVerify] = useState("");
   const [isEmailUnverified, setIsEmailUnverified] = useState(false);
 
-  const { mutate: login, isPending, isError, error, } = useLogin()
-  const { mutate: googleLogin, isPending: isGooglePending, isError: isGoogleError, error: googleError } = useGoogleLogin()
+  const { mutate: login, isPending } = useLogin();
+  const { mutate: googleLogin, isPending: isGooglePending } = useGoogleLogin();
   const resendOtpMutation = useResendOtp();
 
   const {
@@ -90,7 +90,6 @@ export default function SigninModal() {
         setShowSigninModal(false);
 
         if (dentistsToCompare && dentistsToCompare.length > 0) {
-
           const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
           if (hasProfileDetails) {
             setShowCompareModal(true);
@@ -171,7 +170,6 @@ export default function SigninModal() {
     setShowSigninModal(false);
 
     if (dentistsToCompare && dentistsToCompare.length > 0) {
-
       const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
       if (hasProfileDetails) {
         setShowCompareModal(true);
@@ -191,214 +189,211 @@ export default function SigninModal() {
   return (
     <>
       <Dialog open={showSigninModal} onOpenChange={setShowSigninModal}>
-        <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0">
-          {authView === "signin" ? (
-            <>
-              <DialogHeader className="mb-8 text-left">
-                <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-[#1A1A2E]">
-                  Sign in
-                </DialogTitle>
-                <DialogDescription className="text-[16px] leading-snug text-[#6B7280]">
-                  Welcome back! Sign in to manage your appointments and consultations.
-                </DialogDescription>
-              </DialogHeader>
+        <DialogContent className="sm:max-w-150 max-h-[90vh] flex flex-col rounded-lg border-none p-0 gap-0">
+          <div className="overflow-y-auto p-8 flex-1">
+            {authView === "signin" ? (
+              <>
+                <DialogHeader className="mb-8 text-left">
+                  <DialogTitle className="mb-3 text-4xl font-bold leading-tight text-[#1A1A2E]">
+                    Sign in
+                  </DialogTitle>
+                  <DialogDescription className="text-base leading-snug text-[#6B7280]">
+                    Welcome back! Sign in to manage your appointments and consultations.
+                  </DialogDescription>
+                </DialogHeader>
 
-              <div className="mb-4 space-y-3">
-                <button
-                  type="button"
-                  onClick={() => handleSocialLogin("Google")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
-                >
-                  <FcGoogle className="text-2xl" />
-                  <span className="text-[#6B7280]">Continue with Google</span>
-                </button>
+                <div className="mb-4 space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => handleSocialLogin("Google")}
+                    disabled={isGooglePending}
+                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  >
+                    <FcGoogle className="text-2xl" />
+                    <span className="text-[#1A1A2E] font-medium">Continue with Google</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleSocialLogin("Apple")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
-                >
-                  <FaApple className="text-2xl text-black" />
-                  <span className="text-[#6B7280]">Continue with Apple</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSocialLogin("Apple")}
+                    disabled={isGooglePending}
+                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  >
+                    <FaApple className="text-2xl text-black" />
+                    <span className="text-[#1A1A2E] font-medium">Continue with Apple</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleSocialLogin("Facebook")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
-                >
-                  <FaFacebook className="text-2xl text-[#1877F2]" />
-                  <span className="text-[#6B7280]">Continue with Facebook</span>
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSocialLogin("Facebook")}
+                    disabled={isGooglePending}
+                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  >
+                    <FaFacebook className="text-2xl text-[#1877F2]" />
+                    <span className="text-[#1A1A2E] font-medium">Continue with Facebook</span>
+                  </button>
+                </div>
 
-              {/* Divider */}
-              <div className="relative my-6 flex items-center justify-center lg:my-8">
-                <div className="grow border-t border-[#E5E7EB]"></div>
-                <span className="mx-4 bg-white px-2 text-sm text-[#9EA9AA]">or</span>
-                <div className="grow border-t border-[#E5E7EB]"></div>
-              </div>
+                {/* Divider */}
+                <div className="relative my-6 flex items-center justify-center lg:my-8">
+                  <div className="grow border-t border-[#E5E7EB]"></div>
+                  <span className="mx-4 bg-white px-2 text-sm text-[#9EA9AA]">or</span>
+                  <div className="grow border-t border-[#E5E7EB]"></div>
+                </div>
 
-              {/* Form */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div>
-                  <label className="mb-2 block text-[15px] font-semibold text-[#1A1A2E]">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter Email"
-                    {...register("email")}
-                    className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
-                  />
-                  {errors.email && (
-                    <div className="mt-1.5 flex flex-col items-start gap-1">
-                      <p className="text-sm text-red-500">
-                        {errors.email.message}
-                      </p>
-                      {errors.email.message?.toLowerCase().includes("verify") && (
-                        <button
-                          type="button"
-                          disabled={resendOtpMutation.isPending}
-                          onClick={handleStartVerification}
-                          className="text-xs font-semibold text-[#113254] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {resendOtpMutation.isPending ? "Sending OTP..." : "Verify your email now →"}
-                        </button>
-                      )}
+                {/* Form */}
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[#1A1A2E]">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="Enter Email"
+                      {...register("email")}
+                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                    {errors.email && (
+                      <div className="mt-1.5 flex flex-col items-start gap-1">
+                        <p className="text-sm text-red-500">{errors.email.message}</p>
+                        {errors.email.message?.toLowerCase().includes("verify") && (
+                          <button
+                            type="button"
+                            disabled={resendOtpMutation.isPending}
+                            onClick={handleStartVerification}
+                            className="text-xs font-semibold text-[#113254] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {resendOtpMutation.isPending ? "Sending OTP..." : "Verify your email now →"}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <label className="block text-sm font-semibold text-[#1A1A2E]">
+                        Password <span className="text-red-500">*</span>
+                      </label>
+                      <button
+                        type="button"
+                        className="text-sm font-medium text-[#113254] hover:underline"
+                        onClick={() => setAuthView("forgot")}
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter Password"
+                        {...register("password")}
+                        className="w-full rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA9AA]"
+                      >
+                        {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                      </button>
+                    </div>
+                    {errors.password && (
+                      <p className="mt-1.5 text-sm text-red-500">{errors.password.message}</p>
+                    )}
+                  </div>
+
+                  {errors.root?.server?.message && !isEmailUnverified && (
+                    <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                      {errors.root.server.message}
                     </div>
                   )}
-                </div>
 
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <label className="block text-[15px] font-semibold text-[#1A1A2E]">
-                      Password <span className="text-red-500">*</span>
-                    </label>
-                    <button
-                      type="button"
-                      className="text-sm font-medium text-[#113254] hover:underline"
-                      onClick={() => setAuthView("forgot")}
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
-
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter Password"
-                      {...register("password")}
-                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA9AA]"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="size-5" />
-                      ) : (
-                        <Eye className="size-5" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="mt-1.5 text-sm text-red-500">
-                      {errors.password.message}
-                    </p>
+                  {isEmailUnverified && (
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <span>Your email is not verified yet.</span>
+                      <button
+                        type="button"
+                        disabled={resendOtpMutation.isPending}
+                        onClick={handleStartVerification}
+                        className="shrink-0 rounded-lg bg-[#113254] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0d2844] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {resendOtpMutation.isPending ? "Sending..." : "Verify Now"}
+                      </button>
+                    </div>
                   )}
-                </div>
 
-                {errors.root?.server?.message && !isEmailUnverified && (
-                  <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
-                    {errors.root.server.message}
-                  </div>
-                )}
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="size-5 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </button>
+                </form>
 
-                {isEmailUnverified && (
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <span>Your email is not verified yet.</span>
-                    <button
-                      type="button"
-                      disabled={resendOtpMutation.isPending}
-                      onClick={handleStartVerification}
-                      className="shrink-0 rounded-lg bg-[#113254] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0d2844] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {resendOtpMutation.isPending ? "Sending..." : "Verify Now"}
-                    </button>
-                  </div>
-                )}
+                <p className="mt-6 text-center text-sm text-[#6B7280]">
+                  Don&apos;t have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={switchToSignup}
+                    className="font-semibold text-[#113254] hover:underline"
+                  >
+                    Sign up
+                  </button>
+                </p>
 
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {isPending ? (
-                    <>
-                      <Loader2 className="size-5 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    "Sign In"
-                  )}
-                </button>
-              </form>
-
-              <p className="mt-6 text-center text-sm text-[#6B7280]">
-                Don&apos;t have an account?{" "}
-                <button
-                  type="button"
-                  onClick={switchToSignup}
-                  className="font-semibold text-[#113254] hover:underline"
-                >
-                  Sign up
-                </button>
-              </p>
-
-              <p className="mt-2 text-center text-sm text-[#6B7280]">
-                Are you a dentist?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowSigninModal(false);
-                    router.push("/register-doctor");
-                  }}
-                  className="font-semibold text-[#113254] hover:underline"
-                >
-                  Join as a dentist
-                </button>
-              </p>
-            </>
-          ) : authView === "forgot" ? (
-            <ForgotPasswordForm
-              onBack={() => setAuthView("signin")}
-              onSuccess={(email) => {
-                setForgotEmail(email);
-                setAuthView("forgot_otp");
-              }}
-            />
-          ) : authView === "forgot_otp" ? (
-            <ForgotOtpForm
-              email={forgotEmail}
-              onBack={() => setAuthView("forgot")}
-              onSuccess={(token) => {
-                setResetToken(token);
-                setAuthView("forgot_reset");
-              }}
-            />
-          ) : authView === "forgot_reset" ? (
-            <ResetPasswordModalForm
-              token={resetToken}
-              onBack={() => setAuthView("forgot_otp")}
-              onSuccess={() => {
-                setForgotEmail("");
-                setResetToken("");
-                setAuthView("signin");
-              }}
-            />
-          ) : null}
+                <p className="mt-2 text-center text-sm text-[#6B7280]">
+                  Are you a dentist?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSigninModal(false);
+                      router.push("/register-doctor");
+                    }}
+                    className="font-semibold text-[#113254] hover:underline"
+                  >
+                    Join as a dentist
+                  </button>
+                </p>
+              </>
+            ) : authView === "forgot" ? (
+              <ForgotPasswordForm
+                onBack={() => setAuthView("signin")}
+                onSuccess={(email) => {
+                  setForgotEmail(email);
+                  setAuthView("forgot_otp");
+                }}
+              />
+            ) : authView === "forgot_otp" ? (
+              <ForgotOtpForm
+                email={forgotEmail}
+                onBack={() => setAuthView("forgot")}
+                onSuccess={(token) => {
+                  setResetToken(token);
+                  setAuthView("forgot_reset");
+                }}
+              />
+            ) : authView === "forgot_reset" ? (
+              <ResetPasswordModalForm
+                token={resetToken}
+                onBack={() => setAuthView("forgot_otp")}
+                onSuccess={() => {
+                  setForgotEmail("");
+                  setResetToken("");
+                  setAuthView("signin");
+                }}
+              />
+            ) : null}
+          </div>
         </DialogContent>
       </Dialog>
 
