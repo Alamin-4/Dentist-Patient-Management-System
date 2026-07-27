@@ -28,7 +28,10 @@ const TOTAL_STEPS = 6;
 
 export default function IntakeModal() {
   const router = useRouter();
-  const [step, setStep] = useState(() => getBookingDraft().currentStep);
+  const [step, setStep] = useState(() => {
+    const s = getBookingDraft().currentStep;
+    return typeof s === "number" && s >= 1 && s <= TOTAL_STEPS ? s : 1;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -47,7 +50,9 @@ export default function IntakeModal() {
   useEffect(() => {
     if (showBookingModal === "book") {
       const draft = getBookingDraft();
-      setStep(draft.currentStep || 1);
+      const s = draft.currentStep;
+      const validStep = typeof s === "number" && s >= 1 && s <= TOTAL_STEPS ? s : 1;
+      setStep(validStep);
     }
   }, [showBookingModal]);
 
@@ -335,7 +340,7 @@ export default function IntakeModal() {
         <DialogContent
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
-          className="sm:max-w-212 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white"
+          className="sm:max-w-212.5 max-h-[90vh] overflow-y-auto w-full p-0 border-none rounded-lg bg-white"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-[#F3F4F6]">

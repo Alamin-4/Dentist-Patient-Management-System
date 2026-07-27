@@ -21,8 +21,10 @@ export interface DentistVerificationProgress {
   is_verified?: boolean;
   is_docs_verified?: boolean;
   is_membership_paid?: boolean;
+  is_claimed_profile?: boolean;
   show_membership_purchase?: boolean;
   dentist_directory_id?: string | null;
+  directory_slug?: string | null;
   verification_phase?: string | null;
   progress_percentage?: number | null;
   score?: number | null;

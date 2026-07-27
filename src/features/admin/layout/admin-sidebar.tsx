@@ -130,7 +130,6 @@ export function AdminSidebar() {
 
   return (
     <aside className="flex h-full w-72 flex-col bg-[#0D2B3E]">
-      {/* Logo header */}
       <div className="flex items-center justify-between px-5 py-5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2.5">
           <Link href={"/"} className="flex items-center gap-2">
@@ -157,7 +156,6 @@ export function AdminSidebar() {
           </Link>
         </div>
 
-        {/* Mobile close */}
         <button
           onClick={close}
           aria-label="Close sidebar"
@@ -167,17 +165,14 @@ export function AdminSidebar() {
         </button>
       </div>
 
-      {/* Navigation */}
       <nav
         className={cn(
           "flex-1 overflow-y-auto px-3 py-4",
-          // Custom scrollbar — tuned for dark navy sidebar
           "[&::-webkit-scrollbar]:w-1",
           "[&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/4",
           "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/18",
           "[&::-webkit-scrollbar-thumb]:transition-colors",
           "[&::-webkit-scrollbar-thumb:hover]:bg-white/32",
-          // Firefox
           "scrollbar-thin scrollbar-track-transparent",
         )}
       >
@@ -227,7 +222,6 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* User footer */}
       <div className="shrink-0 flex flex-row items-center justify-between border-t border-white/10 p-3">
         <div className="flex items-center gap-3 px-2 py-2 mb-1 rounded-lg">
           <Avatar className="h-8 w-8 shrink-0">
