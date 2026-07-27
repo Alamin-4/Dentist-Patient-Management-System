@@ -156,7 +156,7 @@ export function InboxPage() {
                         <UserIcon className="size-5.5" />
                       </div>
                     )}
-                    <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+
                   </div>
 
                   <div className="flex-1 min-w-0">
