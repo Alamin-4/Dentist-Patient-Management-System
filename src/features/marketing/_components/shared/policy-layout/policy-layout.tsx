@@ -87,6 +87,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
                 options={dropdownOptions}
                 placeholder="Select a section..."
                 allowClear={false}
+                showSearch={false}
                 triggerClassName="bg-slate-50 font-bold border-[#CEE0F4] h-11 text-slate-800 focus:ring-[#10436B]/10 focus:border-[#10436B]"
               />
             </div>

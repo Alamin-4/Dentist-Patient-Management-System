@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Check, AlertCircle, ArrowLeft } from "lucide-react";
-import { useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
+import { useLogout, useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
 import { useGetMe } from "@/hooks/user/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
@@ -121,6 +121,9 @@ export default function ClaimProfilePage() {
 
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { mutate: handleLogout, isPending: isLogoutPending } = useLogout({
+    redirectTo: slug ? `/find-dentists/${slug}/claim` : "/",
+  });
 
   const isNotDentist = useMemo(() => {
     if (!user) return false;
@@ -142,8 +145,21 @@ export default function ClaimProfilePage() {
   }, [user, claimEmail, slug]);
 
   const alreadyClaimedDirectoryId = fullUser?.dentist?.dentistDirectoryId;
+  const isProfileVerifiedAndPaid =
+    fullUser?.dentist?.dentistDirectory?.status === "VERIFIED" ||
+    !!fullUser?.dentist?.dentistDirectory?.membershipPaidAt ||
+    dentist?.status === "VERIFIED" ||
+    dentist?.verified;
+
   const hasAlreadyClaimedAnother = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId !== dentist?.id;
-  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id;
+  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && isProfileVerifiedAndPaid;
+  const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && !isProfileVerifiedAndPaid;
+
+  useEffect(() => {
+    if (isClaimPendingPayment && claimStep < 4) {
+      setClaimStep(4);
+    }
+  }, [isClaimPendingPayment, claimStep]);
 
   useEffect(() => {
     setError(null);
@@ -151,7 +167,7 @@ export default function ClaimProfilePage() {
   }, [claimStep]);
 
   useEffect(() => {
-    if (user?.email && !alreadyClaimedDirectoryId) {
+    if (user?.email && (!alreadyClaimedDirectoryId || isClaimPendingPayment)) {
       const savedSession = typeof window !== "undefined" ? localStorage.getItem(`claim_session_${slug}`) : null;
       let savedEmail = "";
       if (savedSession) {
@@ -165,11 +181,11 @@ export default function ClaimProfilePage() {
       if (user.role === "DENTIST" || isAllowedPatient) {
         setClaimEmail(user.email);
         if (claimStep < 3) {
-          setClaimStep(3);
+          setClaimStep(isClaimPendingPayment ? 4 : 3);
         }
       }
     }
-  }, [user, claimStep, alreadyClaimedDirectoryId, claimEmail, slug]);
+  }, [user, claimStep, alreadyClaimedDirectoryId, isClaimPendingPayment, claimEmail, slug]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -271,6 +287,11 @@ export default function ClaimProfilePage() {
         return;
       }
 
+      if (claimedDirectoryId) {
+        setClaimStep(4);
+        return;
+      }
+
       claimMutation.mutate(
         {
           slug: dentist?.slug,
@@ -295,6 +316,10 @@ export default function ClaimProfilePage() {
           },
           onError: (err: any) => {
             const errMsg = err?.response?.data?.message || err?.message || "Failed to save application.";
+            if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("claimed")) {
+              setClaimStep(4);
+              return;
+            }
             setError(errMsg);
           },
         }
@@ -350,11 +375,11 @@ export default function ClaimProfilePage() {
         {/* Navigation & Header */}
         <div className="mb-8 flex items-center justify-between">
           <button
-            onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
+            onClick={() => router.push(`/find-dentists`)}
             className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer group"
           >
             <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
-            Back to Profile
+            Back to Dentists Directory
           </button>
 
           <div className="text-xs text-slate-400 font-medium">
@@ -390,7 +415,7 @@ export default function ClaimProfilePage() {
                     </div>
                     {s < 4 && (
                       <div
-                        className={`w-10 sm:w-16 h-[2px] transition-colors duration-300 ${claimStep > s ? "bg-[#4CA30D]" : "bg-slate-200"
+                        className={`w-10 sm:w-16 h-0.5 transition-colors duration-300 ${claimStep > s ? "bg-[#4CA30D]" : "bg-slate-200"
                           }`}
                       />
                     )}
@@ -416,13 +441,21 @@ export default function ClaimProfilePage() {
                     Please log out first, then click "Claim Profile" to sign up or log in with your Dentist credentials.
                   </p>
                 </div>
-                <div className="pt-4 flex gap-3 justify-center border-t border-slate-100 mt-6">
+                <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center border-t border-slate-100 mt-6">
                   <button
                     type="button"
-                    onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
+                    disabled={isLogoutPending}
+                    onClick={() => handleLogout()}
+                    className="rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all hover:bg-[#0d2844] active:scale-[0.98] disabled:opacity-70 cursor-pointer text-sm"
+                  >
+                    {isLogoutPending ? "Logging out..." : "Log Out & Continue as Dentist"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/find-dentists")}
                     className="rounded-lg border border-[#E5E7EB] px-6 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer text-sm"
                   >
-                    Return to Profile
+                    Back to Dentists Directory
                   </button>
                 </div>
               </div>
@@ -443,13 +476,21 @@ export default function ClaimProfilePage() {
                     Each professional dentist account is restricted to claiming exactly one directory profile. If you need to manage multiple profiles, please contact support.
                   </p>
                 </div>
-                <div className="pt-4 flex gap-3 justify-center border-t border-slate-100 mt-6">
+                <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center border-t border-slate-100 mt-6">
                   <button
                     type="button"
-                    onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
+                    disabled={isLogoutPending}
+                    onClick={() => handleLogout()}
+                    className="rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all hover:bg-[#0d2844] active:scale-[0.98] disabled:opacity-70 cursor-pointer text-sm"
+                  >
+                    {isLogoutPending ? "Logging out..." : "Log Out & Continue as Dentist"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/find-dentists")}
                     className="rounded-lg border border-[#E5E7EB] px-6 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer text-sm"
                   >
-                    Return to Profile
+                    Back to Dentists Directory
                   </button>
                 </div>
               </div>
@@ -551,6 +592,7 @@ export default function ClaimProfilePage() {
                     handleNextStep={handleNextStep}
                     user={user}
                     setClaimStep={setClaimStep}
+                    claimMutation={claimMutation}
                   />
                 )}
 
