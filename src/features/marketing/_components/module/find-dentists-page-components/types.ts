@@ -58,12 +58,12 @@ export type Dentist = {
   accountType: 'CLAIMABLE' | 'CLAIMED' | 'REGISTERED';
   isClaimed: boolean;  // true when CLAIMABLE profile has been claimed
 
-  // Computed 3-state verification:
-  isDocsVerified: boolean;    // all 3 phases APPROVED
+  // Computed verification (public-facing):
+  isDocsVerified: boolean;    // all 3 phases APPROVED — used for public VERIFIED badge
   isPaymentPaid: boolean;     // membershipPaidAt is set
-  isVerified: boolean;        // isDocsVerified AND isPaymentPaid
-  isPaymentPending: boolean;  // docs done but payment missing
-  verificationStatus: 'VERIFIED' | 'PAYMENT_PENDING' | 'PENDING';
+  isVerified: boolean;        // = isDocsVerified (public: payment not required for badge)
+  isPaymentPending: boolean;  // docs done but payment missing (PRIVATE: profile page only)
+  verificationStatus: 'VERIFIED' | 'UNVERIFIED'; // public badge: VERIFIED or UNVERIFIED
 
   // Phase-level flags (from dentistVerificationProgress)
   isLicenseVerified: boolean;
@@ -133,21 +133,18 @@ export function mapApiDentist(d: any): Dentist {
 
   const hasCoords = typeof d.latitude === "number" && typeof d.longitude === "number";
 
-  // ── 3-state verification logic ───────────────────────────────────────────
+  // ── Verification logic ──────────────────────────────────────────────────
   // Phase flags come from dentistVerificationProgress on the backend.
-  // DentistDirectory.status=VERIFIED is only set by admin after all phases pass.
   const isLicenseVerified: boolean = d.isLicenseVerified ?? (d.status === 'VERIFIED');
   const isOperationsVerified: boolean = d.isOperationsVerified ?? (d.status === 'VERIFIED');
   const isClinicDepthVerified: boolean = d.isClinicDepthVerified ?? (d.status === 'VERIFIED');
+  // All 3 phases approved = publicly VERIFIED (payment is irrelevant for public badge)
   const isDocsVerified = isLicenseVerified && isOperationsVerified && isClinicDepthVerified;
   const isPaymentPaid = !!(d.membershipPaidAt || d.membershipPlan);
-
-  const verificationStatus: Dentist['verificationStatus'] =
-    isDocsVerified && isPaymentPaid
-      ? 'VERIFIED'
-      : isDocsVerified && !isPaymentPaid
-        ? 'PAYMENT_PENDING'
-        : 'PENDING';
+  // isPaymentPending is PRIVATE — only shown on the dentist's own /dentist/profile page
+  const isPaymentPending = isDocsVerified && !isPaymentPaid;
+  // Public badge: VERIFIED (all phases done) or UNVERIFIED
+  const verificationStatus: Dentist['verificationStatus'] = isDocsVerified ? 'VERIFIED' : 'UNVERIFIED';
 
   return {
     ...d,
@@ -173,8 +170,8 @@ export function mapApiDentist(d: any): Dentist {
     isClinicDepthVerified,
     isDocsVerified,
     isPaymentPaid,
-    isVerified: verificationStatus === 'VERIFIED',
-    isPaymentPending: verificationStatus === 'PAYMENT_PENDING',
+    isVerified: isDocsVerified,   // public: all phases done = verified
+    isPaymentPending,              // private: for /dentist/profile only
     verificationStatus,
     surpriseGuarantee: d.surpriseGuarantee ?? false,
     verificationPhase: d.verificationPhase ?? null,

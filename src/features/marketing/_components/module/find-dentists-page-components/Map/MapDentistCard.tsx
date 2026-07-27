@@ -88,12 +88,8 @@ export default function MapDentistCard({
   };
 
   const badgeConfig = dentist.verificationStatus === 'VERIFIED'
-    ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED' }
-    : dentist.verificationStatus === 'PAYMENT_PENDING'
-      ? { icon: 'text-amber-500', text: 'text-amber-600', label: 'PAYMENT PENDING' }
-      : dentist.status === 'UNVERIFIED'
-        ? { icon: 'text-[#505050]', text: 'text-[#505050]', label: dentist.status }
-        : { icon: 'text-slate-400', text: 'text-slate-500', label: dentist.status };
+    ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED', showIcon: true }
+    : { icon: 'text-[#505050]', text: 'text-[#505050]', label: 'UNVERIFIED', showIcon: false };
 
   const ratingValue = dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
   const reviewCount =
@@ -116,7 +112,7 @@ export default function MapDentistCard({
           </div>
           <div>
             <div className="flex items-center gap-1 text-[10px] font-medium text-[#1A1A2E]">
-              {(dentist.verificationStatus === 'VERIFIED' || dentist.verificationStatus === 'PAYMENT_PENDING') && (
+              {badgeConfig.showIcon && (
                 <ShieldCheck className={cn("size-3.5", badgeConfig.icon)} />
               )}
               <span className={cn("font-bold uppercase tracking-wider whitespace-nowrap", badgeConfig.text)}>

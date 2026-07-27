@@ -48,6 +48,8 @@ export interface DentistSpecialty {
 
 export interface DentistDirectory {
   status: string; // "VERIFIED" | "CLAIMED" | "UNVERIFIED"
+  membershipPaidAt?: string | null;
+  membershipPlan?: string | null;
 }
 
 export interface DentistProfileData {

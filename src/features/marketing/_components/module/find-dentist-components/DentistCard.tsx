@@ -113,14 +113,10 @@ export default function DentistCard({
     }
   };
 
-  // ── 3-state verification badge ───────────────────────────────────────
+  // ── 2-state public badge (VERIFIED or UNVERIFIED) ────────────────────────
   const badgeConfig = dentist.verificationStatus === 'VERIFIED'
-    ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED' }
-    : dentist.verificationStatus === 'PAYMENT_PENDING'
-      ? { icon: 'text-amber-500', text: 'text-amber-600', label: 'PAYMENT PENDING' }
-      : dentist.status === 'UNVERIFIED'
-        ? { icon: 'text-[#505050]', text: 'text-[#505050]', label: dentist.status }
-        : { icon: 'text-slate-400', text: 'text-slate-500', label: dentist.status };
+    ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED', showIcon: true }
+    : { icon: 'text-[#505050]', text: 'text-[#505050]', label: 'UNVERIFIED', showIcon: false };
 
 
   const ratingValue = dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
@@ -167,9 +163,7 @@ export default function DentistCard({
             <div className="flex w-full flex-col items-center gap-2">
               {/* Account / verification badge */}
               <div className="flex items-center gap-1.5 text-xs font-medium">
-                {
-                  (dentist.verificationStatus === 'VERIFIED' || dentist.verificationStatus === 'PAYMENT_PENDING') && <ShieldCheck className={cn("size-4", badgeConfig.icon)} />
-                }
+                {badgeConfig.showIcon && <ShieldCheck className={cn("size-4", badgeConfig.icon)} />}
                 <span
                   className={cn(
                     "text-[11px] font-bold uppercase tracking-wider whitespace-nowrap",
