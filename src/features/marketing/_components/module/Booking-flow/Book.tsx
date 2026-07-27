@@ -30,7 +30,10 @@ const TOTAL_STEPS = 6;
 
 export default function IntakeModal() {
   const router = useRouter();
-  const [step, setStep] = useState(() => getBookingDraft().currentStep);
+  const [step, setStep] = useState(() => {
+    const s = getBookingDraft().currentStep;
+    return typeof s === "number" && s >= 1 && s <= TOTAL_STEPS ? s : 1;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -49,7 +52,6 @@ export default function IntakeModal() {
   useEffect(() => {
     if (showBookingModal === "book") {
       const draft = getBookingDraft();
-
       // If step 6 (the final step) is already completed, do not reopen the intake modal.
       // Redirect directly to the appropriate screen.
       if (draft.consultationId && draft.completedSteps.includes(TOTAL_STEPS)) {
@@ -70,7 +72,9 @@ export default function IntakeModal() {
         return;
       }
 
-      setStep(draft.currentStep || 1);
+      const s = draft.currentStep;
+      const validStep = typeof s === "number" && s >= 1 && s <= TOTAL_STEPS ? s : 1;
+      setStep(validStep);
     }
   }, [showBookingModal, bookingMode, selectedDentistId, dentistsToCompare, router, setShowBookingModal]);
 
