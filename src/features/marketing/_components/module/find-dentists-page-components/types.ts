@@ -37,6 +37,7 @@ export type Dentist = {
   isClaimable: boolean;
   claimedByUserId: string | null;
   membershipPlan: string | null;
+  membershipPaidAt: string | null;  // ISO date string or null
   createdAt: string;
   updatedAt: string;
 
@@ -56,7 +57,18 @@ export type Dentist = {
   //   REGISTERED → dentist self-registered (created their own account)
   accountType: 'CLAIMABLE' | 'CLAIMED' | 'REGISTERED';
   isClaimed: boolean;  // true when CLAIMABLE profile has been claimed
-  isVerified: boolean; // true when directory status === VERIFIED
+
+  // Computed 3-state verification:
+  isDocsVerified: boolean;    // all 3 phases APPROVED
+  isPaymentPaid: boolean;     // membershipPaidAt is set
+  isVerified: boolean;        // isDocsVerified AND isPaymentPaid
+  isPaymentPending: boolean;  // docs done but payment missing
+  verificationStatus: 'VERIFIED' | 'PAYMENT_PENDING' | 'PENDING';
+
+  // Phase-level flags (from dentistVerificationProgress)
+  isLicenseVerified: boolean;
+  isOperationsVerified: boolean;
+  isClinicDepthVerified: boolean;
 
   // Structured rating
   rating: DentistRating;
@@ -64,9 +76,7 @@ export type Dentist = {
   // Structured location
   location: DentistLocation;
 
-  // Real geo coords from the API (null/undefined until the dentist's address
-  // has been geocoded / captured via the clinic-depth map picker). No pin
-  // should be rendered when either is missing.
+  // Real geo coords from the API
   latitude?: number | null;
   longitude?: number | null;
   coords?: { lat: number; lng: number };
@@ -123,6 +133,22 @@ export function mapApiDentist(d: any): Dentist {
 
   const hasCoords = typeof d.latitude === "number" && typeof d.longitude === "number";
 
+  // ── 3-state verification logic ───────────────────────────────────────────
+  // Phase flags come from dentistVerificationProgress on the backend.
+  // DentistDirectory.status=VERIFIED is only set by admin after all phases pass.
+  const isLicenseVerified: boolean = d.isLicenseVerified ?? (d.status === 'VERIFIED');
+  const isOperationsVerified: boolean = d.isOperationsVerified ?? (d.status === 'VERIFIED');
+  const isClinicDepthVerified: boolean = d.isClinicDepthVerified ?? (d.status === 'VERIFIED');
+  const isDocsVerified = isLicenseVerified && isOperationsVerified && isClinicDepthVerified;
+  const isPaymentPaid = !!(d.membershipPaidAt || d.membershipPlan);
+
+  const verificationStatus: Dentist['verificationStatus'] =
+    isDocsVerified && isPaymentPaid
+      ? 'VERIFIED'
+      : isDocsVerified && !isPaymentPaid
+        ? 'PAYMENT_PENDING'
+        : 'PENDING';
+
   return {
     ...d,
     coords: hasCoords ? { lat: d.latitude, lng: d.longitude } : undefined,
@@ -141,7 +167,15 @@ export function mapApiDentist(d: any): Dentist {
     },
     accountType,
     isClaimed: d.status === 'CLAIMED' || d.status === 'VERIFIED',
-    isVerified: d.status === 'VERIFIED',
+    membershipPaidAt: d.membershipPaidAt ?? null,
+    isLicenseVerified,
+    isOperationsVerified,
+    isClinicDepthVerified,
+    isDocsVerified,
+    isPaymentPaid,
+    isVerified: verificationStatus === 'VERIFIED',
+    isPaymentPending: verificationStatus === 'PAYMENT_PENDING',
+    verificationStatus,
     surpriseGuarantee: d.surpriseGuarantee ?? false,
     verificationPhase: d.verificationPhase ?? null,
   };

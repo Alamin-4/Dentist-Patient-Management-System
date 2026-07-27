@@ -6,8 +6,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStateContext } from "@/providers/StateProvider";
 import { setBookingCurrentStep } from "@/lib/storage/bookingService";
-import { useAppStore } from "@/store/useAppStore";
-import { usePathname } from "next/navigation";
 
 const CHECKLIST = [
   "Clear dental photos",
@@ -18,27 +16,16 @@ const CHECKLIST = [
 export default function StartBookingModal() {
   const [agreed, setAgreed] = useState(false);
   const { setShowBookingModal, showBookingModal, bookingMode } = useStateContext();
-  const store = useAppStore();
-  const pathname = usePathname();
 
   /**
-   * Transition from "startBooking" → "booking" in a single URL replace call.
-   * Using router.replace instead of the default push-based setShowBookingModal
-   * avoids stacking a ?modal=start-booking entry in history that users could
-   * navigate back to, which would leave the backdrop stuck.
+   * Transition from "startBooking" → "booking" via setShowBookingModal.
+   * setUrlModal detects an existing modal param in the URL and calls
+   * router.replace (not push), keeping the history stack clean and ensuring
+   * pendingModalRef is tracked so ModalSync doesn't re-open a stale modal.
    */
   const handleContinue = () => {
-    // 1. Update Zustand immediately so Dialog visibility flips atomically.
-    store.openModal("booking");
-    // 2. Replace the URL so the browser history doesn't have start-booking → booking
-    //    as two separate entries. We use window.history directly (synchronous) to
-    //    avoid a Next.js router round-trip that could race with ModalSync.
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      params.set("modal", "booking");
-      const newUrl = pathname + "?" + params.toString();
-      window.history.replaceState(null, "", newUrl);
-    }
+    setBookingCurrentStep(1);
+    setShowBookingModal("book");
   };
 
   return (
@@ -110,10 +97,7 @@ export default function StartBookingModal() {
 
           <div className="flex justify-end">
             <button
-              onClick={() => {
-                setBookingCurrentStep(1);
-                setShowBookingModal("book");
-              }}
+              onClick={handleContinue}
               disabled={!agreed}
               className="px-10 py-4 rounded-lg text-[#FFFFFF] font-semibold text-[16px] transition-all bg-[#113254] hover:bg-[#0d2844] active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
             >

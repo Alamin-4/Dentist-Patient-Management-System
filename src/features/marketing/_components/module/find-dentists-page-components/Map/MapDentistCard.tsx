@@ -30,6 +30,7 @@ export default function MapDentistCard({
     setShowPersonalizeModal,
     setShowSignupModal,
     setBookingMode,
+    setDentistsToCompare,
   } = useStateContext();
 
   const handleBookConsultation = () => {
@@ -37,6 +38,7 @@ export default function MapDentistCard({
       toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
       return;
     }
+    setDentistsToCompare([]);
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("book");
@@ -58,6 +60,7 @@ export default function MapDentistCard({
       toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
       return;
     }
+    setDentistsToCompare([]);
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("request");
@@ -84,21 +87,13 @@ export default function MapDentistCard({
     router.push(`/find-dentists/${dentist.slug}/claim`);
   };
 
-  const badgeIconColor = dentist.status === "VERIFIED"
-    ? "text-emerald-500"
-    : dentist.status === "CLAIMED"
-      ? "text-amber-500"
-      : dentist.status === "UNVERIFIED"
-        ? "text-[#505050]"
-        : "text-slate-400";
-
-  const badgeTextColor = dentist.status === "VERIFIED"
-    ? "text-emerald-600"
-    : dentist.status === "CLAIMED"
-      ? "text-amber-600"
-      : dentist.status === "UNVERIFIED"
-        ? "text-[#505050]"
-        : "text-slate-500";
+  const badgeConfig = dentist.verificationStatus === 'VERIFIED'
+    ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED' }
+    : dentist.verificationStatus === 'PAYMENT_PENDING'
+      ? { icon: 'text-amber-500', text: 'text-amber-600', label: 'PAYMENT PENDING' }
+      : dentist.status === 'UNVERIFIED'
+        ? { icon: 'text-[#505050]', text: 'text-[#505050]', label: dentist.status }
+        : { icon: 'text-slate-400', text: 'text-slate-500', label: dentist.status };
 
   const ratingValue = dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
   const reviewCount =
@@ -121,11 +116,11 @@ export default function MapDentistCard({
           </div>
           <div>
             <div className="flex items-center gap-1 text-[10px] font-medium text-[#1A1A2E]">
-              {(dentist.status === "VERIFIED" || dentist.status === "CLAIMED") && (
-                <ShieldCheck className={cn("size-3.5", badgeIconColor)} />
+              {(dentist.verificationStatus === 'VERIFIED' || dentist.verificationStatus === 'PAYMENT_PENDING') && (
+                <ShieldCheck className={cn("size-3.5", badgeConfig.icon)} />
               )}
-              <span className={cn("font-bold uppercase tracking-wider whitespace-nowrap", badgeTextColor)}>
-                {dentist.status}
+              <span className={cn("font-bold uppercase tracking-wider whitespace-nowrap", badgeConfig.text)}>
+                {badgeConfig.label}
               </span>
             </div>
           </div>

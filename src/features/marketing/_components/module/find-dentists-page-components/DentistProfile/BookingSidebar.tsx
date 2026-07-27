@@ -42,6 +42,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
     setShowPersonalizeModal,
     setSelectedDentistId,
     setBookingMode,
+    setDentistsToCompare,
   } = useStateContext();
 
   const isOwnProfile =
@@ -71,6 +72,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
       return;
     }
 
+    setDentistsToCompare([]);
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking(
       [dentist.id],

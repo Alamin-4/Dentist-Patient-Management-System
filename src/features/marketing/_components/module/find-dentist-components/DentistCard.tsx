@@ -66,6 +66,7 @@ export default function DentistCard({
     setShowPersonalizeModal,
     setShowSignupModal,
     setBookingMode,
+    setDentistsToCompare,
   } = useStateContext();
 
   const handleBookConsultation = () => {
@@ -73,6 +74,8 @@ export default function DentistCard({
       toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
       return;
     }
+    // Clear any stale compare state so postBooking compare doesn't show old dentists
+    setDentistsToCompare([]);
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("book");
@@ -93,6 +96,8 @@ export default function DentistCard({
       toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
       return;
     }
+    // Clear any stale compare state
+    setDentistsToCompare([]);
     setSelectedDentistId(dentist.id);
     setSelectedDentistsForBooking([dentist.id], [dentist.backendId || dentist.id]);
     setBookingMode("request");
@@ -108,21 +113,14 @@ export default function DentistCard({
     }
   };
 
-  const badgeIconColor = dentist.status === "VERIFIED"
-    ? "text-emerald-500"
-    : dentist.status === "CLAIMED"
-      ? "text-amber-500"
-      : dentist.status === "UNVERIFIED"
-        ? "text-[#505050]"
-        : "text-slate-400";
-
-  const badgeTextColor = dentist.status === "VERIFIED"
-    ? "text-emerald-600"
-    : dentist.status === "CLAIMED"
-      ? "text-amber-600"
-      : dentist.status === "UNVERIFIED"
-        ? "text-[#505050]"
-        : "text-slate-500";
+  // ── 3-state verification badge ───────────────────────────────────────
+  const badgeConfig = dentist.verificationStatus === 'VERIFIED'
+    ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED' }
+    : dentist.verificationStatus === 'PAYMENT_PENDING'
+      ? { icon: 'text-amber-500', text: 'text-amber-600', label: 'PAYMENT PENDING' }
+      : dentist.status === 'UNVERIFIED'
+        ? { icon: 'text-[#505050]', text: 'text-[#505050]', label: dentist.status }
+        : { icon: 'text-slate-400', text: 'text-slate-500', label: dentist.status };
 
 
   const ratingValue = dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
@@ -170,15 +168,15 @@ export default function DentistCard({
               {/* Account / verification badge */}
               <div className="flex items-center gap-1.5 text-xs font-medium">
                 {
-                  (dentist.status === "VERIFIED" || dentist.status === "CLAIMED") && <ShieldCheck className={cn("size-4", badgeIconColor)} />
+                  (dentist.verificationStatus === 'VERIFIED' || dentist.verificationStatus === 'PAYMENT_PENDING') && <ShieldCheck className={cn("size-4", badgeConfig.icon)} />
                 }
                 <span
                   className={cn(
                     "text-[11px] font-bold uppercase tracking-wider whitespace-nowrap",
-                    badgeTextColor,
+                    badgeConfig.text,
                   )}
                 >
-                  {dentist.status}
+                  {badgeConfig.label}
                 </span>
               </div>
 
