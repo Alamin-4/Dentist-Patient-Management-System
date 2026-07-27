@@ -156,7 +156,10 @@ export default function CompareModal() {
     saveBookingDraft({ bookingMode: isRequestMode ? "request" : "book" });
 
     if (isRequestMode) {
-      setShowCompareModal(false);
+      // Atomically swap compare → startBooking in a single router.replace.
+      // Do NOT call setShowCompareModal(false) first — that would write the URL
+      // twice from the same stale window.location.search snapshot, causing a
+      // race where ModalSync re-opens the compare modal.
       setShowBookingModal("startBooking");
       return;
     }
@@ -184,7 +187,7 @@ export default function CompareModal() {
       setCompareModalPurpose("compare");
       router.push(`/schedule?${params.toString()}`);
     } else {
-      setShowCompareModal(false);
+      // Same single-call pattern: let setUrlModal atomically replace the URL.
       setShowBookingModal("startBooking");
     }
   };
