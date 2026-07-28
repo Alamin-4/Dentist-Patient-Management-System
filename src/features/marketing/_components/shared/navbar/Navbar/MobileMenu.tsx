@@ -35,6 +35,7 @@ interface MobileMenuProps {
     onSignInClick: () => void;
     onSignUpClick: () => void;
     onLogout: () => void;
+    onNavClick: (targetPath: string) => (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 export default function MobileMenu({
@@ -46,6 +47,7 @@ export default function MobileMenu({
     onSignInClick,
     onSignUpClick,
     onLogout,
+    onNavClick  
 }: MobileMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const headerRef = useRef<HTMLDivElement>(null);
@@ -71,14 +73,16 @@ export default function MobileMenu({
                 className="w-75 sm:w-87.5 p-6 bg-white flex flex-col gap-6 overflow-y-auto border-l border-gray-100 shadow-xl"
             >
                 <SheetHeader ref={headerRef} tabIndex={-1} className="p-0 border-b border-gray-100 pb-4 outline-none" >
-                    <SheetTitle className="text-left font-semibold text-lg text-[#10436B] flex items-center gap-2">
+                    <SheetTitle  className="text-left font-semibold text-lg text-[#10436B] flex items-center gap-2">
+                        <Link href={"/"} onClick={onNavClick("/")}>
                         <Image
                             src="/logos/mainlogo.png"
                             alt="Website logo"
                             height={20}
                             width={400}
                             className="w-40 h-auto object-contain"
-                        />
+                            />
+                            </Link>
                     </SheetTitle>
                 </SheetHeader>
 
@@ -111,7 +115,6 @@ export default function MobileMenu({
                     ))}
                 </div>
 
-                {/* Bottom Section */}
                 <div className="mt-auto border-t border-gray-100 pt-6 flex flex-col gap-4">
                     {user ? (
                         <UserMenu
@@ -129,7 +132,6 @@ export default function MobileMenu({
                         />
                     )}
 
-                    {/* Language Selector - Now Professional Dropdown */}
                     <div className="border-t border-gray-100 pt-4">
                         <div className="flex items-center gap-2 mb-3">
                             <Globe size={16} className="text-gray-400" />
