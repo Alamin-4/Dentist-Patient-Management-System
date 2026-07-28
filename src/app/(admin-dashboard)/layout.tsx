@@ -28,7 +28,7 @@ export default function AdminDashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#F5F7FA]">
+      <div className="flex h-dvh items-center justify-center bg-[#F5F7FA]">
         <Loader2 className="h-8 w-8 animate-spin text-[#0D2B3E]" />
       </div>
     );
@@ -40,7 +40,7 @@ export default function AdminDashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen flex-col overflow-hidden bg-[#F5F7FA]">
+      <div className="flex h-dvh flex-col overflow-hidden bg-[#F5F7FA]">
         <div className="flex flex-1 overflow-hidden">
           <aside className="hidden h-full shrink-0 lg:block">
             <AdminSidebar />
@@ -48,7 +48,7 @@ export default function AdminDashboardLayout({
 
           <AdminMobileSidebarDrawer />
 
-          <section className="flex-1 h-screen overflow-y-auto">
+          <section className="flex-1 h-dvh overflow-y-auto">
             <AdminNavbar />
             <main className="overflow-y-auto">
               <div className="min-h-full overflow-y-auto p-6">{children}</div>

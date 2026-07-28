@@ -18,14 +18,14 @@ interface Language {
 }
 
 const languages: Language[] = [
-    { code: "EN", name: "English (US)", flag: "/images/flags/united-states.png" },
-    { code: "FR", name: "French", flag: "/images/flags/france.png" },
-    { code: "DE", name: "German", flag: "/images/flags/germany.png" },
-    { code: "AR", name: "Arabic", flag: "/images/flags/arabic.png" },
-    { code: "ES", name: "Spanish", flag: "/images/flags/spain.png" },
-    { code: "TR", name: "Turkish", flag: "/images/flags/turkey.png" },
-    { code: "AL", name: "Albanian", flag: "/images/flags/albania.png" },
-    { code: "PT", name: "Portuguese", flag: "/images/flags/portuges.png" },
+    { code: "English (US)", name: "English (US)", flag: "/images/flags/united-states.png" },
+    { code: "French", name: "French", flag: "/images/flags/france.png" },
+    { code: "German", name: "German", flag: "/images/flags/germany.png" },
+    { code: "Arabic", name: "Arabic", flag: "/images/flags/arabic.png" },
+    { code: "Spanish", name: "Spanish", flag: "/images/flags/spain.png" },
+    { code: "Turkish", name: "Turkish", flag: "/images/flags/turkey.png" },
+    { code: "Albanian", name: "Albanian", flag: "/images/flags/albania.png" },
+    { code: "Portuguese", name: "Portuguese", flag: "/images/flags/portuges.png" },
 ];
 
 interface LanguageSelectorProps {
@@ -124,8 +124,7 @@ export default function LanguageSelector({
 
     return (
         <DropdownMenu>
-            {/* todo */}
-            <DropdownMenuTrigger className="flex hidden items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 focus:outline-none transition-colors border border-transparent hover:border-gray-100">
+            <DropdownMenuTrigger className="hidden items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 focus:outline-none transition-colors border border-transparent hover:border-gray-100">
                 <Image
                     src={selectedLang.flag}
                     alt={selectedLang.name}

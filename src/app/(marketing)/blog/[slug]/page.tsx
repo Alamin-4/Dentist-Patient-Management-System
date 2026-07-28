@@ -56,7 +56,7 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-dvh flex items-center justify-center bg-slate-50">
         <div className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-[#10436B] animate-spin" />
       </div>
     );
@@ -64,7 +64,7 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
         <h2 className="text-xl font-bold text-slate-800">Article not found</h2>
         <p className="text-slate-400 text-xs mt-2 mb-6">The article you are trying to view does not exist or has been archived.</p>
         <Link
@@ -79,7 +79,7 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen py-16 px-6 md:px-12 text-left">
+    <div className="bg-slate-50 min-h-dvh py-16 px-6 md:px-12 text-left">
       <div className="max-w-3xl mx-auto space-y-8">
 
         {/* Navigation */}

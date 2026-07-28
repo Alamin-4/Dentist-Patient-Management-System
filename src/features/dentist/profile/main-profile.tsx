@@ -64,7 +64,7 @@ export default function DentistProfilePage() {
   ] as const;
 
   return (
-    <div className="flex flex-col gap-6 relative min-h-screen pb-16">
+    <div className="flex flex-col gap-6 relative min-h-dvh pb-16">
       {/* Top Section: Full Width Header */}
       <div className="w-full">
         <ProfileHeader dentist={dentist} rdvScore={rdvScore} />

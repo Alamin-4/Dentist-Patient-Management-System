@@ -303,7 +303,7 @@ export default function FindDentist() {
   };
 
   return (
-    <div className="min-h-screen text-slate-900">
+    <div className="min-h-dvh text-slate-900">
       <TopBar
         query={query}
         onQueryChange={setQuery}
@@ -447,7 +447,6 @@ export default function FindDentist() {
                           (item) => item.id === dentist.id,
                         )}
                         onCompareToggle={() => handleCompareToggle(dentist)}
-                        onPrimaryAction={() => setActiveDentistId(dentist.id)}
                       />
                     ))
                   )}
@@ -466,7 +465,7 @@ export default function FindDentist() {
               </div>
 
               {viewMode === "map" && (
-                <div className="max-w-full w-full h-screen">
+                <div className="max-w-full w-full h-dvh">
                   <div className="sticky top-24 h-full w-full overflow-hidden rounded-lg border border-slate-100 shadow">
                     <DentistMap
                       dentists={filteredDentists}

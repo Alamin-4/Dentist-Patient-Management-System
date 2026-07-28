@@ -153,7 +153,7 @@ export function MeetingLobby({ lobbySecondsLeft, consultation, onLeave }: Meetin
     };
 
     return (
-        <div className="min-h-screen w-full flex flex-col items-center justify-start lg:justify-center bg-linear-to-br from-[#0B0F19] via-[#0F172A] to-[#0A0D14] pt-6 pb-12 px-4 sm:px-6 md:px-8 text-white font-sans overflow-y-auto">
+        <div className="min-h-dvh w-full flex flex-col items-center justify-start lg:justify-center bg-linear-to-br from-[#0B0F19] via-[#0F172A] to-[#0A0D14] pt-6 pb-12 px-4 sm:px-6 md:px-8 text-white font-sans overflow-y-auto">
             <div className="w-full max-w-6xl flex flex-col space-y-6">
                 {/* Header or back link */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800/60">

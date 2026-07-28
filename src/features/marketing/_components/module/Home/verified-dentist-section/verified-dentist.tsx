@@ -1,29 +1,29 @@
 "use client";
+
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
+import Link from "next/link";
 import Sidebar from "./sidebar";
 import DentistCard from "./dentist-card";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import { useStateContext } from "@/providers/StateProvider";
-import Link from "next/link";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
 import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 import CustomSectionHeading from "@/features/shared/custom-section-heading";
 import CustomDesText from "@/features/shared/custom-des-text";
-import CompareToggle from "../../find-dentist-components/CompareToggle";
 
 const SkeletonCard = () => (
-  <div className="rounded-md p-4 sm:p-6 flex flex-col items-start gap-4 border-2 border-slate-100 bg-white animate-pulse">
-    <div className="flex flex-row items-start gap-4 w-full justify-between">
-      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-200 shrink-0" />
-      <div className="flex-1 space-y-2.5 py-1 min-w-0">
-        <div className="h-4 bg-slate-200 rounded w-3/4" />
-        <div className="h-3 bg-slate-200 rounded w-1/2" />
-        <div className="h-3 bg-slate-200 rounded w-1/4" />
+  <div className="animate-pulse rounded-md border-2 border-slate-100 bg-white p-4 sm:p-6">
+    <div className="flex w-full flex-row items-start justify-between gap-4">
+      <div className="h-16 w-16 shrink-0 rounded-full bg-slate-200 sm:h-20 sm:w-20" />
+      <div className="min-w-0 flex-1 space-y-2.5 py-1">
+        <div className="h-4 w-3/4 rounded bg-slate-200" />
+        <div className="h-3 w-1/2 rounded bg-slate-200" />
+        <div className="h-3 w-1/4 rounded bg-slate-200" />
       </div>
-      <div className="h-4 bg-slate-200 rounded w-16 shrink-0" />
+      <div className="h-4 w-16 shrink-0 rounded bg-slate-200" />
     </div>
   </div>
 );
@@ -33,14 +33,7 @@ export default function VerifiedDentists() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const {
-    setShowSignupModal,
-    setShowPersonalizeModal,
-    setDentistsToCompare,
-    setShowCompareModal,
-    searchQuery,
-  } = useStateContext();
-
+  const { setShowSignupModal, setShowPersonalizeModal, setDentistsToCompare, setShowCompareModal, searchQuery } = useStateContext();
   const { user } = useMe();
 
   const { data: directoryResponse, isLoading } = useDentistDirectory({
@@ -48,163 +41,116 @@ export default function VerifiedDentists() {
     procedure: procedure && procedure !== "All Procedures" ? procedure : undefined,
     limit: 6,
   });
-  // console.log("dentist directory:", directoryResponse)
-  const dentists = useMemo(() => {
-    const apiList = directoryResponse?.data || [];
-    return apiList.map((d: any) => ({
-      id: d.id,
-      name: d.name,
-      slug: d.slug,
-      specialty: d.specialty,
-      rating: d.googleRating,
-      reviewCount: d.googleReviewCount,
-      image: d.image,
-      location: d.fullAddress,
-      city: d.city,
-      country: d.country,
-      price: d.price,
-      rdvScore: d.rdvScore,
-      verified: d.status,
-      status: d.status,
-      isClaimable: d.isClaimable,
-      procedures: d.procedures,
-      languages: d.languages,
-      experience: d.experience,
-    }));
+
+  const dentists = useMemo<Dentist[]>(() => {
+    return (directoryResponse?.data || []).map((d: any) => mapApiDentist(d));
   }, [directoryResponse]);
 
   const toggleSelect = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((i) => i !== id)
-        : prev.length < 3
-          ? [...prev, id]
-          : prev,
-    );
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : prev.length < 3 ? [...prev, id] : prev));
   };
 
-  const removeSelectedDentist = (id: string) => {
-    setSelectedIds((prev) => prev.filter((i) => i !== id));
+  const selectedDentists = useMemo(() => dentists.filter((doc) => selectedIds.includes(doc.id)), [dentists, selectedIds]);
+
+  const handleCompare = () => {
+    if (selectedDentists.length < 2) return;
+    const mapped = selectedDentists.map((doc) => {
+      const raw = directoryResponse?.data?.find((item: any) => item.id === doc.id);
+      return raw ? mapApiDentist(raw) : null;
+    }).filter(Boolean) as Dentist[];
+
+    setDentistsToCompare(mapped);
+    if (user?.firstName || user?.name || user?.first_name) setShowCompareModal(true);
+    else if (user) setShowPersonalizeModal(true);
+    else setShowSignupModal(true);
   };
 
-  const selectedDentists = useMemo(() => {
-    return dentists.filter((doc: any) => selectedIds.includes(doc.id));
-  }, [dentists, selectedIds]);
+  const verifiedDentists = dentists?.map((d) => d.status === "VERIFIED")
+
 
   return (
-    <section className="py-12">
-      <div className="max-w-400 w-11/12 mx-auto mb-10 text-center lg:text-left space-y-3">
-        <CustomSectionHeading value={"Verified Dentists"} />
+    <section className="py-6">
+      <div className="mx-auto mb-10 w-11/12 max-w-400 space-y-3 text-center lg:text-left">
+        <CustomSectionHeading value="Verified Dentists" />
         <CustomDesText value="Every dentist is trusted. Every review is from a real patient." />
       </div>
 
-      <div className="max-w-400 w-11/12 mx-auto border border-stroke rounded-md flex flex-col lg:flex-row">
+      <div className="mx-auto flex w-11/12 max-w-400 flex-col rounded-md border border-stroke lg:flex-row">
         <Sidebar active={procedure} onChange={setProcedure} />
 
-        <div className="flex-1 p-6 md:p-10">
-          <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <p className="text-sec-text">
+        <div className="flex-1 p-4 lg:p-6">
+          <header className="mb-6 flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-sec-text text-sm lg:text-base">
               Showing {isLoading ? "..." : dentists.length} dentist{dentists.length !== 1 && "s"} for{" "}
-              <span className="text-[#10436B] font-bold">"{procedure || "All Procedures"}"</span>
+              <span className="font-bold text-[#10436B]">"{procedure || "All Procedures"}"</span>
             </p>
-            <div className="flex items-center gap-4">
-              <div className="*:text-left">
-                <p className="text-sm text-primary font-medium">
-                  Compare
-                </p>
-                <p className="text-xs text-sec-text">up to 3</p>
+
+            {verifiedDentists && verifiedDentists.length >= 2 && (
+              <div className="flex items-center gap-4">
+                <div className="*:text-left">
+                  <p className="text-sm font-medium text-primary">Compare</p>
+                  <p className="text-xs text-sec-text">up to 3</p>
+                </div>
+                <button
+                  onClick={() => { setCompareMode(!compareMode); setSelectedIds([]); }}
+                  className={cn("relative flex h-6 w-11 cursor-pointer items-center rounded-full px-1 transition-all", compareMode ? "bg-[#10436B]" : "bg-gray-300")}
+                >
+                  <div className={cn("h-4 w-4 rounded-full bg-white shadow-sm transition-all", compareMode ? "translate-x-5" : "translate-x-0")} />
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  setCompareMode(!compareMode);
-                  setSelectedIds([]);
-                }}
-                className={cn(
-                  "w-11 h-6 rounded-full transition-all relative flex items-center px-1 cursor-pointer",
-                  compareMode ? "bg-[#10436B]" : "bg-gray-300",
-                )}
-              >
-                <div
-                  className={cn(
-                    "w-4 h-4 bg-white rounded-full transition-all shadow-sm",
-                    compareMode ? "translate-x-5" : "translate-x-0",
-                  )}
-                />
-              </button>
-            </div>
+            )}
+
           </header>
 
           {selectedDentists.length > 0 && (
-            <div className="w-full mb-6 flex flex-row gap-4 items-center justify-center bg-slate-50 p-4 rounded-lg border border-slate-100">
-              <div className="flex flex-row gap-2 items-center justify-center">
-                {selectedDentists.map((dentist: any, i: number) => (
-                  <div key={dentist.id} className="relative group">
+            <div className="mb-6 flex w-full flex-row items-center justify-center gap-4 rounded-lg border border-slate-100 bg-slate-50 p-4">
+              <div className="flex flex-row items-center justify-center gap-2">
+                {selectedDentists.map((dentist, i) => (
+                  <div key={dentist.id} className="group relative">
                     <span
-                      onClick={() => removeSelectedDentist(dentist.id)}
-                      className="absolute -top-1.5 -right-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-full p-0.5 cursor-pointer shadow-sm z-10 transition-colors"
+                      onClick={() => setSelectedIds((prev) => prev.filter((id) => id !== dentist.id))}
+                      className="absolute -right-1.5 -top-1.5 z-10 cursor-pointer rounded-full bg-red-100 p-0.5 text-red-600 shadow-sm transition-colors hover:bg-red-200"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="h-3.5 w-3.5" />
                     </span>
-                    <img
-                      src={dentist.image}
-                      alt={`Selected Dentist ${i + 1}`}
-                      className="rounded-full w-12 h-12 object-cover border-2 border-white shadow-sm"
-                    />
+                    <img src={dentist.image || ""} alt={`Selected ${i + 1}`} className="h-12 w-12 rounded-full border-2 border-white object-cover shadow-sm" />
                   </div>
                 ))}
               </div>
-              <div>
-                <Button
-                  disabled={selectedDentists.length < 2}
-                  onClick={() => {
-                    if (selectedDentists.length < 2) return;
-                    const mappedForCompare = selectedDentists.map((doc: any) => {
-                      const raw = directoryResponse?.data?.find((item: any) => item.id === doc.id);
-                      return raw ? mapApiDentist(raw) : null;
-                    }).filter(Boolean) as Dentist[];
-                    setDentistsToCompare(mappedForCompare);
-                    if (user) {
-                      const hasProfileDetails = !!(user?.firstName || user?.name || user?.first_name);
-                      if (hasProfileDetails) {
-                        setShowCompareModal(true);
-                      } else {
-                        setShowPersonalizeModal(true);
-                      }
-                    } else {
-                      setShowSignupModal(true);
-                    }
-                  }}
-                  className="bg-primary hover:bg-[#092b47] text-white h-11 px-6 rounded-lg cursor-pointer font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Compare
-                </Button>
-              </div>
+              <Button
+                disabled={selectedDentists.length < 2}
+                onClick={handleCompare}
+                className="h-11 cursor-pointer rounded-lg bg-primary px-6 font-bold text-white transition-colors hover:bg-[#092b47] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Compare
+              </Button>
             </div>
           )}
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 xl:grid-cols-2">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
             ) : dentists.length === 0 ? (
-              <div className="col-span-2 text-center py-20 bg-slate-50 rounded-lg border border-slate-100">
-                <p className="text-slate-500 font-semibold">No dentists found matching the criteria.</p>
-                <p className="text-slate-400 text-sm mt-1">Try selecting another procedure or searching in the navbar.</p>
+              <div className="col-span-2 rounded-lg border border-slate-100 bg-slate-50 py-20 text-center">
+                <p className="font-semibold text-slate-500">No dentists found matching the criteria.</p>
+                <p className="mt-1 text-sm text-slate-400">Try selecting another procedure or searching in the navbar.</p>
               </div>
             ) : (
-              dentists.map((doc: any) => (
+              dentists.map((doc) => (
                 <DentistCard
                   key={doc.id}
                   dentist={doc}
                   isCompareMode={compareMode}
-                  isSelected={selectedIds.includes(doc.id)}
-                  onSelect={toggleSelect}
+                  isSelectedForCompare={selectedIds.includes(doc.id)}
+                  onCompareToggle={() => toggleSelect(doc.id)}
+                  isButtonShow={false}
                 />
               ))
             )}
           </div>
 
           <div className="mt-12 text-center">
-            <Link href={"/find-dentists"} className="text-[#10436B] font-bold text-sm hover:underline decoration-2 underline-offset-4">
+            <Link href="/find-dentists" className="text-sm font-bold text-[#10436B] underline-offset-4 hover:underline decoration-2">
               View all specialties
             </Link>
           </div>

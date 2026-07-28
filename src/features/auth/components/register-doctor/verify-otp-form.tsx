@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Clock } from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +12,8 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/auth/useAuth";
+import { useOtpCountdown } from "@/hooks/auth/useOtpCountdown";
 
 const otpSchema = z.object({
   otp: z.string().length(6, "Please enter a valid 6-digit code"),
@@ -26,15 +26,15 @@ interface VerifyOtpFormProps {
 }
 
 export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
-  const [resendCountdown, setResendCountdown] = useState(0);
-
-  const router = useRouter();
-  const pathName = usePathname();
-
   const { otpVerifyMutation, resendOtpMutation, isOtpVerifyLoading } = useAuth();
   const isResending = resendOtpMutation.isPending;
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  /**
+   * Countdown timer hook — persists across page reloads via localStorage.
+   * The key 'register_doctor' namespaces this instance away from other OTP flows.
+   */
+  const { isActive, displayTime, startCountdown, syncWithBackend } =
+    useOtpCountdown({ storageKey: "register_doctor" });
 
   const {
     control,
@@ -44,28 +44,17 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
     clearErrors,
   } = useForm<OtpFormData>({
     resolver: zodResolver(otpSchema),
-    defaultValues: {
-      otp: "",
-    },
+    defaultValues: { otp: "" },
   });
 
   useEffect(() => {
-    if (resendCountdown > 0) {
-      timerRef.current = setTimeout(() => {
-        setResendCountdown((prev) => prev - 1);
-      }, 1000);
+    if (!isActive) {
+      startCountdown();
     }
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [resendCountdown]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally run once on mount
 
   const handleResendOtp = () => {
-    // Prevent action if already resending or countdown is active
-    if (typeof window === "undefined" || resendCountdown > 0 || isResending) {
-      return;
-    }
 
     const registerEmail = localStorage.getItem("registerEmail");
     if (!registerEmail) {
@@ -77,14 +66,36 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       { email: registerEmail },
       {
         onSuccess: () => {
-          // ✅ Show success toast ONLY after API confirms
-          toast.success("OTP sent successfully!");
-          setResendCountdown(60);
+          startCountdown();
         },
         onError: (error: any) => {
+          const responseData = error?.response?.data;
+          const httpStatus = error?.response?.status ?? error?.status;
+
+          if (httpStatus === 429) {
+            const retryAfterSeconds: number | undefined =
+              responseData?.data?.retryAfter;
+            const retryAfterMinutes: number | undefined =
+              responseData?.data?.retryAfterMinutes;
+
+            if (retryAfterSeconds && retryAfterSeconds > 0) {
+              syncWithBackend(retryAfterSeconds);
+            }
+
+            const displayMinutes =
+              retryAfterMinutes ??
+              (retryAfterSeconds ? Math.ceil(retryAfterSeconds / 60) : 60);
+
+            toast.error(
+              `Too many attempts. Please try again in ${displayMinutes} minute${displayMinutes === 1 ? "" : "s"}.`,
+              { duration: 6000 }
+            );
+
+            return;
+          }
+
           const errorMessage =
-            error?.response?.data?.message ||
-            "Failed to resend OTP. Please try again.";
+            responseData?.message || "Failed to resend OTP. Please try again.";
           toast.error(errorMessage);
         },
       }
@@ -102,31 +113,27 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       return;
     }
 
-    const payload = {
-      email: registerEmail,
-      otp: data.otp,
-    };
-
-    otpVerifyMutation.mutate(payload, {
-      onSuccess: () => {
-        setStep("professional-info");
-        router.push(`${pathName}?dentist=professional-info`);
-      },
-      onError: (error: any) => {
-        const errorMessage =
-          error?.response?.data?.message || "Invalid OTP. Please try again.";
-        setError("otp", {
-          type: "manual",
-          message: errorMessage,
-        });
-      },
-    });
+    otpVerifyMutation.mutate(
+      { email: registerEmail, otp: data.otp },
+      {
+        onSuccess: () => {
+          setStep("professional-info");
+        },
+        onError: (error: any) => {
+          const errorMessage =
+            error?.response?.data?.message || "Invalid OTP. Please try again.";
+          setError("otp", { type: "manual", message: errorMessage });
+        },
+      }
+    );
   };
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-      <div className="flex flex-col items-center space-y-6 md:space-y-8 lg:space-y-12">
+      <div className="flex flex-col items-center space-y-6 md:space-y-8">
         <div className="flex flex-col items-center space-y-4 w-full">
+          {/* ── OTP Input ── */}
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <Controller
               name="otp"
@@ -137,7 +144,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
                   value={field.value}
                   onChange={(val) => {
                     field.onChange(val);
-                    clearErrors("otp"); // Clear error immediately when user types
+                    clearErrors("otp");
                   }}
                   containerClassName="group flex items-center justify-between w-full gap-2 lg:gap-4"
                 >
@@ -163,24 +170,25 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
             )}
           </div>
 
-          <div className="text-center text-sm lg:text-base text-gray-600">
-            Didn’t receive OTP?{" "}
+          {isActive ? (
+            <div className="flex items-center gap-1.5 text-sm text-[#163E5C]/70">
+              <Clock className="h-3.5 w-3.5" />
+              <span>
+                OTP expires in {" "}
+                <span className="font-semibold tabular-nums">{displayTime}</span>
+              </span>
+            </div>
+          ) : (
             <button
               type="button"
-              disabled={isResending || resendCountdown > 0}
-              className={`font-bold transition-all focus:outline-none px-2 py-1 ${isResending || resendCountdown > 0
-                ? "text-gray-400 cursor-not-allowed no-underline"
-                : "text-[#163E5C] border-[#163E5C] cursor-pointer hover:underline hover:bg-[#163E5C]/5"
-                }`}
+              disabled={otpVerifyMutation.isPending}
+              className={`font-semibold transition-all px-2 py-1 text-primary border-primary/95 cursor-pointer hover:underline"
+                `}
               onClick={handleResendOtp}
             >
-              {isResending
-                ? "Sending..."
-                : resendCountdown > 0
-                  ? `OTP Sent (Resend in ${resendCountdown}s)`
-                  : "Resend OTP"}
+              {otpVerifyMutation.isPending ? "Sending....." : "Resend OTP"}
             </button>
-          </div>
+          )}
         </div>
 
         <Button

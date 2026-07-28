@@ -71,7 +71,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
   const isHtml = /<[a-z][\s\S]*>/i.test(content);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-16 px-6 md:px-12">
+    <div className="bg-slate-50 min-h-dvh py-16 px-6 md:px-12">
       <div className="max-w-400 w-11/12 mx-auto">
         <div className="flex flex-col xl:flex-row gap-12 items-start">
           {/* Mobile Section Selector */}

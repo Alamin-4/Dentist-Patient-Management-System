@@ -1,7 +1,7 @@
 export interface CSCCountry {
   id: number;
   name: string;
-  iso2: string;
+  iso2: string; // Added ISO code
 }
 
 export interface CSCCity {
@@ -148,23 +148,14 @@ const FALLBACK_CITIES: Record<string, CSCCity[]> = {
   ],
 };
 
-/**
- * Returns available countries directly without third-party API key dependencies.
- */
 export async function getCountries(): Promise<CSCCountry[]> {
   return FALLBACK_COUNTRIES;
 }
 
-/**
- * Returns all available cities across all countries.
- */
 export async function getAllCities(): Promise<CSCCity[]> {
   return Object.values(FALLBACK_CITIES).flat();
 }
 
-/**
- * Returns available cities of a specific country by ISO2 code.
- */
 export async function getCities(countryIso2: string): Promise<CSCCity[]> {
   if (!countryIso2) return [];
   return FALLBACK_CITIES[countryIso2] || [
@@ -172,4 +163,3 @@ export async function getCities(countryIso2: string): Promise<CSCCity[]> {
     { id: 9902, name: "Metropolitan Area" },
   ];
 }
-

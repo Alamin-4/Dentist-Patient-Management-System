@@ -66,7 +66,6 @@ export default function SignupModal() {
     if (!needVerifyEmail) return;
     try {
       await resendOtpMutation.mutateAsync({ email: needVerifyEmail });
-      toast.success("Verification OTP sent successfully!", { style: TOAST_STYLE });
       setPendingEmail(needVerifyEmail);
       setNeedVerifyEmail(null);
       setShowSignupModal(false);
@@ -96,9 +95,6 @@ export default function SignupModal() {
       const res = await registerPatientMutation.mutateAsync(data)
       if (res) {
         if (res?.data?.needEmailVerify) {
-          toast.success("Email is already registered but not verified. Please verify your email.", {
-            style: TOAST_STYLE,
-          });
           setNeedVerifyEmail(data.email);
           return;
         }
@@ -164,9 +160,9 @@ export default function SignupModal() {
   return (
     <>
       <Dialog open={showSignupModal} onOpenChange={setShowSignupModal}>
-        <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0">
-          <DialogHeader className="mb-8 text-left">
-            <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-text">
+        <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-lg border-none p-6 gap-0">
+          <DialogHeader className="mb-6 text-left">
+            <DialogTitle className="mb-2 text-3xl lg:text-[32px] font-semibold leading-tight text-text">
               Sign up
             </DialogTitle>
             <DialogDescription className="text-[16px] leading-snug text-sec-text">
@@ -176,7 +172,7 @@ export default function SignupModal() {
           </DialogHeader>
 
           {needVerifyEmail ? (
-            <div className="flex flex-col items-center justify-center py-6 text-center space-y-6">
+            <div className="flex flex-col items-center justify-center py-6 text-center space-y-4 md:space-y-6">
               <div className="text-text font-semibold text-lg">
                 Your email ({needVerifyEmail}) is registered but not verified.
               </div>
@@ -211,23 +207,25 @@ export default function SignupModal() {
               <div className="mb-4 space-y-3">
                 <button
                   onClick={() => handleSocialLogin("Google")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FcGoogle className="text-2xl" />
                   <span className="text-sec-text">Continue with Google</span>
                 </button>
 
                 <button
+                  disabled
                   onClick={() => handleSocialLogin("Apple")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaApple className="text-2xl text-[#1A1A2E]" />
                   <span className="text-[#6B7280]">Continue with Apple</span>
                 </button>
 
                 <button
+                  disabled
                   onClick={() => handleSocialLogin("Facebook")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaFacebook className="text-2xl text-[#1877F2]" />
                   <span className="text-sec-text">Continue with Facebook</span>
@@ -251,7 +249,7 @@ export default function SignupModal() {
                     type="email"
                     placeholder="Enter Email"
                     {...register("email")}
-                    className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
+                    className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
                   />
                   {errors.email && (
                     <p className="mt-1.5 text-sm text-red-500">
@@ -269,7 +267,7 @@ export default function SignupModal() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter Password"
                       {...register("password")}
-                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
+                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
                     />
                     <button
                       type="button"
@@ -299,7 +297,7 @@ export default function SignupModal() {
                       type={showconfirm_password ? "text" : "password"}
                       placeholder="Enter Password"
                       {...register("confirmPassword")}
-                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
+                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
                     />
                     <button
                       type="button"

@@ -47,7 +47,7 @@ export default function RegisterPageComponent() {
 
   if (isQueryLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-dvh items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>
       </div>
     );
@@ -55,7 +55,7 @@ export default function RegisterPageComponent() {
 
   if (user && user.role === "DENTIST" && dentistProfile?.specialtyId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-dvh items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>
       </div>
     );
@@ -63,14 +63,14 @@ export default function RegisterPageComponent() {
 
   if (user && user.role !== "DENTIST") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-dvh items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#163E5C]"></div>
       </div>
     );
   }
 
   return (
-    <main className="flex min-h-screen w-full flex-col lg:flex-row">
+    <main className="flex min-h-dvh w-full flex-col lg:flex-row">
       <section className="relative hidden w-full flex-col bg-[#163E5C] p-10 text-white lg:flex lg:w-3/5 lg:p-20">
         <div className="flex items-center gap-2">
           <div className="">

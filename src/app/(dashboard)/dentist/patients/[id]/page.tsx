@@ -21,10 +21,10 @@ export default function PatientDetailsPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6 space-y-6 animate-pulse">
+      <div className="min-h-dvh bg-[#F9FAFB] p-6 space-y-6 animate-pulse">
         {/* Back Link skeleton */}
         <div className="h-4 w-32 bg-gray-200 rounded" />
-        
+
         {/* Header section skeleton */}
         <div className="bg-white rounded-lg border border-border p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
