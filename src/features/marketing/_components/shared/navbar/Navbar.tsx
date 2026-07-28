@@ -12,7 +12,6 @@ import AuthButtons from "./Navbar/AuthButtons";
 import LanguageSelector from "./Navbar/LanguageSelector";
 import MobileMenu from "./Navbar/MobileMenu";
 
-
 const navConfig = [
   { label: "Home", href: "/" },
   { label: "Find a Dentist", href: "/find-dentists" },
@@ -25,13 +24,17 @@ export default function NavbarPublic() {
 
   const pathname = usePathname();
   const { user } = useMe();
-  // console.log(user)
   const { mutate: logout } = useLogout();
 
   const isAuthenticated = !!user;
 
-  const handleLogoClick = (e: React.MouseEvent) => {
-    if (pathname === "/") {
+  // ✅ Reusable function to handle smooth scroll to top if already on the target page
+  const handleNavClick = (targetPath: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Normalize paths to avoid any trailing slash mismatches (e.g., "/about-us" vs "/about-us/")
+    const normalize = (path: string) => 
+      path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+    
+    if (normalize(pathname) === normalize(targetPath)) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -40,7 +43,12 @@ export default function NavbarPublic() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-md py-4 lg:py-6">
       <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between gap-4">
-        <Link href="/" onClick={handleLogoClick} className="flex shrink-0 items-center">
+        
+        <Link 
+          href="/" 
+          onClick={handleNavClick("/")} 
+          className="flex shrink-0 items-center"
+        >
           <Image
             src="/logos/mainlogo.png"
             alt="Website logo"
@@ -57,6 +65,7 @@ export default function NavbarPublic() {
             <Link
               key={item.label}
               href={item.href}
+              onClick={handleNavClick(item.href)}
               className={cn(
                 "group flex gap-1 text-[15px] font-medium transition-colors",
                 pathname === item.href
@@ -88,6 +97,7 @@ export default function NavbarPublic() {
           <LanguageSelector />
         </div>
 
+        {/* ✅ Mobile Menu: Passing the handler so you can use it inside MobileMenu.tsx as well */}
         <MobileMenu
           navConfig={navConfig}
           pathname={pathname}
@@ -97,6 +107,7 @@ export default function NavbarPublic() {
           onSignInClick={() => setShowSigninModal(true)}
           onSignUpClick={() => setShowSignupModal(true)}
           onLogout={() => logout()}
+          onNavClick={handleNavClick} 
         />
       </div>
     </nav>
