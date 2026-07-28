@@ -51,7 +51,7 @@ export default function BlogPage() {
   }, [filteredPosts]);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-16 px-6 md:px-12">
+    <div className="bg-slate-50 min-h-dvh py-16 px-6 md:px-12">
       <div className="max-w-400 w-11/12 mx-auto space-y-12">
 
         {/* Header */}

@@ -28,7 +28,7 @@ export default function MapSection({
     onCloseCard,
 }: MapSectionProps) {
     return (
-        <div className="h-[60vh] w-full sm:h-[70vh] xl:h-screen">
+        <div className="h-dvh w-full sm:h-[70vh] xl:h-dvh sticky top-0 right-0">
             <div className="sticky top-24 h-full w-full overflow-hidden rounded-lg border border-slate-100 shadow">
                 <DentistMap
                     dentists={dentists}

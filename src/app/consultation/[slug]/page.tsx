@@ -63,7 +63,7 @@ export default function ConsultationMeetingPage() {
   // 4. Loading State
   if (!token || !serverUrl || !consultation) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#F8FAFB] text-slate-800">
+      <div className="flex flex-col items-center justify-center h-dvh w-screen bg-[#F8FAFB] text-slate-800">
         <div className="flex flex-col items-center gap-4 max-w-sm p-8 rounded-2xl bg-white border border-[#E2E8F0]/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] animate-in fade-in zoom-in duration-300">
           <div className="h-10 w-10 border-4 border-[#113254] border-t-transparent rounded-full animate-spin"></div>
           <div className="text-center space-y-1 mt-1">

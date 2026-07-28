@@ -33,7 +33,7 @@ export default function ConsultationCompletePage() {
   }, [slug]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center rounded-[28px] bg-[#F8FAFB] px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center rounded-[28px] bg-[#F8FAFB] px-4 py-10">
       <div className="max-w-2xl text-center">
         <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-[#113254] text-white shadow-[0_18px_40px_rgba(17,50,84,0.18)]">
           <Check className="size-10 stroke-[3px]" />

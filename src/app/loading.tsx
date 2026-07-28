@@ -76,7 +76,7 @@ function SectionTitleSkeleton() {
 
 export default function GlobalLoading() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-dvh bg-[#F8FAFC]">
       <NavbarSkeleton />
 
       {/* Hero */}

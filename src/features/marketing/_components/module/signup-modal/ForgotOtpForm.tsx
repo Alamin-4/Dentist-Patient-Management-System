@@ -60,7 +60,7 @@ export default function ForgotOtpForm({ email, onBack, onSuccess }: ForgotOtpFor
           onSuccess(res?.data?.resetToken || res?.resetToken);
         },
         onError: (error: any) => {
-          const errMsg = error?.response?.data?.message || "Verification code is incorrect. Please try again.";
+          const errMsg = error?.message || "Verification code is incorrect. Please try again.";
           setError("otp", {
             type: "server",
             message: errMsg,

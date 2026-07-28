@@ -16,14 +16,14 @@ import {
 import { apiClient } from "@/api/client";
 
 const LANG_CODE: Record<string, string> = {
-  English: "EN",
-  Spanish: "ES",
-  French: "FR",
-  Portuguese: "PT",
-  German: "DE",
-  Italian: "IT",
-  Mandarin: "ZH",
-  Japanese: "JA",
+  English: "English",
+  Spanish: "Spanish",
+  French: "French",
+  Portuguese: "Portuguese",
+  German: "German",
+  Italian: "Italian",
+  Mandarin: "Mandarin",
+  Japanese: "Japanese",
 };
 
 const langAbbr = (languages: string[]) =>

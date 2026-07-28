@@ -82,7 +82,7 @@ export default function SuccessContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
+      <div className="min-h-dvh flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
         <div className="w-full max-w-lg bg-white rounded-3xl shadow px-8 py-20 flex flex-col items-center justify-center gap-3">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#113254]"></div>
           <p className="text-sec-text font-medium text-sm animate-pulse">Loading booking details...</p>
@@ -95,7 +95,7 @@ export default function SuccessContent() {
     selections.find((s) => s.dentistId === dentistId);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
+    <div className="min-h-dvh flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
       <div className="w-full max-w-lg bg-white rounded-3xl shadow px-8 pt-10 pb-8 flex flex-col items-center text-center">
         {/* Check icon */}
         <div className="size-16 rounded-full bg-[#113254] flex items-center justify-center mb-6 shadow-lg">

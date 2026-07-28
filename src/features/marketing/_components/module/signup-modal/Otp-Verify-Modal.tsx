@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, MailCheck } from "lucide-react";
+import { Clock, Loader2, MailCheck } from "lucide-react";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
@@ -19,7 +20,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import useAuth from "@/hooks/auth/useAuth";
-
+import { useOtpCountdown } from "@/hooks/auth/useOtpCountdown";
 
 const otpVerifySchema = z.object({
   otp: z.string().length(6, "Please enter the 6-digit verification code"),
@@ -48,6 +49,13 @@ export default function OtpVerifyModal({
 }: OtpVerifyModalProps) {
   const { otpVerifyMutation, resendOtpMutation } = useAuth();
 
+  /**
+   * Countdown timer — persisted in localStorage under the 'patient_signup' namespace.
+   * Survives page reloads (e.g., accidental refresh during verification).
+   */
+  const { isActive, displayTime, startCountdown, syncWithBackend } =
+    useOtpCountdown({ storageKey: "patient_signup" });
+
   const {
     control,
     handleSubmit,
@@ -57,52 +65,93 @@ export default function OtpVerifyModal({
     clearErrors,
   } = useForm<OtpVerifyFormData>({
     resolver: zodResolver(otpVerifySchema),
-    defaultValues: {
-      otp: "",
-    },
+    defaultValues: { otp: "" },
   });
+
+  // Start the 2-minute countdown when the modal first opens.
+  // If the modal is re-opened and a timer is already running (persisted),
+  // we skip restarting it to avoid resetting the clock on every open.
+  useEffect(() => {
+    if (open && !isActive) {
+      startCountdown(); // 120 s default
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const onSubmit = (data: OtpVerifyFormData) => {
     otpVerifyMutation.mutate(
-      {
-        email,
-        otp: data.otp,
-      },
+      { email, otp: data.otp },
       {
         onSuccess: () => {
-          toast.success("Email verified successfully!", {
-            style: TOAST_STYLE,
-          });
+          toast.success("Email verified successfully!", { style: TOAST_STYLE });
           reset();
           onVerified();
         },
         onError: (error: any) => {
-          const errMsg = error?.response?.data?.message || "Verification code is incorrect. Please try again.";
-          setError("otp", {
-            type: "server",
-            message: errMsg,
-          });
+          const errMsg =
+            error?.message ||
+            "Verification code is incorrect. Please try again.";
+          setError("otp", { type: "server", message: errMsg });
+          console.log(error)
         },
-      },
+      }
     );
   };
 
   const handleResendOtp = () => {
+    // if (resendOtpMutation.isPending || isActive || !email) return;
+
     resendOtpMutation.mutate(
       { email },
       {
         onSuccess: () => {
-          toast.success("Verification code sent again.", {
-            style: TOAST_STYLE,
-          });
+          toast.success("Verification code sent again.");
+          startCountdown();
+          console.log("send")
+          reset()
         },
         onError: (error: any) => {
-          const errMsg = error?.response?.data?.message || "Failed to resend verification code. Please try again.";
+          const responseData = error?.response?.data;
+          const httpStatus = error?.response?.status ?? error?.status;
+          console.log("error")
+          if (httpStatus === 429) {
+            const retryAfterSeconds: number | undefined =
+              responseData?.data?.retryAfter;
+            const retryAfterMinutes: number | undefined =
+              responseData?.data?.retryAfterMinutes;
+
+            if (retryAfterSeconds && retryAfterSeconds > 0) {
+              syncWithBackend(retryAfterSeconds);
+            }
+
+            const displayMinutes =
+              retryAfterMinutes ??
+              (retryAfterSeconds ? Math.ceil(retryAfterSeconds / 60) : 60);
+
+            toast.error(
+              `Too many attempts. Please try again in ${displayMinutes} minute${displayMinutes === 1 ? "" : "s"}.`,
+              { style: TOAST_STYLE, duration: 6000 }
+            );
+            return;
+          }
+
+          // ── All other errors ──
+          const errMsg =
+            responseData?.message ||
+            "Failed to resend verification code. Please try again.";
           toast.error(errMsg, { style: TOAST_STYLE });
         },
-      },
+      }
     );
+    console.log("kisui nai")
   };
+
+  // ── Button label logic ────────────────────────────────────────────────────
+  const resendLabel = resendOtpMutation.isPending
+    ? "Sending..."
+    : isActive
+      ? `Resend in ${displayTime}`
+      : "Resend";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -116,7 +165,7 @@ export default function OtpVerifyModal({
           </DialogTitle>
           <DialogDescription className="text-[15px] leading-relaxed text-sec-text">
             We sent a 6-digit verification code to{" "}
-            <span className="font-semibold text-text">{email}</span>.
+            <span className="font-semibold text-text">{email}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -131,9 +180,7 @@ export default function OtpVerifyModal({
                   value={field.value}
                   onChange={(val) => {
                     field.onChange(val);
-                    if (errors.otp) {
-                      clearErrors("otp");
-                    }
+                    if (errors.otp) clearErrors("otp");
                   }}
                   containerClassName="w-full justify-center"
                 >
@@ -157,6 +204,34 @@ export default function OtpVerifyModal({
             )}
           </div>
 
+          {isActive ? (
+            <div className="flex items-center justify-center gap-1.5 text-sm text-[#113254]/60">
+              <Clock className="size-3.5" />
+              <span>
+                Code expires in{" "}
+                <span className="font-semibold tabular-nums text-[#113254]">
+                  {displayTime}
+                </span>
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center">
+              <button
+                type="button"
+                id="otp-resend-btn"
+                onClick={handleResendOtp}
+                disabled={resendOtpMutation.isPending}
+                className={`font-semibold transition-colors text-primary hover:text-primary/95 cursor-pointer 
+                `}
+              >
+                {
+                  resendOtpMutation.isPending ? "Sending...." : "Resend OTP"
+                }
+
+              </button>
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={otpVerifyMutation.isPending || !email}
@@ -171,18 +246,6 @@ export default function OtpVerifyModal({
               "Verify Email"
             )}
           </button>
-
-          <p className="text-center text-sm text-sec-text">
-            Didn&apos;t receive the code?{" "}
-            <button
-              type="button"
-              onClick={handleResendOtp}
-              disabled={resendOtpMutation.isPending || !email}
-              className="font-semibold text-[#113254] transition-colors hover:text-[#0d2844] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {resendOtpMutation.isPending ? "Sending..." : "Resend"}
-            </button>
-          </p>
         </form>
       </DialogContent>
     </Dialog>

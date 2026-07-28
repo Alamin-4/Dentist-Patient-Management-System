@@ -362,14 +362,14 @@ export default function ClaimProfilePage() {
 
   if (isError || !dentist) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white">
+      <div className="flex h-dvh items-center justify-center bg-white">
         <h1 className="text-2xl font-bold text-[#003366]">Dentist Not Found</h1>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-dvh bg-slate-50/50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
 
         {/* Navigation & Header */}

@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
 
   return (
     <>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-dvh">
         {/* Left panel — form */}
         <div className="flex w-full flex-col lg:w-1/2">
           {/* Logo */}

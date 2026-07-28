@@ -66,7 +66,7 @@ export default function AboutUs() {
     };
 
     return (
-        <div className="bg-[#FAFBFD] min-h-screen text-text">
+        <div className="bg-[#FAFBFD] min-h-dvh text-text">
             {/* ── HERO SECTION ── */}
             <section className="relative overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32 bg-linear-to-br from-[#113254]/5 via-[#F1F6FB] to-white border-b border-[#E6EEF6]">
                 {/* Background Decorative Blobs */}

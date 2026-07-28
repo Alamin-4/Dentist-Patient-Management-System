@@ -6,6 +6,7 @@ import DentistCard from "./DentistCard";
 import DentistCardSkeleton from "../find-dentists-page-components/DentistCardSkeleton";
 import EmptyState from "./EmptyState";
 import { Dentist } from "../find-dentists-page-components/types";
+import { cn } from "@/core/lib/utils";
 
 interface DentistListProps {
     dentists: Dentist[];
@@ -13,10 +14,12 @@ interface DentistListProps {
     isCompareMode: boolean;
     compareList: Dentist[];
     onCompareToggle: (dentist: Dentist) => void;
-    onCardClick: (dentistId: string) => void;
+    /** @deprecated Card navigates internally — kept for API compatibility only */
+    onCardClick?: (dentistId: string) => void;
     onClearFilters: () => void;
     onViewOnMap?: (dentist: Dentist) => void;
     hasActiveFilters?: boolean;
+    mapView: boolean
 }
 
 export default function DentistList({
@@ -25,10 +28,10 @@ export default function DentistList({
     isCompareMode,
     compareList,
     onCompareToggle,
-    onCardClick,
     onClearFilters,
     onViewOnMap,
     hasActiveFilters = true,
+    mapView
 }: DentistListProps) {
     if (isLoading) {
         return (
@@ -50,7 +53,7 @@ export default function DentistList({
     }
 
     return (
-        <div className="grid gap-4">
+        <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6", mapView ? "xl:grid-cols-1" : "xl:grid-cols-2")}>
             {dentists.map((dentist) => (
                 <DentistCard
                     key={dentist.id}
@@ -58,8 +61,9 @@ export default function DentistList({
                     isCompareMode={isCompareMode}
                     isSelectedForCompare={compareList.some((item) => item.id === dentist.id)}
                     onCompareToggle={() => onCompareToggle(dentist)}
-                    onPrimaryAction={() => onCardClick(dentist.id)}
                     onViewOnMap={onViewOnMap}
+                    isButtonShow={true}
+                    mapView={mapView}
                 />
             ))}
         </div>

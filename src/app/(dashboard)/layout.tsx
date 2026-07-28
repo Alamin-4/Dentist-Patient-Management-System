@@ -13,7 +13,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex h-screen flex-col overflow-hidden bg-[#F9FAFB]">
+      <div className="flex h-dvh flex-col overflow-hidden bg-[#F9FAFB]">
         <Navbar />
 
         <div className="flex flex-1 overflow-hidden">

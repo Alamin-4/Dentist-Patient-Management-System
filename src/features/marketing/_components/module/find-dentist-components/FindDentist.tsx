@@ -184,7 +184,7 @@ export default function FindDentistComponents() {
                                 "grid gap-6",
                                 viewMode === "list" || showMapFilters
                                     ? "grid-cols-1"
-                                    : "grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]"
+                                    : "grid-cols-1 xl:grid-cols-[minmax(0,1.10fr)_minmax(350px,0.90fr)]"
                             )}
                         >
                             <div className={cn("min-w-0", showMapFilters && "hidden")}>
@@ -207,6 +207,7 @@ export default function FindDentistComponents() {
                                 )}
 
                                 <DentistList
+                                    mapView={!isMobile && viewMode === "map"}
                                     dentists={filteredDentists}
                                     isLoading={isDirLoading}
                                     isCompareMode={compare.isCompareMode}

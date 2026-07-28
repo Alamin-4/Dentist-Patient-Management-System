@@ -152,7 +152,10 @@ export default function ClaimProfileDialog({
     );
   };
 
-  const handleResendOtpCode = () => {
+  const handleResendOtpCode = (options?: {
+    onSuccess?: () => void;
+    onError?: (err: any) => void;
+  }) => {
     setError(null);
     setSuccessMessage(null);
 
@@ -161,10 +164,12 @@ export default function ClaimProfileDialog({
       {
         onSuccess: () => {
           setSuccessMessage("Verification OTP resent to your email.");
+          options?.onSuccess?.();
         },
         onError: (err: any) => {
           const errMsg = err?.response?.data?.message || err?.message || "Failed to resend OTP.";
           setError(errMsg);
+          options?.onError?.(err);
         },
       }
     );

@@ -6,7 +6,7 @@ import { ArrowLeft, Search, Home } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-dvh bg-white flex flex-col">
       {/* Minimal Header */}
       <header className="w-full border-b border-gray-100 bg-white py-5 shadow-sm">
         <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between">

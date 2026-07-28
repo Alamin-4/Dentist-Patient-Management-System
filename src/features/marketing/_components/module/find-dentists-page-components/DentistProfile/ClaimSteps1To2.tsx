@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShieldCheck, Loader2, Eye, EyeOff, Clock } from "lucide-react";
+import { useOtpCountdown } from "@/hooks/auth/useOtpCountdown";
 
 function PasswordField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [show, setShow] = useState(false);
@@ -141,11 +142,51 @@ export function ClaimStep2({
   resendOtpMutation,
   setClaimStep,
 }: any) {
+  /**
+   * Countdown timer — namespaced as 'claim_step2' so it doesn't interfere
+   * with the patient-signup or register-doctor OTP timers.
+   * Persists across reloads via localStorage.
+   */
+  const { isActive, displayTime, startCountdown, syncWithBackend } =
+    useOtpCountdown({ storageKey: "claim_step2" });
+
+  // Start the 2-minute timer when this step mounts (OTP was just sent).
+  // If a timer is already running (e.g. user navigated back), skip restarting.
+  useEffect(() => {
+    if (!isActive) {
+      startCountdown(); // 120 s default
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally run once on mount
+
+  const onResend = () => {
+    // Don't allow resend while countdown is active or a request is in flight
+    if (isActive || resendOtpMutation.isPending) return;
+
+    handleResendOtpCode({
+      onSuccess: () => {
+        startCountdown();
+      },
+      onError: (err: any) => {
+        const httpStatus = err?.response?.status ?? err?.status;
+        if (httpStatus === 429) {
+          const retryAfterSeconds: number | undefined =
+            err?.response?.data?.data?.retryAfter;
+          if (retryAfterSeconds && retryAfterSeconds > 0) {
+            syncWithBackend(retryAfterSeconds);
+          }
+        }
+      },
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="rounded-lg bg-sky-50/50 border border-sky-100 p-4">
         <p className="text-slate-600 text-xs leading-normal">
-          We sent a verification code to <span className="font-semibold text-slate-800">{claimEmail}</span>. Enter the 6-digit OTP code below:
+          We sent a verification code to{" "}
+          <span className="font-semibold text-slate-800">{claimEmail}</span>.
+          Enter the 6-digit OTP code below:
         </p>
       </div>
 
@@ -160,15 +201,26 @@ export function ClaimStep2({
         />
       </div>
 
+      {/* ── Countdown / Resend area — mirrors Otp-Verify-Modal pattern ── */}
       <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleResendOtpCode}
-          disabled={resendOtpMutation.isPending}
-          className="text-xs text-primary hover:underline font-semibold cursor-pointer"
-        >
-          {resendOtpMutation.isPending ? "Resending..." : "Resend Code"}
-        </button>
+        {isActive ? (
+          <span className="flex items-center gap-1.5 text-xs text-[#113254]/60">
+            <Clock className="size-3.5" />
+            Resend in{" "}
+            <span className="font-semibold tabular-nums text-[#113254]">
+              {displayTime}
+            </span>
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={onResend}
+            disabled={resendOtpMutation.isPending}
+            className="text-xs text-primary hover:underline font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {resendOtpMutation.isPending ? "Resending..." : "Resend Code"}
+          </button>
+        )}
       </div>
 
       <div className="flex justify-between pt-4 border-t border-slate-100 mt-6">
