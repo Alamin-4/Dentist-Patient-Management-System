@@ -49,7 +49,7 @@ export function SpecialtyTable({
                   }
                   onChange={(e) => onSelectAll(e.target.checked)}
                   aria-label="Select all specialties"
-                  className="h-4 w-4 rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
+                  className="h-4 w-4 rounded border-gray-300 text-text focus:ring-text"
                 />
               </th>
               {["NAME", "SLUG", "DESCRIPTION", "CREATED AT", "ACTIONS"].map((h) => (
@@ -89,11 +89,11 @@ export function SpecialtyTable({
                       checked={selectedIds.includes(s.id)}
                       onChange={(e) => onSelectOne(s.id, e.target.checked)}
                       aria-label={`Select specialty ${s.name}`}
-                      className="h-4 w-4 rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
+                      className="h-4 w-4 rounded border-gray-300 text-text focus:ring-text"
                     />
                   </td>
                   {/* Name */}
-                  <td className="px-4 py-3.5 text-sm font-semibold text-[#1A1A2E]">
+                  <td className="px-4 py-3.5 text-sm font-semibold text-text">
                     {s.name}
                   </td>
                   {/* Slug */}

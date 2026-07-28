@@ -34,7 +34,7 @@ const PaymentSuccessModal = ({ isOpen, onClose }: PaymentSuccessModalProps) => {
             <Check className="size-10 text-white stroke-[2.5]" />
           </div>
 
-          <h2 className="text-2xl lg:text-3xl font-bold text-[#1A1A2E] mb-4">
+          <h2 className="text-2xl lg:text-3xl font-bold text-text mb-4">
             Treatment deposit secured
           </h2>
 

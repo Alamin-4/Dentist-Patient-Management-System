@@ -43,7 +43,7 @@ export default function ClinicLocationModal({
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
-              <h2 className="text-xl font-bold text-[#1A1A2E]">Clinic Location</h2>
+              <h2 className="text-xl font-bold text-text">Clinic Location</h2>
               <button
                 onClick={onClose}
                 className="p-1.5 hover:bg-slate-100 rounded-full transition-colors text-slate-500 cursor-pointer"

@@ -39,7 +39,7 @@ export default function ReviewSection({
 
       {isLoading ? (
         <div className="py-12 flex justify-center items-center gap-2 text-slate-500">
-          <Loader2 className="animate-spin size-6 text-[#0E3E65]" />
+          <Loader2 className="animate-spin size-6 text-primary" />
           <span>Loading reviews...</span>
         </div>
       ) : (
@@ -58,16 +58,16 @@ export default function ReviewSection({
                   />
                 ))}
               </div>
-              <span className="text-xs text-[#6B7280] mt-3 font-medium">
+              <span className="text-xs text-sec-text mt-3 font-medium">
                 {reviewsList.length} Verified Review{reviewsList.length !== 1 ? "s" : ""}
               </span>
             </div>
 
             <div className="md:col-span-2 space-y-3 flex flex-col justify-center">
               <div className="flex justify-between items-center text-sm font-semibold text-slate-705">
-                <span className="text-[#6B7280]">Communication</span>
+                <span className="text-sec-text">Communication</span>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#0E3E65]">{metrics.communication.toFixed(1)}</span>
+                  <span className="font-bold text-primary">{metrics.communication.toFixed(1)}</span>
                   <div className="flex gap-0.5 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -81,9 +81,9 @@ export default function ReviewSection({
               </div>
 
               <div className="flex justify-between items-center text-sm font-semibold text-slate-705">
-                <span className="text-[#6B7280]">Value for money</span>
+                <span className="text-sec-text">Value for money</span>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#0E3E65]">{metrics.valueForMoney.toFixed(1)}</span>
+                  <span className="font-bold text-primary">{metrics.valueForMoney.toFixed(1)}</span>
                   <div className="flex gap-0.5 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -97,9 +97,9 @@ export default function ReviewSection({
               </div>
 
               <div className="flex justify-between items-center text-sm font-semibold text-slate-705">
-                <span className="text-[#6B7280]">Follow-through</span>
+                <span className="text-sec-text">Follow-through</span>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#0E3E65]">{metrics.followThrough.toFixed(1)}</span>
+                  <span className="font-bold text-primary">{metrics.followThrough.toFixed(1)}</span>
                   <div className="flex gap-0.5 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -120,7 +120,7 @@ export default function ReviewSection({
                 <MessageSquare className="size-6 text-slate-400" />
               </div>
               <p className="text-sm font-semibold text-[#033355]">No Written Reviews Yet</p>
-              <p className="text-xs text-[#6B7280] max-w-sm mx-auto">
+              <p className="text-xs text-sec-text max-w-sm mx-auto">
                 Be the first to share your experience with Dr. {dentist.name}. Submit a verified review to help other patients make informed decisions.
               </p>
             </div>
@@ -131,7 +131,7 @@ export default function ReviewSection({
                   <div className="flex justify-between items-start gap-4 mb-2">
                     <div className="flex items-center gap-3">
                       {/* Avatar */}
-                      <div className="size-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-xs font-bold text-[#0E3E65] uppercase">
+                      <div className="size-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-xs font-bold text-primary uppercase">
                         {review.user?.image ? (
                           <img
                             src={review.user.image}
@@ -146,7 +146,7 @@ export default function ReviewSection({
                         <p className="text-sm font-bold text-slate-800">
                           {review.user?.name || `${review.user?.firstName || "Patient"} ${review.user?.lastName || ""}`}
                         </p>
-                        <p className="text-[10px] text-[#6B7280]">Verified Patient</p>
+                        <p className="text-[10px] text-sec-text">Verified Patient</p>
                       </div>
                     </div>
 
@@ -184,7 +184,7 @@ export default function ReviewSection({
               <Button
                 type="button"
                 onClick={onSeeAllReviews}
-                className="w-full sm:w-auto h-11 rounded-lg border border-slate-200 bg-white text-[#0E3E65] hover:bg-slate-50 font-bold transition-colors cursor-pointer"
+                className="w-full sm:w-auto h-11 rounded-lg border border-slate-200 bg-white text-primary hover:bg-slate-50 font-bold transition-colors cursor-pointer"
               >
                 See All Reviews ({reviewsList.length})
               </Button>

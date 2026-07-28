@@ -25,7 +25,7 @@ function ResetPasswordForm() {
         <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
           <AlertCircle className="h-6 w-6" />
         </div>
-        <h2 className="text-2xl font-bold text-[#1A1A2E] mb-2">Invalid Reset Link</h2>
+        <h2 className="text-2xl font-bold text-text mb-2">Invalid Reset Link</h2>
         <p className="text-gray-500 mb-6 max-w-sm mx-auto">
           The password reset token is missing. Please request a new link from the sign-in modal.
         </p>
@@ -72,7 +72,7 @@ function ResetPasswordForm() {
         <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600 mb-4">
           <CheckCircle2 className="h-6 w-6" />
         </div>
-        <h2 className="text-2xl font-bold text-[#1A1A2E] mb-2">Password Reset Complete</h2>
+        <h2 className="text-2xl font-bold text-text mb-2">Password Reset Complete</h2>
         <p className="text-gray-500 mb-6 max-w-sm mx-auto">
           Your password has been successfully updated. You can now close this page and sign in with your new credentials.
         </p>
@@ -91,7 +91,7 @@ function ResetPasswordForm() {
   return (
     <div>
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-extrabold text-[#1A1A2E] tracking-tight mb-2">
+        <h1 className="text-2xl font-extrabold text-text tracking-tight mb-2">
           Reset your password
         </h1>
         <p className="text-sm text-gray-500">
@@ -101,7 +101,7 @@ function ResetPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#1A1A2E]">
+          <label className="mb-1.5 block text-xs font-semibold text-text">
             New Password
           </label>
           <div className="relative">
@@ -111,7 +111,7 @@ function ResetPasswordForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
+              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-text placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
             />
             <button
               type="button"
@@ -124,7 +124,7 @@ function ResetPasswordForm() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#1A1A2E]">
+          <label className="mb-1.5 block text-xs font-semibold text-text">
             Confirm New Password
           </label>
           <div className="relative">
@@ -134,7 +134,7 @@ function ResetPasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
+              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-text placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
             />
             <button
               type="button"

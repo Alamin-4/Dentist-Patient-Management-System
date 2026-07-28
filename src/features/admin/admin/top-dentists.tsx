@@ -10,7 +10,7 @@ export function TopDentists({ dentists = [] }: TopDentistsProps) {
     <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-[15px] font-bold text-[#1A1A2E]">Top dentists</h3>
+        <h3 className="text-[15px] font-bold text-text">Top dentists</h3>
         <span className="text-[12px] text-gray-400">By bookings (30d)</span>
       </div>
 
@@ -36,7 +36,7 @@ export function TopDentists({ dentists = [] }: TopDentistsProps) {
 
             {/* Name + specialty */}
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-[#1A1A2E] truncate leading-tight">
+              <p className="text-[13px] font-semibold text-text truncate leading-tight">
                 {doc.name}
               </p>
               <p className="text-[11px] text-gray-400 mt-0.5 truncate">
@@ -46,7 +46,7 @@ export function TopDentists({ dentists = [] }: TopDentistsProps) {
 
             {/* Bookings count */}
             <div className="text-right shrink-0">
-              <p className="text-[13px] font-bold text-[#1A1A2E]">
+              <p className="text-[13px] font-bold text-text">
                 {doc.bookings.toLocaleString()}
               </p>
               <p className="text-[11px] text-gray-400">bookings</p>

@@ -80,7 +80,7 @@ export function InvestigationDrawer({
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="font-bold text-[#1A1A2E]">{dentist.name}</p>
+                <p className="font-bold text-text">{dentist.name}</p>
                 <span className={cn("flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold", status.className)}>
                   <span className="h-1.5 w-1.5 rounded-full bg-current" />
                   {status.label}
@@ -90,7 +90,7 @@ export function InvestigationDrawer({
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" /> {dentist.country}
                 </span>
-                <span>RDV Score: <strong className="text-[#1A1A2E]">{dentist.rdv_score}</strong></span>
+                <span>RDV Score: <strong className="text-text">{dentist.rdv_score}</strong></span>
               </div>
             </div>
           </div>
@@ -158,15 +158,15 @@ export function InvestigationDrawer({
                         </div>
                         <div>
                           <p className="text-[10px] uppercase tracking-wide text-gray-400">Booking Date</p>
-                          <p className="mt-0.5 font-medium text-[#1A1A2E]">{flag.booking_date}</p>
+                          <p className="mt-0.5 font-medium text-text">{flag.booking_date}</p>
                         </div>
                         <div>
                           <p className="text-[10px] uppercase tracking-wide text-gray-400">Patient</p>
-                          <p className="mt-0.5 font-medium text-[#1A1A2E]">{flag.patient}</p>
+                          <p className="mt-0.5 font-medium text-text">{flag.patient}</p>
                         </div>
                         <div>
                           <p className="text-[10px] uppercase tracking-wide text-gray-400">Procedure</p>
-                          <p className="mt-0.5 font-medium text-[#1A1A2E]">{flag.procedure}</p>
+                          <p className="mt-0.5 font-medium text-text">{flag.procedure}</p>
                         </div>
                       </div>
 
@@ -175,13 +175,13 @@ export function InvestigationDrawer({
                         <div className="grid grid-cols-2 gap-3 text-xs">
                           <div>
                             <p className="text-[10px] text-gray-400">Estimate Price</p>
-                            <p className="mt-0.5 text-base font-bold text-[#1A1A2E]">
+                            <p className="mt-0.5 text-base font-bold text-text">
                               ${flag.estimate_price.toLocaleString()}
                             </p>
                           </div>
                           <div>
                             <p className="text-[10px] text-gray-400">Final Price</p>
-                            <p className="mt-0.5 text-base font-bold text-[#1A1A2E]">
+                            <p className="mt-0.5 text-base font-bold text-text">
                               ${flag.final_price.toLocaleString()}
                             </p>
                           </div>
@@ -240,12 +240,12 @@ export function InvestigationDrawer({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
                 placeholder="Add investigation notes..."
-                className="w-full resize-none rounded-lg border border-gray-200 p-3.5 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
+                className="w-full resize-none rounded-lg border border-gray-200 p-3.5 text-sm text-text outline-none placeholder:text-gray-300 focus:border-text focus:ring-1 focus:ring-text transition-colors"
               />
               <div className="mt-2 flex justify-end">
                 <button
                   onClick={() => onSaveNotes(dentist, notes)}
-                  className="rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors"
+                  className="rounded-lg bg-text px-4 py-2 text-sm font-semibold text-white hover:bg-text/90 transition-colors"
                 >
                   Save notes
                 </button>
@@ -257,7 +257,7 @@ export function InvestigationDrawer({
               <section>
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-[#1A1A2E]">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text">
                       <Archive className="h-4 w-4 text-gray-400" />
                       Dentist Archived
                     </div>
@@ -269,7 +269,7 @@ export function InvestigationDrawer({
                   </p>
                   <button
                     onClick={() => onReactivate(dentist)}
-                    className="mt-3 flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-sm font-semibold text-[#1A1A2E] hover:bg-gray-50 transition-colors"
+                    className="mt-3 flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-sm font-semibold text-text hover:bg-gray-50 transition-colors"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
                     Reactivate Dentist
@@ -282,14 +282,14 @@ export function InvestigationDrawer({
             {isSuspended && (
               <section>
                 <div className="rounded-lg border border-gray-200 p-4">
-                  <p className="mb-1 text-sm font-semibold text-[#1A1A2E]">Investigation Decision</p>
+                  <p className="mb-1 text-sm font-semibold text-text">Investigation Decision</p>
                   <p className="mb-3 text-xs text-gray-400">
                     This action cannot be undone. Review all evidence before proceeding.
                   </p>
                   <div className="flex gap-3">
                     <button
                       onClick={() => onReinstate(dentist)}
-                      className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] hover:bg-gray-50 transition-colors"
+                      className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-text hover:bg-gray-50 transition-colors"
                     >
                       Reinstate Dentist
                     </button>

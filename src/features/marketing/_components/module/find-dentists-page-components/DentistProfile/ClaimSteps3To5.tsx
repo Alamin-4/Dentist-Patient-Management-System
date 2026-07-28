@@ -128,15 +128,14 @@ export function ClaimStep4({
   return (
     <div className="space-y-4">
       <div className="space-y-3 mb-4">
-        <label className="text-[14px] font-semibold text-[#1A1A2E] block">Choose Your Membership Plan</label>
+        <label className="text-[14px] font-semibold text-text block">Choose Your Membership Plan</label>
         <div className="grid grid-cols-2 gap-4">
           <div
             onClick={() => setSelectedPlan("6_MONTH")}
-            className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${
-              selectedPlan === "6_MONTH"
-                ? "border-[#113254] bg-[#113254]/5 ring-2 ring-[#113254]/10"
-                : "border-slate-200 hover:bg-slate-50"
-            }`}
+            className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
+              ? "border-[#113254] bg-[#113254]/5 ring-2 ring-[#113254]/10"
+              : "border-slate-200 hover:bg-slate-50"
+              }`}
           >
             <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
             <span className="block text-2xl font-extrabold text-[#113254] mt-1">$899</span>
@@ -144,13 +143,12 @@ export function ClaimStep4({
           </div>
           <div
             onClick={() => setSelectedPlan("12_MONTH")}
-            className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${
-              selectedPlan === "12_MONTH"
-                ? "border-[#4CA30D] bg-[#4CA30D]/5 ring-2 ring-[#4CA30D]/10"
-                : "border-slate-200 hover:bg-slate-50"
-            }`}
+            className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "12_MONTH"
+              ? "border-badge bg-badge/5 ring-2 ring-badge/10"
+              : "border-slate-200 hover:bg-slate-50"
+              }`}
           >
-            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#4CA30D] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
+            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-badge text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
             <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
             <span className="block text-2xl font-extrabold text-[#113254] mt-1">$1499</span>
             <span className="block text-[10px] text-slate-400 mt-1">~$124.92/mo</span>

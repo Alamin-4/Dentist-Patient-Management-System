@@ -113,7 +113,6 @@ export default function DentistCard({
     }
   };
 
-  // ── 2-state public badge (VERIFIED or UNVERIFIED) ────────────────────────
   const badgeConfig = dentist.status === 'VERIFIED'
     ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED', showIcon: true }
     : { icon: 'text-[#505050]', text: 'text-[#505050]', label: 'UNVERIFIED', showIcon: false };
@@ -132,7 +131,7 @@ export default function DentistCard({
     <div
       onClick={onPrimaryAction}
       className={cn(
-        "relative w-full overflow-hidden border border-[#CEE0F4] bg-white transition-all duration-300 rounded-lg hover:shadow-md",
+        "relative w-full overflow-hidden border border-border bg-white transition-all duration-300 rounded-lg hover:shadow-md",
         floating && "w-[min(100%,34rem)] shadow-lg",
         isSelectedForCompare && "border-[#10436B] bg-slate-50/20",
         onPrimaryAction && "cursor-pointer",
@@ -161,7 +160,6 @@ export default function DentistCard({
             </div>
 
             <div className="flex w-full flex-col items-center gap-2">
-              {/* Account / verification badge */}
               <div className="flex items-center gap-1.5 text-xs font-medium">
                 {badgeConfig.showIcon && <ShieldCheck className={cn("size-4", badgeConfig.icon)} />}
                 <span
@@ -174,15 +172,13 @@ export default function DentistCard({
                 </span>
               </div>
 
-              {/* RDV score */}
               <div className="flex items-center justify-center text-xs gap-2 rounded-md border border-slate-200 px-3 py-1 text-center">
-                <div className="text-[#0E3E65]">
+                <div className="text-primary">
                   {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
                 </div>
-                <div className="text-[#1A1A2E]">RDV Score</div>
+                <div className="text-text">RDV Score</div>
               </div>
 
-              {/* Verification phase progress: 3 dots (License · Operations · Clinic) */}
               {dentist.accountType !== "CLAIMABLE" && (
                 <VerificationDots phase={dentist.verificationPhase} />
               )}
@@ -192,7 +188,7 @@ export default function DentistCard({
           <div className="min-w-0 w-full space-y-3">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="space-y-1">
-                <h3 className="lg:text-lg font-semibold text-[#1A1A2E]">
+                <h3 className="lg:text-lg font-semibold text-text">
                   {dentist.name}
                 </h3>
                 <p className="text-[14px] font-semibold text-[#10436B]">
@@ -202,7 +198,6 @@ export default function DentistCard({
             </div>
 
             <div className="space-y-2">
-              {/* Star rating */}
               <div className="flex items-center gap-1.5">
                 <span className="text-[14px] font-bold text-[#10436B]">
                   {ratingValue > 0 ? ratingValue.toFixed(1) : "0"}
@@ -225,10 +220,9 @@ export default function DentistCard({
                 </span>
               </div>
 
-              {/* Location */}
               <div className="flex items-center gap-1.5 text-slate-500">
                 <MapPin className="size-4 shrink-0" />
-                <span className="block truncate text-[14px] text-[#6B7280]">
+                <span className="block truncate text-[14px] text-sec-text">
                   {locationText || "Location not specified"}
                 </span>
                 {dentist.coords && onViewOnMap && (
@@ -238,7 +232,7 @@ export default function DentistCard({
                       e.stopPropagation();
                       onViewOnMap(dentist);
                     }}
-                    className="text-[12px] font-semibold text-[#0E3E65] underline decoration-dotted hover:text-[#002850] shrink-0 ml-1 cursor-pointer"
+                    className="text-[12px] font-semibold text-primary underline decoration-dotted hover:text-[#002850] shrink-0 ml-1 cursor-pointer"
                   >
                     (View on Map)
                   </button>
@@ -250,7 +244,7 @@ export default function DentistCard({
                 <div className="flex items-center gap-1.5 text-slate-500">
                   <Globe className="size-4 shrink-0 text-[#10436B]" />
                   <span className="block truncate text-[13px] text-[#4B5563]">
-                    <span className="font-semibold text-[#1A1A2E]">Languages:</span>{" "}
+                    <span className="font-semibold text-text">Languages:</span>{" "}
                     {dentist.languages.join(", ")}
                   </span>
                 </div>
@@ -260,7 +254,7 @@ export default function DentistCard({
             {/* Tags */}
             <div className="flex flex-wrap items-center gap-2">
               {dentist.surpriseGuarantee && (
-                <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-3 py-1 text-[12px] font-medium text-[#0E3E65] hover:bg-sky-50">
+                <Badge className="whitespace-nowrap border-none bg-secondary px-3 py-1 text-[12px] font-medium text-primary hover:bg-sky-50">
                   <BadgeCheck className="size-4" />
                   No Surprise Guarantee
                 </Badge>
@@ -272,8 +266,8 @@ export default function DentistCard({
 
         <div className="flex flex-row sm:flex-col items-end justify-between gap-3 xl:min-w-50">
           <div className="text-right">
-            <div className="text-[12px] text-[#6B7280]">Starting from</div>
-            <div className="text-[#0E3E65] font-bold text-xl lg:text-2xl mt-1">
+            <div className="text-[12px] text-sec-text">Starting from</div>
+            <div className="text-primary font-bold text-xl lg:text-2xl mt-1">
               ${dentist.price.toLocaleString()}
             </div>
             <div className="text-[10px] text-[#9CA3AF]">Estimate</div>

@@ -18,7 +18,7 @@ export default function InProgressBookingCard({ booking }: Props) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white border border-[#CEE0F4] rounded-lg overflow-hidden"
+      className="bg-white border border-border rounded-lg overflow-hidden"
     >
       {/* Top Section */}
       <div className="p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
@@ -33,24 +33,24 @@ export default function InProgressBookingCard({ booking }: Props) {
             />
           </div>
           {booking.doctor.isVerified && (
-            <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-              <ShieldCheck className="size-3.5 text-[#4CA30D]" />
+            <div className="flex items-center gap-1 text-xs font-medium text-text">
+              <ShieldCheck className="size-3.5 text-badge" />
               <span>VERIFIED</span>
             </div>
           )}
-          <div className="border border-[#1A1A2E] rounded px-2 py-0.5 text-[11px] font-bold text-[#1A1A2E]">
+          <div className="border border-text rounded px-2 py-0.5 text-[11px] font-bold text-text">
             {booking.doctor.rdvScore} RDV Score
           </div>
         </div>
 
         {/* Doctor Info */}
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg md:text-xl font-bold text-[#1A1A2E] leading-tight">
+          <h2 className="text-lg md:text-xl font-bold text-text leading-tight">
             {booking.doctor.name}
           </h2>
           <p className="text-sm text-[#475569] mt-0.5">{booking.doctor.specialty}</p>
           <div className="flex items-center gap-1 mt-1.5">
-            <span className="font-semibold text-sm text-[#1A1A2E] mr-0.5">
+            <span className="font-semibold text-sm text-text mr-0.5">
               {booking.doctor.rating}
             </span>
             {[...Array(5)].map((_, i) => (
@@ -73,26 +73,26 @@ export default function InProgressBookingCard({ booking }: Props) {
         {/* Procedure */}
         <div className="shrink-0 space-y-1 min-w-[130px]">
           <p className="text-xs text-slate-500 font-medium">Procedure</p>
-          <p className="text-sm font-semibold text-[#1A1A2E]">{booking.procedure}</p>
+          <p className="text-sm font-semibold text-text">{booking.procedure}</p>
         </div>
 
         {/* Appointment Dates */}
         <div className="shrink-0 space-y-1 min-w-[170px]">
           <p className="text-xs text-slate-500 font-medium">Appointment Dates</p>
-          <p className="text-sm font-semibold text-[#1A1A2E]">{booking.appointmentDate}</p>
+          <p className="text-sm font-semibold text-text">{booking.appointmentDate}</p>
         </div>
 
         {/* Estimate Budget */}
         <div className="shrink-0 space-y-1 text-right">
           <p className="text-xs text-slate-500 font-medium">Estimate Budget</p>
-          <p className="text-xl font-bold text-[#0E3E65]">
+          <p className="text-xl font-bold text-primary">
             ${booking.estimateBudget.toLocaleString()}
           </p>
           {booking.paymentStatus === "in_escrow" && (
             <p className="text-xs font-bold text-[#CA8504] mt-0.5">In Escrow</p>
           )}
           {booking.paymentStatus === "paid" && (
-            <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
+            <p className="text-xs font-bold text-badge mt-0.5">Paid</p>
           )}
           {booking.paymentStatus === "refunded" && (
             <p className="text-xs font-bold text-rose-600 mt-0.5">Refunded</p>
@@ -113,7 +113,7 @@ export default function InProgressBookingCard({ booking }: Props) {
               <span
                 className={cn(
                   "text-sm whitespace-nowrap",
-                  step.completed ? "text-[#1A1A2E] font-medium" : "text-slate-400"
+                  step.completed ? "text-text font-medium" : "text-slate-400"
                 )}
               >
                 {step.label}

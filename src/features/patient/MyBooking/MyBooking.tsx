@@ -243,7 +243,7 @@ export default function MyBooking() {
 
   return (
     <div>
-      <p className="text-2xl lg:text-3xl text-[#1A1A2E] font-bold">My Bookings</p>
+      <p className="text-2xl lg:text-3xl text-text font-bold">My Bookings</p>
 
       <div className="mt-4">
         <ToggleButton value={activeTab} onChange={setActiveTab} tabs={TABS} />
@@ -268,7 +268,7 @@ function EmptyState({ title, description }: { title: string; description: string
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
       <CalendarOff className="size-12 text-[#0F3659] opacity-60" />
-      <h3 className="text-lg font-bold text-[#1A1A2E]">{title}</h3>
+      <h3 className="text-lg font-bold text-text">{title}</h3>
       <p className="text-sm text-slate-500 max-w-xs leading-relaxed">{description}</p>
     </div>
   );

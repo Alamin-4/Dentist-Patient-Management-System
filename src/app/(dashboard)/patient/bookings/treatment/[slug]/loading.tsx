@@ -8,7 +8,7 @@ export default function TreatmentDetailLoading() {
       <Skeleton className="w-44 h-8 rounded mb-5" />
 
       {/* Doctor header card */}
-      <div className="bg-white border border-[#CEE0F4] rounded-lg p-5 md:p-6 mb-6">
+      <div className="bg-white border border-border rounded-lg p-5 md:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
           <div className="flex flex-col items-center gap-2 shrink-0">
             <Skeleton className="w-16 h-16 rounded-full" />

@@ -66,7 +66,7 @@ export function LeaveReviewModal({
       <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-none gap-0 rounded-3xl">
         {/* Header Section */}
         <DialogHeader className="p-6 border-b flex flex-row items-center justify-between space-y-0">
-          <DialogTitle className="text-2xl font-bold text-[#1A1A2E]">
+          <DialogTitle className="text-2xl font-bold text-text">
             Leave review
           </DialogTitle>
         </DialogHeader>
@@ -84,15 +84,15 @@ export function LeaveReviewModal({
                 />
               </div>
               <div className="flex items-center gap-1">
-                <ShieldCheck className="size-4 text-[#4CA30D]" />
-                <span className="text-[10px] font-bold text-[#1A1A2E]">
+                <ShieldCheck className="size-4 text-badge" />
+                <span className="text-[10px] font-bold text-text">
                   VERIFIED
                 </span>
               </div>
             </div>
 
             <div className="flex-1 text-center md:text-left space-y-1.5">
-              <h3 className="text-2xl font-bold text-[#1A1A2E]">
+              <h3 className="text-2xl font-bold text-text">
                 {doctor.name}
               </h3>
               <p className="text-slate-500 font-medium">{doctor.specialty}</p>
@@ -105,9 +105,8 @@ export function LeaveReviewModal({
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
-                      className={`size-4 ${
-                        star <= Math.round(doctor.rating) ? "fill-current" : "text-slate-200"
-                      }`}
+                      className={`size-4 ${star <= Math.round(doctor.rating) ? "fill-current" : "text-slate-200"
+                        }`}
                     />
                   ))}
                 </div>
@@ -127,7 +126,7 @@ export function LeaveReviewModal({
           <div className="space-y-6">
             {categories.map((cat) => (
               <div key={cat.id} className="space-y-3">
-                <p className="text-lg font-semibold text-[#1A1A2E]">
+                <p className="text-lg font-semibold text-text">
                   {cat.label}
                 </p>
                 <div className="flex gap-2">
@@ -151,7 +150,7 @@ export function LeaveReviewModal({
           </div>
 
           <div className="space-y-3">
-            <p className="text-lg font-semibold text-[#1A1A2E]">Write Review</p>
+            <p className="text-lg font-semibold text-text">Write Review</p>
             <Textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
@@ -166,7 +165,7 @@ export function LeaveReviewModal({
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1 h-14 rounded-lg cursor-pointer border-slate-300 font-bold text-[#1A1A2E] hover:bg-slate-50"
+            className="flex-1 h-14 rounded-lg cursor-pointer border-slate-300 font-bold text-text hover:bg-slate-50"
           >
             Cancel
           </Button>

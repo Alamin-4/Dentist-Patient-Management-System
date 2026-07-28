@@ -111,7 +111,7 @@ export default function MapDentistCard({
             />
           </div>
           <div>
-            <div className="flex items-center gap-1 text-[10px] font-medium text-[#1A1A2E]">
+            <div className="flex items-center gap-1 text-[10px] font-medium text-text">
               {badgeConfig.showIcon && (
                 <ShieldCheck className={cn("size-3.5", badgeConfig.icon)} />
               )}
@@ -124,7 +124,7 @@ export default function MapDentistCard({
             <span className="text-xs font-bold text-[#003366] leading-none">
               {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
             </span>
-            <span className="text-[10px] font-medium text-[#6B7280]">Score</span>
+            <span className="text-[10px] font-medium text-sec-text">Score</span>
           </div>
         </div>
 
@@ -135,7 +135,7 @@ export default function MapDentistCard({
               {dentist.name}
             </h3>
             {dentist.isVerified && (
-              <ShieldCheck className="size-3.5 text-[#4CA30D] shrink-0" />
+              <ShieldCheck className="size-3.5 text-badge shrink-0" />
             )}
           </div>
 
@@ -170,7 +170,7 @@ export default function MapDentistCard({
             <div className="flex items-center gap-1 text-slate-500">
               <Globe className="size-3.5 shrink-0 text-[#10436B]" />
               <span className="truncate text-[11px] text-[#4B5563]">
-                <span className="font-semibold text-[#1A1A2E]">Languages:</span>{" "}
+                <span className="font-semibold text-text">Languages:</span>{" "}
                 {dentist.languages.join(", ")}
               </span>
             </div>
@@ -178,7 +178,7 @@ export default function MapDentistCard({
 
           <div className="flex flex-wrap items-center gap-2 w-full">
             {dentist.surpriseGuarantee && (
-              <Badge className="whitespace-nowrap border-none bg-[#EEF8FF] px-2 py-0.5 text-[10px] font-medium text-[#0E3E65] hover:bg-sky-50">
+              <Badge className="whitespace-nowrap border-none bg-secondary px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-sky-50">
                 <BadgeCheck className="size-3.5" />
                 No Surprise Guarantee
               </Badge>
@@ -189,7 +189,7 @@ export default function MapDentistCard({
         {/* Top Right: Price */}
         <div className="flex flex-col">
           <div className="text-right shrink-0 space-y-1">
-            <div className="text-[10px] text-[#6B7280]">Starting from</div>
+            <div className="text-[10px] text-sec-text">Starting from</div>
             <div className="font-bold text-base text-[#003366] leading-none">
               ${dentist.price.toLocaleString()}
             </div>

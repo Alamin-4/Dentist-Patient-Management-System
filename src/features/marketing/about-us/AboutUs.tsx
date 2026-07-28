@@ -66,7 +66,7 @@ export default function AboutUs() {
     };
 
     return (
-        <div className="bg-[#FAFBFD] min-h-screen text-[#1A1A2E]">
+        <div className="bg-[#FAFBFD] min-h-screen text-text">
             {/* ── HERO SECTION ── */}
             <section className="relative overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32 bg-linear-to-br from-[#113254]/5 via-[#F1F6FB] to-white border-b border-[#E6EEF6]">
                 {/* Background Decorative Blobs */}
@@ -98,7 +98,7 @@ export default function AboutUs() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-[16px] md:text-[18px] text-[#6B7280] leading-relaxed max-w-2xl mx-auto mb-10"
+                        className="text-[16px] md:text-[18px] text-sec-text leading-relaxed max-w-2xl mx-auto mb-10"
                     >
                         RatedDocs is an enterprise-grade dental/patient platform designed to connect international and local patients directly with independently audited, top-tier dental clinics.
                     </motion.p>
@@ -131,13 +131,13 @@ export default function AboutUs() {
                                 initial={{ opacity: 0, y: 40 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 0.3 + idx * 0.1 }}
-                                className="bg-white rounded-2xl border border-[#E9EDEE] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(17,50,84,0.06)] hover:-translate-y-1 transition-all duration-300"
+                                className="bg-white rounded-2xl border border-stroke p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(17,50,84,0.06)] hover:-translate-y-1 transition-all duration-300"
                             >
                                 <div className="size-12 rounded-xl bg-[#EBF4FF] flex items-center justify-center mb-6 text-[#113254]">
                                     <stat.icon className="size-6" />
                                 </div>
                                 <h3 className="text-[18px] font-bold text-[#113254] mb-2">{stat.title}</h3>
-                                <p className="text-[14px] text-[#6B7280] leading-relaxed">{stat.desc}</p>
+                                <p className="text-[14px] text-sec-text leading-relaxed">{stat.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -225,7 +225,7 @@ export default function AboutUs() {
                         <h2 className="text-[28px] md:text-[36px] font-black text-[#113254]">
                             The RatedDocs Verified Score
                         </h2>
-                        <p className="text-[14px] md:text-[15px] text-[#6B7280] mt-3 leading-relaxed">
+                        <p className="text-[14px] md:text-[15px] text-sec-text mt-3 leading-relaxed">
                             We don&apos;t rely on unverified online reviews. Instead, our proprietary verification system calculates an RDV score (out of 100) based on three independent clinical audits.
                         </p>
                     </div>
@@ -260,7 +260,7 @@ export default function AboutUs() {
                             <motion.div
                                 key={idx}
                                 variants={itemVariants}
-                                className="bg-[#FAFBFD] rounded-2xl border border-[#E9EDEE] p-6 md:p-8 flex flex-col justify-between"
+                                className="bg-[#FAFBFD] rounded-2xl border border-stroke p-6 md:p-8 flex flex-col justify-between"
                             >
                                 <div>
                                     <div className="flex items-center justify-between gap-4 mb-6">
@@ -273,7 +273,7 @@ export default function AboutUs() {
                                         <step.icon className="size-6" />
                                     </div>
                                     <h3 className="text-[18px] font-bold text-[#113254] mb-3">{step.title}</h3>
-                                    <p className="text-[13px] text-[#6B7280] leading-relaxed">{step.desc}</p>
+                                    <p className="text-[13px] text-sec-text leading-relaxed">{step.desc}</p>
                                 </div>
                             </motion.div>
                         ))}
@@ -297,7 +297,7 @@ export default function AboutUs() {
                             <h2 className="text-[28px] md:text-[36px] font-black text-[#113254] leading-tight">
                                 Our Core Pillars of Practice
                             </h2>
-                            <p className="text-[15px] text-[#6B7280] leading-relaxed">
+                            <p className="text-[15px] text-sec-text leading-relaxed">
                                 At RatedDocs, we believe healthcare is built on honesty. These core pillars guide how we construct our platform, validate clinics, and support patients globally.
                             </p>
                         </motion.div>
@@ -325,12 +325,12 @@ export default function AboutUs() {
                                     icon: FileCheck
                                 }
                             ].map((val, idx) => (
-                                <div key={idx} className="bg-white rounded-xl border border-[#E9EDEE] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
+                                <div key={idx} className="bg-white rounded-xl border border-stroke p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
                                     <div className="size-10 rounded-lg bg-[#F1F6FB] flex items-center justify-center mb-4 text-[#113254]">
                                         <val.icon className="size-5" />
                                     </div>
                                     <h4 className="font-bold text-[15px] text-[#113254] mb-1">{val.title}</h4>
-                                    <p className="text-[12px] text-[#6B7280] leading-relaxed">{val.desc}</p>
+                                    <p className="text-[12px] text-sec-text leading-relaxed">{val.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -382,7 +382,7 @@ export default function AboutUs() {
             <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
                 <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
                     <DialogHeader>
-                        <DialogTitle className="text-[#0E3E65] font-bold text-xl">Sign Out Required</DialogTitle>
+                        <DialogTitle className="text-primary font-bold text-xl">Sign Out Required</DialogTitle>
                         <DialogDescription className="text-slate-500">
                             You are currently signed in as a Patient. To register a new Dentist account, you must sign out of your current account.
                         </DialogDescription>
@@ -399,7 +399,7 @@ export default function AboutUs() {
                         <Button
                             type="button"
                             onClick={handleConfirmLogout}
-                            className="bg-[#0E3E65] hover:bg-[#002850] text-white font-bold h-10 text-sm px-6"
+                            className="bg-primary hover:bg-[#002850] text-white font-bold h-10 text-sm px-6"
                         >
                             Sign Out & Continue
                         </Button>

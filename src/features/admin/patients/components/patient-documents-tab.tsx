@@ -19,10 +19,10 @@ export function PatientDocumentsTab({ documents }: PatientDocumentsTabProps) {
     <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-        <h3 className="text-base font-semibold text-[#1A1A2E]">
+        <h3 className="text-base font-semibold text-text">
           Document vault
         </h3>
-        <button className="flex items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors">
+        <button className="flex items-center gap-2 rounded-lg bg-text px-4 py-2 text-sm font-semibold text-white hover:bg-text/90 transition-colors">
           <Download className="h-4 w-4" />
           Download all document
         </button>
@@ -45,7 +45,7 @@ export function PatientDocumentsTab({ documents }: PatientDocumentsTabProps) {
                 <FileText className="h-4.5 w-4.5 text-blue-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#1A1A2E]">
+                <p className="text-sm font-medium text-text">
                   {doc.name}
                 </p>
                 <p className="text-xs text-gray-400">

@@ -219,7 +219,7 @@ export default function SpecialtyOverview() {
             {/* ── Page Header ─────────────────────────────────────────────── */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">
+                    <h1 className="text-2xl font-bold tracking-tight text-text">
                         Specialties
                     </h1>
                     <p className="mt-0.5 text-sm text-gray-500">
@@ -241,7 +241,7 @@ export default function SpecialtyOverview() {
                     {/* Changed to open the modal instead of routing */}
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
+                        className="inline-flex h-9 items-center gap-2 rounded-lg bg-text px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
                     >
                         <Plus className="h-4 w-4" />
                         Add Specialty
@@ -325,7 +325,7 @@ export default function SpecialtyOverview() {
                         placeholder="e.g. Cardiology"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                        className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
                     />
                 </div>
 
@@ -338,7 +338,7 @@ export default function SpecialtyOverview() {
                         value={newDescription}
                         onChange={(e) => setNewDescription(e.target.value)}
                         rows={3}
-                        className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] resize-none"
+                        className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text resize-none"
                     />
                 </div>
             </FormModal>
@@ -362,7 +362,7 @@ export default function SpecialtyOverview() {
                         placeholder="e.g. Cardiology"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                        className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
                     />
                 </div>
 
@@ -375,7 +375,7 @@ export default function SpecialtyOverview() {
                         value={editDescription}
                         onChange={(e) => setEditDescription(e.target.value)}
                         rows={3}
-                        className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] resize-none"
+                        className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text resize-none"
                     />
                 </div>
             </FormModal>

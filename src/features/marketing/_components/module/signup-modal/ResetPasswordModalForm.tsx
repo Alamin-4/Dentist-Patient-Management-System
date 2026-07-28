@@ -50,7 +50,7 @@ export default function ResetPasswordModalForm({ token, onSuccess, onBack }: Res
   return (
     <>
       <DialogHeader className="mb-6 text-center">
-        <DialogTitle className="text-2xl font-extrabold text-[#1A1A2E] tracking-tight mb-2">
+        <DialogTitle className="text-2xl font-extrabold text-text tracking-tight mb-2">
           Reset your password
         </DialogTitle>
         <DialogDescription className="text-sm text-gray-500">
@@ -60,7 +60,7 @@ export default function ResetPasswordModalForm({ token, onSuccess, onBack }: Res
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#1A1A2E]">
+          <label className="mb-1.5 block text-xs font-semibold text-text">
             New Password
           </label>
           <div className="relative">
@@ -70,7 +70,7 @@ export default function ResetPasswordModalForm({ token, onSuccess, onBack }: Res
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
+              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-text placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
             />
             <button
               type="button"
@@ -83,7 +83,7 @@ export default function ResetPasswordModalForm({ token, onSuccess, onBack }: Res
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#1A1A2E]">
+          <label className="mb-1.5 block text-xs font-semibold text-text">
             Confirm New Password
           </label>
           <div className="relative">
@@ -93,7 +93,7 @@ export default function ResetPasswordModalForm({ token, onSuccess, onBack }: Res
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
+              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-text placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-[#113254] hover:border-gray-300"
             />
             <button
               type="button"

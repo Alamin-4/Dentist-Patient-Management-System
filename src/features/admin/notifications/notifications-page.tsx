@@ -154,7 +154,7 @@ function FilterDropdown<T extends string>({
         className={cn(
           "flex h-9 items-center gap-2 rounded-lg border px-3 text-sm font-medium transition-colors",
           value
-            ? "border-[#1A1A2E] bg-[#1A1A2E]/5 text-[#1A1A2E]"
+            ? "border-text bg-text/5 text-text"
             : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
         )}
       >
@@ -168,7 +168,7 @@ function FilterDropdown<T extends string>({
             <button
               onClick={() => { onChange(""); setOpen(false); }}
               className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50",
-                !value ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
+                !value ? "font-semibold text-text" : "text-gray-600")}
             >
               All
             </button>
@@ -177,7 +177,7 @@ function FilterDropdown<T extends string>({
                 key={opt.value}
                 onClick={() => { onChange(opt.value); setOpen(false); }}
                 className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50",
-                  value === opt.value ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
+                  value === opt.value ? "font-semibold text-text" : "text-gray-600")}
               >
                 {opt.label}
               </button>
@@ -205,7 +205,7 @@ function StatCard({ icon: Icon, iconBg, iconColor, label, value, valueColor }: {
       </div>
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">{label}</p>
-        <p className={cn("text-2xl font-bold tracking-tight", valueColor ?? "text-[#1A1A2E]")}>{value}</p>
+        <p className={cn("text-2xl font-bold tracking-tight", valueColor ?? "text-text")}>{value}</p>
       </div>
     </div>
   );
@@ -251,7 +251,7 @@ function NotificationRow({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            <p className={cn("text-sm", !notification.read ? "font-bold text-[#1A1A2E]" : "font-semibold text-gray-700")}>
+            <p className={cn("text-sm", !notification.read ? "font-bold text-text" : "font-semibold text-gray-700")}>
               {notification.title}
             </p>
             {/* Priority badge — only medium+ */}
@@ -295,7 +295,7 @@ function NotificationRow({
             {notification.actionLabel && (
               <button
                 onClick={() => toast.success(`Navigating to: ${notification.actionLabel}`)}
-                className="rounded-lg bg-[#1A1A2E] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors"
+                className="rounded-lg bg-text px-3 py-1.5 text-xs font-semibold text-white hover:bg-text/90 transition-colors"
               >
                 {notification.actionLabel}
               </button>
@@ -372,7 +372,7 @@ function Pagination({ page, total, pageSize, onChange }: {
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition-colors",
                 page === p
-                  ? "border-[#1A1A2E] bg-[#1A1A2E] text-white"
+                  ? "border-text bg-text text-white"
                   : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
               )}
             >
@@ -509,7 +509,7 @@ export default function NotificationsPage() {
       {/* ── Page header ── */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">Notifications</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text">Notifications</h1>
           <p className="mt-0.5 text-sm text-gray-500">
             {unreadCount > 0
               ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""} · ${items.length} total`
@@ -542,8 +542,8 @@ export default function NotificationsPage() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard
           icon={Bell}
-          iconBg="bg-[#1A1A2E]/8"
-          iconColor="text-[#1A1A2E]"
+          iconBg="bg-text/8"
+          iconColor="text-text"
           label="Total"
           value={items.length}
         />
@@ -569,7 +569,7 @@ export default function NotificationsPage() {
           iconColor="text-destructive-500"
           label="Critical"
           value={criticalCount}
-          valueColor={criticalCount > 0 ? "text-destructive-600" : "text-[#1A1A2E]"}
+          valueColor={criticalCount > 0 ? "text-destructive-600" : "text-text"}
         />
       </div>
 
@@ -595,7 +595,7 @@ export default function NotificationsPage() {
               value={search}
               onChange={(e) => { setSearch(e.target.value); resetPage(); }}
               placeholder="Search notifications…"
-              className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E] transition-colors"
+              className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text transition-colors"
             />
             {search && (
               <button
@@ -653,7 +653,7 @@ export default function NotificationsPage() {
               {hasFilters && (
                 <button
                   onClick={() => { setSearch(""); setTypeFilter(""); setPriorityFilter(""); }}
-                  className="text-sm font-semibold text-[#1A1A2E] underline-offset-2 hover:underline"
+                  className="text-sm font-semibold text-text underline-offset-2 hover:underline"
                 >
                   Clear all filters
                 </button>

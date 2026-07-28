@@ -50,16 +50,16 @@ export default function ReferralsPageComponent() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-300">
-      <h1 className="text-3xl font-bold text-[#1A1A2E]">Referrals</h1>
+      <h1 className="text-3xl font-bold text-text">Referrals</h1>
 
       {/* Top Section: Code & Credits */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Referral Code Card */}
-        <div className="lg:col-span-2 bg-white rounded-lg border border-[#CEE0F4] p-8 flex flex-col items-center justify-center text-center space-y-6">
+        <div className="lg:col-span-2 bg-white rounded-lg border border-border p-8 flex flex-col items-center justify-center text-center space-y-6">
           <div className="space-y-1">
-            <p className="text-[#6B7280]">Your Referral Code</p>
+            <p className="text-sec-text">Your Referral Code</p>
             <div className="flex items-center gap-3">
-              <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A2E] tracking-tight">
+              <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-text tracking-tight">
                 {referralCode || "—"}
               </span>
               {referralCode && (
@@ -71,7 +71,7 @@ export default function ReferralsPageComponent() {
                 </button>
               )}
             </div>
-            <p className="text-[#6B7280] text-xs">
+            <p className="text-sec-text text-xs">
               Share your code and you both get $50 credit
             </p>
           </div>
@@ -80,14 +80,14 @@ export default function ReferralsPageComponent() {
             <Button
               variant="outline"
               disabled={!referralCode}
-              className="flex-1 h-12 rounded-lg cursor-pointer border-[#6B7280] font-medium text-[#6B7280] gap-2"
+              className="flex-1 h-12 rounded-lg cursor-pointer border-sec-text font-medium text-sec-text gap-2"
             >
               <MessageSquare className="size-4" /> Share as SMS
             </Button>
             <Button
               variant="outline"
               disabled={!referralCode}
-              className="flex-1 h-12 rounded-lg cursor-pointer border-[#6B7280] font-medium text-[#6B7280] gap-2"
+              className="flex-1 h-12 rounded-lg cursor-pointer border-sec-text font-medium text-sec-text gap-2"
             >
               <Mail className="size-4" /> Share as Email
             </Button>
@@ -95,13 +95,13 @@ export default function ReferralsPageComponent() {
         </div>
 
         {/* Available Credits Card */}
-        <div className="bg-white rounded-lg border border-[#CEE0F4] p-8 flex flex-col justify-between min-h-60">
+        <div className="bg-white rounded-lg border border-border p-8 flex flex-col justify-between min-h-60">
           <div className="space-y-1">
-            <p className="text-[#6B7280]">Available Credits</p>
-            <p className="text-2xl md:text-3xl font-bold text-[#1A1A2E]">{availableCredits}</p>
+            <p className="text-sec-text">Available Credits</p>
+            <p className="text-2xl md:text-3xl font-bold text-text">{availableCredits}</p>
           </div>
 
-          <div className="flex items-center gap-2 text-[#6B7280] border-t pt-4">
+          <div className="flex items-center gap-2 text-sec-text border-t pt-4">
             <Calendar className="size-5" />
             <p className="text-sm">
               Expires on:{" "}
@@ -114,8 +114,8 @@ export default function ReferralsPageComponent() {
       </div>
 
       {/* Referral History Section */}
-      <div className="space-y-6 p-4 lg:p-6 rounded-lg bg-white border border-[#E9EDEE]">
-        <h2 className="text-2xl font-bold text-[#1A1A2E]">Referral History</h2>
+      <div className="space-y-6 p-4 lg:p-6 rounded-lg bg-white border border-stroke">
+        <h2 className="text-2xl font-bold text-text">Referral History</h2>
 
         {history.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
@@ -127,21 +127,20 @@ export default function ReferralsPageComponent() {
             {history.map((item: any) => (
               <div
                 key={item.id}
-                className="bg-white rounded-lg border border-[#CEE0F4] p-4 lg:p-6 flex items-center justify-between"
+                className="bg-white rounded-lg border border-border p-4 lg:p-6 flex items-center justify-between"
               >
                 <div className="space-y-1">
-                  <h4 className="text-xl font-bold text-[#1A1A2E]">
+                  <h4 className="text-xl font-bold text-text">
                     {item.name}
                   </h4>
-                  <p className="text-[#6B7280] font-medium">{item.date}</p>
+                  <p className="text-sec-text font-medium">{item.date}</p>
                 </div>
 
                 <div
-                  className={`px-6 py-2 rounded-lg font-bold text-sm whitespace-nowrap ${
-                    item.status === "Credit issued"
-                      ? "bg-[#0BB05F] text-white"
-                      : "bg-[#F7941D] text-white"
-                  }`}
+                  className={`px-6 py-2 rounded-lg font-bold text-sm whitespace-nowrap ${item.status === "Credit issued"
+                    ? "bg-[#0BB05F] text-white"
+                    : "bg-[#F7941D] text-white"
+                    }`}
                 >
                   {item.status}
                 </div>

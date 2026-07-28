@@ -111,12 +111,12 @@ export default function OtpVerifyModal({
           <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-full bg-[#EAF2F8] text-[#113254]">
             <MailCheck className="size-7" />
           </div>
-          <DialogTitle className="text-[30px] font-semibold leading-tight text-[#1A1A2E]">
+          <DialogTitle className="text-[30px] font-semibold leading-tight text-text">
             Verify your email
           </DialogTitle>
-          <DialogDescription className="text-[15px] leading-relaxed text-[#6B7280]">
+          <DialogDescription className="text-[15px] leading-relaxed text-sec-text">
             We sent a 6-digit verification code to{" "}
-            <span className="font-semibold text-[#1A1A2E]">{email}</span>.
+            <span className="font-semibold text-text">{email}</span>.
           </DialogDescription>
         </DialogHeader>
 
@@ -172,7 +172,7 @@ export default function OtpVerifyModal({
             )}
           </button>
 
-          <p className="text-center text-sm text-[#6B7280]">
+          <p className="text-center text-sm text-sec-text">
             Didn&apos;t receive the code?{" "}
             <button
               type="button"

@@ -22,9 +22,9 @@ export default function ReferralHistory({
   onQueryChange,
 }: ReferralHistoryProps) {
   return (
-    <section className="rounded-[18px] border border-[#E9EDEE] bg-white px-4 py-5 shadow-[0_1px_2px_rgba(15,54,89,0.02)] sm:px-5 lg:px-6 lg:py-6">
+    <section className="rounded-[18px] border border-stroke bg-white px-4 py-5 shadow-[0_1px_2px_rgba(15,54,89,0.02)] sm:px-5 lg:px-6 lg:py-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-[18px] font-semibold leading-7 text-[#1A1A2E] sm:text-[20px]">
+        <h2 className="text-[18px] font-semibold leading-7 text-text sm:text-[20px]">
           Referral History
         </h2>
 
@@ -34,7 +34,7 @@ export default function ReferralHistory({
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Search by name, email"
-            className="h-10 w-full rounded-md border border-[#E5E7EB] bg-white pl-9 pr-3 text-sm text-[#1A1A2E] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#CEE0F4]"
+            className="h-10 w-full rounded-md border border-[#E5E7EB] bg-white pl-9 pr-3 text-sm text-text placeholder:text-[#9CA3AF] outline-none transition focus:border-border"
           />
         </label>
       </div>
@@ -50,7 +50,7 @@ export default function ReferralHistory({
           {items.map((item) => (
             <div
               key={item.id}
-              className="grid grid-cols-[1.2fr_1.2fr_0.6fr] items-center px-4 py-4 text-[13px] text-[#1A1A2E]"
+              className="grid grid-cols-[1.2fr_1.2fr_0.6fr] items-center px-4 py-4 text-[13px] text-text"
             >
               <div className="flex items-center gap-3 font-medium">
                 <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0F3659] text-[11px] font-semibold text-white">
@@ -58,7 +58,7 @@ export default function ReferralHistory({
                 </div>
                 <span>{item.name}</span>
               </div>
-              <div className="text-[#6B7280]">{item.email}</div>
+              <div className="text-sec-text">{item.email}</div>
               <div className="text-right font-medium">{item.amount}</div>
             </div>
           ))}
@@ -81,14 +81,14 @@ export default function ReferralHistory({
                   {item.initials}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="truncate text-[14px] font-semibold text-[#1A1A2E]">
+                  <h3 className="truncate text-[14px] font-semibold text-text">
                     {item.name}
                   </h3>
-                  <p className="truncate text-[12px] text-[#6B7280]">{item.email}</p>
+                  <p className="truncate text-[12px] text-sec-text">{item.email}</p>
                 </div>
               </div>
 
-              <div className="shrink-0 text-[14px] font-semibold text-[#1A1A2E]">
+              <div className="shrink-0 text-[14px] font-semibold text-text">
                 {item.amount}
               </div>
             </div>

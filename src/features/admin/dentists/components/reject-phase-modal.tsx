@@ -43,7 +43,7 @@ export function RejectPhaseModal({
                 <XCircle className="h-5 w-5 text-red-500" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#1A1A2E]">
+                <h3 className="text-base font-bold text-text">
                   Reject {phaseLabel}?
                 </h3>
                 <p className="mt-0.5 text-sm text-gray-500">
@@ -69,7 +69,7 @@ export function RejectPhaseModal({
               onChange={(e) => setReason(e.target.value)}
               placeholder="Enter rejection reason..."
               rows={4}
-              className="w-full resize-none rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+              className="w-full resize-none rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
             />
           </div>
 
@@ -77,7 +77,7 @@ export function RejectPhaseModal({
           <div className="mt-5 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-text transition-colors hover:bg-gray-50"
             >
               Cancel
             </button>

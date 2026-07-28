@@ -35,17 +35,17 @@ export default function ForgotPasswordForm({ onBack, onSuccess }: ForgotPassword
   return (
     <>
       <DialogHeader className="mb-8 text-left">
-        <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-[#1A1A2E]">
+        <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-text">
           Forgot password?
         </DialogTitle>
-        <DialogDescription className="text-[16px] leading-snug text-[#6B7280]">
+        <DialogDescription className="text-[16px] leading-snug text-sec-text">
           Enter your email address and we&apos;ll send you a link to reset your password.
         </DialogDescription>
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="mb-2 block text-[15px] font-semibold text-[#1A1A2E]">
+          <label className="mb-2 block text-[15px] font-semibold text-text">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -54,7 +54,7 @@ export default function ForgotPasswordForm({ onBack, onSuccess }: ForgotPassword
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
+            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
           />
         </div>
 

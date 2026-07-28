@@ -66,20 +66,20 @@ const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: 
   const year = dObj.getUTCFullYear();
   const month = dObj.getUTCMonth();
   const day = dObj.getUTCDate();
-  
+
   const timeParts = scheduledTime.split(":");
   let hours = parseInt(timeParts[0], 10);
   let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
-  
+
   if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
     hours += 12;
   } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
     hours = 0;
   }
-  
+
   if (isNaN(hours)) hours = 0;
   if (isNaN(minutes)) minutes = 0;
-  
+
   const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
   const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
   return localUtcMs - offsetMinutes * 60 * 1000;
@@ -140,8 +140,8 @@ function EmptySlate({ tab }: { tab: Tab }) {
       <div className="size-14 rounded-lg bg-[#113254] flex items-center justify-center mb-5">
         <Video className="size-7 text-white" />
       </div>
-      <p className="text-[17px] font-bold text-[#1A1A2E] mb-2">{title}</p>
-      <p className="text-[14px] text-[#6B7280] max-w-xs leading-relaxed mb-6">{body}</p>
+      <p className="text-[17px] font-bold text-text mb-2">{title}</p>
+      <p className="text-[14px] text-sec-text max-w-xs leading-relaxed mb-6">{body}</p>
       <Link
         href="/find-dentists"
         className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95 cursor-pointer"
@@ -208,7 +208,7 @@ export default function Overview() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#1A1A2E] mb-8">Overview</h1>
+      <h1 className="text-2xl font-bold text-text mb-8">Overview</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
@@ -233,7 +233,7 @@ export default function Overview() {
 
       {/* Consultation section */}
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100">
-        <h2 className="text-xl font-bold text-[#1A1A2E] mb-4">Consultation</h2>
+        <h2 className="text-xl font-bold text-text mb-4">Consultation</h2>
 
         {/* Tabs */}
         <div className="flex gap-8 border-b border-gray-100 mb-6">
@@ -244,7 +244,7 @@ export default function Overview() {
               onClick={() => setActiveTab(key)}
               className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px cursor-pointer ${activeTab === key
                 ? "text-[#113254] border-[#113254]"
-                : "text-[#9CA3AF] border-transparent hover:text-[#6B7280]"
+                : "text-[#9CA3AF] border-transparent hover:text-sec-text"
                 }`}
             >
               {label}

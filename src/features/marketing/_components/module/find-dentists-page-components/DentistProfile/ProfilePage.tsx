@@ -38,7 +38,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
                   <ShieldAlert className="size-8 text-amber-500" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-[#0E3E65]">
+                  <h3 className="text-lg font-bold text-primary">
                     {isClaimed ? "Verification Pending" : "Profile Not Yet Claimed"}
                   </h3>
                   <p className="text-slate-500 text-sm max-w-md mx-auto">

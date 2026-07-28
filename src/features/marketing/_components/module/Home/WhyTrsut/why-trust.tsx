@@ -1,57 +1,55 @@
 "use client";
 
-import { BadgeCheck, Users, Search, ClipboardCheck } from "lucide-react";
+import CustomDesText from "@/features/shared/custom-des-text";
+import CustomPrimaryHeading from "@/features/shared/custom-primary-heading";
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import { RealPatientReviews, TransparentPricing, TrustedExpertCare, VerifiedBadge } from "@/svg-icon/svg";
+import { Users, Search, ClipboardCheck } from "lucide-react";
 
 const trustFeatures = [
   {
     title: "Verified Dentists",
     description: "Only verified dentists make it onto RatedDocs.",
-    icon: <BadgeCheck className="w-8 h-8 text-[#E3A32A]" />,
+    icon: VerifiedBadge,
   },
   {
     title: "Trusted Expert Care",
     description: "Top-trained dentists. Trusted materials. Full transparency.",
-    icon: <Users className="w-8 h-8 text-[#E3A32A]" />,
+    icon: TrustedExpertCare,
   },
   {
     title: "Transparent Pricing",
     description: "Transparent pricing. No surprises. Ever.",
-    icon: <Search className="w-8 h-8 text-[#E3A32A]" />,
+    icon: TransparentPricing,
   },
   {
     title: "Real Patient Reviews",
     description: "Real reviews. Verified patients. Zero fake feedback.",
-    icon: <ClipboardCheck className="w-8 h-8 text-[#E3A32A]" />,
+    icon: RealPatientReviews,
   },
 ];
 
 export default function WhyTrust() {
   return (
-    <section className="py-20 bg-[#EEF8FF]">
+    <section className="py-20 bg-secondary">
       <div className="max-w-400 w-11/12 mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#10436B]">
-            Why Trust RatedDocs Verified Dentists?
-          </h2>
-          <p className="text-gray-500 text-lg leading-relaxed">
-            Every dentist on RatedDocs undergoes a strict verification process,
+        <div className="text-center max-w-4xl mx-auto mb-20 space-y-4">
+          <CustomSectionHeading value={"Why Trust RatedDocs Verified Dentists?"} center_align={true} />
+          <CustomDesText value="Every dentist on RatedDocs undergoes a strict verification process,
             including license checks, to ensure your confidence when booking
-            your next appointment.
-          </p>
+            your next appointment." center_align={true} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
           {trustFeatures.map((feature, index) => (
-            <div key={index} className="flex items-start gap-6 group">
-              <div className="shrink-0 transition-transform duration-300 group-hover:scale-110">
+            <div key={index} className="group space-y-3 lg:space-y-5">
+              <div className="flex flex-row gap-2 items-center">
                 <div className="p-1 rounded-lg">{feature.icon}</div>
+                <CustomPrimaryHeading value={feature.title} />
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-xl font-bold text-[#10436B]">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-500 text-base">{feature.description}</p>
+                <p className="text-sec-text lg:text-lg font-medium">{feature.description}</p>
               </div>
             </div>
           ))}

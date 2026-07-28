@@ -40,7 +40,7 @@ function Section({ title, sub, action, children }: {
     <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2 border-b border-gray-100 px-5 py-4">
         <div>
-          <h3 className="text-sm font-bold text-[#1A1A2E]">{title}</h3>
+          <h3 className="text-sm font-bold text-text">{title}</h3>
           {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
         </div>
         {action}
@@ -77,7 +77,7 @@ function RevenueBarChart({ monthlyData }: { monthlyData: any[] }) {
               onClick={() => setMetric(m)}
               className={cn(
                 "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                metric === m ? "bg-[#1A1A2E] text-white" : "text-gray-500 hover:bg-gray-100"
+                metric === m ? "bg-text text-white" : "text-gray-500 hover:bg-gray-100"
               )}
             >
               {labels[m]}
@@ -113,13 +113,13 @@ function RevenueBarChart({ monthlyData }: { monthlyData: any[] }) {
                 <div key={row.month} className="group relative flex flex-1 flex-col items-center">
                   {/* Hover tooltip */}
                   <div className="pointer-events-none absolute bottom-full mb-2 hidden rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-lg group-hover:block z-10 whitespace-nowrap text-center">
-                    <p className="text-xs font-bold text-[#1A1A2E]">{formatVal(v)}</p>
+                    <p className="text-xs font-bold text-text">{formatVal(v)}</p>
                     <p className="text-[10px] text-gray-400">{row.month}</p>
                   </div>
                   <div className="relative w-full overflow-hidden rounded-t-lg" style={{ height: `${h}%` }}>
                     <div className={cn(
                       "absolute inset-0 rounded-t-lg transition-all",
-                      isLast ? "bg-[#1A1A2E]" : "bg-[#1A1A2E]/20 group-hover:bg-[#1A1A2E]/50"
+                      isLast ? "bg-text" : "bg-text/20 group-hover:bg-text/50"
                     )} />
                   </div>
                 </div>
@@ -147,7 +147,7 @@ function RevenueBarChart({ monthlyData }: { monthlyData: any[] }) {
         ].map((s) => (
           <div key={s.label} className="flex flex-col items-center gap-0.5 py-3.5">
             <p className="text-[11px] font-medium text-gray-400">{s.label}</p>
-            <p className="text-lg font-bold text-[#1A1A2E]">{s.value}</p>
+            <p className="text-lg font-bold text-text">{s.value}</p>
           </div>
         ))}
       </div>
@@ -179,7 +179,7 @@ function KpiCards({ cards }: { cards: any[] }) {
               </div>
             </div>
             <div className="mt-3">
-              <p className="text-2xl font-bold tracking-tight text-[#1A1A2E]">{kpi.value}</p>
+              <p className="text-2xl font-bold tracking-tight text-text">{kpi.value}</p>
               <p className="mt-0.5 text-xs font-semibold text-gray-500">{kpi.label}</p>
               <p className="mt-0.5 text-[10px] text-gray-400">{kpi.sub}</p>
             </div>
@@ -214,7 +214,7 @@ function DateRangeSelector({ value, onChange }: { value: string; onChange: (v: s
                 key={r}
                 onClick={() => { onChange(r); setOpen(false); }}
                 className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50",
-                  value === r ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
+                  value === r ? "font-semibold text-text" : "text-gray-600")}
               >
                 {r}
               </button>
@@ -545,7 +545,7 @@ export default function ReportsPage() {
   // Verification Funnel
   const verificationFunnel = useMemo(() => {
     const list = verificationslistData?.data || [];
-    
+
     // License
     const licenseApproved = list.filter((d: any) => d.dentistVerificationProgress?.isLicenseVerified).length;
     const licenseRejected = list.filter((d: any) => d.dentistLicense?.verificationStatus === "REJECTED").length;
@@ -577,7 +577,7 @@ export default function ReportsPage() {
   // Compliance
   const complianceData = useMemo(() => {
     const list = verificationslistData?.data || [];
-    const pendingCount = list.filter((d: any) => 
+    const pendingCount = list.filter((d: any) =>
       !d.dentistVerificationProgress?.isLicenseVerified ||
       !d.dentistVerificationProgress?.isOperationsVerified ||
       !d.dentistVerificationProgress?.isClinicDepthVerified
@@ -600,7 +600,7 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">Reports</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text">Reports</h1>
           <p className="mt-0.5 text-sm text-gray-500">
             Platform analytics, revenue insights, and operational health.
           </p>
@@ -609,7 +609,7 @@ export default function ReportsPage() {
           <DateRangeSelector value={dateRange} onChange={setDateRange} />
           <button
             onClick={() => toast.success(`Exporting ${tab} report as CSV…`)}
-            className="flex items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#1A1A2E]/90 active:scale-95 transition-all"
+            className="flex items-center gap-2 rounded-lg bg-text px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-text/90 active:scale-95 transition-all"
           >
             <Download className="h-3.5 w-3.5" />
             Export CSV
@@ -650,7 +650,7 @@ export default function ReportsPage() {
                         <div className="h-full rounded-full" style={{ width: `${row.share}%`, backgroundColor: row.color }} />
                       </div>
                       <span className="w-8 text-right text-xs font-semibold text-gray-500">{row.share}%</span>
-                      <span className="w-10 text-right text-sm font-bold text-[#1A1A2E]">{fmtNum(row.count)}</span>
+                      <span className="w-10 text-right text-sm font-bold text-text">{fmtNum(row.count)}</span>
                     </div>
                   </div>
                 ))}
@@ -668,13 +668,13 @@ export default function ReportsPage() {
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-[#1A1A2E]">{row.procedure}</p>
+                      <p className="truncate text-sm font-semibold text-text">{row.procedure}</p>
                       <div className="mt-1 h-1 overflow-hidden rounded-full bg-gray-100">
-                        <div className="h-full rounded-full bg-[#1A1A2E]/70" style={{ width: `${row.share}%` }} />
+                        <div className="h-full rounded-full bg-text/70" style={{ width: `${row.share}%` }} />
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-[#1A1A2E]">{fmt(row.revenue)}</p>
+                      <p className="text-sm font-bold text-text">{fmt(row.revenue)}</p>
                       <p className="text-[10px] text-gray-400">{fmtNum(row.bookings)} bookings</p>
                     </div>
                   </div>
@@ -702,18 +702,18 @@ export default function ReportsPage() {
                   ) : geographyData.map((row) => (
                     <tr key={row.country} className="transition-colors hover:bg-gray-50/60">
                       <td className="px-5 py-3">
-                        <span className="flex items-center gap-2 text-sm font-semibold text-[#1A1A2E]">
+                        <span className="flex items-center gap-2 text-sm font-semibold text-text">
                           <span className="text-base">{row.flag}</span>
                           {row.country}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-sm text-gray-600">{fmtNum(row.dentists)}</td>
                       <td className="px-5 py-3 text-sm text-gray-600">{fmtNum(row.bookings)}</td>
-                      <td className="px-5 py-3 text-sm font-semibold text-[#1A1A2E]">{fmt(row.revenue)}</td>
+                      <td className="px-5 py-3 text-sm font-semibold text-text">{fmt(row.revenue)}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
                           <div className="h-1.5 w-20 overflow-hidden rounded-full bg-gray-100">
-                            <div className="h-full rounded-full bg-[#1A1A2E]" style={{ width: `${row.share}%` }} />
+                            <div className="h-full rounded-full bg-text" style={{ width: `${row.share}%` }} />
                           </div>
                           <span className="text-xs font-medium text-gray-500">{row.share}%</span>
                         </div>
@@ -750,7 +750,7 @@ export default function ReportsPage() {
                     return (
                       <tr key={row.month} className={cn("transition-colors hover:bg-gray-50/60", isLatest && "bg-sky-50/20")}>
                         <td className="px-5 py-3.5">
-                          <span className="flex items-center gap-2 text-sm font-semibold text-[#1A1A2E]">
+                          <span className="flex items-center gap-2 text-sm font-semibold text-text">
                             {row.month}
                             {isLatest && (
                               <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-700">MTD</span>
@@ -758,7 +758,7 @@ export default function ReportsPage() {
                           </span>
                         </td>
                         <td className="px-5 py-3.5 text-sm text-gray-600">{fmtNum(row.bookings)}</td>
-                        <td className="px-5 py-3.5 text-sm font-semibold text-[#1A1A2E]">{fmt(row.revenue)}</td>
+                        <td className="px-5 py-3.5 text-sm font-semibold text-text">{fmt(row.revenue)}</td>
                         <td className="px-5 py-3.5 text-sm font-semibold text-success-700">{fmt(row.fees)}</td>
                         <td className="px-5 py-3.5 text-sm text-gray-600">{fmt(row.escrowReleased)}</td>
                         <td className="px-5 py-3.5 text-sm text-gray-600">{fmt(row.revenue - row.fees)}</td>
@@ -768,12 +768,12 @@ export default function ReportsPage() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-gray-200 bg-gray-50">
-                    <td className="px-5 py-3.5 text-sm font-bold text-[#1A1A2E]">Total</td>
-                    <td className="px-5 py-3.5 text-sm font-bold text-[#1A1A2E]">{fmtNum(monthlyDataList.reduce((s, r) => s + r.bookings, 0))}</td>
-                    <td className="px-5 py-3.5 text-sm font-bold text-[#1A1A2E]">{fmt(monthlyDataList.reduce((s, r) => s + r.revenue, 0))}</td>
+                    <td className="px-5 py-3.5 text-sm font-bold text-text">Total</td>
+                    <td className="px-5 py-3.5 text-sm font-bold text-text">{fmtNum(monthlyDataList.reduce((s, r) => s + r.bookings, 0))}</td>
+                    <td className="px-5 py-3.5 text-sm font-bold text-text">{fmt(monthlyDataList.reduce((s, r) => s + r.revenue, 0))}</td>
                     <td className="px-5 py-3.5 text-sm font-bold text-success-700">{fmt(monthlyDataList.reduce((s, r) => s + r.fees, 0))}</td>
-                    <td className="px-5 py-3.5 text-sm font-bold text-[#1A1A2E]">{fmt(monthlyDataList.reduce((s, r) => s + r.escrowReleased, 0))}</td>
-                    <td className="px-5 py-3.5 text-sm font-bold text-[#1A1A2E]">
+                    <td className="px-5 py-3.5 text-sm font-bold text-text">{fmt(monthlyDataList.reduce((s, r) => s + r.escrowReleased, 0))}</td>
+                    <td className="px-5 py-3.5 text-sm font-bold text-text">
                       {fmt(monthlyDataList.reduce((s, r) => s + r.revenue - r.fees, 0))}
                     </td>
                   </tr>
@@ -800,7 +800,7 @@ export default function ReportsPage() {
                     <Icon className={cn("h-4.5 w-4.5", s.color)} />
                   </div>
                   <div>
-                    <p className="text-xl font-bold text-[#1A1A2E]">{s.value}</p>
+                    <p className="text-xl font-bold text-text">{s.value}</p>
                     <p className="text-xs text-gray-400">{s.label}</p>
                   </div>
                 </div>
@@ -820,7 +820,7 @@ export default function ReportsPage() {
                         <div className="h-full rounded-full transition-all" style={{ width: `${row.share}%`, backgroundColor: row.color }} />
                       </div>
                       <span className="w-8 text-right text-xs font-semibold text-gray-400">{row.share}%</span>
-                      <span className="w-10 text-right text-base font-bold text-[#1A1A2E]">{fmtNum(row.count)}</span>
+                      <span className="w-10 text-right text-base font-bold text-text">{fmtNum(row.count)}</span>
                     </div>
                   </div>
                 ))}
@@ -837,10 +837,10 @@ export default function ReportsPage() {
                       {i + 1}
                     </span>
                     <div className="min-w-0 text-left">
-                      <p className="truncate text-sm font-semibold text-[#1A1A2E]">{row.procedure}</p>
+                      <p className="truncate text-sm font-semibold text-text">{row.procedure}</p>
                       <p className="text-xs text-gray-400">{fmtNum(row.bookings)} bookings · avg {fmt(row.avgValue)}</p>
                     </div>
-                    <p className="text-sm font-bold text-[#1A1A2E]">{fmt(row.revenue)}</p>
+                    <p className="text-sm font-bold text-text">{fmt(row.revenue)}</p>
                   </div>
                 ))}
               </div>
@@ -882,7 +882,7 @@ export default function ReportsPage() {
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-2.5">
                           <Avatar initials={d.initials} color={d.avatarColor} size="sm" />
-                          <p className="text-sm font-bold text-[#1A1A2E]">{d.name}</p>
+                          <p className="text-sm font-bold text-text">{d.name}</p>
                         </div>
                       </td>
                       <td className="px-4 py-3.5 text-sm text-gray-500">{d.specialty}</td>
@@ -892,7 +892,7 @@ export default function ReportsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3.5 text-sm font-medium text-gray-700">{fmtNum(d.bookings)}</td>
-                      <td className="px-4 py-3.5 text-sm font-bold text-[#1A1A2E]">{fmt(d.revenue)}</td>
+                      <td className="px-4 py-3.5 text-sm font-bold text-text">{fmt(d.revenue)}</td>
                       <td className="px-4 py-3.5">
                         <span className="flex items-center gap-1 text-sm font-semibold text-amber-500">
                           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> {d.rating}
@@ -920,7 +920,7 @@ export default function ReportsPage() {
               {verificationFunnel.map((row) => (
                 <div key={row.phase} className="py-4">
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-[#1A1A2E]">{row.phase}</p>
+                    <p className="text-sm font-semibold text-text">{row.phase}</p>
                     <span className={cn(
                       "rounded-full px-2.5 py-0.5 text-xs font-bold",
                       row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-amber-700"
@@ -957,7 +957,7 @@ export default function ReportsPage() {
             {complianceData.map((item) => (
               <div key={item.label} className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm text-center">
                 <p className={cn("text-2xl font-bold", item.color)}>{item.value}</p>
-                <p className="mt-1 text-xs font-semibold text-[#1A1A2E]">{item.label}</p>
+                <p className="mt-1 text-xs font-semibold text-text">{item.label}</p>
                 <p className="mt-0.5 text-[10px] text-gray-400">{item.sub}</p>
               </div>
             ))}
@@ -969,7 +969,7 @@ export default function ReportsPage() {
                 {verificationFunnel.map((row) => (
                   <div key={row.phase} className="flex items-center gap-4 py-4">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#1A1A2E]">{row.phase}</p>
+                      <p className="text-sm font-semibold text-text">{row.phase}</p>
                       <p className="mt-0.5 text-xs text-gray-400">
                         {row.approved} approved · {row.rejected} rejected · {row.pending} pending
                       </p>
@@ -1006,7 +1006,7 @@ export default function ReportsPage() {
                         ? <CheckCircle2 className="h-4 w-4 shrink-0 text-success-500" />
                         : <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />}
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#1A1A2E]">{item.label}</p>
+                        <p className="text-sm font-semibold text-text">{item.label}</p>
                         <p className="text-xs text-gray-400">{item.note}</p>
                       </div>
                     </div>

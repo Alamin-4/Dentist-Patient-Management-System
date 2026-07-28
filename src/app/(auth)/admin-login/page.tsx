@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-[15px] font-bold text-[#1A1A2E] leading-tight">
+                <p className="text-[15px] font-bold text-text leading-tight">
                   RatedDocs
                 </p>
                 <p className="text-[11px] text-gray-400 leading-tight">
@@ -87,7 +87,7 @@ export default function AdminLoginPage() {
                 <>
                   {/* Heading */}
                   <div className="mb-8">
-                    <h1 className="text-[28px] font-extrabold text-[#1A1A2E] leading-tight tracking-tight mb-2">
+                    <h1 className="text-[28px] font-extrabold text-text leading-tight tracking-tight mb-2">
                       Welcome back
                     </h1>
                     <p className="text-sm text-gray-500">
@@ -105,7 +105,7 @@ export default function AdminLoginPage() {
                     <div>
                       <label
                         htmlFor="email"
-                        className="mb-1.5 block text-[13px] font-medium text-[#1A1A2E]"
+                        className="mb-1.5 block text-[13px] font-medium text-text"
                       >
                         Work email
                       </label>
@@ -116,7 +116,7 @@ export default function AdminLoginPage() {
                         placeholder="admin@rateddocs.com"
                         autoComplete="email"
                         className={cn(
-                          "w-full rounded-lg border px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all",
+                          "w-full rounded-lg border px-4 py-3 text-sm text-text placeholder:text-gray-400 outline-none transition-all",
                           "focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C]",
                           errors.email
                             ? "border-red-400 bg-red-50 focus:ring-red-200 focus:border-red-400"
@@ -134,7 +134,7 @@ export default function AdminLoginPage() {
                     <div>
                       <label
                         htmlFor="password"
-                        className="mb-1.5 block text-[13px] font-medium text-[#1A1A2E]"
+                        className="mb-1.5 block text-[13px] font-medium text-text"
                       >
                         Password
                       </label>
@@ -146,7 +146,7 @@ export default function AdminLoginPage() {
                           placeholder="demopassword"
                           autoComplete="current-password"
                           className={cn(
-                            "w-full rounded-lg border px-4 py-3 pr-11 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all",
+                            "w-full rounded-lg border px-4 py-3 pr-11 text-sm text-text placeholder:text-gray-400 outline-none transition-all",
                             "focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C]",
                             errors.password
                               ? "border-red-400 bg-red-50 focus:ring-red-200 focus:border-red-400"
@@ -184,7 +184,7 @@ export default function AdminLoginPage() {
                           clearErrors();
                           setView("forgot");
                         }}
-                        className="text-sm text-[#1A1A2E] underline underline-offset-2 hover:text-[#163E5C] transition-colors"
+                        className="text-sm text-text underline underline-offset-2 hover:text-[#163E5C] transition-colors"
                       >
                         Forgot password?
                       </button>
@@ -202,8 +202,8 @@ export default function AdminLoginPage() {
                       disabled={isSubmitting || isPending}
                       className={cn(
                         "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
-                        "bg-[#1A1A2E] hover:bg-[#0D2B3E]",
-                        "focus:outline-none focus:ring-2 focus:ring-[#1A1A2E]/30 focus:ring-offset-2",
+                        "bg-text hover:bg-[#0D2B3E]",
+                        "focus:outline-none focus:ring-2 focus:ring-text/30 focus:ring-offset-2",
                         "disabled:opacity-60 disabled:cursor-not-allowed",
                       )}
                     >

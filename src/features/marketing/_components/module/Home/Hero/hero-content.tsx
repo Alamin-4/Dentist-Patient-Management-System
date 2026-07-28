@@ -4,7 +4,7 @@ export default function HeroContent() {
   return (
     <div className="flex flex-col gap-6">
       <div className="space-y-4 max-w-xl">
-        <h1 className="text-2xl md:text-3xl pr-5 leading-[150%] lg:text-[44px] font-extrabold tracking-tight text-[#1A1A2E]">
+        <h1 className="text-2xl md:text-3xl pr-5 leading-[150%] lg:text-[44px] font-extrabold tracking-tight text-text">
           Compare Verified International Dentists
         </h1>
         <p className="max-w-120 text-lg leading-relaxed text-gray-500">

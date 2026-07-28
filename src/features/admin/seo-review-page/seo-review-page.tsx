@@ -94,7 +94,7 @@ function FilterDropdown({
         onClick={onToggle}
         className={cn(
           "flex h-9 items-center gap-1.5 rounded-lg border bg-white px-3 text-sm font-medium transition-colors hover:bg-gray-50",
-          value ? "border-[#1A1A2E] text-[#1A1A2E]" : "border-gray-200 text-gray-600"
+          value ? "border-text text-text" : "border-gray-200 text-gray-600"
         )}
       >
         {value || label}
@@ -104,7 +104,7 @@ function FilterDropdown({
         <div className="absolute left-0 top-10 z-20 min-w-44 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
           <button
             onClick={onClear}
-            className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50", !value ? "font-semibold text-[#1A1A2E]" : "text-gray-500")}
+            className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50", !value ? "font-semibold text-text" : "text-gray-500")}
           >
             All
           </button>
@@ -112,7 +112,7 @@ function FilterDropdown({
             <button
               key={opt}
               onClick={() => onSelect(opt)}
-              className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50", value === opt ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
+              className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50", value === opt ? "font-semibold text-text" : "text-gray-600")}
             >
               {opt}
             </button>
@@ -133,14 +133,14 @@ function RemoveModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm:
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <Trash className="h-5 w-5 text-red-500" />
           </div>
-          <h3 className="text-base font-bold text-[#1A1A2E]">Remove this SEO page?</h3>
+          <h3 className="text-base font-bold text-text">Remove this SEO page?</h3>
           <p className="mt-2 text-sm leading-relaxed text-gray-500">
             This page will be immediately taken down from the public site. The review will remain in the system but will no longer have a public URL.
           </p>
           <div className="mt-6 flex gap-3">
             <button
               onClick={onCancel}
-              className="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-gray-50"
             >
               Cancel
             </button>
@@ -266,7 +266,7 @@ export default function SEOReviewPage() {
       render: (row) => (
         <div className="flex items-center gap-2.5">
           <Avatar initials={row.dentist_initials} color={row.dentist_avatar_color} />
-          <span className="font-medium text-[#1A1A2E]">{row.dentist_name}</span>
+          <span className="font-medium text-text">{row.dentist_name}</span>
         </div>
       ),
     },
@@ -276,7 +276,7 @@ export default function SEOReviewPage() {
       render: (row) => (
         <div className="flex items-center gap-2">
           <Avatar initials={row.patient_initials} color={row.patient_avatar_color} />
-          <span className="text-[#1A1A2E]">{row.patient_name}</span>
+          <span className="text-text">{row.patient_name}</span>
         </div>
       ),
     },
@@ -307,7 +307,7 @@ export default function SEOReviewPage() {
         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           <Link
             href={`/admin/seo-review-pages/${row.id}`}
-            className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-[#1A1A2E] transition-colors hover:bg-gray-50"
+            className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-text transition-colors hover:bg-gray-50"
           >
             <ExternalLink className="h-3.5 w-3.5" /> View page
           </Link>
@@ -334,7 +334,7 @@ export default function SEOReviewPage() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A2E] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-text border-t-transparent" />
       </div>
     );
   }
@@ -344,7 +344,7 @@ export default function SEOReviewPage() {
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">SEO Pages</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text">SEO Pages</h1>
           <p className="mt-0.5 text-sm text-gray-500">
             Pages are auto-generated from published reviews. Monitor status and remove when needed.
           </p>
@@ -372,7 +372,7 @@ export default function SEOReviewPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by dentist or patient..."
-                className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
               />
             </div>
             <FilterDropdown

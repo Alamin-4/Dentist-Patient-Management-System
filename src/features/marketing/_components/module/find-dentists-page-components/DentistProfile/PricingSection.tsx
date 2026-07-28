@@ -13,7 +13,7 @@ export default function PricingSection({
   if (!procedures || procedures.length === 0) {
     return (
       <section id="pricing" className="rounded-lg border border-slate-200 bg-white p-6 space-y-4">
-        <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65]">
+        <h2 className="text-xl lg:text-2xl font-bold text-primary">
           Pricing
         </h2>
         <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200 text-sm">
@@ -25,7 +25,7 @@ export default function PricingSection({
 
   return (
     <section id="pricing" className="rounded-lg border border-slate-200 bg-white p-6 space-y-4">
-      <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65]">
+      <h2 className="text-xl lg:text-2xl font-bold text-primary">
         Pricing
       </h2>
 
@@ -41,7 +41,7 @@ export default function PricingSection({
                 <p className="text-xs text-slate-500 font-medium">{proc.notes}</p>
               )}
             </div>
-            <div className="text-[15px] font-extrabold text-[#0E3E65]">
+            <div className="text-[15px] font-extrabold text-primary">
               ${proc.price ? proc.price.toLocaleString() : "0"}
             </div>
           </div>

@@ -100,7 +100,7 @@ export function DentistsTable({
                   type="checkbox"
                   checked={isAllSelected}
                   onChange={handleSelectAll}
-                  className="rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
+                  className="rounded border-gray-300 text-text focus:ring-text"
                 />
               </th>
               {["Dentist", "Specialty", "Location", "Status", "Rating", "Bookings", "Membership", "Joined", ""].map((h, i) => (
@@ -139,7 +139,7 @@ export function DentistsTable({
                         e.stopPropagation();
                         handleSelectRow(dentist.id);
                       }}
-                      className="rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
+                      className="rounded border-gray-300 text-text focus:ring-text"
                     />
                   </td>
 
@@ -147,7 +147,7 @@ export function DentistsTable({
                     <div className="flex items-center gap-3">
                       <Avatar initials={dentist.initials} color={dentist.avatar_color} />
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-[#1A1A2E]">
+                        <p className="truncate text-sm font-semibold text-text">
                           {dentist.name}
                         </p>
                         <p className="truncate text-xs text-gray-400">
@@ -261,7 +261,7 @@ export function DentistsTable({
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
                   p === currentPage
-                    ? "bg-[#1A1A2E] text-white"
+                    ? "bg-text text-white"
                     : "border border-gray-200 text-gray-500 hover:bg-gray-50"
                 )}
               >

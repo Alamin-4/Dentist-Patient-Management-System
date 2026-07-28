@@ -90,7 +90,7 @@ export function AdminNavbar() {
             <DropdownMenuContent align="end" className="w-56 p-2 mt-1">
               {/* User info header */}
               <div className="px-2 py-2 mb-1">
-                <p className="text-sm font-semibold text-[#1A1A2E] truncate">
+                <p className="text-sm font-semibold text-text truncate">
                   {user?.name || "Admin"}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5 truncate">

@@ -68,7 +68,7 @@ export function VerificationBanner() {
           <div className="mx-auto size-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-6">
             <CheckCircle2 className="size-10" />
           </div>
-          
+
           <h3 className="text-2xl font-bold text-foreground">
             Documents Verified successfully!
           </h3>
@@ -81,32 +81,30 @@ export function VerificationBanner() {
               <label className="text-sm font-semibold text-foreground block">
                 Select Your Membership Plan
               </label>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div
                   onClick={() => setSelectedPlan("6_MONTH")}
-                  className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${
-                    selectedPlan === "6_MONTH"
-                      ? "border-[#0e3e65] bg-[#0e3e65]/5 ring-2 ring-[#0e3e65]/10"
-                      : "border-slate-200 hover:bg-slate-50"
-                  }`}
+                  className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
+                    ? "border-primary bg-primary/5 ring-2 ring-primary/10"
+                    : "border-slate-200 hover:bg-slate-50"
+                    }`}
                 >
                   <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
-                  <span className="block text-2xl font-extrabold text-[#0e3e65] mt-1">$899</span>
+                  <span className="block text-2xl font-extrabold text-primary mt-1">$899</span>
                   <span className="block text-[10px] text-slate-400 mt-1">~$149.83/mo</span>
                 </div>
-                
+
                 <div
                   onClick={() => setSelectedPlan("12_MONTH")}
-                  className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${
-                    selectedPlan === "12_MONTH"
-                      ? "border-[#4CA30D] bg-[#4CA30D]/5 ring-2 ring-[#4CA30D]/10"
-                      : "border-slate-200 hover:bg-slate-50"
-                  }`}
+                  className={`relative border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "12_MONTH"
+                    ? "border-badge bg-badge/5 ring-2 ring-badge/10"
+                    : "border-slate-200 hover:bg-slate-50"
+                    }`}
                 >
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#4CA30D] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-badge text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
                   <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
-                  <span className="block text-2xl font-extrabold text-[#0e3e65] mt-1">$1499</span>
+                  <span className="block text-2xl font-extrabold text-primary mt-1">$1499</span>
                   <span className="block text-[10px] text-slate-400 mt-1">~$124.92/mo</span>
                 </div>
               </div>
@@ -122,7 +120,7 @@ export function VerificationBanner() {
                 <Button
                   size="lg"
                   disabled={checkoutMutation.isPending}
-                  className="w-full h-14 rounded-lg bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
+                  className="w-full h-14 rounded-lg bg-primary hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
                   onClick={handleProceedToPayment}
                 >
                   {checkoutMutation.isPending ? (
@@ -357,7 +355,7 @@ export function VerificationBanner() {
             <Button
               size="lg"
               disabled={isAllApprovedOrSubmitted}
-              className="w-full h-14 rounded-lg bg-[#0E3E65] hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="w-full h-14 rounded-lg bg-primary hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
               onClick={() => {
                 router.push(`/dentist/verification?phase=${targetPhaseParam}`);
               }}

@@ -110,14 +110,14 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
           />
         </div>
         <div className="space-y-1 min-w-0 flex-1">
-          <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#0E3E65] truncate leading-tight">
+          <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary truncate leading-tight">
             {dentist.name}
           </h3>
-          <p className="text-xs text-[#6B7280] font-medium leading-none">
+          <p className="text-xs text-sec-text font-medium leading-none">
             Dentist
           </p>
           <div className="flex items-center gap-1.5 pt-1">
-            <span className="font-bold text-sm text-[#0E3E65]">
+            <span className="font-bold text-sm text-primary">
               {rating.toFixed(1)}
             </span>
             <div className="flex text-amber-400">
@@ -164,8 +164,8 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
 
       <div className="mt-6 sm:mt-10 flex items-center justify-between gap-3 sm:gap-6">
         <div className="shrink-0">
-          <p className="text-xs text-[#6B7280]">Starting from</p>
-          <p className="text-lg sm:text-xl lg:text-2xl font-extrabold text-[#0E3E65]">
+          <p className="text-xs text-sec-text">Starting from</p>
+          <p className="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary">
             ${dentist.price ? dentist.price.toLocaleString() : "0"}
           </p>
           <p className="text-[10px] text-[#9CA3AF]">Estimate</p>
@@ -175,7 +175,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
           (dentist.verified ? (
             <Button
               onClick={() => initiateBooking("book")}
-              className="h-12 sm:h-14 flex-1 bg-[#0E3E65] text-sm sm:text-base font-semibold text-white hover:bg-[#002850]"
+              className="h-12 sm:h-14 flex-1 bg-primary text-sm sm:text-base font-semibold text-white hover:bg-[#002850]"
             >
               Book consultation
             </Button>
@@ -194,7 +194,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
               )}
               {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
                 <Button
-                  className="h-10 sm:h-11 text-xs sm:text-sm bg-[#0E3E65] font-semibold text-white hover:bg-[#002850]"
+                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-[#002850]"
                   onClick={() => initiateBooking("request")}
                 >
                   Request Consultation
@@ -218,16 +218,16 @@ function TrustPill({
 }) {
   const styles: Record<string, string> = {
     green:
-      "text-[#4CA30D] bg-green-50 border-[#4CA30D]/20",
+      "text-badge bg-green-50 border-badge/20",
     amber:
       "text-amber-600 bg-amber-50 border-amber-200",
     slate:
       "text-slate-600 bg-slate-50 border-slate-200",
-    blue: "text-[#003366] bg-[#EEF8FF] border-[#003366]/10",
+    blue: "text-[#003366] bg-secondary border-[#003366]/10",
   };
 
   const iconColor: Record<string, string> = {
-    green: "text-[#4CA30D]",
+    green: "text-badge",
     amber: "text-amber-500",
     slate: "text-slate-400",
     blue: "text-[#003366]",

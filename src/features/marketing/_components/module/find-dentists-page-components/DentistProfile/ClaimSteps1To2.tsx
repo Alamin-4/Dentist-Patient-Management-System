@@ -7,14 +7,14 @@ function PasswordField({ value, onChange }: { value: string; onChange: (v: strin
   const [show, setShow] = useState(false);
   return (
     <div className="space-y-2 animate-fadeIn">
-      <label className="text-[14px] font-semibold text-[#1A1A2E] block">Create Password</label>
+      <label className="text-[14px] font-semibold text-text block">Create Password</label>
       <div className="relative">
         <input
           type={show ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Minimum 8 characters"
-          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 pr-10 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 pr-10 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
         />
         <button
           type="button"
@@ -48,14 +48,14 @@ export function ClaimStep1({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <label className="text-[14px] font-semibold text-[#1A1A2E] block">Email Address</label>
+        <label className="text-[14px] font-semibold text-text block">Email Address</label>
         <input
           type="email"
           value={claimEmail}
           onChange={(e) => setClaimEmail(e.target.value)}
           disabled={!!user}
           placeholder="Enter professional email"
-          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800 disabled:bg-slate-50 disabled:text-slate-400"
+          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800 disabled:bg-slate-50 disabled:text-slate-400"
         />
         {user && (
           <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
@@ -73,7 +73,7 @@ export function ClaimStep1({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-[14px] font-semibold text-[#1A1A2E] block">Years of Experience</label>
+          <label className="text-[14px] font-semibold text-text block">Years of Experience</label>
           <input
             type="number"
             min={0}
@@ -82,11 +82,11 @@ export function ClaimStep1({
             }}
             value={yearsOfExperience}
             onChange={(e) => setYearsOfExperience(Number(e.target.value))}
-            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-[14px] font-semibold text-[#1A1A2E] block">International Patients (%)</label>
+          <label className="text-[14px] font-semibold text-text block">International Patients (%)</label>
           <input
             type="number"
             min={0}
@@ -95,18 +95,18 @@ export function ClaimStep1({
             }}
             value={internationalPatients}
             onChange={(e) => setInternationalPatients(Number(e.target.value))}
-            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+            className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-[14px] font-semibold text-[#1A1A2E] block">Professional Bio / Motivation</label>
+        <label className="text-[14px] font-semibold text-text block">Professional Bio / Motivation</label>
         <textarea
           value={motivation}
           onChange={(e) => setMotivation(e.target.value)}
           placeholder="Tell patients about your dental approach and clinical background..."
-          className="w-full min-h-20 rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm text-slate-800"
+          className="w-full min-h-20 rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm text-slate-800"
         />
       </div>
 
@@ -150,13 +150,13 @@ export function ClaimStep2({
       </div>
 
       <div className="space-y-2">
-        <label className="text-[14px] font-semibold text-[#1A1A2E] block">Verification Code</label>
+        <label className="text-[14px] font-semibold text-text block">Verification Code</label>
         <input
           value={claimOtp}
           onChange={(e) => setClaimOtp(e.target.value)}
           placeholder="0 0 0 0 0 0"
           maxLength={6}
-          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-center text-lg font-mono tracking-widest placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+          className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-center text-lg font-mono tracking-widest placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
         />
       </div>
 
@@ -165,7 +165,7 @@ export function ClaimStep2({
           type="button"
           onClick={handleResendOtpCode}
           disabled={resendOtpMutation.isPending}
-          className="text-xs text-[#0E3E65] hover:underline font-semibold cursor-pointer"
+          className="text-xs text-primary hover:underline font-semibold cursor-pointer"
         >
           {resendOtpMutation.isPending ? "Resending..." : "Resend Code"}
         </button>

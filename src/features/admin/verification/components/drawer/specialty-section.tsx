@@ -24,7 +24,7 @@ function SpecialtySectionComponent({ specialty, onPreview }: SpecialtySectionPro
         className="flex w-full items-center justify-between bg-white px-4 py-3"
       >
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-[#1A1A2E]">
+          <span className="text-sm font-semibold text-text">
             {specialty.name}
           </span>
           <span className="text-xs text-gray-400">

@@ -123,7 +123,7 @@ export function PatientBookingsTab({ bookings }: PatientBookingsTabProps) {
                       {b.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-sm font-medium text-[#1A1A2E]">
+                  <td className="px-4 py-3.5 text-sm font-medium text-text">
                     ${b.amount.toLocaleString()}
                   </td>
                 </tr>

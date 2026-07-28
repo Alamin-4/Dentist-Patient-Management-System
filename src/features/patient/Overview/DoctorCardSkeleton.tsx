@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/feedback/skeleton";
 
 export function DoctorCardSkeleton() {
   return (
-    <div className="w-full bg-white rounded-lg border border-[#CEE0F4] overflow-hidden animate-pulse">
+    <div className="w-full bg-white rounded-lg border border-border overflow-hidden animate-pulse">
       {/* Main Content Area */}
       <div className="p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-6">
         {/* Left: Avatar */}

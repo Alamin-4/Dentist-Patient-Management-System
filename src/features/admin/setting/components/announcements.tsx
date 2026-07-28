@@ -134,7 +134,7 @@ export function Announcements() {
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-4">
           <div>
-            <h2 className="text-base font-bold text-[#1A1A2E]">Platform Announcements</h2>
+            <h2 className="text-base font-bold text-text">Platform Announcements</h2>
             <p className="mt-0.5 text-xs text-slate-500">
               Broadcast banner messages to patients, dentists, or everyone.
             </p>
@@ -162,7 +162,7 @@ export function Announcements() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-bold text-[#1A1A2E]">{ann.title}</p>
+                    <p className="text-xs font-bold text-text">{ann.title}</p>
                     <AudienceBadge audience={ann.audience} />
                     <StatusBadge status={ann.status} />
                   </div>

@@ -52,7 +52,7 @@ export default function GuidelinesModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl w-full p-0 border-none rounded-3xl overflow-hidden bg-white shadow-2xl">
         <div className="px-8 py-6 border-b border-[#F3F4F6]">
-          <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
+          <DialogTitle className="text-[20px] font-bold text-text">
             Book Consultation
           </DialogTitle>
         </div>

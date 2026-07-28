@@ -20,7 +20,7 @@ export function PatientsPagination({ currentPage, totalPages, filteredLength, pa
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <button key={p} onClick={() => onPageChange(p)}
                         className={cn("flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
-                            p === currentPage ? "bg-[#1A1A2E] text-white" : "border border-gray-200 text-gray-500 hover:bg-gray-50"
+                            p === currentPage ? "bg-text text-white" : "border border-gray-200 text-gray-500 hover:bg-gray-50"
                         )}>
                         {p}
                     </button>

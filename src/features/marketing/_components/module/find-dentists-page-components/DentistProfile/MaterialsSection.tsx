@@ -31,7 +31,7 @@ export default function MaterialsSection({
   if (!materials || materials.length === 0) {
     return (
       <section id="materials" className="rounded-lg border border-slate-200 bg-white p-6 space-y-4">
-        <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65]">
+        <h2 className="text-xl lg:text-2xl font-bold text-primary">
           Materials
         </h2>
         <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200 text-sm">
@@ -74,7 +74,7 @@ export default function MaterialsSection({
 
   return (
     <section id="materials" className="rounded-lg border border-slate-200 bg-white p-6 space-y-4">
-      <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65]">
+      <h2 className="text-xl lg:text-2xl font-bold text-primary">
         Materials
       </h2>
 
@@ -111,9 +111,9 @@ export default function MaterialsSection({
               )}
             </div>
 
-            <div className="flex shrink-0 items-center gap-1.5 bg-green-50 text-[#4CA30D] px-3 py-1.5 rounded-full border border-green-100">
+            <div className="flex shrink-0 items-center gap-1.5 bg-green-50 text-badge px-3 py-1.5 rounded-full border border-green-100">
               <CheckCircle2 className="w-4 h-4" />
-              <span className="text-xs font-semibold text-[#1A1A2E]">
+              <span className="text-xs font-semibold text-text">
                 Supplier verified
               </span>
             </div>

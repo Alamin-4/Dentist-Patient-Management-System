@@ -203,20 +203,20 @@ export default function BookingDetailPage({
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link
           href="/admin/bookings"
-          className="flex items-center gap-1.5 font-medium hover:text-[#1A1A2E]"
+          className="flex items-center gap-1.5 font-medium hover:text-text"
         >
           <ArrowLeft className="h-4 w-4" />
           Bookings
         </Link>
         <span>›</span>
-        <span className="font-semibold text-[#1A1A2E]">{booking.booking_id}</span>
+        <span className="font-semibold text-text">{booking.booking_id}</span>
       </div>
 
       {/* ── Booking hero + escrow ────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">
+            <h1 className="text-2xl font-bold tracking-tight text-text">
               {booking.booking_id}
             </h1>
             <span
@@ -272,7 +272,7 @@ export default function BookingDetailPage({
         <div className="flex flex-col gap-4">
           {/* Booking Journey */}
           <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-            <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+            <h3 className="mb-4 text-base font-semibold text-text">
               Booking Journey
             </h3>
             <ol className="space-y-3">
@@ -292,11 +292,11 @@ export default function BookingDetailPage({
                         </div>
                       ) : isCompleted ? (
                         isCurrent ? (
-                          <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#1A1A2E] bg-[#1A1A2E]">
+                          <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-text bg-text">
                             <span className="h-2 w-2 rounded-full bg-white" />
                           </div>
                         ) : (
-                          <CheckCircle className="h-5 w-5 text-[#1A1A2E]" />
+                          <CheckCircle className="h-5 w-5 text-text" />
                         )
                       ) : (
                         <Circle className="h-5 w-5 text-gray-200" />
@@ -308,7 +308,7 @@ export default function BookingDetailPage({
                         className={cn(
                           "text-sm font-medium",
                           isCompleted || isCurrent
-                            ? "text-[#1A1A2E]"
+                            ? "text-text"
                             : isCancelledStep
                               ? "text-red-500"
                               : "text-gray-300"
@@ -328,13 +328,13 @@ export default function BookingDetailPage({
 
           {/* Platform Fee */}
           <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-            <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+            <h3 className="mb-4 text-base font-semibold text-text">
               Platform Fee
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Gross Amount</span>
-                <span className="font-medium text-[#1A1A2E]">
+                <span className="font-medium text-text">
                   ${booking.platform_fee.gross_amount.toLocaleString()}
                 </span>
               </div>
@@ -356,7 +356,7 @@ export default function BookingDetailPage({
                 </span>
               </div>
               <div className="flex justify-between border-t border-gray-100 pt-3 text-sm">
-                <span className="font-semibold text-[#1A1A2E]">
+                <span className="font-semibold text-text">
                   Net to Dentist
                 </span>
                 <span

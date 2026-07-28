@@ -25,12 +25,12 @@ export default function RequestSuccessModal({ open, onClose }: RequestSuccessMod
           </div>
 
           {/* Title */}
-          <h2 className="text-[22px] font-black text-[#1A1A2E] mb-2">
+          <h2 className="text-[22px] font-black text-text mb-2">
             Request Submitted Successfully
           </h2>
 
           {/* Description */}
-          <p className="text-[14px] text-[#6B7280] leading-relaxed max-w-sm mb-6">
+          <p className="text-[14px] text-sec-text leading-relaxed max-w-sm mb-6">
             Your request has been successfully sent to the dentist. You can create the meeting schedule after the dentist reviews and accepts the consultation request.
           </p>
 

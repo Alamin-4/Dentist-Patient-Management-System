@@ -210,7 +210,7 @@ export default function ProcedureOverview() {
       {/* ── Page Header ─────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">
+          <h1 className="text-2xl font-bold tracking-tight text-text">
             Procedures Catalog
           </h1>
           <p className="mt-0.5 text-sm text-gray-500">
@@ -231,7 +231,7 @@ export default function ProcedureOverview() {
           </label>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
+            className="inline-flex h-9 items-center gap-2 rounded-lg bg-text px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
           >
             <Plus className="h-4 w-4" />
             Add Procedure
@@ -297,7 +297,7 @@ export default function ProcedureOverview() {
             placeholder="e.g. Tooth Extraction"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+            className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 px-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
           />
         </div>
 
@@ -308,7 +308,7 @@ export default function ProcedureOverview() {
           <select
             value={newSpecialtyId}
             onChange={(e) => setNewSpecialtyId(e.target.value)}
-            className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+            className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-text"
           >
             <option value="">Select Specialty...</option>
             {specialties.map((spec: any) => (

@@ -248,10 +248,10 @@ export default function Result() {
     <section className="space-y-6 lg:space-y-7">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1.5">
-          <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[#1A1A2E] sm:text-[30px]">
+          <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-text sm:text-[30px]">
             Results
           </h1>
-          <p className="max-w-2xl text-[14px] leading-6 text-[#6B7280] sm:text-[15px]">
+          <p className="max-w-2xl text-[14px] leading-6 text-sec-text sm:text-[15px]">
             Upload AI-verified before/after imagery for your patients.
           </p>
         </div>
@@ -290,212 +290,208 @@ export default function Result() {
       <Dialog open={isModalOpen} onOpenChange={(open) => !isUploading && setIsModalOpen(open)}>
         <DialogContent className="sm:max-w-2xl p-0 overflow-hidden border-none rounded-3xl gap-0 bg-white">
           <div className="flex items-center justify-between p-6 border-b">
-            <DialogTitle className="text-2xl font-bold text-[#1A1A2E]">
+            <DialogTitle className="text-2xl font-bold text-text">
               Add New Before/After Result
             </DialogTitle>
           </div>
 
           <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
-            <div className="space-y-3">
-              <label className="block text-sm font-semibold text-[#1A1A2E]">Images</label>
+            <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-text">Images</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Before Image */}
+                  {beforePreview ? (
+                    <div className="relative border rounded-lg h-44 overflow-hidden group">
+                      <img src={beforePreview} alt="Before Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setValue("beforeImage", null, { shouldValidate: true })}
+                        className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                      >
+                        <span className="text-xs font-bold">✕</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <FileUploadField
+                      name="beforeImage"
+                      label="Before Image"
+                      accept="image/*"
+                      maxSizeMB={5}
+                      allowedMimeTypes={["image/"]}
+                      allowedTypesLabel="JPG, PNG, WEBP"
+                    />
+                  )}
+
+                  {/* After Image */}
+                  {afterPreview ? (
+                    <div className="relative border rounded-lg h-44 overflow-hidden group">
+                      <img src={afterPreview} alt="After Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setValue("afterImage", null, { shouldValidate: true })}
+                        className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                      >
+                        <span className="text-xs font-bold">✕</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <FileUploadField
+                      name="afterImage"
+                      label="After Image"
+                      accept="image/*"
+                      maxSizeMB={5}
+                      allowedMimeTypes={["image/"]}
+                      allowedTypesLabel="JPG, PNG, WEBP"
+                    />
+                  )}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Before Image */}
-                {beforePreview ? (
-                  <div className="relative border rounded-lg h-44 overflow-hidden group">
-                    <img src={beforePreview} alt="Before Preview" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setValue("beforeImage", null, { shouldValidate: true })}
-                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
-                    >
-                      <span className="text-xs font-bold">✕</span>
-                    </button>
-                  </div>
-                ) : (
-                  <FileUploadField
-                    name="beforeImage"
-                    label="Before Image"
-                    accept="image/*"
-                    maxSizeMB={5}
-                    allowedMimeTypes={["image/"]}
-                    allowedTypesLabel="JPG, PNG, WEBP"
-                  />
-                )}
-
-                {/* After Image */}
-                {afterPreview ? (
-                  <div className="relative border rounded-lg h-44 overflow-hidden group">
-                    <img src={afterPreview} alt="After Preview" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setValue("afterImage", null, { shouldValidate: true })}
-                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
-                    >
-                      <span className="text-xs font-bold">✕</span>
-                    </button>
-                  </div>
-                ) : (
-                  <FileUploadField
-                    name="afterImage"
-                    label="After Image"
-                    accept="image/*"
-                    maxSizeMB={5}
-                    allowedMimeTypes={["image/"]}
-                    allowedTypesLabel="JPG, PNG, WEBP"
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-[#1A1A2E]">
-                  Patient Name
-                </label>
-                <select
-                  {...register("patientName")}
-                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground ${
-                    errors.patientName ? "border-red-500" : "border-slate-200"
-                  }`}
-                >
-                  <option value="">Select Patient</option>
-                  {patients.map((pat: any) => (
-                    <option key={pat.id} value={pat.name}>
-                      {pat.name} ({pat.patientCode})
-                    </option>
-                  ))}
-                </select>
-                {errors.patientName && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.patientName.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-[#1A1A2E]">
-                  Treatment Title
-                </label>
-                <select
-                  {...register("title")}
-                  disabled={!selectedPatientName}
-                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${
-                    errors.title ? "border-red-500" : "border-slate-200"
-                  }`}
-                >
-                  {!selectedPatientName ? (
-                    <option value="">Select patient first</option>
-                  ) : (
-                    <>
-                      <option value="">Select Treatment Title</option>
-                      {treatmentTitleOptions.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-text">
+                    Patient Name
+                  </label>
+                  <select
+                    {...register("patientName")}
+                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground ${errors.patientName ? "border-red-500" : "border-slate-200"
+                      }`}
+                  >
+                    <option value="">Select Patient</option>
+                    {patients.map((pat: any) => (
+                      <option key={pat.id} value={pat.name}>
+                        {pat.name} ({pat.patientCode})
+                      </option>
+                    ))}
+                  </select>
+                  {errors.patientName && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.patientName.message}
+                    </p>
                   )}
-                </select>
-                {errors.title && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.title.message}
-                  </p>
-                )}
-              </div>
+                </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-[#1A1A2E]">
-                  Date
-                </label>
-                <select
-                  {...register("date")}
-                  disabled={!selectedPatientName}
-                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${
-                    errors.date ? "border-red-500" : "border-slate-200"
-                  }`}
-                >
-                  {!selectedPatientName ? (
-                    <option value="">Select patient first</option>
-                  ) : (
-                    <>
-                      <option value="">Select Date</option>
-                      {dateOptions.map((d) => (
-                        <option key={d} value={d}>
-                          {d}
-                        </option>
-                      ))}
-                    </>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-text">
+                    Treatment Title
+                  </label>
+                  <select
+                    {...register("title")}
+                    disabled={!selectedPatientName}
+                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.title ? "border-red-500" : "border-slate-200"
+                      }`}
+                  >
+                    {!selectedPatientName ? (
+                      <option value="">Select patient first</option>
+                    ) : (
+                      <>
+                        <option value="">Select Treatment Title</option>
+                        {treatmentTitleOptions.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                  {errors.title && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.title.message}
+                    </p>
                   )}
-                </select>
-                {errors.date && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.date.message}
-                  </p>
-                )}
-              </div>
+                </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-[#1A1A2E]">
-                  Location
-                </label>
-                <select
-                  {...register("location")}
-                  disabled={!selectedPatientName}
-                  className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${
-                    errors.location ? "border-red-500" : "border-slate-200"
-                  }`}
-                >
-                  {!selectedPatientName ? (
-                    <option value="">Select patient first</option>
-                  ) : (
-                    <>
-                      <option value="">Select Location</option>
-                      {locationOptions.map((loc) => (
-                        <option key={loc} value={loc}>
-                          {loc}
-                        </option>
-                      ))}
-                    </>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-text">
+                    Date
+                  </label>
+                  <select
+                    {...register("date")}
+                    disabled={!selectedPatientName}
+                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.date ? "border-red-500" : "border-slate-200"
+                      }`}
+                  >
+                    {!selectedPatientName ? (
+                      <option value="">Select patient first</option>
+                    ) : (
+                      <>
+                        <option value="">Select Date</option>
+                        {dateOptions.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                  {errors.date && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.date.message}
+                    </p>
                   )}
-                </select>
-                {errors.location && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.location.message}
-                  </p>
-                )}
-              </div>
-            </div>
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isUploading}
-                onClick={() => {
-                  resetForm();
-                  setIsModalOpen(false);
-                }}
-                className="flex-1 h-12 rounded-xl border-slate-200 text-sm font-bold text-[#1A1A2E] hover:bg-slate-50 cursor-pointer"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isUploading || createResultMutation.isPending}
-                className="flex-1 h-12 rounded-xl bg-[#0F3659] text-sm font-bold text-white hover:bg-[#0a2640] cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                {isUploading ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  "Add Result"
-                )}
-              </Button>
-            </div>
-          </form>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-text">
+                    Location
+                  </label>
+                  <select
+                    {...register("location")}
+                    disabled={!selectedPatientName}
+                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.location ? "border-red-500" : "border-slate-200"
+                      }`}
+                  >
+                    {!selectedPatientName ? (
+                      <option value="">Select patient first</option>
+                    ) : (
+                      <>
+                        <option value="">Select Location</option>
+                        {locationOptions.map((loc) => (
+                          <option key={loc} value={loc}>
+                            {loc}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                  {errors.location && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.location.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isUploading}
+                  onClick={() => {
+                    resetForm();
+                    setIsModalOpen(false);
+                  }}
+                  className="flex-1 h-12 rounded-xl border-slate-200 text-sm font-bold text-text hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isUploading || createResultMutation.isPending}
+                  className="flex-1 h-12 rounded-xl bg-[#0F3659] text-sm font-bold text-white hover:bg-[#0a2640] cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    "Add Result"
+                  )}
+                </Button>
+              </div>
+            </form>
           </FormProvider>
         </DialogContent>
       </Dialog>

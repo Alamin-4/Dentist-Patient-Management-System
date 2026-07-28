@@ -53,7 +53,7 @@ const DoctorCard = ({ data }: CardProps) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full bg-white rounded-lg border border-[#CEE0F4] overflow-hidden"
+      className="w-full bg-white rounded-lg border border-border overflow-hidden"
     >
       {/* Main Content Area */}
       <div className="p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-6">
@@ -67,8 +67,8 @@ const DoctorCard = ({ data }: CardProps) => {
               className="object-cover"
             />
           </div>
-          <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-            <ShieldCheck className="size-4 text-[#4CA30D]" />
+          <div className="flex items-center gap-1 text-xs font-medium text-text">
+            <ShieldCheck className="size-4 text-badge" />
             VERIFIED
           </div>
         </div>
@@ -76,7 +76,7 @@ const DoctorCard = ({ data }: CardProps) => {
         {/* Middle: Doctor Info */}
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl md:text-2xl font-bold text-[#1A1A2E]">
+            <h2 className="text-xl md:text-2xl font-bold text-text">
               {doctorName}
             </h2>
             {(data.consultationId || data.consultation?.id) && (
@@ -95,7 +95,7 @@ const DoctorCard = ({ data }: CardProps) => {
             {specialty}
           </p>
           <div className="flex items-center gap-1 pt-1">
-            <span className="text-[#1A1A2E] font-semibold mr-1">
+            <span className="text-text font-semibold mr-1">
               {rating}
             </span>
             {[...Array(5)].map((_, i) => (
@@ -118,7 +118,7 @@ const DoctorCard = ({ data }: CardProps) => {
         {/* Right: Procedure Info */}
         <div className="flex-1 space-y-1">
           <p className="text-slate-500 text-sm font-medium">Procedure</p>
-          <p className="text-lg font-semibold text-[#1A1A2E]">
+          <p className="text-lg font-semibold text-text">
             {procedureName}
           </p>
         </div>
@@ -135,14 +135,14 @@ const DoctorCard = ({ data }: CardProps) => {
         <div className="flex flex-col items-end gap-3 shrink-0 w-full md:w-auto">
           {isAccepted ? (
             <div className="text-right">
-              <p className="text-[#6B7280] text-sm font-medium mb-1">
+              <p className="text-sec-text text-sm font-medium mb-1">
                 Estimate Budget
               </p>
-              <p className="lg:text-xl font-bold text-[#0E3E65]">
+              <p className="lg:text-xl font-bold text-primary">
                 ${totalEstimate.toLocaleString()}
               </p>
               {isPaid && (
-                <p className="text-[#4CA30D] text-sm font-bold pt-2">
+                <p className="text-badge text-sm font-bold pt-2">
                   In Escrow
                 </p>
               )}

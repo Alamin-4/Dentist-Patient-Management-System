@@ -25,7 +25,7 @@ function PlanTable({
   return (
     <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-base font-semibold text-[#1A1A2E]">{label}</h3>
+        <h3 className="text-base font-semibold text-text">{label}</h3>
         {badge && (
           <span className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-medium text-gray-500">
             {badge}
@@ -62,7 +62,7 @@ function PlanTable({
           </tbody>
           <tfoot>
             <tr className="border-t border-gray-100 bg-gray-50/40">
-              <td className="px-4 py-3 text-sm font-semibold text-[#1A1A2E]">
+              <td className="px-4 py-3 text-sm font-semibold text-text">
                 {totalLabel}
               </td>
               <td
@@ -112,7 +112,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
         <>
           <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-base font-semibold text-[#1A1A2E]">
+              <h3 className="text-base font-semibold text-text">
                 {plan.final_plan.label}
               </h3>
               <span className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
@@ -152,7 +152,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-gray-100 bg-gray-50/40">
-                    <td className="px-4 py-3 text-sm font-semibold text-[#1A1A2E]">
+                    <td className="px-4 py-3 text-sm font-semibold text-text">
                       Final total
                     </td>
                     <td className="px-4 py-3 text-right text-sm font-bold text-emerald-600">
@@ -169,7 +169,7 @@ export function BookingTreatmentTab({ booking }: BookingTreatmentTabProps) {
       {/* Treatment Plan Agreement */}
       {plan.signed_by && (
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+          <h3 className="mb-4 text-base font-semibold text-text">
             Treatment Plan Agreement
           </h3>
           <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4">

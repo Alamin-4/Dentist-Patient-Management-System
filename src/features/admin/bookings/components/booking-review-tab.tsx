@@ -26,7 +26,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
       {/* Patient Review */}
       <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-[#1A1A2E]">
+          <h3 className="text-base font-semibold text-text">
             Patient Review
           </h3>
           <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
@@ -44,7 +44,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
               {review.reviewer_initials}
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#1A1A2E]">
+              <p className="text-sm font-semibold text-text">
                 {review.reviewer_name}
               </p>
               <p className="text-xs text-gray-400">{review.review_date}</p>
@@ -53,7 +53,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
           {/* Overall rating */}
           <div className="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5">
             <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-            <span className="text-sm font-semibold text-[#1A1A2E]">
+            <span className="text-sm font-semibold text-text">
               {review.overall_rating.toFixed(1)} overall
             </span>
           </div>
@@ -76,7 +76,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
                     )}
                   />
                 ))}
-                <span className="w-4 text-right text-sm font-semibold text-[#1A1A2E]">
+                <span className="w-4 text-right text-sm font-semibold text-text">
                   {cat.rating}
                 </span>
               </div>
@@ -109,7 +109,7 @@ export function BookingReviewTab({ booking }: BookingReviewTabProps) {
 
       {/* Before & After Results */}
       <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+        <h3 className="mb-4 text-base font-semibold text-text">
           Before &amp; After Results
         </h3>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">

@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/feedback/skeleton";
 
 export function ConsultationCardSkeleton() {
   return (
-    <div className="rounded-lg border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)] animate-pulse">
+    <div className="rounded-lg border border-border bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)] animate-pulse">
       <div className="grid gap-5 lg:grid-cols-[1.35fr_0.9fr_0.9fr] lg:items-start">
         {/* Doctor Info Group */}
         <div className="flex gap-4">

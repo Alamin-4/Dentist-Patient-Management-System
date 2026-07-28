@@ -34,7 +34,7 @@ export default function ProfileRedirectPage() {
       <div className="flex flex-col items-center gap-4 p-8 rounded-2xl bg-white border border-gray-100 shadow-sm">
         <Loader2 className="h-8 w-8 animate-spin text-[#10436B]" />
         <div className="text-center">
-          <p className="text-sm font-semibold text-[#1A1A2E]">Loading profile</p>
+          <p className="text-sm font-semibold text-text">Loading profile</p>
           <p className="text-xs text-gray-400 mt-1">Please wait while we redirect you...</p>
         </div>
       </div>
