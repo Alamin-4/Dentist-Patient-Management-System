@@ -53,7 +53,7 @@ export function ChangePassword() {
                 <div className="mb-6 flex items-center gap-3">
                     <Lock className="h-5 w-5 text-gray-400" />
                     <div>
-                        <h3 className="text-base font-semibold text-[#1A1A2E]">Change Password</h3>
+                        <h3 className="text-base font-semibold text-text">Change Password</h3>
                         <p className="text-sm text-gray-400">Choose a strong password with at least 8 characters.</p>
                     </div>
                 </div>
@@ -68,7 +68,7 @@ export function ChangePassword() {
                                 disabled={changePasswordMutation.isPending}
                                 placeholder="Enter old password"
                                 {...register("oldPassword", { required: "Current password is required" })}
-                                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-text outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-text ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-text"
                                     }`}
                             />
                             <button
@@ -96,7 +96,7 @@ export function ChangePassword() {
                                     required: "New password is required",
                                     minLength: { value: 8, message: "New password must be at least 8 characters long" },
                                 })}
-                                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-text outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-text ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-text"
                                     }`}
                             />
                             <button
@@ -124,7 +124,7 @@ export function ChangePassword() {
                                     required: "Please confirm your password",
                                     validate: (val) => val === newPasswordVal || "Passwords must match",
                                 })}
-                                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-[#1A1A2E] outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-[#1A1A2E] ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                                className={`h-12 w-full rounded-lg border bg-white px-4 pr-11 text-sm text-text outline-none placeholder:text-gray-300 focus:ring-1 focus:ring-text ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-text"
                                     }`}
                             />
                             <button
@@ -173,7 +173,7 @@ export function ChangePassword() {
                             "flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer min-w-[160px]",
                             changePasswordMutation.isPending || !Object.values(checks).every(Boolean) || newPasswordVal !== watch("confirmNewPassword")
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                : "bg-[#1A1A2E] hover:bg-[#1A1A2E]/90"
+                                : "bg-text hover:bg-text/90"
                         )}
                     >
                         {changePasswordMutation.isPending ? (

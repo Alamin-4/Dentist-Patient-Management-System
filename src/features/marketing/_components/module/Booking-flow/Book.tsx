@@ -416,7 +416,7 @@ export default function IntakeModal() {
         >
           {/* Header */}
           <div className="relative bg-white pl-8 pr-16 py-6 border-b border-[#F3F4F6] shrink-0">
-            <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
+            <DialogTitle className="text-[20px] font-bold text-text">
               {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
             </DialogTitle>
           </div>
@@ -430,7 +430,7 @@ export default function IntakeModal() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <span className="text-[#6B7280] font-medium text-[14px] whitespace-nowrap">
+              <span className="text-sec-text font-medium text-[14px] whitespace-nowrap">
                 Step {step} of {TOTAL_STEPS}
               </span>
             </div>
@@ -449,7 +449,7 @@ export default function IntakeModal() {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="px-6 lg:px-8 py-2 lg:py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all cursor-pointer"
+                  className="px-6 lg:px-8 py-2 lg:py-3.5 bg-white border border-[#E5E7EB] text-text rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all cursor-pointer"
                 >
                   Back
                 </button>

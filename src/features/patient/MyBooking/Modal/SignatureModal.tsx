@@ -88,7 +88,7 @@ const SignatureModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="text-xl font-bold text-[#1A1A2E]">E-Signature</h2>
+          <h2 className="text-xl font-bold text-text">E-Signature</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-slate-100 rounded-full transition-colors"
@@ -105,7 +105,7 @@ const SignatureModal = ({
               className={cn(
                 "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all",
                 activeTab === "draw"
-                  ? "bg-white shadow-sm text-[#1A1A2E]"
+                  ? "bg-white shadow-sm text-text"
                   : "text-slate-400",
               )}
             >
@@ -116,7 +116,7 @@ const SignatureModal = ({
               className={cn(
                 "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all",
                 activeTab === "type"
-                  ? "bg-white shadow-sm text-[#1A1A2E]"
+                  ? "bg-white shadow-sm text-text"
                   : "text-slate-400",
               )}
             >
@@ -155,7 +155,7 @@ const SignatureModal = ({
                   placeholder="Type your name here..."
                   value={typedName}
                   onChange={(e) => setTypedName(e.target.value)}
-                  className="w-full text-4xl text-center font-serif italic border-none focus:ring-0 placeholder:text-slate-200 text-[#1A1A2E]"
+                  className="w-full text-4xl text-center font-serif italic border-none focus:ring-0 placeholder:text-slate-200 text-text"
                 />
               </div>
             )}
@@ -166,7 +166,7 @@ const SignatureModal = ({
         <div className="px-6 py-6 border-t border-slate-100 flex items-center justify-between gap-4">
           <button
             onClick={onClose}
-            className="flex-1 py-3 border border-slate-200 rounded-lg font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors"
+            className="flex-1 py-3 border border-slate-200 rounded-lg font-bold text-text hover:bg-slate-50 transition-colors"
           >
             Cancel
           </button>

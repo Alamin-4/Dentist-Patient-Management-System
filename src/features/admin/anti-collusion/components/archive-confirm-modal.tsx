@@ -22,7 +22,7 @@ export function ArchiveConfirmModal({ open, dentistName, onClose, onConfirm }: A
       <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-2xl">
-          <h3 className="text-base font-bold text-[#1A1A2E]">Archive {dentistName}?</h3>
+          <h3 className="text-base font-bold text-text">Archive {dentistName}?</h3>
           <p className="mt-2 text-sm text-gray-500 leading-relaxed">
             Their profile will be hidden from patient search and they cannot accept new bookings.
             Active bookings will continue unaffected. This can be reversed — you can reactivate them
@@ -31,7 +31,7 @@ export function ArchiveConfirmModal({ open, dentistName, onClose, onConfirm }: A
           <div className="mt-5 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] hover:bg-gray-50 transition-colors"
+              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-text hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>

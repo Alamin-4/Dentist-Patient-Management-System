@@ -93,10 +93,10 @@ export function ContactMessagesTable() {
     {
       key: "sender",
       header: "Sender",
-      className: "w-48 font-semibold text-[#1A1A2E]",
+      className: "w-48 font-semibold text-text",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="truncate text-xs font-bold text-[#1A1A2E]">{row.name}</span>
+          <span className="truncate text-xs font-bold text-text">{row.name}</span>
           <span className="text-[11px] text-slate-400 font-medium truncate">{row.email}</span>
         </div>
       ),
@@ -107,7 +107,7 @@ export function ContactMessagesTable() {
       className: "max-w-xs",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-bold text-xs text-[#1A1A2E] truncate">{row.subject}</span>
+          <span className="font-bold text-xs text-text truncate">{row.subject}</span>
           <span className="text-xs text-slate-400 line-clamp-1">{row.message}</span>
         </div>
       ),
@@ -134,7 +134,7 @@ export function ContactMessagesTable() {
       {/* Header */}
       <div className="border-b border-slate-200 pb-4 flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-[#1A1A2E]">Contact Inquiries Inbox</h2>
+          <h2 className="text-base font-bold text-text">Contact Inquiries Inbox</h2>
           <p className="mt-0.5 text-xs text-slate-500">
             View and respond to customer support inquiries submitted from the website.
           </p>
@@ -184,7 +184,7 @@ export function ContactMessagesTable() {
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-2 gap-4">
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-400">Sender Name</p>
-                <p className="text-xs font-bold text-[#1A1A2E]">{selectedMessage.name}</p>
+                <p className="text-xs font-bold text-text">{selectedMessage.name}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-400">Received Date</p>
@@ -203,7 +203,7 @@ export function ContactMessagesTable() {
             {/* Content Card */}
             <div className="space-y-2">
               <p className="text-[10px] uppercase font-bold text-slate-400">Subject</p>
-              <h4 className="text-sm font-bold text-[#1A1A2E] leading-snug">
+              <h4 className="text-sm font-bold text-text leading-snug">
                 {selectedMessage.subject}
               </h4>
 

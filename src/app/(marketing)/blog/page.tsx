@@ -53,7 +53,7 @@ export default function BlogPage() {
   return (
     <div className="bg-slate-50 min-h-screen py-16 px-6 md:px-12">
       <div className="max-w-400 w-11/12 mx-auto space-y-12">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
           <div className="space-y-2 max-w-xl text-left">
@@ -77,17 +77,17 @@ export default function BlogPage() {
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="text-center py-24 bg-white border border-[#CEE0F4] rounded-3xl text-gray-400 shadow-xs">
+          <div className="text-center py-24 bg-white border border-border rounded-3xl text-gray-400 shadow-xs">
             No articles found matching "{search}".
           </div>
         ) : (
           <div className="space-y-12">
-            
+
             {/* Featured Post (1 Col Hero Banner) */}
             {featuredPost && (
               <Link
                 href={`/blog/${featuredPost.slug}`}
-                className="group grid grid-cols-1 lg:grid-cols-5 bg-white border border-[#CEE0F4] rounded-3xl overflow-hidden hover:shadow-lg transition-all duration-300"
+                className="group grid grid-cols-1 lg:grid-cols-5 bg-white border border-border rounded-3xl overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 <div className="lg:col-span-3 h-64 sm:h-96 relative bg-slate-100 overflow-hidden">
                   <img
@@ -102,7 +102,7 @@ export default function BlogPage() {
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-[#10436B] text-xs font-bold rounded-full">
                       Featured Article
                     </span>
-                    <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] leading-snug group-hover:text-[#10436B] transition-colors">
+                    <h2 className="text-2xl md:text-3xl font-black text-text leading-snug group-hover:text-[#10436B] transition-colors">
                       {featuredPost.title}
                     </h2>
                     <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
@@ -116,7 +116,7 @@ export default function BlogPage() {
                         <User className="h-4 w-4 text-[#10436B]" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-[#1A1A2E]">{featuredPost.author}</p>
+                        <p className="text-xs font-bold text-text">{featuredPost.author}</p>
                         <p className="text-[10px] text-gray-400 font-medium">
                           {new Date(featuredPost.publishedAt || featuredPost.createdAt).toLocaleDateString("en-US", {
                             month: "short",
@@ -143,7 +143,7 @@ export default function BlogPage() {
                   <Link
                     key={post.id}
                     href={`/blog/${post.slug}`}
-                    className="group flex flex-col bg-white border border-[#CEE0F4] rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300"
+                    className="group flex flex-col bg-white border border-border rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300"
                   >
                     <div className="h-48 w-full bg-slate-100 overflow-hidden relative">
                       <img
@@ -155,7 +155,7 @@ export default function BlogPage() {
 
                     <div className="p-5 flex-1 flex flex-col justify-between gap-5 text-left">
                       <div className="space-y-3">
-                        <h3 className="font-bold text-base text-[#1A1A2E] group-hover:text-[#10436B] transition-colors leading-snug line-clamp-2">
+                        <h3 className="font-bold text-base text-text group-hover:text-[#10436B] transition-colors leading-snug line-clamp-2">
                           {post.title}
                         </h3>
                         <p className="text-xs text-gray-400 leading-relaxed line-clamp-3">
@@ -169,7 +169,7 @@ export default function BlogPage() {
                             <User className="h-3.5 w-3.5 text-[#10436B]" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold text-[#1A1A2E]">{post.author}</p>
+                            <p className="text-[10px] font-bold text-text">{post.author}</p>
                             <p className="text-[9px] text-gray-400">
                               {new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
                             </p>

@@ -128,7 +128,7 @@ export default function CreateTreatmentPlanModal({
         <DialogContent className="sm:max-w-275 w-[95vw] rounded-lg overflow-y-auto p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none">
           {/* Header */}
           <div className="px-8 py-6 border-b border-slate-200">
-            <DialogTitle className="text-lg lg:text-xl font-semibold text-[#1A1A2E]">
+            <DialogTitle className="text-lg lg:text-xl font-semibold text-text">
               Create Treatment Plan
             </DialogTitle>
           </div>
@@ -152,7 +152,7 @@ export default function CreateTreatmentPlanModal({
                       <h3 className="text-2xl font-semibold text-slate-900">
                         {patientName}
                       </h3>
-                      <span className="px-3 py-1 bg-[#F0F2F5] text-[#6B7280] text-[12px] rounded-full border border-slate-200">
+                      <span className="px-3 py-1 bg-[#F0F2F5] text-sec-text text-[12px] rounded-full border border-slate-200">
                         {consultation?.treatmentPlan ? consultation.treatmentPlan.status : "Not Sent"}
                       </span>
                     </div>
@@ -200,7 +200,7 @@ export default function CreateTreatmentPlanModal({
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 divide-x divide-slate-100">
                       <div className="p-4">
-                        <p className="text-[12px] text-[#6B7280] mb-1">
+                        <p className="text-[12px] text-sec-text mb-1">
                           Last Visited
                         </p>
                         <p className="text-[14px] font-bold text-slate-800">
@@ -208,7 +208,7 @@ export default function CreateTreatmentPlanModal({
                         </p>
                       </div>
                       <div className="p-4">
-                        <p className="text-[12px] text-[#6B7280] mb-1">
+                        <p className="text-[12px] text-sec-text mb-1">
                           Existing conditions
                         </p>
                         <p className="text-[14px] font-bold text-slate-800">
@@ -306,14 +306,14 @@ export default function CreateTreatmentPlanModal({
               {/* Total Cost Row */}
               <div className="p-5 rounded-lg border border-slate-200 flex justify-between items-center bg-white">
                 <span className="text-sm font-semibold text-[#4A4A4C]">Total Cost</span>
-                <span className=" font-semibold text-[#0E3E65]">
+                <span className=" font-semibold text-primary">
                   ${totalCost}
                 </span>
               </div>
 
               {/* Additional Information */}
               <div className="space-y-2 pt-4">
-                <label className="text-sm font-medium text-[#6B7280] inline-block">
+                <label className="text-sm font-medium text-sec-text inline-block">
                   Any other information to share?
                 </label>
                 <Textarea
@@ -337,7 +337,7 @@ export default function CreateTreatmentPlanModal({
               <Button
                 type="submit"
                 disabled={proposePlan.isPending}
-                className="bg-[#0E3E65] hover:bg-[#082f46] cursor-pointer text-white h-14 px-8 rounded-lg font-semibold disabled:opacity-50"
+                className="bg-primary hover:bg-[#082f46] cursor-pointer text-white h-14 px-8 rounded-lg font-semibold disabled:opacity-50"
               >
                 {proposePlan.isPending ? "Sending..." : "Create plan and send to patient"}
               </Button>

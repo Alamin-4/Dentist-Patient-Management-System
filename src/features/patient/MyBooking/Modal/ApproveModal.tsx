@@ -27,7 +27,7 @@ export function ConfirmReleaseModal({
           <X className="size-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-[#1A1A2E] pr-8 leading-snug">
+        <h2 className="text-2xl font-bold text-text pr-8 leading-snug">
           Confirm &amp; Release Payment
         </h2>
 
@@ -36,7 +36,7 @@ export function ConfirmReleaseModal({
           the code below with the doctor when you arrive at the clinic.
         </p>
 
-        <p className="text-5xl font-bold text-[#1A1A2E] tracking-widest mt-1">
+        <p className="text-5xl font-bold text-text tracking-widest mt-1">
           {paymentCode}
         </p>
       </DialogContent>

@@ -82,10 +82,10 @@ export default function UserMenu({
                         </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[#1A1A2E] truncate">
+                        <p className="text-sm font-semibold text-text truncate">
                             {displayName}
                         </p>
-                        <p className="text-xs text-[#6B7280] truncate">{user?.email}</p>
+                        <p className="text-xs text-sec-text truncate">{user?.email}</p>
                     </div>
                 </div>
 

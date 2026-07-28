@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/feedback/skeleton";
 function ReferralStatsSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
-      <section className="rounded-[18px] border border-[#CEE0F4] bg-white px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <section className="rounded-[18px] border border-border bg-white px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <div className="flex flex-col items-center gap-4 text-center">
           <Skeleton className="h-4 w-28 rounded-full" />
           <Skeleton className="h-10 w-56 rounded-full" />
@@ -12,7 +12,7 @@ function ReferralStatsSkeleton() {
         </div>
       </section>
 
-      <section className="rounded-[18px] border border-[#CEE0F4] bg-white px-4 py-6 sm:px-6 lg:px-5 lg:py-8">
+      <section className="rounded-[18px] border border-border bg-white px-4 py-6 sm:px-6 lg:px-5 lg:py-8">
         <div className="space-y-3">
           <Skeleton className="h-4 w-32 rounded-full" />
           <Skeleton className="h-8 w-20 rounded-full" />
@@ -25,7 +25,7 @@ function ReferralStatsSkeleton() {
 
 function ReferralHistorySkeleton() {
   return (
-    <section className="rounded-[18px] border border-[#E9EDEE] bg-white px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
+    <section className="rounded-[18px] border border-stroke bg-white px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Skeleton className="h-6 w-40 rounded-full" />
         <Skeleton className="h-10 w-full max-w-70 rounded-md" />

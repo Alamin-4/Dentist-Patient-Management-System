@@ -66,7 +66,7 @@ export function GeneralSocials() {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {/* Header */}
       <div className="border-b border-slate-200 pb-4">
-        <h2 className="text-base font-bold text-[#1A1A2E]">General & Social Branding</h2>
+        <h2 className="text-base font-bold text-text">General & Social Branding</h2>
         <p className="mt-0.5 text-xs text-slate-500">
           Manage dynamic site branding, footer tagline text, social media profiles, and support team details.
         </p>
@@ -75,7 +75,7 @@ export function GeneralSocials() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Footer Branding */}
         <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
-          <h3 className="text-xs font-bold text-[#1A1A2E] uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
             <Globe className="h-4 w-4 text-[#10436B]" />
             Footer Brand Tagline
           </h3>
@@ -98,7 +98,7 @@ export function GeneralSocials() {
 
         {/* Contact Info */}
         <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
-          <h3 className="text-xs font-bold text-[#1A1A2E] uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
             <Mail className="h-4 w-4 text-[#10436B]" />
             Contact Details
           </h3>
@@ -165,7 +165,7 @@ export function GeneralSocials() {
 
         {/* Social Media Links */}
         <div className="col-span-1 md:col-span-2 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
-          <h3 className="text-xs font-bold text-[#1A1A2E] uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
             <ShareIcon className="h-4 w-4 text-[#10436B]" />
             Social Media Links
           </h3>

@@ -79,7 +79,7 @@ export default function ProfileSettingsPage() {
 
   return (
     <div className="">
-      <h1 className="text-2xl lg:text-3xl font-bold text-[#1A1A2E] mb-8">
+      <h1 className="text-2xl lg:text-3xl font-bold text-text mb-8">
         Profile & Settings
       </h1>
 
@@ -116,7 +116,7 @@ export default function ProfileSettingsPage() {
             />
           </div>
 
-          <h3 className="text-2xl font-bold text-[#1A1A2E] text-center">{displayName}</h3>
+          <h3 className="text-2xl font-bold text-text text-center">{displayName}</h3>
           <p className="text-slate-400 font-medium text-sm mb-10 text-center">
             {user?.email || ""}
           </p>

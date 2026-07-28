@@ -12,8 +12,8 @@ export default function CtaSearchSection() {
 
       <div className="relative z-10 max-w-400 w-11/12 mx-auto flex flex-col items-center text-center">
         {/* Top Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#E3A32A]/50 bg-black/20 backdrop-blur-md mb-8">
-          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#F2C467] bg-[#CDA555]/32 backdrop-blur-md mb-8">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#17B26A]">
             <span className="text-[10px] text-white italic">✓</span>
           </div>
           <span className="text-white text-sm font-medium">
@@ -21,7 +21,7 @@ export default function CtaSearchSection() {
           </span>
         </div>
 
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-12 tracking-tight">
+        <h2 className="text-3xl md:text-4xl lg:text-[48px] font-bold text-white mb-12 tracking-tight">
           Find Verified Dentist
         </h2>
 

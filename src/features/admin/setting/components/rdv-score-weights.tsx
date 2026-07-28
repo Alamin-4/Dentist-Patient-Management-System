@@ -93,7 +93,7 @@ export function RdvScoreWeights() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
-          <h2 className="text-base font-bold text-[#1A1A2E]">RDV Score Weights</h2>
+          <h2 className="text-base font-bold text-text">RDV Score Weights</h2>
           <p className="mt-0.5 text-xs text-slate-500">
             Set the RDV score contribution for each verification phase. Total must equal 100%.
           </p>
@@ -117,7 +117,7 @@ export function RdvScoreWeights() {
           <div key={phase.id} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full border-2 border-slate-300 bg-slate-100" />
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-[#1A1A2E]">{phase.label}</p>
+              <p className="text-xs font-bold text-text">{phase.label}</p>
               <p className="text-[11px] text-slate-400">{phase.meta}</p>
             </div>
             <div className="flex items-center gap-1">

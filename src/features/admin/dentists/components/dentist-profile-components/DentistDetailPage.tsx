@@ -128,11 +128,11 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
         <div className="flex flex-col gap-5">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Link href="/admin/dentists" className="flex items-center gap-1.5 font-medium text-gray-500 transition-colors hover:text-[#1A1A2E]">
+                <Link href="/admin/dentists" className="flex items-center gap-1.5 font-medium text-gray-500 transition-colors hover:text-text">
                     <ArrowLeft className="h-4 w-4" /> Dentists
                 </Link>
                 <span>/</span>
-                <span className="font-medium text-[#1A1A2E]">{fullName}</span>
+                <span className="font-medium text-text">{fullName}</span>
             </div>
 
             {/* Profile header */}
@@ -147,9 +147,9 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                         </div>
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
-                                <h2 className="text-xl font-bold text-[#1A1A2E] sm:text-2xl">{fullName}</h2>
+                                <h2 className="text-xl font-bold text-text sm:text-2xl">{fullName}</h2>
                                 {rdvScore > 0 && (
-                                    <span className="flex items-center gap-1 rounded-full bg-[#1A1A2E] px-2.5 py-0.5 text-xs font-bold text-white">
+                                    <span className="flex items-center gap-1 rounded-full bg-text px-2.5 py-0.5 text-xs font-bold text-white">
                                         <CheckCircle2 className="h-3 w-3" /> RDV · {rdvScore}
                                     </span>
                                 )}
@@ -180,7 +180,7 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                                 {Array.from({ length: 5 }).map((_, i) => (
                                     <Star key={i} className={`h-4 w-4 ${i < Math.round(rdvScore / 20) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`} />
                                 ))}
-                                <span className="ml-1 text-xl font-bold text-[#1A1A2E]">{rdvScore}</span>
+                                <span className="ml-1 text-xl font-bold text-text">{rdvScore}</span>
                             </div>
                             <p className="mt-0.5 text-xs text-gray-400">RDV Score</p>
                         </div>
@@ -210,7 +210,7 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                 {/* Sidebar */}
                 <div className="hidden w-64 shrink-0 flex-col gap-4 lg:flex">
                     <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-                        <p className="mb-3 text-sm font-bold text-[#1A1A2E]">Verification Status</p>
+                        <p className="mb-3 text-sm font-bold text-text">Verification Status</p>
                         <div className="divide-y divide-gray-50">
                             <VerificationStatus label="Phase 1 — Identity" status={ph1Status} short="Ph.1" />
                             <VerificationStatus label="Phase 2 — Operations" status={ph2Status} short="Ph.2" />
@@ -219,7 +219,7 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                     </div>
 
                     <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-                        <p className="mb-3 text-sm font-bold text-[#1A1A2E]">Admin Actions</p>
+                        <p className="mb-3 text-sm font-bold text-text">Admin Actions</p>
                         <div className="flex flex-col gap-2">
                             <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
                                 <Pencil className="h-4 w-4 text-gray-400" /> Edit profile

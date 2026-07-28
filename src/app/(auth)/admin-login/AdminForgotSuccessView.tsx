@@ -11,11 +11,11 @@ export default function AdminForgotSuccessView({ email, onBack }: AdminForgotSuc
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-[28px] font-extrabold text-[#1A1A2E] leading-tight tracking-tight mb-2">
+        <h1 className="text-[28px] font-extrabold text-text leading-tight tracking-tight mb-2">
           Check your inbox
         </h1>
         <p className="text-sm text-gray-500">
-          A password recovery email has been sent to <strong className="text-[#1A1A2E]">{email}</strong>. Please check your inbox and spam folder.
+          A password recovery email has been sent to <strong className="text-text">{email}</strong>. Please check your inbox and spam folder.
         </p>
       </div>
 
@@ -24,8 +24,8 @@ export default function AdminForgotSuccessView({ email, onBack }: AdminForgotSuc
         onClick={onBack}
         className={cn(
           "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
-          "bg-[#1A1A2E] hover:bg-[#0D2B3E]",
-          "focus:outline-none focus:ring-2 focus:ring-[#1A1A2E]/30 focus:ring-offset-2",
+          "bg-text hover:bg-[#0D2B3E]",
+          "focus:outline-none focus:ring-2 focus:ring-text/30 focus:ring-offset-2",
         )}
       >
         Back to Sign In

@@ -51,13 +51,13 @@ function DentistCard({ c }: { c: Consultation }) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-base font-semibold text-[#1A1A2E]">
+        <p className="text-base font-semibold text-text">
           {c.dentist_name}
         </p>
         <p className="text-sm text-gray-500">{c.specialty}</p>
         {/* Stars */}
         <div className="mt-1 flex items-center gap-1">
-          <span className="text-sm font-semibold text-[#1A1A2E]">
+          <span className="text-sm font-semibold text-text">
             {c.rating}
           </span>
           {Array.from({ length: 5 }).map((_, i) => (
@@ -81,7 +81,7 @@ function DentistCard({ c }: { c: Consultation }) {
           </div>
         )}
         {/* RDV Score */}
-        <div className="mt-2 inline-flex items-center rounded-md border border-gray-200 px-2.5 py-1 text-sm font-semibold text-[#1A1A2E]">
+        <div className="mt-2 inline-flex items-center rounded-md border border-gray-200 px-2.5 py-1 text-sm font-semibold text-text">
           {c.rdv_score} RDV Score
         </div>
       </div>
@@ -153,7 +153,7 @@ export function PatientConsultationsTab({
                   <p className="text-xs uppercase tracking-wide text-gray-400">
                     Procedure
                   </p>
-                  <p className="mt-0.5 text-sm font-semibold text-[#1A1A2E]">
+                  <p className="mt-0.5 text-sm font-semibold text-text">
                     {c.procedure}
                   </p>
                   {c.estimate_min !== undefined && (
@@ -161,7 +161,7 @@ export function PatientConsultationsTab({
                       <p className="mt-2 text-xs uppercase tracking-wide text-gray-400">
                         Estimate Budget
                       </p>
-                      <p className="mt-0.5 text-lg font-bold text-[#1A1A2E]">
+                      <p className="mt-0.5 text-lg font-bold text-text">
                         {c.estimate_min === c.estimate_max
                           ? `$${c.estimate_min.toLocaleString()}`
                           : `$${c.estimate_min.toLocaleString()} – $${c.estimate_max!.toLocaleString()}`}
@@ -174,7 +174,7 @@ export function PatientConsultationsTab({
               {c.date && (
                 <div className="mt-4 flex flex-col gap-1 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-[#1A1A2E]">
+                    <p className="text-sm font-semibold text-text">
                       {formatDate(c.date)}
                     </p>
                     <p className="text-sm text-gray-400">
@@ -182,13 +182,13 @@ export function PatientConsultationsTab({
                     </p>
                   </div>
                   {activeTab === "upcoming" && (
-                    <button className="mt-2 flex items-center gap-1.5 text-sm font-medium text-[#1A1A2E] underline underline-offset-2 sm:mt-0">
+                    <button className="mt-2 flex items-center gap-1.5 text-sm font-medium text-text underline underline-offset-2 sm:mt-0">
                       <CalendarPlus className="h-4 w-4" />
                       Add to calendar
                     </button>
                   )}
                   {activeTab === "active" && (
-                    <button className="mt-2 rounded-lg bg-[#1A1A2E] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors sm:mt-0">
+                    <button className="mt-2 rounded-lg bg-text px-5 py-2 text-sm font-semibold text-white hover:bg-text/90 transition-colors sm:mt-0">
                       Join Consultation
                     </button>
                   )}
@@ -211,7 +211,7 @@ export function PatientConsultationsTab({
                   <p className="text-xs uppercase tracking-wide text-gray-400">
                     Procedure
                   </p>
-                  <p className="mt-0.5 text-sm font-semibold text-[#1A1A2E]">
+                  <p className="mt-0.5 text-sm font-semibold text-text">
                     {c.procedure}
                   </p>
                   {c.estimate_status === "pending" ? (
@@ -221,7 +221,7 @@ export function PatientConsultationsTab({
                       </span>
                       {c.time_remaining && (
                         <div className="mt-2 text-right">
-                          <p className="text-xl font-bold text-[#1A1A2E]">
+                          <p className="text-xl font-bold text-text">
                             {c.time_remaining}
                           </p>
                           <p className="text-xs text-gray-400">Time remaining</p>
@@ -234,7 +234,7 @@ export function PatientConsultationsTab({
                         <p className="mt-2 text-xs uppercase tracking-wide text-gray-400">
                           Estimate Budget
                         </p>
-                        <p className="mt-0.5 text-lg font-bold text-[#1A1A2E]">
+                        <p className="mt-0.5 text-lg font-bold text-text">
                           ${c.estimate_min.toLocaleString()}
                         </p>
                       </>
@@ -252,7 +252,7 @@ export function PatientConsultationsTab({
                     {c.estimate_message}
                   </p>
                   {c.estimate_status === "received" && (
-                    <button className="shrink-0 rounded-lg bg-[#1A1A2E] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors">
+                    <button className="shrink-0 rounded-lg bg-text px-5 py-2 text-sm font-semibold text-white hover:bg-text/90 transition-colors">
                       Review full plan
                     </button>
                   )}

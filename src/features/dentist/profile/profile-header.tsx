@@ -59,7 +59,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             {isFullyVerified && !isPaymentPending ? (
               <Badge
                 variant="secondary"
-                className="bg-[#4CA30D]/11 text-[#4CA30D] hover:bg-[#DEF7EC] border-none px-2 py-2 font-semibold text-xs rounded-md flex items-center gap-1"
+                className="bg-badge/11 text-badge hover:bg-[#DEF7EC] border-none px-2 py-2 font-semibold text-xs rounded-md flex items-center gap-1"
               >
                 <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">

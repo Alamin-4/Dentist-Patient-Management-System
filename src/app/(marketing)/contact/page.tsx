@@ -92,12 +92,12 @@ export default function ContactPage() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Info Cards */}
-            <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
+            <div className="bg-white rounded-2xl border border-border p-6 shadow-sm flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
                 <Mail className="h-6 w-6 text-[#10436B]" />
               </div>
               <div className="space-y-1">
-                <h4 className="font-bold text-[#1A1A2E] text-base">Email Support</h4>
+                <h4 className="font-bold text-text text-base">Email Support</h4>
                 <p className="text-xs text-gray-400">Response within 24 hours</p>
                 <a href={`mailto:${contactInfo.email}`} className="text-sm font-semibold text-[#10436B] hover:underline block pt-1">
                   {contactInfo.email}
@@ -106,12 +106,12 @@ export default function ContactPage() {
             </div>
 
             {contactInfo.phone && (
-              <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
+              <div className="bg-white rounded-2xl border border-border p-6 shadow-sm flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
                   <Phone className="h-6 w-6 text-[#10436B]" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-bold text-[#1A1A2E] text-base">Hotline Phone</h4>
+                  <h4 className="font-bold text-text text-base">Hotline Phone</h4>
                   <a href={`tel:${contactInfo.phone}`} className="text-sm font-semibold text-[#10436B] hover:underline block pt-1">
                     {contactInfo.phone}
                   </a>
@@ -120,12 +120,12 @@ export default function ContactPage() {
             )}
 
             {contactInfo.address && (
-              <div className="bg-white rounded-2xl border border-[#CEE0F4] p-6 shadow-sm flex items-start gap-4">
+              <div className="bg-white rounded-2xl border border-border p-6 shadow-sm flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[#F4F9FD] flex items-center justify-center shrink-0">
                   <MapPin className="h-6 w-6 text-[#10436B]" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-bold text-[#1A1A2E] text-base">Headquarters</h4>
+                  <h4 className="font-bold text-text text-base">Headquarters</h4>
                   <p className="text-xs text-gray-400">Global Operations Center</p>
                   <p className="text-sm font-medium text-slate-600 leading-relaxed pt-1">
                     {contactInfo.address}
@@ -137,8 +137,8 @@ export default function ContactPage() {
           </div>
 
           {/* Right: Contact Form (3 cols) */}
-          <div className="lg:col-span-3 bg-white border border-[#CEE0F4] rounded-2xl p-6 md:p-10 shadow-sm space-y-6">
-            <h3 className="text-xl font-black text-[#1A1A2E] flex items-center gap-2">
+          <div className="lg:col-span-3 bg-white border border-border rounded-2xl p-6 md:p-10 shadow-sm space-y-6">
+            <h3 className="text-xl font-black text-text flex items-center gap-2">
               <HelpCircle className="h-5 w-5 text-[#10436B]" />
               Send Us a Message
             </h3>

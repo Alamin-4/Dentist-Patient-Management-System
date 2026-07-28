@@ -208,7 +208,7 @@ export default function Booking() {
     <div className="flex flex-col gap-5">
       {/* ── Page Header ─────────────────────────────────────────────── */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">
+        <h1 className="text-2xl font-bold tracking-tight text-text">
           Bookings
         </h1>
         <p className="mt-0.5 text-sm text-gray-500">
@@ -230,7 +230,7 @@ export default function Booking() {
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}
             </p>
-            <p className="mt-1.5 text-3xl font-bold tracking-tight text-[#1A1A2E]">
+            <p className="mt-1.5 text-3xl font-bold tracking-tight text-text">
               {s.value}
             </p>
           </div>
@@ -256,7 +256,7 @@ export default function Booking() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search booking ID, patient, dentist, procedure..."
-              className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+              className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
             />
           </div>
           <input
@@ -264,12 +264,12 @@ export default function Booking() {
             placeholder="mm/dd/yyyy"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="h-9 w-36 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-500 outline-none focus:border-[#1A1A2E]"
+            className="h-9 w-36 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-500 outline-none focus:border-text"
           />
           <select
             value={selectedDentist}
             onChange={(e) => setSelectedDentist(e.target.value)}
-            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-text"
           >
             <option value="All dentists">All dentists</option>
             {dentistOptions.map((name) => (
@@ -281,7 +281,7 @@ export default function Booking() {
           <select
             value={selectedEscrow}
             onChange={(e) => setSelectedEscrow(e.target.value)}
-            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-text"
           >
             <option value="All escrow states">All escrow states</option>
             <option value="In Escrow">In Escrow</option>
@@ -332,7 +332,7 @@ export default function Booking() {
                           initials={b.patient.initials}
                           color={b.patient.avatar_color}
                         />
-                        <span className="text-sm font-medium text-[#1A1A2E] truncate">
+                        <span className="text-sm font-medium text-text truncate">
                           {b.patient.name}
                         </span>
                       </div>
@@ -345,7 +345,7 @@ export default function Booking() {
                           color={b.dentist.avatar_color}
                         />
                         <div>
-                          <p className="text-sm font-medium text-[#1A1A2E]">
+                          <p className="text-sm font-medium text-text">
                             {b.dentist.name}
                           </p>
                           <p className="text-xs text-gray-400">
@@ -385,7 +385,7 @@ export default function Booking() {
                       )}
                     </td>
                     {/* Amount */}
-                    <td className="px-4 py-3.5 text-sm font-semibold text-[#1A1A2E]">
+                    <td className="px-4 py-3.5 text-sm font-semibold text-text">
                       ${b.amount.toLocaleString()}
                     </td>
                     {/* Date */}

@@ -115,7 +115,7 @@ export const ConsultationCard = ({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-[#1A1A2E] text-[17px] leading-snug truncate">
+                <h3 className="font-bold text-text text-[17px] leading-snug truncate">
                   {patientName || "Patient"}
                 </h3>
                 {data.requestStatus === "MISSED" && (
@@ -146,7 +146,7 @@ export const ConsultationCard = ({
         {type === "Treatment Estimate" && (
           <>
             <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-bold text-[#1A1A2E]">
+              <span className="text-sm font-bold text-text">
                 Treatment Plan Status
               </span>
               <span
@@ -172,11 +172,11 @@ export const ConsultationCard = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-gray-400 font-semibold mb-1">Treatment Procedure</p>
-              <p className="text-sm font-bold text-[#1A1A2E] truncate pr-2">{procedure}</p>
+              <p className="text-sm font-bold text-text truncate pr-2">{procedure}</p>
             </div>
             <div>
               <p className="text-xs text-gray-400 font-semibold mb-1">Approx. Budget</p>
-              <p className="text-sm font-bold text-[#1A1A2E]">{budget}</p>
+              <p className="text-sm font-bold text-text">{budget}</p>
             </div>
           </div>
 
@@ -186,11 +186,11 @@ export const ConsultationCard = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-gray-400 font-semibold mb-1">Date</p>
-              <p className="text-sm font-bold text-[#1A1A2E]">{date}</p>
+              <p className="text-sm font-bold text-text">{date}</p>
             </div>
             <div>
               <p className="text-xs text-gray-400 font-semibold mb-1">Time slot</p>
-              <p className="text-sm font-bold text-[#1A1A2E]">{timeSlot}</p>
+              <p className="text-sm font-bold text-text">{timeSlot}</p>
             </div>
           </div>
         </div>

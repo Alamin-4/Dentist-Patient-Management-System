@@ -20,7 +20,7 @@ function InfoGrid({
           <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
             {item.label}
           </p>
-          <div className="mt-1 text-sm font-medium text-[#1A1A2E]">{item.value}</div>
+          <div className="mt-1 text-sm font-medium text-text">{item.value}</div>
         </div>
       ))}
     </div>
@@ -83,7 +83,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
     <div className="flex flex-col gap-4">
       {/* Patient & Dentist */}
       <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+        <h3 className="mb-4 text-base font-semibold text-text">
           Patient &amp; {booking.status === "Cancelled" ? "Provider" : "Dentist"}
         </h3>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -100,7 +100,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
                 {booking.patient.initials}
               </div>
               <div>
-                <p className="font-semibold text-[#1A1A2E]">
+                <p className="font-semibold text-text">
                   {booking.patient.name}
                 </p>
                 <p className="text-sm text-gray-400">
@@ -140,7 +140,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
                 {booking.dentist.initials}
               </div>
               <div>
-                <p className="font-semibold text-[#1A1A2E]">
+                <p className="font-semibold text-text">
                   {booking.dentist.name}
                 </p>
                 <p className="text-sm text-gray-400">{booking.dentist.specialty}</p>
@@ -188,7 +188,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
 
       {/* Appointment Details */}
       <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+        <h3 className="mb-4 text-base font-semibold text-text">
           Appointment Details
         </h3>
         <InfoGrid
@@ -226,21 +226,21 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
 
       {/* Payment & Escrow */}
       <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+        <h3 className="mb-4 text-base font-semibold text-text">
           Payment &amp; Escrow
         </h3>
         {escrowBanner()}
         <div className="mt-4 space-y-3">
           <div className="flex justify-between border-b border-gray-50 pb-3 text-sm">
             <span className="text-gray-500">Estimate Amount</span>
-            <span className="font-medium text-[#1A1A2E]">
+            <span className="font-medium text-text">
               ${booking.payment.estimate_amount.toLocaleString()}
             </span>
           </div>
           {booking.payment.final_amount !== null && (
             <div className="flex justify-between border-b border-gray-50 pb-3 text-sm">
               <span className="text-gray-500">Final Amount</span>
-              <span className="font-medium text-[#1A1A2E]">
+              <span className="font-medium text-text">
                 ${booking.payment.final_amount.toLocaleString()}
               </span>
             </div>
@@ -269,7 +269,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
       {"cancellation" in booking && booking.cancellation && (
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[#1A1A2E]">
+            <h3 className="text-base font-semibold text-text">
               Cancellation Details
             </h3>
             <span className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
@@ -287,7 +287,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
                   {item.label}
                 </p>
-                <p className="mt-1 text-sm font-medium text-[#1A1A2E]">{item.value}</p>
+                <p className="mt-1 text-sm font-medium text-text">{item.value}</p>
               </div>
             ))}
           </div>

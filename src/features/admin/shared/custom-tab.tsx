@@ -34,7 +34,7 @@ export function CustomTab({
             className={cn(
               "rounded-full px-3.5 py-1 text-sm font-medium transition-colors",
               active === tab.key
-                ? "bg-[#1A1A2E] text-white"
+                ? "bg-text text-white"
                 : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
             )}
           >
@@ -64,7 +64,7 @@ export function CustomTab({
           className={cn(
             "relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors",
             active === tab.key
-              ? "text-[#1A1A2E] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#1A1A2E]"
+              ? "text-text after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-text"
               : "text-gray-500 hover:text-gray-700"
           )}
         >
@@ -77,7 +77,7 @@ export function CustomTab({
               className={cn(
                 "rounded-full px-2 py-0.5 text-xs font-semibold",
                 active === tab.key
-                  ? "bg-[#1A1A2E] text-white"
+                  ? "bg-text text-white"
                   : "bg-gray-100 text-gray-500"
               )}
             >

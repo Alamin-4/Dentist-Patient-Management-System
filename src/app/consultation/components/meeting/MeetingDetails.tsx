@@ -5,47 +5,47 @@ import { Button } from "@/components/ui/button";
 import { ConsultationChat } from "./ConsultationChat";
 
 const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
-  if (!tzStr) return 0;
-  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
-  const match = tzStr.match(regex);
-  if (match) {
-    const sign = match[1] === "-" ? -1 : 1;
-    const hours = parseInt(match[2], 10);
-    const minutes = match[3] ? parseInt(match[3], 10) : 0;
-    return sign * (hours * 60 + minutes);
-  }
-  if (tzStr.includes("EST")) return -5 * 60;
-  if (tzStr.includes("CST")) return -6 * 60;
-  if (tzStr.includes("MST")) return -7 * 60;
-  if (tzStr.includes("PST")) return -8 * 60;
-  if (tzStr.includes("CET")) return 1 * 60;
-  if (tzStr.includes("AEST")) return 10 * 60;
-  if (tzStr.includes("BST")) return 6 * 60;
-  return 0;
+    if (!tzStr) return 0;
+    const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
+    const match = tzStr.match(regex);
+    if (match) {
+        const sign = match[1] === "-" ? -1 : 1;
+        const hours = parseInt(match[2], 10);
+        const minutes = match[3] ? parseInt(match[3], 10) : 0;
+        return sign * (hours * 60 + minutes);
+    }
+    if (tzStr.includes("EST")) return -5 * 60;
+    if (tzStr.includes("CST")) return -6 * 60;
+    if (tzStr.includes("MST")) return -7 * 60;
+    if (tzStr.includes("PST")) return -8 * 60;
+    if (tzStr.includes("CET")) return 1 * 60;
+    if (tzStr.includes("AEST")) return 10 * 60;
+    if (tzStr.includes("BST")) return 6 * 60;
+    return 0;
 };
 
 const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
-  const dObj = new Date(scheduledDate);
-  const year = dObj.getUTCFullYear();
-  const month = dObj.getUTCMonth();
-  const day = dObj.getUTCDate();
-  
-  const timeParts = scheduledTime.split(":");
-  let hours = parseInt(timeParts[0], 10);
-  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
-  
-  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
-    hours += 12;
-  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
-    hours = 0;
-  }
-  
-  if (isNaN(hours)) hours = 0;
-  if (isNaN(minutes)) minutes = 0;
-  
-  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
-  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
-  return localUtcMs - offsetMinutes * 60 * 1000;
+    const dObj = new Date(scheduledDate);
+    const year = dObj.getUTCFullYear();
+    const month = dObj.getUTCMonth();
+    const day = dObj.getUTCDate();
+
+    const timeParts = scheduledTime.split(":");
+    let hours = parseInt(timeParts[0], 10);
+    let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+
+    if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
+        hours += 12;
+    } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
+        hours = 0;
+    }
+
+    if (isNaN(hours)) hours = 0;
+    if (isNaN(minutes)) minutes = 0;
+
+    const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
+    const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
+    return localUtcMs - offsetMinutes * 60 * 1000;
 };
 
 interface MeetingDetailsProps {
@@ -97,22 +97,22 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
                         <div className="mx-auto size-16 rounded-full bg-amber-50 flex items-center justify-center mb-4">
                             <Clock className="size-8 text-amber-600" />
                         </div>
-                        <h2 className="text-2xl font-bold text-[#1A1A2E]">Consultation Expired</h2>
+                        <h2 className="text-2xl font-bold text-text">Consultation Expired</h2>
                         <p className="text-sm text-gray-500">This session's time window has passed.</p>
                     </div>
 
                     <div className="space-y-3 rounded-xl bg-[#F8FAFC] p-5 border border-gray-100">
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Dentist</span>
-                            <span className="text-[#1A1A2E] font-semibold">{dentistName}</span>
+                            <span className="text-text font-semibold">{dentistName}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Was scheduled</span>
-                            <span className="text-[#1A1A2E] font-semibold">{scheduledDateStr}</span>
+                            <span className="text-text font-semibold">{scheduledDateStr}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Time</span>
-                            <span className="text-[#1A1A2E] font-semibold">{scheduledTime} ({timezone})</span>
+                            <span className="text-text font-semibold">{scheduledTime} ({timezone})</span>
                         </div>
                     </div>
 
@@ -154,30 +154,30 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
                         <div className="mx-auto size-16 rounded-full bg-[#113254]/5 flex items-center justify-center mb-4">
                             <Video className="size-8 text-[#113254]" />
                         </div>
-                        <h2 className="text-2xl font-bold text-[#1A1A2E]">Upcoming Consultation</h2>
+                        <h2 className="text-2xl font-bold text-text">Upcoming Consultation</h2>
                         <p className="text-sm text-gray-500">Your video session details are below</p>
                     </div>
 
                     <div className="space-y-3 rounded-xl bg-[#F8FAFC] p-5 border border-gray-100">
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Dentist</span>
-                            <span className="text-[#1A1A2E] font-semibold">{dentistName}</span>
+                            <span className="text-text font-semibold">{dentistName}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Procedure</span>
-                            <span className="text-[#1A1A2E] font-semibold">{procedure}</span>
+                            <span className="text-text font-semibold">{procedure}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Date</span>
-                            <span className="text-[#1A1A2E] font-semibold">{scheduledDateStr}</span>
+                            <span className="text-text font-semibold">{scheduledDateStr}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Time</span>
-                            <span className="text-[#1A1A2E] font-semibold">{scheduledTime} ({timezone})</span>
+                            <span className="text-text font-semibold">{scheduledTime} ({timezone})</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Duration</span>
-                            <span className="text-[#1A1A2E] font-semibold">{duration} minutes</span>
+                            <span className="text-text font-semibold">{duration} minutes</span>
                         </div>
                     </div>
 

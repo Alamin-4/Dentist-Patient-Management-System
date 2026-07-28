@@ -44,7 +44,7 @@ export default function DentistDashboardLayout({
   if (dentistProfile.isPending || isProgressLoading) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0E3E65]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }

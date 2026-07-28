@@ -35,19 +35,19 @@ export default function ScheduleSuccessModal({
           </div>
 
           {/* Title */}
-          <h2 className="text-[22px] font-black text-[#1A1A2E] mb-2">
+          <h2 className="text-[22px] font-black text-text mb-2">
             You&apos;re booked with{" "}
             {dentists
               .map((d, i) => (i === 0 ? d.name : `Dr ${d.name.split(" ").slice(-1)[0]}`))
               .join(" and ")}
           </h2>
-          <p className="text-[14px] text-[#6B7280] leading-relaxed max-w-sm">
+          <p className="text-[14px] text-sec-text leading-relaxed max-w-sm">
             Your dentist will review your details before the consultation.
             Please have your photos, any X-rays, and a list of questions ready.
           </p>
 
           {/* Booked appointments */}
-          <div className="w-full mt-6 rounded-lg border border-[#E9EDEE] overflow-hidden">
+          <div className="w-full mt-6 rounded-lg border border-stroke overflow-hidden">
             {dentists.map((doc, i) => {
               const sel = selections[i];
               return (
@@ -64,16 +64,16 @@ export default function ScheduleSuccessModal({
                       className="size-12 rounded-full object-cover shrink-0 bg-gray-100"
                     />
                     <div className="min-w-0">
-                      <p className="font-bold text-[14px] text-[#1A1A2E] truncate">
+                      <p className="font-bold text-[14px] text-text truncate">
                         {doc.name}
                       </p>
-                      <p className="text-[12px] text-[#6B7280]">
+                      <p className="text-[12px] text-sec-text">
                         {doc.specialty}
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[13px] font-semibold text-[#1A1A2E]">
+                    <p className="text-[13px] font-semibold text-text">
                       {sel?.date ? formatDate(sel.date) : "0"}
                     </p>
                     <p className="text-[12px] text-[#9CA3AF] flex items-center justify-end gap-1 mt-0.5">

@@ -296,7 +296,7 @@ export default function BookingDetailPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </button>
-            <h1 className="text-2xl lg:text-3xl text-[#1A1A2E] font-bold">
+            <h1 className="text-2xl lg:text-3xl text-text font-bold">
               Treatment Detail
             </h1>
           </div>
@@ -319,10 +319,10 @@ export default function BookingDetailPage() {
                 <div className="font-bold text-lg text-[#0F172A]">{display.name}</div>
                 <div className="text-sm text-slate-500 mb-2">{display.email}</div>
                 <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${booking?.status === "COMPLETED"
-                    ? "bg-green-50 text-green-700 border border-green-100"
-                    : booking?.status === "CANCELLED"
-                      ? "bg-red-50 text-red-700 border border-red-100"
-                      : "bg-blue-50 text-blue-700 border border-blue-100"
+                  ? "bg-green-50 text-green-700 border border-green-100"
+                  : booking?.status === "CANCELLED"
+                    ? "bg-red-50 text-red-700 border border-red-100"
+                    : "bg-blue-50 text-blue-700 border border-blue-100"
                   }`}>
                   {booking?.status === "CANCELLED" ? "Rejected" : booking?.status}
                 </span>
@@ -344,10 +344,10 @@ export default function BookingDetailPage() {
               <div className="text-xs text-slate-500 mb-1">Estimate Budget</div>
               <div className="text-2xl font-bold text-[#0A2540]">{display.budget}</div>
               <div className={`text-sm font-semibold ${booking?.paymentStatus === "REFUNDED"
-                  ? "text-[#0284C7]"
-                  : booking?.paymentStatus === "PAID"
-                    ? "text-green-700"
-                    : "text-[#D97706]"
+                ? "text-[#0284C7]"
+                : booking?.paymentStatus === "PAID"
+                  ? "text-green-700"
+                  : "text-[#D97706]"
                 }`}>
                 {booking?.paymentStatus === "IN_ESCROW"
                   ? "In Escrow"

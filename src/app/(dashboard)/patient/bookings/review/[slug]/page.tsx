@@ -183,7 +183,7 @@ export default function ReviewPlanPage() {
         <span className="text-sm font-medium">Back</span>
       </button>
 
-      <h1 className="text-2xl lg:text-3xl text-[#1A1A2E] font-bold mb-6">
+      <h1 className="text-2xl lg:text-3xl text-text font-bold mb-6">
         Review Plan
       </h1>
 
@@ -203,18 +203,18 @@ export default function ReviewPlanPage() {
                   />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-[#1A1A2E]">{doctorName}</h3>
+                  <h3 className="text-lg font-bold text-text">{doctorName}</h3>
                   <p className="text-sm text-[#475569] font-medium">{specialty}</p>
                 </div>
               </div>
-              <div className="bg-[#EEF8FF] text-[#0E3E65] px-3.5 py-2 rounded-full border border-[#B3D8FF] flex items-center gap-2 select-none">
+              <div className="bg-secondary text-primary px-3.5 py-2 rounded-full border border-[#B3D8FF] flex items-center gap-2 select-none">
                 <ShieldCheck className="size-4 text-[#0086C9]" />
                 <span className="text-[11px] font-bold uppercase tracking-wider">No Surprise Guarantee</span>
               </div>
             </div>
 
             {/* Treatment breakdown */}
-            <h4 className="text-[17px] font-bold mb-4 text-[#1A1A2E]">Treatment plan breakdown</h4>
+            <h4 className="text-[17px] font-bold mb-4 text-text">Treatment plan breakdown</h4>
             <div className="border  rounded-xl overflow-hidden  bg-white">
               <div className="flex justify-between bg-slate-50 px-6 py-3.5 border-b  font-bold text-[13px] uppercase tracking-wider text-[#475569]">
                 <span>Procedure breakdown</span>
@@ -224,12 +224,12 @@ export default function ReviewPlanPage() {
                 {plan.lineItems?.map((item: any, idx: number) => (
                   <div key={idx} className="flex justify-between px-6 py-4 text-sm hover:bg-slate-50/50 transition-colors">
                     <span className="text-[#475569] font-medium">{item.globalProcedure?.name || "Procedure"}</span>
-                    <span className="text-[#1A1A2E] font-semibold">
+                    <span className="text-text font-semibold">
                       {Number(item.unitPrice) === 0 ? "Included" : `$${Number(item.unitPrice).toLocaleString()}`}
                     </span>
                   </div>
                 ))}
-                <div className="flex justify-between px-6 py-5 bg-white border-t  font-bold text-[#1A1A2E]">
+                <div className="flex justify-between px-6 py-5 bg-white border-t  font-bold text-text">
                   <span className="text-base">Estimate amount</span>
                   <span className="text-lg">
                     ${totalEstimate.toLocaleString()}
@@ -240,7 +240,7 @@ export default function ReviewPlanPage() {
 
             {/* 15% leeway */}
             <div className="mt-6 bg-[#F0F9FF] p-5 rounded-xl border border-[#B3D8FF] shadow-[0_1px_2px_rgba(14,62,101,0.02)]">
-              <p className="text-[#0E3E65] font-bold mb-1 text-[15px]">15% leeway</p>
+              <p className="text-primary font-bold mb-1 text-[15px]">15% leeway</p>
               <p className="text-[#203A55] text-sm leading-relaxed font-medium">
                 Your final price on Day 1 will be within 15%. If Dr. {dentistUser?.lastName || "your dentist"}&apos;s
                 final price exceeds 15%, you can Reject for a full refund. No questions asked.
@@ -277,30 +277,30 @@ export default function ReviewPlanPage() {
         {/* ── Right column ─────────────────────────────────────────────────── */}
         <div className="lg:col-span-5 space-y-6">
           <SectionCard className=" p-5 md:p-6 ">
-            <h4 className="text-lg font-bold mb-6 text-[#1A1A2E]">Estimate Timeline</h4>
+            <h4 className="text-lg font-bold mb-6 text-text">Estimate Timeline</h4>
 
             <div className="relative pl-6 ml-2 space-y-6 mb-8">
               {/* Connecting Line */}
-              <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-[#0E3E65]/30" />
+              <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-primary/30" />
 
               {/* Bullet 1 */}
               <div className="relative flex items-start gap-4">
-                <div className="absolute left-[-23px] top-1.5 size-3.5 rounded-full bg-[#0E3E65] border-4 border-white shrink-0 z-10" />
-                <p className="text-[#6B7280] text-sm font-semibold leading-relaxed">
+                <div className="absolute left-[-23px] top-1.5 size-3.5 rounded-full bg-primary border-4 border-white shrink-0 z-10" />
+                <p className="text-sec-text text-sm font-semibold leading-relaxed">
                   You selected : <span className="text-black font-bold">{travelRange}</span>
                 </p>
               </div>
               {/* Bullet 2 */}
               <div className="relative flex items-start gap-4">
-                <div className="absolute left-[-23px] top-1.5 size-3.5 rounded-full bg-[#0E3E65] border-4 border-white shrink-0 z-10" />
-                <p className="text-[#6B7280] text-sm font-semibold leading-relaxed">
+                <div className="absolute left-[-23px] top-1.5 size-3.5 rounded-full bg-primary border-4 border-white shrink-0 z-10" />
+                <p className="text-sec-text text-sm font-semibold leading-relaxed">
                   Treatment takes : <span className="text-black font-bold">4–5 days once you arrive</span>
                 </p>
               </div>
               {/* Bullet 3 */}
               <div className="relative flex items-start gap-4">
-                <div className="absolute left-[-23px] top-1.5 size-3.5 rounded-full bg-[#0E3E65] border-4 border-white shrink-0 z-10" />
-                <p className="text-[#6B7280] text-sm font-semibold leading-relaxed">
+                <div className="absolute left-[-23px] top-1.5 size-3.5 rounded-full bg-primary border-4 border-white shrink-0 z-10" />
+                <p className="text-sec-text text-sm font-semibold leading-relaxed">
                   Appointment Date : <span className="text-black font-bold">{scheduledDate}</span>
                 </p>
               </div>
@@ -308,7 +308,7 @@ export default function ReviewPlanPage() {
 
             {/* Sign to confirm */}
             <div className="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
-              <h5 className="font-bold text-[#1A1A2E] text-[15px] mb-1">Sign to confirm plan</h5>
+              <h5 className="font-bold text-text text-[15px] mb-1">Sign to confirm plan</h5>
               <p className="text-[11px] text-slate-500 mb-4 font-semibold">
                 Read each point carefully. You must agree to all three before your payment is processed.
               </p>
@@ -323,7 +323,7 @@ export default function ReviewPlanPage() {
                     />
                   ) : (
                     <div className="h-full flex items-center justify-center">
-                      <span className="text-3xl font-serif italic text-[#1A1A2E]">
+                      <span className="text-3xl font-serif italic text-text">
                         {signatureData}
                       </span>
                     </div>
@@ -331,7 +331,7 @@ export default function ReviewPlanPage() {
                   <button
                     type="button"
                     onClick={() => setSignModalOpen(true)}
-                    className="absolute top-2 right-2 text-[11px] font-semibold text-[#6B7280] border border-slate-200 bg-white rounded-md px-2 py-1 hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="absolute top-2 right-2 text-[11px] font-semibold text-sec-text border border-slate-200 bg-white rounded-md px-2 py-1 hover:bg-slate-50 transition-colors cursor-pointer"
                   >
                     Resign
                   </button>

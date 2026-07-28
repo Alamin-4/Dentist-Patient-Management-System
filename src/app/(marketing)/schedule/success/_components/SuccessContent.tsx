@@ -85,7 +85,7 @@ export default function SuccessContent() {
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#F9FAFB]">
         <div className="w-full max-w-lg bg-white rounded-3xl shadow px-8 py-20 flex flex-col items-center justify-center gap-3">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#113254]"></div>
-          <p className="text-[#6B7280] font-medium text-sm animate-pulse">Loading booking details...</p>
+          <p className="text-sec-text font-medium text-sm animate-pulse">Loading booking details...</p>
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ export default function SuccessContent() {
         </div>
 
         {/* Title */}
-        <h2 className="text-[24px] font-black text-[#1A1A2E] mb-2 leading-tight">
+        <h2 className="text-[24px] font-black text-text mb-2 leading-tight">
           You&apos;re booked with{" "}
           {dentists
             .map((d, i) =>
@@ -111,13 +111,13 @@ export default function SuccessContent() {
             )
             .join(" and ")}
         </h2>
-        <p className="text-[14px] text-[#6B7280] leading-relaxed max-w-sm">
+        <p className="text-[14px] text-sec-text leading-relaxed max-w-sm">
           Your dentist will review your details before the consultation. Please
           have your photos, any X-rays, and a list of questions ready.
         </p>
 
         {/* Appointment summary */}
-        <div className="w-full mt-6 rounded-lg border border-[#E9EDEE] overflow-hidden">
+        <div className="w-full mt-6 rounded-lg border border-stroke overflow-hidden">
           {dentists.map((doc) => {
             const sel = getSelection(doc.id);
             return (
@@ -134,17 +134,17 @@ export default function SuccessContent() {
                     className="size-12 rounded-full object-cover shrink-0 bg-gray-100"
                   />
                   <div className="min-w-0">
-                    <p className="font-bold text-[14px] text-[#1A1A2E] truncate">
+                    <p className="font-bold text-[14px] text-text truncate">
                       {doc.name}
                     </p>
-                    <p className="text-[12px] text-[#6B7280]">
+                    <p className="text-[12px] text-sec-text">
                       {doc.specialty}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <p className="text-[13px] font-semibold text-[#1A1A2E]">
+                  <p className="text-[13px] font-semibold text-text">
                     {sel?.date ? formatDate(sel.date) : "0"}
                   </p>
                   <p className="text-[12px] text-[#9CA3AF] mt-0.5 flex items-center justify-end gap-1">

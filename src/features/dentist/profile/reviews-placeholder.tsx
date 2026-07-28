@@ -62,7 +62,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
                 />
               ))}
             </div>
-            <span className="text-xs text-[#6B7280] mt-3 font-medium">
+            <span className="text-xs text-sec-text mt-3 font-medium">
               {reviewsList.length} Verified Review{reviewsList.length !== 1 ? "s" : ""}
             </span>
           </div>
@@ -70,7 +70,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
           {/* Right Card: Metrics details */}
           <div className="md:col-span-2 space-y-3 flex flex-col justify-center">
             <div className="flex justify-between items-center text-sm font-semibold">
-              <span className="text-[#6B7280]">Communication</span>
+              <span className="text-sec-text">Communication</span>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[#163E5C]">{metrics.communication.toFixed(1)}</span>
                 <div className="flex gap-0.5 text-amber-400">
@@ -85,7 +85,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             </div>
 
             <div className="flex justify-between items-center text-sm font-semibold">
-              <span className="text-[#6B7280]">Value for money</span>
+              <span className="text-sec-text">Value for money</span>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[#163E5C]">{metrics.valueForMoney.toFixed(1)}</span>
                 <div className="flex gap-0.5 text-amber-400">
@@ -100,7 +100,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             </div>
 
             <div className="flex justify-between items-center text-sm font-semibold">
-              <span className="text-[#6B7280]">Follow-through</span>
+              <span className="text-sec-text">Follow-through</span>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[#163E5C]">{metrics.followThrough.toFixed(1)}</span>
                 <div className="flex gap-0.5 text-amber-400">
@@ -138,7 +138,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
                     <p className="text-sm font-bold text-slate-800">
                       {review.user?.name || `${review.user?.firstName || "Patient"} ${review.user?.lastName || ""}`}
                     </p>
-                    <p className="text-[10px] text-[#6B7280]">Verified Patient</p>
+                    <p className="text-[10px] text-sec-text">Verified Patient</p>
                   </div>
                 </div>
 

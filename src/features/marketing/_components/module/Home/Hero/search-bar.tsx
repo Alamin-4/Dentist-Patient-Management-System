@@ -6,6 +6,7 @@ import { Search, Stethoscope, DollarSign, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
 import { proceduresLists } from "@/lib/location-data";
+import { DolarSVG, procedureSVGIcon } from "@/svg-icon/svg";
 
 export default function SearchBar() {
   const router = useRouter();
@@ -70,7 +71,7 @@ export default function SearchBar() {
           onClick={() => setIsOpen(!isOpen)}
           className="flex w-full items-center gap-3 px-5 py-3 transition-all hover:bg-white/50 md:rounded-l-full md:border-r md:border-gray-200"
         >
-          <Stethoscope size={20} className="shrink-0 text-[#10436B]" />
+          {procedureSVGIcon}
           <div className="flex flex-1 items-center justify-between overflow-hidden">
             <span className={cn(
               "truncate text-sm font-medium",
@@ -131,9 +132,7 @@ export default function SearchBar() {
       </div>
 
       <div className="flex items-center gap-3 px-5 py-3">
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E3A32A]/15 text-[#E3A32A]">
-          <DollarSign size={14} strokeWidth={3} />
-        </div>
+        {DolarSVG}
         <div className="flex flex-1 items-center gap-2">
           <input
             type="text"

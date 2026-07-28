@@ -14,18 +14,18 @@ export function PatientsFilters({ tableSearch, setTableSearch, cityFilter, setCi
                 <input
                     value={tableSearch} onChange={(e) => { setTableSearch(e.target.value); setPage(1); }}
                     placeholder="Search by name, email, phone..."
-                    className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                    className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
                 />
             </div>
             <div className="relative">
                 <select value={cityFilter} onChange={(e) => { setCityFilter(e.target.value); setPage(1); }}
-                    className="h-9 appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]">
+                    className="h-9 appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-text focus:ring-1 focus:ring-text">
                     {allCities.map((c) => <option key={c} value={c}>{c === "all" ? "All cities" : c}</option>)}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
             </div>
             <div className="relative">
-                <select className="h-9 appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-[#1A1A2E]">
+                <select className="h-9 appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-text">
                     <option>All time</option><option>Last 7 days</option><option>Last 30 days</option><option>Last 90 days</option>
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />

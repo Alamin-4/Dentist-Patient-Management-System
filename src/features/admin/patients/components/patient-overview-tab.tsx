@@ -62,7 +62,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
       <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-sm font-medium text-[#1A1A2E]">{value}</p>
+      <p className="text-sm font-medium text-text">{value}</p>
     </div>
   );
 }
@@ -101,10 +101,10 @@ export function PatientOverviewTab({
         {/* Personal Information card */}
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[#1A1A2E]">
+            <h3 className="text-base font-semibold text-text">
               Personal information
             </h3>
-            <button className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#1A1A2E]">
+            <button className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-text">
               <Pencil className="h-3.5 w-3.5" />
               Edit
             </button>
@@ -127,7 +127,7 @@ export function PatientOverviewTab({
         {/* Recent Bookings card */}
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[#1A1A2E]">
+            <h3 className="text-base font-semibold text-text">
               Recent bookings
             </h3>
             <button className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700">
@@ -187,7 +187,7 @@ export function PatientOverviewTab({
                         )}
                       </span>
                     </td>
-                    <td className="py-3 text-sm font-medium text-[#1A1A2E]">
+                    <td className="py-3 text-sm font-medium text-text">
                       ${b.amount.toLocaleString()}
                     </td>
                   </tr>
@@ -202,23 +202,23 @@ export function PatientOverviewTab({
       <div className="flex flex-col gap-4">
         {/* Engagement card */}
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+          <h3 className="mb-4 text-base font-semibold text-text">
             Engagement
           </h3>
           <div className="space-y-4">
             <div>
               <div className="mb-1.5 flex justify-between text-sm">
                 <span className="text-gray-500">Booking show-up rate</span>
-                <span className="font-semibold text-[#1A1A2E]">
+                <span className="font-semibold text-text">
                   {profile.engagement.show_up_rate}%
                 </span>
               </div>
-              <ProgressBar value={profile.engagement.show_up_rate} color="bg-[#1A1A2E]" />
+              <ProgressBar value={profile.engagement.show_up_rate} color="bg-text" />
             </div>
             <div>
               <div className="mb-1.5 flex justify-between text-sm">
                 <span className="text-gray-500">Reviews submitted</span>
-                <span className="font-semibold text-[#1A1A2E]">
+                <span className="font-semibold text-text">
                   {profile.engagement.reviews_ratio}
                 </span>
               </div>
@@ -234,7 +234,7 @@ export function PatientOverviewTab({
             <div>
               <div className="mb-1.5 flex justify-between text-sm">
                 <span className="text-gray-500">Documents uploaded</span>
-                <span className="font-semibold text-[#1A1A2E]">
+                <span className="font-semibold text-text">
                   {profile.engagement.documents_count} docs
                 </span>
               </div>
@@ -248,11 +248,11 @@ export function PatientOverviewTab({
 
         {/* Referrals card */}
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+          <h3 className="mb-4 text-base font-semibold text-text">
             Referrals
           </h3>
           {/* Referral code box */}
-          <div className="mb-4 rounded-lg bg-[#1A1A2E] px-4 py-3">
+          <div className="mb-4 rounded-lg bg-text px-4 py-3">
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
               Referral Code
             </p>
@@ -269,13 +269,13 @@ export function PatientOverviewTab({
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Total referrals</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-text">
                 {profile.referrals.total}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Credited</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-text">
                 {profile.referrals.credited}
               </span>
             </div>
@@ -284,25 +284,25 @@ export function PatientOverviewTab({
 
         {/* Activity card */}
         <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-[#1A1A2E]">
+          <h3 className="mb-4 text-base font-semibold text-text">
             Activity
           </h3>
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Total bookings</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-text">
                 {profile.activity.total_bookings}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Amount spent</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-text">
                 ${profile.activity.amount_spent.toLocaleString()}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Avg rating given</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-text">
                 {profile.activity.avg_rating > 0
                   ? `${profile.activity.avg_rating} ★`
                   : "0"}
@@ -310,7 +310,7 @@ export function PatientOverviewTab({
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Last visit</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-text">
                 {profile.activity.last_visit}
               </span>
             </div>

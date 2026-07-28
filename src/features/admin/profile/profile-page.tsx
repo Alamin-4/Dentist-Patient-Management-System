@@ -24,7 +24,7 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <div className="h-10 w-10 border-4 border-[#1A1A2E] border-t-transparent rounded-full animate-spin"></div>
+        <div className="h-10 w-10 border-4 border-text border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -35,7 +35,7 @@ export default function ProfilePage() {
     <div className="flex flex-col gap-5">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">My Profile</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-text">My Profile</h1>
         <p className="mt-0.5 text-sm text-gray-400">System / My Profile</p>
       </div>
 
@@ -49,7 +49,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab(key)}
               className={cn(
                 "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors cursor-pointer",
-                activeTab === key ? "bg-gray-100 text-[#1A1A2E]" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                activeTab === key ? "bg-gray-100 text-text" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />

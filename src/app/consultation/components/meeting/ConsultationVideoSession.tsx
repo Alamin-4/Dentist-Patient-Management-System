@@ -260,7 +260,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
                             <Check className="size-10 text-white stroke-[3px]" />
                         </div>
                         <div className="space-y-2">
-                            <h2 className="text-[22px] md:text-[24px] font-extrabold text-[#1A1A2E] leading-tight">
+                            <h2 className="text-[22px] md:text-[24px] font-extrabold text-text leading-tight">
                                 Consultation has been completed.
                             </h2>
                             <p className="text-[14px] text-gray-500 leading-relaxed max-w-sm">

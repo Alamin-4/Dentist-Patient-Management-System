@@ -27,8 +27,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
 
-// ─── Section data ──────────────────────────────────────────────────────────────
 
 const FEATURES = [
   "Biometric Facial Mapping",
@@ -36,7 +37,6 @@ const FEATURES = [
   "Direct specialist matching based on results",
 ];
 
-// ─── Facial triangulation mesh (viewBox 0 0 100 100) ──────────────────────────
 const L_POLYS = [
   "10,28 20,18 30,22",
   "20,18 30,22 36,12",
@@ -80,8 +80,6 @@ const R_DOTS: [number, number][] = [
   [54, 44], [78, 56], [64, 52], [70, 60], [56, 60], [83, 64], [76, 70],
   [68, 74], [72, 82], [80, 78],
 ];
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AiSmilePreview() {
   const router = useRouter();
@@ -188,9 +186,7 @@ export default function AiSmilePreview() {
   return (
     <section className="bg-white py-20">
       <div className="mx-auto max-w-7xl w-11/12 space-y-14">
-        {/* ── Top: 2-column content row ── */}
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          {/* Left: heading + description + button */}
+        <div className="flex justify-between flex-wrap *:flex-1 items-start gap-10 lg:grid-cols-2 lg:gap-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -198,62 +194,55 @@ export default function AiSmilePreview() {
             viewport={{ once: true }}
             className="space-y-7"
           >
-            <h2 className="font-heading text-[2.5rem] font-black leading-[1.08] tracking-tight text-[#0A0A1A] lg:text-[2.75rem]">
-              Visualize your ideal smile <br className="hidden sm:block" />
-              instantly.
-            </h2>
-
-            <p className="max-w-110 text-[15px] leading-relaxed text-slate-500">
-              Our proprietary Neural-Dental engine analyzes your facial
+            <CustomSectionHeading value="Visualize your ideal smile instantly" />
+            <CustomDesText value="Our proprietary Neural-Dental engine analyzes your facial
               structure to simulate perfect symmetry. Upload a single photo and
               receive a full 3D simulation of your recommended procedures within
-              seconds.
-            </p>
+              seconds."/>
 
-            {/* Trigger Button */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center overflow-hidden rounded-lg bg-[#0E3E65] pl-6 pr-2 py-2 transition-all hover:bg-[#002850] active:scale-[0.98] text-white gap-3 shadow-md"
+              className="inline-flex items-center overflow-hidden rounded-lg bg-primary pl-6 pr-2 py-2 transition-all hover:bg-[#002850] active:scale-[0.98] text-white gap-3 shadow-md"
             >
               <span className="text-sm font-semibold">
                 Try AI Smile Preview
               </span>
               <ArrowUpRight
-                className="size-8 p-1.5 rounded-md bg-[#FFD86B] text-[#0E3E65]"
+                className="size-8 p-1.5 rounded-md bg-accent text-primary"
                 strokeWidth={2.5}
               />
             </button>
           </motion.div>
 
-          {/* Right: feature list */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.55, delay: 0.1 }}
-            viewport={{ once: true }}
-            className="flex flex-col gap-8"
-          >
-            {FEATURES.map((feature, i) => (
-              <motion.div
-                key={feature}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.15 + i * 0.1 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-4"
-              >
-                <div className="size-5 shrink-0 rounded-full border-2 border-emerald-400 bg-emerald-50 flex items-center justify-center">
-                  <CheckCircle2 className="size-3 text-emerald-500" />
-                </div>
-                <span className="text-[15px] font-semibold text-slate-700">
-                  {feature}
-                </span>
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="flex items-center justify-end">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="flex flex-col gap-6 lg:gap-8"
+            >
+              {FEATURES.map((feature, i) => (
+                <motion.div
+                  key={feature}
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.15 + i * 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex items-center gap-4"
+                >
+                  <div className="size-5 shrink-0 rounded-full border border-primary flex items-center justify-center">
+                    <span className="w-2 h-2 rounded-full bg-accent"></span>
+                  </div>
+                  <span className="text-[15px] font-semibold text-slate-700">
+                    {feature}
+                  </span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
 
-        {/* ── Bottom: AI visualization card ── */}
         <motion.div
           onClick={() => setIsModalOpen(true)}
           initial={{ opacity: 0, y: 28 }}
@@ -267,7 +256,6 @@ export default function AiSmilePreview() {
               "linear-gradient(180deg, #0f1b2d 0%, #071018 50%, #0a1622 100%)",
           }}
         >
-          {/* Background image */}
           {imgVisible && (
             <Image
               src="/images/ai-smile-preview.png"
@@ -279,11 +267,9 @@ export default function AiSmilePreview() {
             />
           )}
 
-          {/* Color gradients */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-cyan-500/10" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-fuchsia-500/10" />
 
-          {/* SVG Landmark Triangulation */}
           <svg
             className="pointer-events-none absolute inset-0 h-full w-full"
             viewBox="0 0 100 100"
@@ -340,17 +326,14 @@ export default function AiSmilePreview() {
             />
           </svg>
 
-          {/* Center split glow */}
           <div className="pointer-events-none absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400 shadow-[0_0_12px_6px_rgb(34_211_238/0.4)]" />
 
-          {/* Hover overlay CTA */}
           <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <span className="bg-[#FFD86B] text-[#0E3E65] font-bold text-sm px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+            <span className="bg-accent text-primary font-bold text-sm px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
               <Sparkles className="size-4" /> Try Live Smile Preview
             </span>
           </div>
 
-          {/* Animated scan line */}
           <motion.div
             className="pointer-events-none absolute left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-400/55 to-transparent"
             style={{ top: "20%" }}
@@ -360,7 +343,6 @@ export default function AiSmilePreview() {
         </motion.div>
       </div>
 
-      {/* ─── Fully Functional Dialog Modal ────────────────────────────────────── */}
       <Dialog
         open={isModalOpen}
         onOpenChange={(open) => {
@@ -369,13 +351,11 @@ export default function AiSmilePreview() {
         }}
       >
         <DialogContent className="sm:max-w-4xl w-11/12 p-0 overflow-hidden bg-white text-[#0A111F] border  rounded-xl shadow-2xl">
-          <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] min-h-[500px]">
+          <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] min-h-125">
 
-            {/* Left Column: Interactive Display & Viewport */}
             <div className="p-6 flex flex-col justify-center items-center border-r relative">
               <AnimatePresence mode="wait">
 
-                {/* Step 1: Upload Dropzone */}
                 {step === "upload" && (
                   <motion.div
                     key="upload-zone"
@@ -384,7 +364,7 @@ export default function AiSmilePreview() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="w-full flex flex-col items-center justify-center space-y-6 text-center py-10"
                   >
-                    <div className="h-16 w-16 rounded-full bg-[#FFD86B]/10 border border-[#FFD86B]/30 flex items-center justify-center text-[#FFD86B]">
+                    <div className="h-16 w-16 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                       <Smile className="size-8" />
                     </div>
                     <div>
@@ -395,7 +375,6 @@ export default function AiSmilePreview() {
                     </div>
 
                     <div className="flex flex-col gap-3 w-full max-w-xs">
-                      {/* File input button */}
                       <label className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#0A111F] text-white border border-slate-700 hover:border-slate-600 cursor-pointer text-sm font-semibold transition-all">
                         <Upload className="size-4" />
                         Upload custom photo
@@ -413,12 +392,11 @@ export default function AiSmilePreview() {
                         <span className="h-px bg-slate-800 flex-1" />
                       </div>
 
-                      {/* Sample photo button */}
                       <Button
                         type="button"
                         variant="secondary"
                         onClick={handleUseSample}
-                        className="bg-[#0E3E65] hover:bg-[#0E3E65] text-white border border-sky-900/50 h-12 text-sm font-semibold"
+                        className="bg-primary hover:bg-primary text-white border border-sky-900/50 h-12 text-sm font-semibold"
                       >
                         <FileImage className="size-4 mr-2" />
                         Try with Sample Photo
@@ -433,9 +411,8 @@ export default function AiSmilePreview() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="w-full h-full flex flex-col items-center justify-center min-h-[350px] relative"
+                    className="w-full h-full flex flex-col items-center justify-center min-h-87.5 relative"
                   >
-                    {/* Image under analysis */}
                     <div className="relative aspect-3/4 w-64 rounded-xl overflow-hidden border border-cyan-500/30 bg-slate-950 shadow-2xl">
                       {uploadedImage && (
                         <Image
@@ -446,7 +423,6 @@ export default function AiSmilePreview() {
                         />
                       )}
 
-                      {/* Biometric mesh simulation */}
                       <svg
                         className="pointer-events-none absolute inset-0 h-full w-full opacity-60"
                         viewBox="0 0 100 100"
@@ -466,7 +442,6 @@ export default function AiSmilePreview() {
                         ))}
                       </svg>
 
-                      {/* Moving laser scan line */}
                       <motion.div
                         className="absolute left-0 right-0 h-0.5 bg-cyan-400 shadow-[0_0_12px_4px_rgb(34_211_238/0.6)]"
                         initial={{ top: "0%" }}
@@ -477,7 +452,6 @@ export default function AiSmilePreview() {
                   </motion.div>
                 )}
 
-                {/* Step 3: Interactive Before/After Slider */}
                 {step === "results" && (
                   <motion.div
                     key="results-zone"
@@ -526,10 +500,10 @@ export default function AiSmilePreview() {
 
                       {/* Drag handle line */}
                       <div
-                        className="absolute top-0 bottom-0 w-[2px] bg-[#FFD86B] cursor-ew-resize"
+                        className="absolute top-0 bottom-0 w-0.5 bg-accent cursor-ew-resize"
                         style={{ left: `${sliderPosition}%` }}
                       >
-                        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#FFD86B] border-4 border-slate-950 flex items-center justify-center shadow-lg">
+                        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-accent border-4 border-slate-950 flex items-center justify-center shadow-lg">
                           <Sliders className="size-3 text-slate-950" />
                         </div>
                       </div>
@@ -538,13 +512,13 @@ export default function AiSmilePreview() {
                       <span className="absolute bottom-3 left-3 bg-slate-950/70 border border-slate-800/80 px-2 py-0.5 rounded text-[10px] uppercase font-bold text-slate-300">
                         Before
                       </span>
-                      <span className="absolute bottom-3 right-3 bg-[#FFD86B]/90 border border-[#FFD86B]/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold text-slate-950">
+                      <span className="absolute bottom-3 right-3 bg-accent/90 border border-accent/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold text-slate-950">
                         After
                       </span>
                     </div>
 
                     <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                      <Sliders className="size-3 text-[#FFD86B]" /> Drag the slider handle to compare smiles
+                      <Sliders className="size-3 text-accent" /> Drag the slider handle to compare smiles
                     </p>
                   </motion.div>
                 )}
@@ -552,11 +526,10 @@ export default function AiSmilePreview() {
               </AnimatePresence>
             </div>
 
-            {/* Right Column: Information, Logs, and Actions */}
             <div className="p-8 flex flex-col justify-between">
               <div>
                 <DialogHeader className="space-y-1">
-                  <div className="flex items-center gap-2 text-[#FFD86B] font-bold text-xs uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-accent font-bold text-xs uppercase tracking-wider">
                     <Sparkles className="size-4" /> AI Dental Engine
                   </div>
                   <DialogTitle className="text-white font-extrabold text-2xl tracking-tight mt-1">
@@ -571,7 +544,6 @@ export default function AiSmilePreview() {
                   </DialogDescription>
                 </DialogHeader>
 
-                {/* Step specific panel */}
                 <div className="mt-8">
                   {step === "upload" && (
                     <div className="space-y-4">
@@ -592,11 +564,11 @@ export default function AiSmilePreview() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs text-slate-400">
                           <span className="font-semibold text-slate-300">{scanMessage}</span>
-                          <span className="font-bold text-[#FFD86B]">{scanProgress}%</span>
+                          <span className="font-bold text-accent">{scanProgress}%</span>
                         </div>
                         <div className="w-full bg-slate-900 border border-slate-800 h-2.5 rounded-full overflow-hidden">
                           <motion.div
-                            className="bg-linear-to-r from-cyan-400 via-sky-500 to-[#FFD86B] h-full"
+                            className="bg-linear-to-r from-cyan-400 via-sky-500 to-accent h-full"
                             style={{ width: `${scanProgress}%` }}
                             transition={{ ease: "easeInOut" }}
                           />
@@ -624,7 +596,6 @@ export default function AiSmilePreview() {
                     <div className="space-y-4">
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Recommended Treatment Plan</div>
                       <div className="space-y-2">
-                        {/* Procedure 1 */}
                         <div className="flex items-center justify-between rounded-lg bg-slate-900 border border-slate-800/80 p-3">
                           <div className="flex items-center gap-2.5">
                             <div className="h-6 w-6 rounded bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-bold">1</div>
@@ -636,7 +607,6 @@ export default function AiSmilePreview() {
                           <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">98% Match</span>
                         </div>
 
-                        {/* Procedure 2 */}
                         <div className="flex items-center justify-between rounded-lg bg-slate-900 border border-slate-800/80 p-3">
                           <div className="flex items-center gap-2.5">
                             <div className="h-6 w-6 rounded bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-bold">2</div>
@@ -648,7 +618,6 @@ export default function AiSmilePreview() {
                           <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">94% Match</span>
                         </div>
 
-                        {/* Procedure 3 */}
                         <div className="flex items-center justify-between rounded-lg bg-slate-900 border border-slate-800/80 p-3">
                           <div className="flex items-center gap-2.5">
                             <div className="h-6 w-6 rounded bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-bold">3</div>
@@ -665,7 +634,6 @@ export default function AiSmilePreview() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-8 flex items-center justify-end gap-3 pt-4 border-t border-slate-850 shrink-0">
                 {step === "results" && (
                   <Button
@@ -682,7 +650,7 @@ export default function AiSmilePreview() {
                   <Button
                     type="button"
                     onClick={handleRedirectToDentists}
-                    className="bg-[#FFD86B] hover:bg-[#ffe395] text-slate-950 font-bold h-11 px-5 rounded-lg text-xs gap-1.5 shadow-lg shadow-yellow-500/10"
+                    className="bg-accent hover:bg-[#ffe395] text-slate-950 font-bold h-11 px-5 rounded-lg text-xs gap-1.5 shadow-lg shadow-yellow-500/10"
                   >
                     Find Dentists for these Procedures
                     <ArrowRight className="size-3.5" />

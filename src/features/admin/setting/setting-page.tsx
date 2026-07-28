@@ -86,9 +86,9 @@ export default function SettingPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-8 text-slate-800">
-   
+
       <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-2xl font-black tracking-tight text-[#1A1A2E]">Admin Settings & Content Manager</h1>
+        <h1 className="text-2xl font-black tracking-tight text-text">Admin Settings & Content Manager</h1>
         <p className="mt-1 text-xs md:text-sm text-slate-500">
           Manage site content, legal policies, blog posts, general contact branding, and commission rates.
         </p>
@@ -104,7 +104,7 @@ export default function SettingPage() {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-            className="flex w-full items-center justify-between rounded-xl bg-[#1A1A2E] text-white p-3 border border-[#1A1A2E] cursor-pointer transition-all active:scale-[0.99]"
+            className="flex w-full items-center justify-between rounded-xl bg-text text-white p-3 border border-text cursor-pointer transition-all active:scale-[0.99]"
           >
             <div className="flex items-center gap-3 min-w-0">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">
@@ -150,7 +150,7 @@ export default function SettingPage() {
                           {item.icon}
                         </span>
                         <div className="min-w-0">
-                          <p className={cn("text-xs truncate", isSelected ? "font-black text-[#10436B]" : "font-bold text-[#1A1A2E]")}>
+                          <p className={cn("text-xs truncate", isSelected ? "font-black text-[#10436B]" : "font-bold text-text")}>
                             {item.label}
                           </p>
                           <p className="text-[11px] truncate text-slate-400">{item.sub}</p>
@@ -177,7 +177,7 @@ export default function SettingPage() {
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-all cursor-pointer border",
                   active === item.id
-                    ? "bg-[#1A1A2E] text-white border-[#1A1A2E]"
+                    ? "bg-text text-white border-text"
                     : "text-slate-600 border-transparent hover:bg-slate-100/70"
                 )}
               >
@@ -193,7 +193,7 @@ export default function SettingPage() {
                   <p
                     className={cn(
                       "truncate text-xs font-bold",
-                      active === item.id ? "text-white" : "text-[#1A1A2E]"
+                      active === item.id ? "text-white" : "text-text"
                     )}
                   >
                     {item.label}

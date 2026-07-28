@@ -160,13 +160,13 @@ export function AddToCalendarModal({
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-5">
-            <DialogTitle className="text-[18px] font-bold text-[#1A1A2E]">
+            <DialogTitle className="text-[18px] font-bold text-text">
               Add to Calendar
             </DialogTitle>
             <button
               type="button"
               onClick={onClose}
-              className="size-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-[#6B7280] transition-colors"
+              className="size-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-sec-text transition-colors"
             >
               <X className="size-4" />
             </button>
@@ -181,16 +181,16 @@ export function AddToCalendarModal({
                 className="size-11 rounded-full object-cover shrink-0 bg-gray-200"
               />
               <div className="min-w-0">
-                <p className="text-[14px] font-bold text-[#1A1A2E] truncate">
+                <p className="text-[14px] font-bold text-text truncate">
                   {appointment.doctorName}
                 </p>
-                <p className="text-[12px] text-[#6B7280]">
+                <p className="text-[12px] text-sec-text">
                   {appointment.specialty}
                 </p>
               </div>
             </div>
             <div className="text-right shrink-0">
-              <p className="text-[13px] font-semibold text-[#1A1A2E]">
+              <p className="text-[13px] font-semibold text-text">
                 {appointment.date}
               </p>
               <p className="text-[12px] text-[#9CA3AF] mt-0.5">
@@ -203,7 +203,7 @@ export function AddToCalendarModal({
           </div>
 
           {/* Calendar selection */}
-          <p className="text-[13px] font-semibold text-[#6B7280] mb-3">
+          <p className="text-[13px] font-semibold text-sec-text mb-3">
             Select Calendar
           </p>
           <div className="grid grid-cols-3 gap-3 mb-6">
@@ -215,8 +215,8 @@ export function AddToCalendarModal({
                   type="button"
                   onClick={() => setSelected(key)}
                   className={`relative flex flex-col items-center gap-2.5 rounded-lg border-2 py-4 px-2 transition-all ${isSelected
-                      ? "border-[#113254] bg-[#F0F5FA]"
-                      : "border-[#E5E7EB] bg-white hover:border-[#113254]/30"
+                    ? "border-[#113254] bg-[#F0F5FA]"
+                    : "border-[#E5E7EB] bg-white hover:border-[#113254]/30"
                     }`}
                 >
                   {/* Checkmark badge */}

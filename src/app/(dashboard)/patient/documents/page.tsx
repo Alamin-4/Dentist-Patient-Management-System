@@ -50,7 +50,7 @@ export default function DocumentsPage() {
     <div className="animate-in fade-in duration-300">
       <div>
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-[#1A1A2E] mb-8">
+          <h1 className="text-3xl font-bold text-text mb-8">
             Document Vault
           </h1>
           {activeTab === "my-docs" && (
@@ -114,10 +114,10 @@ export default function DocumentsPage() {
                   {/* Info Section */}
                   <div className="flex items-center gap-5 md:w-1/3">
                     <div className="w-12 h-12 bg-[#F3F4F6] rounded-full flex items-center justify-center shrink-0">
-                      <FileText className="w-5 h-5 text-[#6B7280]" />
+                      <FileText className="w-5 h-5 text-sec-text" />
                     </div>
                     <div>
-                      <h3 className="text-[17px] font-bold text-[#1A1A2E]">
+                      <h3 className="text-[17px] font-bold text-text">
                         {doc.title}
                       </h3>
                       <p className="text-sm font-medium text-[#9CA3AF] mt-0.5">
@@ -128,7 +128,7 @@ export default function DocumentsPage() {
 
                   {/* File Count - Desktop Middle */}
                   <div className="hidden md:flex flex-col items-center md:w-1/4">
-                    <span className="text-[17px] font-bold text-[#1A1A2E]">
+                    <span className="text-[17px] font-bold text-text">
                       {doc.files}
                     </span>
                     <span className="text-xs font-medium text-[#9CA3AF]">
@@ -139,7 +139,7 @@ export default function DocumentsPage() {
                   {/* Date Section */}
                   <div className="flex flex-row md:flex-col justify-between md:items-center md:w-1/4">
                     <div className="flex flex-col md:items-center">
-                      <span className="text-[15px] font-bold text-[#1A1A2E]">
+                      <span className="text-[15px] font-bold text-text">
                         {doc.date}
                       </span>
                       <span className="text-xs font-medium text-[#9CA3AF] mt-0.5">
@@ -199,7 +199,7 @@ export default function DocumentsPage() {
         <Dialog open={!!previewPlan} onOpenChange={() => setPreviewPlan(null)}>
           <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-none gap-0 rounded-3xl bg-white">
             <DialogHeader className="p-6 border-b border-slate-100 flex flex-row items-center justify-between space-y-0">
-              <DialogTitle className="text-2xl font-bold text-[#1A1A2E]">
+              <DialogTitle className="text-2xl font-bold text-text">
                 Treatment Plan Preview
               </DialogTitle>
             </DialogHeader>
@@ -210,7 +210,7 @@ export default function DocumentsPage() {
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Date</span>
                 </div>
                 <div className="flex justify-between items-center gap-4">
-                  <span className="text-base font-bold text-[#1A1A2E]">{previewPlan.title}</span>
+                  <span className="text-base font-bold text-text">{previewPlan.title}</span>
                   <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">{previewPlan.date}</span>
                 </div>
                 {previewPlan.dentistName && (
@@ -221,7 +221,7 @@ export default function DocumentsPage() {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-base font-bold text-[#1A1A2E]">Procedures Breakdown</h4>
+                <h4 className="text-base font-bold text-text">Procedures Breakdown</h4>
                 <div className="border border-slate-100 rounded-2xl overflow-hidden bg-white">
                   <table className="w-full text-left border-collapse">
                     <thead>

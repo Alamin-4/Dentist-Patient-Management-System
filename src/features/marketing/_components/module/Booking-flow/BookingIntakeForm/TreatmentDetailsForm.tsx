@@ -89,7 +89,7 @@ export default function TreatmentDetailsForm({
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
-      <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-8">
+      <h2 className="text-[22px] font-bold text-text mb-8">
         Help us create your estimate comparison
       </h2>
 
@@ -112,7 +112,7 @@ export default function TreatmentDetailsForm({
               type="text"
               placeholder="10,500"
               {...register("budget")}
-              className="flex-1 px-4 h-full outline-none text-[#1A1A2E] font-semibold text-[16px] bg-white"
+              className="flex-1 px-4 h-full outline-none text-text font-semibold text-[16px] bg-white"
             />
           </div>
           {activeErrors.budget && (
@@ -209,10 +209,10 @@ function DateInput({
           : "border-[#E5E7EB] hover:border-[#CBD5E1] focus-within:border-[#113254]"
           }`}
       >
-        <span className={`text-[15px] font-semibold ${displayString ? "text-[#1A1A2E]" : "text-[#9CA3AF]"}`}>
+        <span className={`text-[15px] font-semibold ${displayString ? "text-text" : "text-[#9CA3AF]"}`}>
           {displayString || placeholder}
         </span>
-        <CalendarDays className="w-5 h-5 text-[#6B7280]" />
+        <CalendarDays className="w-5 h-5 text-sec-text" />
       </div>
 
       {isOpen && (

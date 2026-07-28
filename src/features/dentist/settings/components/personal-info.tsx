@@ -115,7 +115,7 @@ export default function PersonalInfo() {
   return (
     <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between border-b border-[#EEF2F7] pb-4 mb-4">
-        <h2 className="text-lg font-semibold text-[#0E3E65]">Personal Information</h2>
+        <h2 className="text-lg font-semibold text-primary">Personal Information</h2>
         <button
           type="button"
           onClick={() => {
@@ -125,11 +125,10 @@ export default function PersonalInfo() {
               setIsEditing(true);
             }
           }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${
-            isEditing
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
               ? "text-red-500 hover:bg-red-50 border-red-200"
               : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
-          }`}
+            }`}
         >
           <Pencil className="h-3.5 w-3.5" />
           {isEditing ? "Cancel" : "Edit"}
@@ -145,9 +144,8 @@ export default function PersonalInfo() {
               type="text"
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("firstName", { required: "First name is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.firstName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.firstName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.firstName && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.firstName.message}</p>
@@ -161,9 +159,8 @@ export default function PersonalInfo() {
               type="text"
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("lastName", { required: "Last name is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.lastName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.lastName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.lastName && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.lastName.message}</p>
@@ -177,9 +174,8 @@ export default function PersonalInfo() {
               type="text"
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("legalName", { required: "Legal name is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.legalName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.legalName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.legalName && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.legalName.message}</p>
@@ -193,9 +189,8 @@ export default function PersonalInfo() {
               type="text"
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("phoneNumber", { required: "Phone number is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.phoneNumber ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.phoneNumber ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.phoneNumber && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.phoneNumber.message}</p>
@@ -208,9 +203,8 @@ export default function PersonalInfo() {
             <select
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("specialtyId", { required: "Specialty is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.specialtyId ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm bg-white outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.specialtyId ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             >
               <option value="">Select Specialty</option>
               {specialties.map((spec: any) => (
@@ -236,9 +230,8 @@ export default function PersonalInfo() {
                 required: "Years of experience is required",
                 min: { value: 0, message: "Cannot be negative" },
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.yearsOfExperience ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.yearsOfExperience ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.yearsOfExperience && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.yearsOfExperience.message}</p>
@@ -252,9 +245,8 @@ export default function PersonalInfo() {
               type="text"
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("city", { required: "City is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.city ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.city ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.city && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.city.message}</p>
@@ -268,9 +260,8 @@ export default function PersonalInfo() {
               type="text"
               disabled={!isEditing || updateDentistProfileMutation.isPending}
               {...register("country", { required: "Country is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${
-                errors.country ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.country ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {errors.country && (
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.country.message}</p>

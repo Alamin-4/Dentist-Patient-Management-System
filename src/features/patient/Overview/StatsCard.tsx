@@ -20,8 +20,8 @@ export const StatCard = ({ icon, value, label, isLoading }: StatProps) => (
         </div>
       ) : (
         <>
-          <h3 className="text-2xl font-bold text-[#1A1A2E]">{value}</h3>
-          <p className="text-sm font-medium text-[#6B7280]">{label}</p>
+          <h3 className="text-2xl font-bold text-text">{value}</h3>
+          <p className="text-sm font-medium text-sec-text">{label}</p>
         </>
       )}
     </div>

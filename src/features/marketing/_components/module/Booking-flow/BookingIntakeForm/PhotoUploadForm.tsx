@@ -121,17 +121,17 @@ export default function PhotoUploadForm({
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
-      <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-6">
+      <h2 className="text-[22px] font-bold text-text mb-6">
         Upload your dental photos
       </h2>
 
       {/* Tip banner */}
       <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-lg mb-8">
         <div>
-          <p className="font-bold text-[#1A1A2E] text-[15px] mb-1">
+          <p className="font-bold text-text text-[15px] mb-1">
             Tip for best results
           </p>
-          <p className="text-[#6B7280] text-sm leading-relaxed">
+          <p className="text-sec-text text-sm leading-relaxed">
             Stand near a window in natural light. Use your phone&apos;s front
             camera. Avoid flash — it washes out detail doctors need for an
             accurate estimate.
@@ -205,7 +205,7 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
-    
+
     // Clear input so selecting the same file after an error works
     e.target.value = "";
 
@@ -253,7 +253,7 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
           className="flex flex-col items-center justify-center gap-3 w-full h-full min-h-40 p-6 text-center"
         >
           <Upload className={`w-6 h-6 transition-colors ${error ? "text-red-400" : "text-[#9CA3AF] group-hover:text-[#113254]"}`} />
-          <span className="text-[13px] font-semibold text-[#1A1A2E] leading-snug">
+          <span className="text-[13px] font-semibold text-text leading-snug">
             {label}
           </span>
         </button>

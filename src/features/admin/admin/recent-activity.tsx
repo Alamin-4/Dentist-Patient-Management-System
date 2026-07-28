@@ -47,7 +47,7 @@ export function RecentActivity({ activities = [] }: RecentActivityProps) {
   return (
     <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
       {/* Header */}
-      <h3 className="text-[15px] font-bold text-[#1A1A2E] mb-5">
+      <h3 className="text-[15px] font-bold text-text mb-5">
         Recent activity
       </h3>
 
@@ -75,7 +75,7 @@ export function RecentActivity({ activities = [] }: RecentActivityProps) {
 
               {/* Text */}
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold text-[#1A1A2E] leading-tight">
+                <p className="text-[13px] font-semibold text-text leading-tight">
                   {item.title}
                 </p>
                 <p className="text-[11px] text-gray-400 mt-0.5 truncate">

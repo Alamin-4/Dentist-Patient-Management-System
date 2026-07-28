@@ -51,7 +51,7 @@ export function ProcedureFilters({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search procedures by name..."
-              className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+              className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
             />
           </div>
 
@@ -59,7 +59,7 @@ export function ProcedureFilters({
           <select
             value={selectedSpecialty}
             onChange={(e) => setSelectedSpecialty(e.target.value)}
-            className="h-9 w-48 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+            className="h-9 w-48 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-text"
           >
             <option value="">All Specialties</option>
             {specialties.map((spec: any) => (
@@ -74,7 +74,7 @@ export function ProcedureFilters({
             type="month"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="h-9 w-40 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-[#1A1A2E]"
+            className="h-9 w-40 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 outline-none focus:border-text"
           />
         </>
       )}

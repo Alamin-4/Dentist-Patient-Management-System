@@ -43,13 +43,13 @@ export default function StartBookingModal() {
         className="sm:max-w-190 w-full p-0 border-none rounded-lg overflow-hidden bg-white"
       >
         <div className="px-8 py-6 border-b border-[#F3F4F6]">
-          <DialogTitle className="text-[24px] font-bold text-[#1A1A2E]">
+          <DialogTitle className="text-[24px] font-bold text-text">
             {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
           </DialogTitle>
         </div>
 
         <div className="p-8">
-          <p className="text-[18px] leading-relaxed text-[#1A1A2E] font-medium mb-8">
+          <p className="text-[18px] leading-relaxed text-text font-medium mb-8">
             To help your consultant review your case, please make sure you have
             the following ready before continuing.
           </p>
@@ -59,14 +59,14 @@ export default function StartBookingModal() {
             {CHECKLIST.map((item) => (
               <div key={item} className="flex items-center gap-4">
                 <CheckCircle2 className="shrink-0 w-5 h-5 text-[#113254] fill-[#113254] stroke-white" />
-                <span className="text-[16px] font-semibold text-[#1A1A2E]">
+                <span className="text-[16px] font-semibold text-text">
                   {item}
                 </span>
               </div>
             ))}
           </div>
 
-          <p className="text-[#1A1A2E] text-[15px] leading-relaxed mb-8">
+          <p className="text-text text-[15px] leading-relaxed mb-8">
             RatedDocs reviews dentist data but does not provide treatment or
             guarantee outcomes.
           </p>
@@ -81,7 +81,7 @@ export default function StartBookingModal() {
             />
             <label
               htmlFor="terms"
-              className="text-[15px] text-[#1A1A2E] font-medium cursor-pointer leading-snug"
+              className="text-[15px] text-text font-medium cursor-pointer leading-snug"
             >
               I have read and agree to the{" "}
               <a href="/terms" className="text-[#113254] underline underline-offset-4">

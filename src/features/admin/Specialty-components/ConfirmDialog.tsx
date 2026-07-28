@@ -42,7 +42,7 @@ export function ConfirmDialog({
                     </div>
 
                     <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-[#1A1A2E]">{title}</h3>
+                        <h3 className="text-lg font-semibold text-text">{title}</h3>
                         <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{description}</p>
                     </div>
                 </div>

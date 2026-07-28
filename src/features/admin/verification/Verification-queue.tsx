@@ -193,7 +193,7 @@ export default function VerificationQueue() {
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">
+          <h1 className="text-2xl font-bold tracking-tight text-text">
             Verification Queue
           </h1>
           <p className="mt-0.5 text-sm text-gray-500">
@@ -215,7 +215,7 @@ export default function VerificationQueue() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">{card.label}</p>
-                <p className="mt-0.5 text-3xl font-bold tracking-tight text-[#1A1A2E]">
+                <p className="mt-0.5 text-3xl font-bold tracking-tight text-text">
                   {meta[card.key]}
                 </p>
                 <p className="mt-0.5 text-xs text-gray-400">{card.sub}</p>
@@ -314,7 +314,7 @@ export default function VerificationQueue() {
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#1A1A2E]">
+            <DialogTitle className="text-lg font-bold text-text">
               Reject Verification Phase
             </DialogTitle>
             <DialogDescription className="text-sm text-gray-500">

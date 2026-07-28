@@ -39,7 +39,7 @@ export default function MyResultPage() {
 
   return (
     <div className="animate-in fade-in duration-300">
-      <h1 className="text-3xl font-bold text-[#1A1A2E] mb-8">My Result</h1>
+      <h1 className="text-3xl font-bold text-text mb-8">My Result</h1>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
@@ -52,7 +52,7 @@ export default function MyResultPage() {
             <UserCheck className="size-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-[#1A1A2E]">Profile Personalization Required</h2>
+            <h2 className="text-2xl font-bold text-text">Profile Personalization Required</h2>
             <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
               Please complete your profile personalization details first so we can track and display your dental treatment results correctly.
             </p>
@@ -91,7 +91,7 @@ export default function MyResultPage() {
                 </div>
               </div>
               <div className="p-5 space-y-1">
-                <h3 className="text-xl font-bold text-[#1A1A2E]">
+                <h3 className="text-xl font-bold text-text">
                   {result.title}
                 </h3>
                 <p className="text-slate-400 font-medium text-sm">

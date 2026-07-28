@@ -54,7 +54,7 @@ export function PlatformFee() {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {/* Header */}
       <div className="border-b border-slate-200 pb-4">
-        <h2 className="text-base font-bold text-[#1A1A2E]">Platform Fee</h2>
+        <h2 className="text-base font-bold text-text">Platform Fee</h2>
         <p className="mt-0.5 text-xs text-slate-500">
           Set the percentage RatedDocs earns from each successfully completed booking.
         </p>
@@ -62,7 +62,7 @@ export function PlatformFee() {
 
       {/* Fee rate */}
       <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-[#1A1A2E]">Fee rate percentage</label>
+        <label className="text-xs font-bold text-text">Fee rate percentage</label>
         <div className="flex items-center gap-2">
           <div className="relative flex-1 max-w-sm">
             <input

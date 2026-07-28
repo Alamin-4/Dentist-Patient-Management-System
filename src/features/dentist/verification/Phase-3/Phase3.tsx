@@ -267,7 +267,7 @@ export default function Phase3() {
                       type="button"
                       disabled={isFormLocked}
                       onClick={() => setIsMapOpen(true)}
-                      className="p-3 bg-[#0E3E65] text-white rounded-md hover:bg-[#082842] transition-colors disabled:opacity-60 shrink-0 flex items-center gap-1.5 font-semibold text-sm cursor-pointer"
+                      className="p-3 bg-primary text-white rounded-md hover:bg-[#082842] transition-colors disabled:opacity-60 shrink-0 flex items-center gap-1.5 font-semibold text-sm cursor-pointer"
                       title="Select on Map"
                     >
                       <MapPin className="h-5 w-5" />

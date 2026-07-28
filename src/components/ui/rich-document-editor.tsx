@@ -189,10 +189,10 @@ export function RichDocumentEditor({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder="Untitled Document..."
-              className="w-full text-xl md:text-2xl font-black text-[#1A1A2E] outline-none border-b border-transparent focus:border-[#10436B] bg-transparent transition-all"
+              className="w-full text-xl md:text-2xl font-black text-text outline-none border-b border-transparent focus:border-[#10436B] bg-transparent transition-all"
             />
           ) : (
-            <h2 className="text-xl md:text-2xl font-black text-[#1A1A2E] truncate">
+            <h2 className="text-xl md:text-2xl font-black text-text truncate">
               {title || "Untitled Document"}
             </h2>
           )}
@@ -206,8 +206,8 @@ export function RichDocumentEditor({
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-md transition-all cursor-pointer",
                 activeTab === "edit"
-                  ? "bg-white text-[#1A1A2E] border border-slate-200"
-                  : "text-slate-500 hover:text-[#1A1A2E]"
+                  ? "bg-white text-text border border-slate-200"
+                  : "text-slate-500 hover:text-text"
               )}
             >
               <Edit2 className="h-3.5 w-3.5" />
@@ -219,8 +219,8 @@ export function RichDocumentEditor({
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-md transition-all cursor-pointer",
                 activeTab === "preview"
-                  ? "bg-white text-[#1A1A2E] border border-slate-200"
-                  : "text-slate-500 hover:text-[#1A1A2E]"
+                  ? "bg-white text-text border border-slate-200"
+                  : "text-slate-500 hover:text-text"
               )}
             >
               <Eye className="h-3.5 w-3.5" />
@@ -265,7 +265,7 @@ export function RichDocumentEditor({
                   key={idx}
                   className={cn(
                     "text-xs font-medium text-slate-600 border-l-2 transition-colors pl-2.5 py-0.5 hover:text-[#10436B] cursor-pointer",
-                    item.level === 1 && "font-bold text-[#1A1A2E] border-[#10436B]",
+                    item.level === 1 && "font-bold text-text border-[#10436B]",
                     item.level === 2 && "border-slate-300 pl-3",
                     item.level === 3 && "border-slate-200 text-slate-400 pl-4 text-[11px]"
                   )}
@@ -279,11 +279,11 @@ export function RichDocumentEditor({
           <div className="border-t border-slate-100 pt-3 space-y-2 text-xs text-slate-500">
             <div className="flex justify-between items-center">
               <span>Word Count:</span>
-              <span className="font-bold text-[#1A1A2E]">{stats.wordCount}</span>
+              <span className="font-bold text-text">{stats.wordCount}</span>
             </div>
             <div className="flex justify-between items-center">
               <span>Characters:</span>
-              <span className="font-bold text-[#1A1A2E]">{stats.charCount}</span>
+              <span className="font-bold text-text">{stats.charCount}</span>
             </div>
             <div className="flex justify-between items-center">
               <span>Est. Read Time:</span>

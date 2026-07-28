@@ -105,7 +105,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Link
             href="/admin/patients"
-            className="flex items-center gap-1.5 font-medium text-gray-500 hover:text-[#1A1A2E]"
+            className="flex items-center gap-1.5 font-medium text-gray-500 hover:text-text"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to patients
@@ -113,14 +113,14 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
           <span>/</span>
           <Link
             href="/admin/patients"
-            className="hover:text-[#1A1A2E]"
+            className="hover:text-text"
           >
             Patients
           </Link>
           <span>/</span>
-          <span className="text-[#1A1A2E] font-medium">{patient.name}</span>
+          <span className="text-text font-medium">{patient.name}</span>
         </div>
-        <button className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-[#1A1A2E] shadow-xs hover:bg-gray-50 transition-colors">
+        <button className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-text shadow-xs hover:bg-gray-50 transition-colors">
           <Pencil className="h-3.5 w-3.5" />
           Edit
         </button>
@@ -153,7 +153,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
             {/* Name + badges + meta */}
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-bold text-[#1A1A2E] sm:text-2xl">
+                <h2 className="text-xl font-bold text-text sm:text-2xl">
                   {patient.name}
                 </h2>
                 {/* Status badge */}
@@ -231,7 +231,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
             </p>
             <p
               className={cn(
-                "mt-1 font-bold tracking-tight text-[#1A1A2E]",
+                "mt-1 font-bold tracking-tight text-text",
                 i === 4 ? "text-lg leading-snug" : "text-2xl"
               )}
             >

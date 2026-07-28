@@ -78,7 +78,7 @@ function VerificationCardComponent({
           <div className="flex-1 min-w-0">
             {/* Name + badges row */}
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-semibold text-[#1A1A2E]">
+              <p className="text-sm font-semibold text-text">
                 {displayName}
               </p>
               <span
@@ -138,7 +138,7 @@ function VerificationCardComponent({
         <div className="shrink-0 self-start sm:self-center">
           <button
             onClick={() => onViewSubmission(dentist)}
-            className="flex items-center gap-1.5 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1A1A2E]/90 active:scale-95"
+            className="flex items-center gap-1.5 rounded-lg bg-text px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-text/90 active:scale-95"
           >
             {isRejected ? "View Details" : "View Submission"}
             <span className="text-white/60 text-base leading-none">›</span>
