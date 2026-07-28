@@ -81,7 +81,7 @@ export function ConsultationRequestDrawer({
       <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-          <h2 className="text-base font-bold text-[#1A1A2E]">{title}</h2>
+          <h2 className="text-base font-bold text-text">{title}</h2>
           <button
             onClick={onClose}
             className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100"
@@ -100,7 +100,7 @@ export function ConsultationRequestDrawer({
                 className={cn(
                   "flex-1 py-3 text-sm font-semibold transition-colors",
                   activeTab === tab
-                    ? "border-b-2 border-[#1A1A2E] text-[#1A1A2E]"
+                    ? "border-b-2 border-text text-text"
                     : "text-gray-400 hover:text-gray-600"
                 )}
               >
@@ -125,7 +125,7 @@ export function ConsultationRequestDrawer({
                     {consultation.patient_initials}
                   </span>
                   <div>
-                    <p className="text-sm font-bold text-[#1A1A2E]">
+                    <p className="text-sm font-bold text-text">
                       {consultation.patient_name}
                     </p>
                     <p className="text-xs text-gray-400">{consultation.patient_email}</p>
@@ -246,7 +246,7 @@ export function ConsultationRequestDrawer({
                     {consultation.patient_initials}
                   </span>
                   <div>
-                    <p className="text-sm font-bold text-[#1A1A2E]">
+                    <p className="text-sm font-bold text-text">
                       {consultation.patient_name}
                     </p>
                     <p className="text-xs text-gray-400">{consultation.patient_email}</p>
@@ -314,7 +314,7 @@ export function ConsultationRequestDrawer({
                   </div>
                 ))}
                 <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
-                  <p className="text-sm font-bold text-[#1A1A2E]">Estimate amount</p>
+                  <p className="text-sm font-bold text-text">Estimate amount</p>
                   <p className="text-sm font-bold text-blue-600">
                     ${treatment_plan.estimate_amount.toLocaleString()}
                   </p>

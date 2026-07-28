@@ -62,7 +62,7 @@ function ConsultationCard({
             {consultation.patient_initials}
           </span>
           <div>
-            <p className="text-sm font-bold text-[#1A1A2E]">{consultation.patient_name}</p>
+            <p className="text-sm font-bold text-text">{consultation.patient_name}</p>
             <p className="text-xs text-gray-400">{consultation.patient_email}</p>
           </div>
         </div>
@@ -84,7 +84,7 @@ function ConsultationCard({
           <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
             Treatment Procedure
           </p>
-          <p className="mt-0.5 text-sm font-semibold text-[#1A1A2E]">
+          <p className="mt-0.5 text-sm font-semibold text-text">
             {consultation.treatment_procedure}
           </p>
         </div>
@@ -92,7 +92,7 @@ function ConsultationCard({
           <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
             Appox Budget
           </p>
-          <p className="mt-0.5 text-sm font-semibold text-[#1A1A2E]">
+          <p className="mt-0.5 text-sm font-semibold text-text">
             ${consultation.approx_budget.toLocaleString()}
           </p>
         </div>
@@ -112,7 +112,7 @@ function ConsultationCard({
 
       <button
         onClick={onViewDetails}
-        className="w-full rounded-lg border border-gray-200 bg-white py-2 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50"
+        className="w-full rounded-lg border border-gray-200 bg-white py-2 text-sm font-semibold text-text transition-colors hover:bg-gray-50"
       >
         View Details
       </button>

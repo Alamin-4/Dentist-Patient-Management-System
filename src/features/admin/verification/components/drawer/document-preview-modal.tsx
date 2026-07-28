@@ -18,7 +18,7 @@ export function DocumentPreviewModal({ isOpen, onClose, url, name }: DocumentPre
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white">
         <DialogHeader className="px-5 py-4 border-b border-gray-100 flex flex-row items-center justify-between space-y-0">
-          <DialogTitle className="text-base font-bold text-[#1A1A2E] truncate pr-4">
+          <DialogTitle className="text-base font-bold text-text truncate pr-4">
             {name}
           </DialogTitle>
           <div className="flex items-center gap-2">
@@ -68,7 +68,7 @@ export function DocumentPreviewModal({ isOpen, onClose, url, name }: DocumentPre
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-text px-4 py-2 text-sm font-semibold text-white hover:bg-text/90 transition-colors"
               >
                 Open in new tab <ZoomIn className="h-4 w-4" />
               </a>

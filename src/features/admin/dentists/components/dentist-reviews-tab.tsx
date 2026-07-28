@@ -55,7 +55,7 @@ export function DentistReviewsTab({ reviews, totalReviews }: DentistReviewsTabPr
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-bold text-[#1A1A2E]">{review.reviewer_name}</p>
+                  <p className="text-sm font-bold text-text">{review.reviewer_name}</p>
                   <StarRating rating={review.rating} />
                   <span className="text-xs text-gray-400">
                     {review.treatment} · {review.date}

@@ -48,6 +48,18 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Client-side guard: size & type
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("Image is too large. Maximum allowed size is 5 MB.");
+            e.target.value = "";
+            return;
+        }
+        if (!file.type.startsWith("image/")) {
+            toast.error("Only image files (JPG, PNG, WEBP) are allowed.");
+            e.target.value = "";
+            return;
+        }
+
         try {
             setUploading(true);
             const res = await apiClient.files.upload(file);
@@ -98,7 +110,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
                         <button
                             onClick={handleAvatarClick}
                             disabled={uploading}
-                            className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A2E] text-white shadow hover:bg-[#1A1A2E]/90 disabled:opacity-50 cursor-pointer"
+                            className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-text text-white shadow hover:bg-text/90 disabled:opacity-50 cursor-pointer"
                         >
                             <Camera className="h-3 w-3" />
                         </button>
@@ -111,7 +123,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
                         />
                     </div>
                     <div>
-                        <p className="text-lg font-bold text-[#1A1A2E]">
+                        <p className="text-lg font-bold text-text">
                             {[user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Admin"}
                         </p>
                         <p className="text-sm text-gray-400">
@@ -123,7 +135,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
 
             {/* Personal details */}
             <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-                <h3 className="mb-5 text-base font-semibold text-[#1A1A2E]">Personal details</h3>
+                <h3 className="mb-5 text-base font-semibold text-text">Personal details</h3>
                 <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {/* First name */}
                     <div>
@@ -131,7 +143,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
                         <input
                             disabled={updateProfileMutation.isPending}
                             {...register("firstName", { required: "First name is required" })}
-                            className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-[#1A1A2E] outline-none focus:ring-1 focus:ring-[#1A1A2E] ${errors.firstName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                            className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-text outline-none focus:ring-1 focus:ring-text ${errors.firstName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-text"
                                 }`}
                         />
                         {errors.firstName && (
@@ -145,7 +157,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
                         <input
                             disabled={updateProfileMutation.isPending}
                             {...register("lastName", { required: "Last name is required" })}
-                            className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-[#1A1A2E] outline-none focus:ring-1 focus:ring-[#1A1A2E] ${errors.lastName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-[#1A1A2E]"
+                            className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-text outline-none focus:ring-1 focus:ring-text ${errors.lastName ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-text"
                                 }`}
                         />
                         {errors.lastName && (
@@ -171,7 +183,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
                         <button
                             type="submit"
                             disabled={updateProfileMutation.isPending}
-                            className="flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white bg-[#1A1A2E] hover:bg-[#1A1A2E]/90 disabled:opacity-60 disabled:cursor-not-allowed min-w-[130px] cursor-pointer"
+                            className="flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white bg-text hover:bg-text/90 disabled:opacity-60 disabled:cursor-not-allowed min-w-32.5 cursor-pointer"
                         >
                             {updateProfileMutation.isPending ? (
                                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

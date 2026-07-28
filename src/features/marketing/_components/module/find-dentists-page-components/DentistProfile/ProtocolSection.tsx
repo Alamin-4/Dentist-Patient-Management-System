@@ -70,7 +70,7 @@ export default function ProtocolSection({
 
   return (
     <section id="protocols" className="rounded-lg border border-slate-200 bg-white p-6">
-      <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65] mb-6">
+      <h2 className="text-xl lg:text-2xl font-bold text-primary mb-6">
         Clinical Protocols & Verification
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-12">
@@ -79,7 +79,7 @@ export default function ProtocolSection({
 
           return (
             <div key={i} className="space-y-1">
-              <p className="text-xs text-[#6B7280]">{p.label}</p>
+              <p className="text-xs text-sec-text">{p.label}</p>
               <div className="flex items-center gap-2">
                 {hasValue ? (
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +89,7 @@ export default function ProtocolSection({
                   <span className="w-4.5 h-4.5" />
                 )}
 
-                <span className={`text-[14px] font-medium ${hasValue ? "text-[#1A1A2E]" : "text-slate-400"}`}>
+                <span className={`text-[14px] font-medium ${hasValue ? "text-text" : "text-slate-400"}`}>
                   {p.value || "N/A"}
                 </span>
               </div>

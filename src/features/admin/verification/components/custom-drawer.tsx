@@ -119,7 +119,7 @@ export function CustomDrawer({
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="break-all text-base font-bold text-[#1A1A2E]">
+                <p className="break-all text-base font-bold text-text">
                   {drawerDetails.displayName}
                 </p>
                 {dentist.queue_status === "approved" && (
@@ -177,7 +177,7 @@ export function CustomDrawer({
                   className={cn(
                     "relative flex flex-col items-center gap-0.5 px-4 py-3 text-xs font-medium transition-colors disabled:cursor-not-allowed",
                     isActive
-                      ? "text-[#1A1A2E] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#1A1A2E]"
+                      ? "text-text after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-text"
                       : isLocked
                         ? "text-gray-300"
                         : "text-gray-500 hover:text-gray-700",
@@ -238,7 +238,7 @@ export function CustomDrawer({
                 activePhaseStatus === "approved"
                   ? "bg-emerald-600 text-white cursor-not-allowed"
                   : activePhaseStatus === "pending"
-                    ? "bg-[#1A1A2E] text-white hover:bg-[#1A1A2E]/90"
+                    ? "bg-text text-white hover:bg-text/90"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
               )}
             >

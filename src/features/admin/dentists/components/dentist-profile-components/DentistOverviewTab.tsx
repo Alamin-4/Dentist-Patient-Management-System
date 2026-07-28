@@ -14,7 +14,7 @@ export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
             {/* Phase 1: License */}
             <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#1A1A2E]">Phase 1: License & Identity</h3>
+                    <h3 className="text-lg font-bold text-text">Phase 1: License & Identity</h3>
                     <StatusBadge status={license_step?.status} />
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -35,7 +35,7 @@ export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
             {/* Phase 2: Operations */}
             <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#1A1A2E]">Phase 2: Operations</h3>
+                    <h3 className="text-lg font-bold text-text">Phase 2: Operations</h3>
                     <StatusBadge status={operation_step?.status} />
                 </div>
 
@@ -74,7 +74,7 @@ export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
                                 <tbody className="divide-y divide-gray-50">
                                     {operation_step.procedures_feature.map((proc: any, idx: number) => (
                                         <tr key={idx}>
-                                            <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-[#1A1A2E]">{proc.procedure_name}</td>
+                                            <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-text">{proc.procedure_name}</td>
                                             <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{proc.currency} {proc.price}</td>
                                             <td className="px-4 py-3 text-sm text-gray-500">{proc.option_notes}</td>
                                         </tr>
@@ -91,7 +91,7 @@ export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
             {/* Phase 3: Clinical */}
             <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#1A1A2E]">Phase 3: Clinical</h3>
+                    <h3 className="text-lg font-bold text-text">Phase 3: Clinical</h3>
                     <StatusBadge status={clinical_step?.status} />
                 </div>
 
@@ -140,7 +140,7 @@ function InfoItem({ label, value }: { label: string; value: string }) {
     return (
         <div>
             <p className="text-xs font-medium uppercase tracking-wide text-gray-400">{label}</p>
-            <p className="mt-1 text-sm font-medium text-[#1A1A2E] wrap-break-word">{value || 'N/A'}</p>
+            <p className="mt-1 text-sm font-medium text-text wrap-break-word">{value || 'N/A'}</p>
         </div>
     );
 }

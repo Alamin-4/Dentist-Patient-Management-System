@@ -71,7 +71,7 @@ export default function PaymentInfo({
     <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between border-b border-[#EEF2F7] pb-4 mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-[#0E3E65]">Payout Settings</h2>
+          <h2 className="text-lg font-semibold text-primary">Payout Settings</h2>
           <span className="text-xs text-[#475569] bg-slate-100 px-2 py-0.5 rounded-full font-medium">Stripe Connect</span>
         </div>
         {isVerified && connected && (
@@ -107,7 +107,7 @@ export default function PaymentInfo({
               <span className="text-sm font-semibold text-slate-800">
                 Verification Required
               </span>
-              <p className="text-xs text-[#6B7280]">
+              <p className="text-xs text-sec-text">
                 Your account is not verified yet. Please complete your profile verification first to set up payouts.
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function PaymentInfo({
               <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-slate-800">Set Up Payout Account</p>
-                  <p className="text-sm text-[#6B7280]">
+                  <p className="text-sm text-sec-text">
                     Connect your Stripe account to receive patient booking fees directly.
                   </p>
                 </div>
@@ -178,7 +178,7 @@ export default function PaymentInfo({
                         {isFullyOnboarded ? "Active Payouts" : "Setup Incomplete"}
                       </span>
                     </div>
-                    <p className="text-xs text-[#6B7280]">
+                    <p className="text-xs text-sec-text">
                       {isFullyOnboarded
                         ? "Your banking details are verified. Payouts will automatically transfer upon treatment completion."
                         : "Please finish your onboarding registration with Stripe to enable card charges and payouts."}

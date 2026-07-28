@@ -27,6 +27,7 @@ export interface FilterSidebarProps {
   onShowVerifiedOnlyChange: (value: boolean) => void;
   onClear: () => void;
   availableProcedures: string[];
+  availableLanguages?: string[];
 }
 
 const scoreRanges = ["0-25", "25-50", "50-75", "75-100"];
@@ -66,7 +67,9 @@ export default function FilterSidebar({
   showVerifiedOnly, onShowVerifiedOnlyChange,
   onClear,
   availableProcedures,
+  availableLanguages,
 }: FilterSidebarProps) {
+  const languagesList = availableLanguages && availableLanguages.length > 0 ? availableLanguages : languages;
   const [countriesList, setCountriesList] = React.useState<CSCCountry[]>([]);
   const [citiesList, setCitiesList] = React.useState<CSCCity[]>([]);
 
@@ -137,10 +140,7 @@ export default function FilterSidebar({
         <FilterSection title="Country">
           <SearchableDropdown
             value={country}
-            onChange={(val) => {
-              onCountryChange(val);
-              onCityChange("All Cities");
-            }}
+            onChange={onCountryChange}
             options={["All Countries", ...countriesList.map((c) => c.name)]}
             placeholder="Select Country"
             clearValue="All Countries"
@@ -234,7 +234,7 @@ export default function FilterSidebar({
         {/* Languages */}
         <FilterSection title="Languages">
           <div className="space-y-3">
-            {languages.map((language) => (
+            {languagesList.map((language) => (
               <div key={language} className="flex items-center gap-3">
                 <Checkbox
                   id={language}

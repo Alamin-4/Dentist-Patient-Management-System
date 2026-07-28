@@ -9,7 +9,10 @@ import { useStateContext } from "@/providers/StateProvider";
 import Link from "next/link";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
-import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
+import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+import CompareToggle from "../../find-dentist-components/CompareToggle";
 
 const SkeletonCard = () => (
   <div className="rounded-md p-4 sm:p-6 flex flex-col items-start gap-4 border-2 border-slate-100 bg-white animate-pulse">
@@ -45,7 +48,7 @@ export default function VerifiedDentists() {
     procedure: procedure && procedure !== "All Procedures" ? procedure : undefined,
     limit: 6,
   });
-
+  // console.log("dentist directory:", directoryResponse)
   const dentists = useMemo(() => {
     const apiList = directoryResponse?.data || [];
     return apiList.map((d: any) => ({
@@ -88,35 +91,28 @@ export default function VerifiedDentists() {
     return dentists.filter((doc: any) => selectedIds.includes(doc.id));
   }, [dentists, selectedIds]);
 
-
-
   return (
     <section className="py-12">
-      <div className="max-w-400 w-11/12 mx-auto mb-10 text-center lg:text-left">
-        <h2 className="text-4xl font-black text-[#10436B]">
-          Verified Dentists
-        </h2>
-        <p className="text-gray-400 mt-2 text-lg">
-          Every dentist is trusted. Every review is from a real patient.
-        </p>
+      <div className="max-w-400 w-11/12 mx-auto mb-10 text-center lg:text-left space-y-3">
+        <CustomSectionHeading value={"Verified Dentists"} />
+        <CustomDesText value="Every dentist is trusted. Every review is from a real patient." />
       </div>
 
-      <div className="max-w-400 w-11/12 mx-auto border border-[#E9EDEE] rounded-md flex flex-col lg:flex-row">
+      <div className="max-w-400 w-11/12 mx-auto border border-stroke rounded-md flex flex-col lg:flex-row">
         <Sidebar active={procedure} onChange={setProcedure} />
 
         <div className="flex-1 p-6 md:p-10">
           <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <p className="text-[#6B7280]">
+            <p className="text-sec-text">
               Showing {isLoading ? "..." : dentists.length} dentist{dentists.length !== 1 && "s"} for{" "}
               <span className="text-[#10436B] font-bold">"{procedure || "All Procedures"}"</span>
             </p>
-
             <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-[11px] text-[#10436B] font-bold uppercase leading-none">
+              <div className="*:text-left">
+                <p className="text-sm text-primary font-medium">
                   Compare
                 </p>
-                <p className="text-[10px] text-gray-400">up to 3</p>
+                <p className="text-xs text-sec-text">up to 3</p>
               </div>
               <button
                 onClick={() => {
@@ -124,7 +120,7 @@ export default function VerifiedDentists() {
                   setSelectedIds([]);
                 }}
                 className={cn(
-                  "w-11 h-6 rounded-full transition-all relative flex items-center px-1",
+                  "w-11 h-6 rounded-full transition-all relative flex items-center px-1 cursor-pointer",
                   compareMode ? "bg-[#10436B]" : "bg-gray-300",
                 )}
               >
@@ -178,7 +174,7 @@ export default function VerifiedDentists() {
                       setShowSignupModal(true);
                     }
                   }}
-                  className="bg-[#0E3E65] hover:bg-[#092b47] text-white h-11 px-6 rounded-lg cursor-pointer font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary hover:bg-[#092b47] text-white h-11 px-6 rounded-lg cursor-pointer font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Compare
                 </Button>

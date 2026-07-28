@@ -88,7 +88,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
               <Megaphone className="h-4 w-4 text-amber-600" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-bold text-[#1A1A2E]">New announcement</h3>
+              <h3 className="text-sm font-bold text-text">New announcement</h3>
               <p className="text-xs text-slate-500">Broadcast a message to platform users</p>
             </div>
             <button
@@ -104,7 +104,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
           <div className="flex flex-col gap-4 p-5">
             {/* Title */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-[#1A1A2E]">
+              <label className="text-xs font-bold text-text">
                 Title <span className="text-red-500">*</span>
               </label>
               <input
@@ -123,7 +123,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
 
             {/* Message */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-[#1A1A2E]">
+              <label className="text-xs font-bold text-text">
                 Message <span className="text-red-500">*</span>
               </label>
               <textarea
@@ -142,7 +142,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
 
             {/* Audience */}
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-[#1A1A2E]">Send to</label>
+              <label className="text-xs font-bold text-text">Send to</label>
               <div className="flex gap-2">
                 {AUDIENCE_OPTIONS.map((opt) => (
                   <button

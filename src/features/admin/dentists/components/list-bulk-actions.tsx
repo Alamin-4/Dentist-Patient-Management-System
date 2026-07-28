@@ -15,7 +15,7 @@ export function ListBulkActions({
   if (selectedIds.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-6 rounded-full border border-gray-200 bg-[#1A1A2E] px-6 py-3.5 shadow-2xl text-white animate-fade-in-up">
+    <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-6 rounded-full border border-gray-200 bg-text px-6 py-3.5 shadow-2xl text-white animate-fade-in-up">
       <span className="text-sm font-medium">
         {selectedIds.length} selected
       </span>

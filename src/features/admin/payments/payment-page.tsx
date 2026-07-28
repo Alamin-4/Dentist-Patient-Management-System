@@ -97,7 +97,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
         <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-5 py-4">
           <div>
             <div className="flex items-center gap-2">
-              <p className="text-base font-bold text-[#1A1A2E]">{txn.txn_ref}</p>
+              <p className="text-base font-bold text-text">{txn.txn_ref}</p>
               <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold", s.bg, s.border, s.text)}>
                 <span className={cn("h-1.5 w-1.5 rounded-full", s.dot)} />
                 {txn.status}
@@ -119,7 +119,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
               {detailRows.map((row, i) => (
                 <div key={i} className="flex items-center justify-between px-4 py-3">
                   <span className="text-sm text-gray-400">{row.label}</span>
-                  <span className="text-sm font-medium text-[#1A1A2E]">{row.value}</span>
+                  <span className="text-sm font-medium text-text">{row.value}</span>
                 </div>
               ))}
             </div>
@@ -147,7 +147,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
                         )}
                       </div>
                       <div>
-                        <p className={cn("text-sm font-medium", isDone || isCurrent ? "text-[#1A1A2E]" : "text-gray-300")}>
+                        <p className={cn("text-sm font-medium", isDone || isCurrent ? "text-text" : "text-gray-300")}>
                           {step.step}
                         </p>
                         {step.date && <p className="text-xs text-gray-400">{step.date}</p>}
@@ -235,7 +235,7 @@ export default function PaymentPage() {
     return bookingsResponse.data.map((b: any) => {
       const mapped = mapDbBookingToUiBooking(b);
       if (!mapped) return null;
-      
+
       let status: Transaction["status"] = "In Escrow";
       if (b.paymentStatus === "PAID") {
         status = "Released";
@@ -251,20 +251,20 @@ export default function PaymentPage() {
         year: "numeric"
       });
 
-      const scheduledDateStr = b.scheduledDate 
+      const scheduledDateStr = b.scheduledDate
         ? new Date(b.scheduledDate).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric"
-          })
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        })
         : null;
 
       const completionDateStr = b.status === "COMPLETED"
         ? new Date(b.updatedAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric"
-          })
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        })
         : null;
 
       const escrow_timeline = [
@@ -365,10 +365,10 @@ export default function PaymentPage() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">Payments &amp; Escrow</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-text">Payments &amp; Escrow</h1>
             <p className="mt-0.5 text-sm text-gray-500">Monitor booking escrow, track releases, and manage referral payouts.</p>
           </div>
-          <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-[#1A1A2E] shadow-sm hover:bg-gray-50 transition-colors">
+          <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-text shadow-sm hover:bg-gray-50 transition-colors">
             <Download className="h-4 w-4" /> Export
           </button>
         </div>
@@ -384,7 +384,7 @@ export default function PaymentPage() {
               <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-full", s.iconBg)}>{s.icon}</div>
               <div>
                 <p className="text-sm text-gray-500">{s.label}</p>
-                <p className={cn("mt-1 text-3xl font-bold tracking-tight", s.valueColor ?? "text-[#1A1A2E]")}>{s.value}</p>
+                <p className={cn("mt-1 text-3xl font-bold tracking-tight", s.valueColor ?? "text-text")}>{s.value}</p>
                 <p className="mt-0.5 text-xs text-gray-400">{s.sub}</p>
               </div>
             </div>
@@ -397,7 +397,7 @@ export default function PaymentPage() {
           <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by booking ID or name..." className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]" />
+              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by booking ID or name..." className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text" />
             </div>
             {/* Status dropdown */}
             <div className="relative">
@@ -407,7 +407,7 @@ export default function PaymentPage() {
               {statusOpen && (
                 <div className="absolute left-0 top-10 z-20 w-44 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
                   {statusOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setStatusFilter(opt); setStatusOpen(false); }} className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50", statusFilter === opt ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}>
+                    <button key={opt} onClick={() => { setStatusFilter(opt); setStatusOpen(false); }} className={cn("w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50", statusFilter === opt ? "font-semibold text-text" : "text-gray-600")}>
                       {opt}
                     </button>
                   ))}
@@ -435,23 +435,23 @@ export default function PaymentPage() {
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         <Avatar initials={t.patient_initials} color={t.patient_avatar_color} size="sm" />
-                        <span className="text-sm font-medium text-[#1A1A2E]">{t.patient_name}</span>
+                        <span className="text-sm font-medium text-text">{t.patient_name}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         <Avatar initials={t.dentist_initials} color={t.dentist_avatar_color} size="sm" />
                         <div>
-                          <p className="text-sm font-medium text-[#1A1A2E]">{t.dentist_name}</p>
+                          <p className="text-sm font-medium text-text">{t.dentist_name}</p>
                           <p className="text-xs text-gray-400">{t.dentist_specialty}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3.5 text-sm font-semibold text-[#1A1A2E]">${t.amount.toLocaleString()}</td>
+                    <td className="px-4 py-3.5 text-sm font-semibold text-text">${t.amount.toLocaleString()}</td>
                     <td className="px-4 py-3.5"><StatusBadge status={t.status} /></td>
                     <td className="px-4 py-3.5 text-sm text-gray-500">{t.date}</td>
                     <td className="px-4 py-3.5 text-sm font-medium text-gray-500">
-                      <span className="flex items-center gap-1 hover:text-[#1A1A2E]">View detail <ChevronRight className="h-3.5 w-3.5" /></span>
+                      <span className="flex items-center gap-1 hover:text-text">View detail <ChevronRight className="h-3.5 w-3.5" /></span>
                     </td>
                   </tr>
                 ))}

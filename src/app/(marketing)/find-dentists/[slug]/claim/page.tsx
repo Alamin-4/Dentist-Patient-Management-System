@@ -7,7 +7,7 @@ import { useLogout, useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAu
 import { useGetMe } from "@/hooks/user/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
-import ProfilePageSkeleton from "@/features/marketing/_components/module/DentistAllComponents/DentistProfile/profile-page-skeleton";
+import ProfilePageSkeleton from "@/features/marketing/_components/module/find-dentists-page-components/DentistProfile/profile-page-skeleton";
 
 import {
   useClaimDentistDirectoryProfile,
@@ -15,8 +15,8 @@ import {
   useSendClaimOtp,
 } from "@/hooks/dentist/useDentistDirectory";
 
-import { ClaimStep1, ClaimStep2 } from "@/features/marketing/_components/module/DentistAllComponents/DentistProfile/ClaimSteps1To2";
-import { ClaimStep3, ClaimStep4, ClaimStep5 } from "@/features/marketing/_components/module/DentistAllComponents/DentistProfile/ClaimSteps3To5";
+import { ClaimStep1, ClaimStep2 } from "@/features/marketing/_components/module/find-dentists-page-components/DentistProfile/ClaimSteps1To2";
+import { ClaimStep3, ClaimStep4, ClaimStep5 } from "@/features/marketing/_components/module/find-dentists-page-components/DentistProfile/ClaimSteps3To5";
 
 export default function ClaimProfilePage() {
   const params = useParams();
@@ -391,7 +391,7 @@ export default function ClaimProfilePage() {
         <div className="bg-white border border-slate-200/80 rounded-xl shadow-sm overflow-hidden p-8 sm:p-10">
 
           <div className="mb-6 text-left pb-6 border-b border-slate-100">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0E3E65] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight">
               Claim Professional Profile
             </h1>
             <p className="mt-1 text-sm text-slate-500">
@@ -405,9 +405,9 @@ export default function ClaimProfilePage() {
                   <div key={s} className="flex items-center gap-1">
                     <div
                       className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${claimStep > s
-                        ? "bg-[#4CA30D] text-white animate-scaleUp"
+                        ? "bg-badge text-white animate-scaleUp"
                         : claimStep === s
-                          ? "bg-[#0E3E65] text-white scale-110 ring-4 ring-[#0E3E65]/15 font-extrabold"
+                          ? "bg-primary text-white scale-110 ring-4 ring-primary/15 font-extrabold"
                           : "bg-slate-50 border border-slate-200 text-slate-400"
                         }`}
                     >
@@ -415,7 +415,7 @@ export default function ClaimProfilePage() {
                     </div>
                     {s < 4 && (
                       <div
-                        className={`w-10 sm:w-16 h-0.5 transition-colors duration-300 ${claimStep > s ? "bg-[#4CA30D]" : "bg-slate-200"
+                        className={`w-10 sm:w-16 h-0.5 transition-colors duration-300 ${claimStep > s ? "bg-badge" : "bg-slate-200"
                           }`}
                       />
                     )}
@@ -512,7 +512,7 @@ export default function ClaimProfilePage() {
                   <button
                     type="button"
                     onClick={() => router.push("/dentist")}
-                    className="rounded-lg bg-[#0E3E65] px-6 py-2.5 font-semibold text-white transition-colors hover:bg-[#002850] cursor-pointer text-sm"
+                    className="rounded-lg bg-primary px-6 py-2.5 font-semibold text-white transition-colors hover:bg-[#002850] cursor-pointer text-sm"
                   >
                     Go to Dashboard →
                   </button>

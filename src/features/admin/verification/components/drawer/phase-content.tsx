@@ -28,7 +28,7 @@ export function Ph1Content({
         </div>
       )}
       <div className="rounded-lg border border-gray-100 bg-white p-4">
-        <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+        <h4 className="mb-3 text-sm font-semibold text-text">
           License Verification
         </h4>
         <div className="space-y-2.5">
@@ -41,7 +41,7 @@ export function Ph1Content({
               className="flex items-center justify-between gap-3 border-b border-gray-50 pb-2.5 last:border-0 last:pb-0"
             >
               <span className="text-sm text-gray-400">{row.label}</span>
-              <span className="break-all text-right text-sm font-medium text-[#1A1A2E]">
+              <span className="break-all text-right text-sm font-medium text-text">
                 {row.value || "N/A"}
               </span>
             </div>
@@ -55,7 +55,7 @@ export function Ph1Content({
       </div>
       {data.government_id && (
         <div className="rounded-lg border border-gray-100 bg-white p-4">
-          <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+          <h4 className="mb-3 text-sm font-semibold text-text">
             Government ID
           </h4>
           <FileRow
@@ -72,7 +72,7 @@ export function Ph1Content({
       )}
       {data.selfie && (
         <div className="rounded-lg border border-gray-100 bg-white p-4">
-          <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+          <h4 className="mb-3 text-sm font-semibold text-text">
             Professional Headshot / Selfie
           </h4>
           <div className="flex gap-4 items-center">
@@ -126,7 +126,7 @@ export function Ph2Content({
         </div>
       )}
       <div className="rounded-lg border border-gray-100 bg-white p-4">
-        <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+        <h4 className="mb-3 text-sm font-semibold text-text">
           Sterilization Evidence
         </h4>
         <div className="space-y-3">
@@ -150,7 +150,7 @@ export function Ph2Content({
       </div>
       {data.procedure_pricing && data.procedure_pricing.length > 0 && (
         <div className="rounded-lg border border-gray-100 bg-white p-4">
-          <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+          <h4 className="mb-3 text-sm font-semibold text-text">
             Procedure Pricing
           </h4>
           <div className="overflow-x-auto">
@@ -215,7 +215,7 @@ export function Ph3Content({
         </div>
       )}
       <div className="rounded-lg border border-gray-100 bg-white p-4">
-        <h4 className="mb-3 text-sm font-semibold text-[#1A1A2E]">
+        <h4 className="mb-3 text-sm font-semibold text-text">
           Clinic Location
         </h4>
         <div className="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 text-sm text-gray-600">

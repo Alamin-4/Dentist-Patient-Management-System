@@ -78,7 +78,7 @@ export default function Referrals() {
   return (
     <section className="space-y-6 lg:space-y-7">
       <header className="space-y-1.5">
-        <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[#1A1A2E] sm:text-[30px]">
+        <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-text sm:text-[30px]">
           Referrals
         </h1>
       </header>

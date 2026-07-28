@@ -82,9 +82,9 @@ function FlaggedRow({ review, onView }: { review: Review; onView: () => void }) 
         <Avatar initials={review.reviewer_initials} color={review.reviewer_avatar_color} />
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-semibold text-[#1A1A2E]">{review.reviewer_name}</p>
+            <p className="text-sm font-semibold text-text">{review.reviewer_name}</p>
             <Stars rating={review.rating} small />
-            <span className="text-sm font-semibold text-[#1A1A2E]">{review.rating.toFixed(1)}</span>
+            <span className="text-sm font-semibold text-text">{review.rating.toFixed(1)}</span>
             {review.ai_confidence && <ConfidenceBadge label={review.ai_confidence} />}
             {review.has_photos && (
               <span className="flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-600">
@@ -104,7 +104,7 @@ function FlaggedRow({ review, onView }: { review: Review; onView: () => void }) 
           </div>
         </div>
       </div>
-      <button onClick={onView} className="ml-3 shrink-0 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-medium text-[#1A1A2E] hover:bg-gray-50 transition-colors">
+      <button onClick={onView} className="ml-3 shrink-0 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-medium text-text hover:bg-gray-50 transition-colors">
         View review
       </button>
     </div>
@@ -120,9 +120,9 @@ function PublishedRow({ review, onView }: { review: Review; onView: () => void }
         <Avatar initials={review.reviewer_initials} color={review.reviewer_avatar_color} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-semibold text-[#1A1A2E]">{review.reviewer_name}</p>
+            <p className="text-sm font-semibold text-text">{review.reviewer_name}</p>
             <Stars rating={review.rating} small />
-            <span className="text-sm font-semibold text-[#1A1A2E]">{review.rating.toFixed(1)}</span>
+            <span className="text-sm font-semibold text-text">{review.rating.toFixed(1)}</span>
             {isAdmin ? (
               <span className="flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600">
                 <CheckCircle2 className="h-3 w-3" /> Admin approved
@@ -146,7 +146,7 @@ function PublishedRow({ review, onView }: { review: Review; onView: () => void }
           {review.review_content && <p className="mt-1.5 truncate text-xs text-gray-400">{review.review_content}</p>}
         </div>
       </div>
-      <button onClick={onView} className="ml-3 shrink-0 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-medium text-[#1A1A2E] hover:bg-gray-50 transition-colors">
+      <button onClick={onView} className="ml-3 shrink-0 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-medium text-text hover:bg-gray-50 transition-colors">
         View
       </button>
     </div>
@@ -162,9 +162,9 @@ function RejectedRow({ review, onView }: { review: Review; onView: () => void })
         <Avatar initials={review.reviewer_initials} color={review.reviewer_avatar_color} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-semibold text-[#1A1A2E]">{review.reviewer_name}</p>
+            <p className="text-sm font-semibold text-text">{review.reviewer_name}</p>
             <Stars rating={review.rating} small />
-            <span className="text-sm font-semibold text-[#1A1A2E]">{review.rating.toFixed(1)}</span>
+            <span className="text-sm font-semibold text-text">{review.rating.toFixed(1)}</span>
             <span className="flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600">
               <XCircle className="h-3 w-3" /> Rejected
             </span>
@@ -187,7 +187,7 @@ function RejectedRow({ review, onView }: { review: Review; onView: () => void })
           )}
         </div>
       </div>
-      <button onClick={onView} className="ml-3 shrink-0 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-medium text-[#1A1A2E] hover:bg-gray-50 transition-colors">
+      <button onClick={onView} className="ml-3 shrink-0 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-medium text-text hover:bg-gray-50 transition-colors">
         View details
       </button>
     </div>
@@ -233,7 +233,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
             <Avatar initials={review.reviewer_initials} color={review.reviewer_avatar_color} />
             <div>
               <div className="flex items-center gap-2">
-                <p className="font-bold text-[#1A1A2E]">{review.reviewer_name}</p>
+                <p className="font-bold text-text">{review.reviewer_name}</p>
                 {isF && <span className="flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700"><AlertTriangle className="h-3 w-3" />Flagged for review</span>}
                 {isP && !isAdmin && <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-600"><CheckCircle2 className="h-3 w-3" />Auto-published</span>}
                 {isP && isAdmin && <span className="flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600"><CheckCircle2 className="h-3 w-3" />Admin approved</span>}
@@ -287,7 +287,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
           {/* Review content */}
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Review Content</p>
-            <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm leading-relaxed text-[#1A1A2E]">
+            <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm leading-relaxed text-text">
               {review.review_content || "No comments written."}
             </div>
             {review.has_photos && (
@@ -303,7 +303,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
             <div className="rounded-lg border border-gray-100 bg-white p-4">
               <div className="mb-3 flex items-center gap-2">
                 <Stars rating={review.rating} />
-                <span className="font-bold text-[#1A1A2E]">{review.rating.toFixed(1)}</span>
+                <span className="font-bold text-text">{review.rating.toFixed(1)}</span>
                 <span className="text-sm text-gray-400">overall</span>
               </div>
               <div className="space-y-2.5">
@@ -312,7 +312,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
                     <span className="text-sm text-gray-500">{r.label}</span>
                     <div className="flex items-center gap-2">
                       <Stars rating={r.rating} small />
-                      <span className="w-4 text-right text-sm font-semibold text-[#1A1A2E]">{r.rating}</span>
+                      <span className="w-4 text-right text-sm font-semibold text-text">{r.rating}</span>
                     </div>
                   </div>
                 ))}
@@ -327,7 +327,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
               {contextRows.map((row, i) => (
                 <div key={i} className="flex items-center justify-between px-4 py-2.5">
                   <span className="text-sm text-gray-400">{row.label}</span>
-                  <span className="text-sm font-medium text-[#1A1A2E]">{row.value}</span>
+                  <span className="text-sm font-medium text-text">{row.value}</span>
                 </div>
               ))}
             </div>
@@ -345,7 +345,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
               <button onClick={() => onAction(review.id, "rejected")} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
                 <XCircle className="h-4 w-4" /> Reject review
               </button>
-              <button onClick={() => onAction(review.id, "published")} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors">
+              <button onClick={() => onAction(review.id, "published")} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-text px-4 py-2.5 text-sm font-semibold text-white hover:bg-text/90 transition-colors">
                 <CheckCircle className="h-4 w-4" /> Publish review
               </button>
             </div>
@@ -544,14 +544,14 @@ export default function Reviews() {
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">Reviews &amp; Ratings</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text">Reviews &amp; Ratings</h1>
           <p className="mt-0.5 text-sm text-gray-500">AI screens every review automatically. Only flagged content reaches this queue.</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: "Total submitted", value: meta.total_submitted, sub: "All time", color: "text-[#1A1A2E]" },
+            { label: "Total submitted", value: meta.total_submitted, sub: "All time", color: "text-text" },
             { label: "Published", value: meta.auto_published, sub: "Live on profiles", color: "text-emerald-600" },
             { label: "Flagged for review", value: meta.flagged_for_review, sub: "Awaiting decision", color: "text-amber-600" },
             { label: "Rejected", value: meta.rejected, sub: "Not published", color: "text-red-500" },
@@ -583,7 +583,7 @@ export default function Reviews() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search reviews..."
-                className="h-8 w-44 rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-xs outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                className="h-8 w-44 rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-xs outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
               />
             </div>
           </div>

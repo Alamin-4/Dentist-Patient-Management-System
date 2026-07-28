@@ -39,10 +39,10 @@ export default function ConsultationCompletePage() {
           <Check className="size-10 stroke-[3px]" />
         </div>
 
-        <h1 className="mt-10 text-[28px] font-bold text-[#1A1A2E] md:text-[34px]">
+        <h1 className="mt-10 text-[28px] font-bold text-text md:text-[34px]">
           Your consultation is complete
         </h1>
-        
+
         {loading ? (
           <div className="flex items-center justify-center mt-6 text-[#64748B]">
             <Loader2 className="size-5 animate-spin mr-2" />

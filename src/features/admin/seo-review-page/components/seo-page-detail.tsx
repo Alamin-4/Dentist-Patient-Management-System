@@ -71,7 +71,7 @@ function Stars({ rating, small }: { rating: number; small?: boolean }) {
 function PhotosSection() {
   return (
     <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-      <h3 className="text-sm font-semibold text-[#1A1A2E]">Before &amp; After Photos</h3>
+      <h3 className="text-sm font-semibold text-text">Before &amp; After Photos</h3>
       <p className="mt-0.5 text-xs text-gray-400">Submitted by the patient · verified by RatedDocs</p>
       <div className="mt-4 grid grid-cols-2 gap-3">
         {["Before", "After"].map((label) => (
@@ -84,12 +84,12 @@ function PhotosSection() {
               <span className="text-sm font-medium text-gray-400">{label}</span>
             </div>
             {label === "Before" && (
-              <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium text-[#1A1A2E] shadow-sm">
+              <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium text-text shadow-sm">
                 <ShieldCheck className="h-3 w-3 text-blue-500" /> Verified RatedDocs Patient
               </div>
             )}
             {label === "After" && (
-              <div className="absolute bottom-2 right-2 rounded-full bg-[#1A1A2E]/80 px-2 py-0.5 text-xs font-medium text-white">
+              <div className="absolute bottom-2 right-2 rounded-full bg-text/80 px-2 py-0.5 text-xs font-medium text-white">
                 RatedDocs
               </div>
             )}
@@ -109,7 +109,7 @@ function RelatedReviewCard({ page }: { page: SEOPage }) {
         <div className="flex items-center gap-2.5">
           <Avatar initials={page.patient_initials} color={page.patient_avatar_color} size="sm" />
           <div>
-            <p className="text-sm font-semibold text-[#1A1A2E]">{page.patient_name}</p>
+            <p className="text-sm font-semibold text-text">{page.patient_name}</p>
             <p className="flex items-center gap-1 text-xs text-gray-400">
               <MapPin className="h-3 w-3" /> {page.patient_location}
             </p>
@@ -117,7 +117,7 @@ function RelatedReviewCard({ page }: { page: SEOPage }) {
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <Stars rating={page.rating} small />
-          <span className="text-sm font-semibold text-[#1A1A2E]">{page.rating.toFixed(1)}</span>
+          <span className="text-sm font-semibold text-text">{page.rating.toFixed(1)}</span>
         </div>
       </div>
 
@@ -145,7 +145,7 @@ function RelatedReviewCard({ page }: { page: SEOPage }) {
         </div>
         <Link
           href={`/admin/seo-review-pages/${page.id}`}
-          className="flex items-center gap-1 text-xs font-semibold text-[#1A1A2E] hover:text-gray-600 transition-colors"
+          className="flex items-center gap-1 text-xs font-semibold text-text hover:text-gray-600 transition-colors"
         >
           Read full review <ExternalLink className="h-3 w-3" />
         </Link>
@@ -214,7 +214,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link
           href="/admin/seo-review-pages"
-          className="flex items-center gap-1.5 font-medium text-[#1A1A2E] hover:text-gray-600 transition-colors"
+          className="flex items-center gap-1.5 font-medium text-text hover:text-gray-600 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> SEO Review Pages
         </Link>
@@ -233,7 +233,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
                 <Avatar initials={page.patient_initials} color={page.patient_avatar_color} />
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-bold text-[#1A1A2E]">{page.patient_name}</p>
+                    <p className="font-bold text-text">{page.patient_name}</p>
                     <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live
                     </span>
@@ -263,7 +263,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
             {/* Overall rating */}
             <div className="mt-4 flex items-center gap-2">
               <Stars rating={page.rating} />
-              <span className="text-2xl font-bold text-[#1A1A2E]">{page.rating.toFixed(1)}</span>
+              <span className="text-2xl font-bold text-text">{page.rating.toFixed(1)}</span>
               <span className="text-sm text-gray-400">/ 5</span>
             </div>
 
@@ -274,7 +274,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
                   <span className="text-sm text-gray-500">{r.label}</span>
                   <div className="flex items-center gap-2">
                     <Stars rating={r.rating} small />
-                    <span className="w-4 text-right text-sm font-semibold text-[#1A1A2E]">{r.rating}</span>
+                    <span className="w-4 text-right text-sm font-semibold text-text">{r.rating}</span>
                   </div>
                 </div>
               ))}
@@ -300,7 +300,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
 
           {/* Helpful votes */}
           <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
-            <p className="text-sm font-semibold text-[#1A1A2E]">Was this review helpful?</p>
+            <p className="text-sm font-semibold text-text">Was this review helpful?</p>
             <div className="mt-3 flex items-center gap-3">
               <button
                 onClick={() => handleHelpful("yes")}
@@ -334,8 +334,8 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
           {relatedPages.length > 0 && (
             <div>
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-base font-bold text-[#1A1A2E]">Related Reviews</h2>
-                <Link href="/admin/seo-review-pages" className="text-sm font-semibold text-[#1A1A2E] hover:text-gray-600 transition-colors">
+                <h2 className="text-base font-bold text-text">Related Reviews</h2>
+                <Link href="/admin/seo-review-pages" className="text-sm font-semibold text-text hover:text-gray-600 transition-colors">
                   See all
                 </Link>
               </div>
@@ -350,7 +350,7 @@ export default function SEOPageDetail({ page: initialPage }: SEOPageDetailProps)
 
         {/* ── Right: dentist sidebar ── */}
         <div className="w-full shrink-0 lg:w-72 xl:w-80">
-          <div className="rounded-lg bg-[#1A1A2E] p-5 text-white shadow-lg">
+          <div className="rounded-lg bg-text p-5 text-white shadow-lg">
             {/* Dentist avatar */}
             <div className="flex flex-col items-center text-center">
               <div

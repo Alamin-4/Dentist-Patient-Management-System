@@ -144,7 +144,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           type="button"
           onClick={handleSendVerificationOtp}
           disabled={isOtpResendLoading}
-          className="h-11 w-full bg-[#163E5C] hover:bg-[#0E3E65] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+          className="h-11 w-full bg-[#163E5C] hover:bg-primary focus:ring-0 focus:ring-offset-0 cursor-pointer"
         >
           {isOtpResendLoading ? (
             <>
@@ -297,7 +297,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
       <Button
         type="submit"
         disabled={isRegisterDentistLoading}
-        className="h-11 bg-[#163E5C] hover:bg-[#0E3E65] focus:ring-0 focus:ring-offset-0 cursor-pointer w-full"
+        className="h-11 bg-[#163E5C] hover:bg-primary focus:ring-0 focus:ring-offset-0 cursor-pointer w-full"
       >
         {isRegisterDentistLoading ? (
           <>

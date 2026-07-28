@@ -14,6 +14,7 @@ import {
   updateBookingData,
   getAllDentalPhotos,
   getDentalPhotosList,
+  clearBookingData,
 } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import PersonalInfoForm from "./BookingIntakeForm/PersonalInfoForm";
@@ -337,7 +338,15 @@ export default function IntakeModal() {
       toast.success("Your consultation details are saved.");
       setShowBookingModal(null);
 
-      if (selectedDentistId) {
+      // Multi-dentist compare flow: show postBooking compare modal so the user
+      // can pick their preferred dentist. selectedDentistId is set to the first
+      // selected dentist by CompareModal, but we need the user to choose again.
+      if (dentistsToCompare && dentistsToCompare.length > 1) {
+        setCompareModalPurpose("postBooking");
+        setSchedule(true);
+        setShowCompareModal(true);
+      } else if (selectedDentistId) {
+        // Single-dentist booking: go straight to schedule
         const draft = getBookingDraft();
         const params = new URLSearchParams();
         params.set("dentistIds", selectedDentistId);
@@ -345,16 +354,8 @@ export default function IntakeModal() {
           params.set("consultationId", String(draft.consultationId));
         }
         router.push(`/schedule?${params.toString()}`);
-      } else if (dentistsToCompare && dentistsToCompare.length > 0) {
-        const q = dentistsToCompare.map(d => d.id).join(",");
-        const draft = getBookingDraft();
-        const params = new URLSearchParams();
-        params.set("dentistIds", q);
-        if (draft.consultationId) {
-          params.set("consultationId", String(draft.consultationId));
-        }
-        router.push(`/schedule?${params.toString()}`);
       } else {
+        // Fallback: open postBooking compare to let user pick a dentist
         setCompareModalPurpose("postBooking");
         setSchedule(true);
         setShowCompareModal(true);
@@ -394,6 +395,9 @@ export default function IntakeModal() {
   const handleClose = () => {
     if (showBookingModal === "book") {
       setShowBookingModal(null);
+      // Reset step state so stale step doesn't linger if the user re-opens
+      setStep(1);
+      setFormErrors({});
     }
   };
 
@@ -408,11 +412,11 @@ export default function IntakeModal() {
         <DialogContent
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
-          className="sm:max-w-212 max-h-[90vh] flex flex-col w-full p-0 border-none rounded-lg bg-white overflow-hidden relative"
+          className="sm:max-w-212 max-h-[90vh] flex flex-col w-full p-0 border-none rounded-lg bg-white overflow-hidden"
         >
           {/* Header */}
           <div className="relative bg-white pl-8 pr-16 py-6 border-b border-[#F3F4F6] shrink-0">
-            <DialogTitle className="text-[20px] font-bold text-[#1A1A2E]">
+            <DialogTitle className="text-[20px] font-bold text-text">
               {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
             </DialogTitle>
           </div>
@@ -426,7 +430,7 @@ export default function IntakeModal() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <span className="text-[#6B7280] font-medium text-[14px] whitespace-nowrap">
+              <span className="text-sec-text font-medium text-[14px] whitespace-nowrap">
                 Step {step} of {TOTAL_STEPS}
               </span>
             </div>
@@ -445,7 +449,7 @@ export default function IntakeModal() {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="px-6 lg:px-8 py-2 lg:py-3.5 bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all cursor-pointer"
+                  className="px-6 lg:px-8 py-2 lg:py-3.5 bg-white border border-[#E5E7EB] text-text rounded-lg hover:bg-[#F9FAFB] active:scale-95 transition-all cursor-pointer"
                 >
                   Back
                 </button>
@@ -455,8 +459,8 @@ export default function IntakeModal() {
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={isSubmitting || Object.keys(formErrors).length > 0}
-                className="inline-flex items-center justify-center gap-2 px-6 lg:px-12 py-2 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
+                disabled={isSubmitting || Object.values(formErrors).some(Boolean)}
+                className="inline-flex items-center justify-center gap-2 px-6 lg:px-12 py-2 lg:py-3.5 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg active:scale-95 transition-all disabled:opacity-50 disabled:bg-slate-300 disabled:text-slate-500 disabled:border-slate-200 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer"
               >
                 {isSubmitting && <Loader2 className="size-5 animate-spin" />}
                 {step === TOTAL_STEPS

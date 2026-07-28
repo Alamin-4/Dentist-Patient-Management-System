@@ -46,6 +46,12 @@ export interface DentistSpecialty {
   name: string;
 }
 
+export interface DentistDirectory {
+  status: string; // "VERIFIED" | "CLAIMED" | "UNVERIFIED"
+  membershipPaidAt?: string | null;
+  membershipPlan?: string | null;
+}
+
 export interface DentistProfileData {
   id: string;
   slug?: string | null;
@@ -58,4 +64,5 @@ export interface DentistProfileData {
   dentistOperationsVerifications?: DentistOperationVerification[] | null;
   dentistClinicDepthVerification?: DentistClinicDepthVerification | null;
   dentistProcedures?: DentistProcedure[] | null;
+  dentistDirectory?: DentistDirectory | null;
 }

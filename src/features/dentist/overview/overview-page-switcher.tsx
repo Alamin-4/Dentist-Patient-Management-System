@@ -105,7 +105,7 @@ export function OverviewPageSwitcher() {
           </p>
           <button
             onClick={() => refetch()}
-            className="mt-5 inline-flex items-center justify-center rounded-lg bg-[#0E3E65] hover:bg-[#082842] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors"
+            className="mt-5 inline-flex items-center justify-center rounded-lg bg-primary hover:bg-[#082842] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors"
           >
             Retry Connection
           </button>

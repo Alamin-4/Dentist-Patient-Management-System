@@ -36,7 +36,7 @@ export default function AdminForgotPasswordForm({ onBack, onSuccess }: AdminForg
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-[28px] font-extrabold text-[#1A1A2E] leading-tight tracking-tight mb-2">
+        <h1 className="text-[28px] font-extrabold text-text leading-tight tracking-tight mb-2">
           Forgot password
         </h1>
         <p className="text-sm text-gray-500">
@@ -48,7 +48,7 @@ export default function AdminForgotPasswordForm({ onBack, onSuccess }: AdminForg
         <div>
           <label
             htmlFor="forgot-email"
-            className="mb-1.5 block text-[13px] font-medium text-[#1A1A2E]"
+            className="mb-1.5 block text-[13px] font-medium text-text"
           >
             Work email
           </label>
@@ -59,7 +59,7 @@ export default function AdminForgotPasswordForm({ onBack, onSuccess }: AdminForg
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C] hover:border-gray-300"
+            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-text placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C] hover:border-gray-300"
           />
         </div>
 
@@ -74,8 +74,8 @@ export default function AdminForgotPasswordForm({ onBack, onSuccess }: AdminForg
           disabled={forgotPasswordMutation.isPending}
           className={cn(
             "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
-            "bg-[#1A1A2E] hover:bg-[#0D2B3E]",
-            "focus:outline-none focus:ring-2 focus:ring-[#1A1A2E]/30 focus:ring-offset-2",
+            "bg-text hover:bg-[#0D2B3E]",
+            "focus:outline-none focus:ring-2 focus:ring-text/30 focus:ring-offset-2",
             "disabled:opacity-60 disabled:cursor-not-allowed",
           )}
         >
@@ -93,7 +93,7 @@ export default function AdminForgotPasswordForm({ onBack, onSuccess }: AdminForg
       <button
         type="button"
         onClick={onBack}
-        className="mt-6 block w-full text-center text-sm font-semibold text-[#1A1A2E] hover:underline"
+        className="mt-6 block w-full text-center text-sm font-semibold text-text hover:underline"
       >
         Back to Sign In
       </button>

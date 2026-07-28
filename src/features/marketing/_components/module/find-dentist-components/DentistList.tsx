@@ -3,9 +3,9 @@
 "use client";
 
 import DentistCard from "./DentistCard";
-import DentistCardSkeleton from "../DentistAllComponents/DentistCardSkeleton";
+import DentistCardSkeleton from "../find-dentists-page-components/DentistCardSkeleton";
 import EmptyState from "./EmptyState";
-import { Dentist } from "../DentistAllComponents/types";
+import { Dentist } from "../find-dentists-page-components/types";
 
 interface DentistListProps {
     dentists: Dentist[];

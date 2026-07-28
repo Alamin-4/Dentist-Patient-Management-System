@@ -110,7 +110,7 @@ export default function VerificationLayout({
           <div className="rounded-lg border border-gray-100 bg-white shadow-sm p-6">
             {isProgressLoading ? (
               <div className="flex min-h-80 items-center justify-center">
-                <Loader2 className="h-7 w-7 animate-spin text-[#0E3E65]" />
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
               </div>
             ) : (
               children

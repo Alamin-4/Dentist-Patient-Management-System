@@ -2,43 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Search, User as UserIcon, MessageSquare, Calendar, Clock, Loader2 } from "lucide-react";
+import { Search, User as UserIcon, MessageSquare, Loader2 } from "lucide-react";
 import { useSession, useMe } from "@/hooks/auth/useAuth";
 import { usePatientConsultations, useDentistConsultations } from "@/hooks/consultation/useConsultation";
 import { ConsultationChat } from "@/app/consultation/components/meeting/ConsultationChat";
-
-const getFriendlyStatus = (status: string) => {
-  switch (status) {
-    case "ACCEPTED":
-    case "SCHEDULED":
-      return "Upcoming";
-    case "ACTIVE":
-      return "Active";
-    case "COMPLETED":
-      return "Completed";
-    case "MISSED":
-      return "Missed";
-    default:
-      return status;
-  }
-};
-
-const getStatusBadgeCls = (status: string, isSelected: boolean) => {
-  if (isSelected) return "bg-white/15 text-white";
-  switch (status) {
-    case "ACCEPTED":
-    case "SCHEDULED":
-      return "bg-blue-50 text-blue-700 border border-blue-100";
-    case "ACTIVE":
-      return "bg-emerald-50 text-emerald-700 border border-emerald-100 animate-pulse";
-    case "COMPLETED":
-      return "bg-slate-100 text-slate-600 border border-slate-200";
-    case "MISSED":
-      return "bg-rose-50 text-rose-700 border border-rose-100";
-    default:
-      return "bg-slate-100 text-slate-600 border border-slate-200";
-  }
-};
 
 export function InboxPage() {
   const searchParams = useSearchParams();
@@ -160,12 +127,7 @@ export function InboxPage() {
               const { name, avatar, procedure } = getRecipientInfo(item);
               const isSelected = item.id === selectedId;
 
-              const dateStr = item.scheduledDate
-                ? new Date(item.scheduledDate).toLocaleDateString([], {
-                  month: "short",
-                  day: "numeric",
-                })
-                : "Not Scheduled";
+
 
               return (
                 <button
@@ -194,23 +156,17 @@ export function InboxPage() {
                         <UserIcon className="size-5.5" />
                       </div>
                     )}
-                    <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline justify-between mb-1 gap-1">
+                    <div className="flex items-baseline mb-1">
                       <h4
                         className={`font-semibold text-[14px] truncate ${isSelected ? "text-white" : "text-slate-800"
                           }`}
                       >
                         {name}
                       </h4>
-                      <span
-                        className={`text-[10px] whitespace-nowrap ${isSelected ? "text-white/60" : "text-slate-400"
-                          }`}
-                      >
-                        {dateStr}
-                      </span>
                     </div>
 
                     <p
@@ -220,17 +176,7 @@ export function InboxPage() {
                       {procedure}
                     </p>
 
-                    <div className="flex items-center gap-3 mt-1.5">
-                      {item.scheduledTime && (
-                        <span
-                          className={`text-[10px] flex items-center gap-1 ${isSelected ? "text-white/60" : "text-slate-400"
-                            }`}
-                        >
-                          <Clock className="size-3" />
-                          {item.scheduledTime}
-                        </span>
-                      )}
-                    </div>
+
                   </div>
                 </button>
               );

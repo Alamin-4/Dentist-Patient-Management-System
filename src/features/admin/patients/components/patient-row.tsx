@@ -27,7 +27,7 @@ export function PatientRow({ patient, onClick }: Props) {
                         <Avatar initials={patient.initials} color={patient.avatar_color} />
                     )}
                     <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-[#1A1A2E]">{patient.name}</p>
+                        <p className="truncate text-sm font-semibold text-text">{patient.name}</p>
                         <p className="truncate text-xs text-gray-400">{patient.email}</p>
                     </div>
                 </div>

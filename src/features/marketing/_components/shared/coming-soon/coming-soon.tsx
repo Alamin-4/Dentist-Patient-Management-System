@@ -25,7 +25,7 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
           <span className="text-xs font-bold uppercase tracking-widest text-[#E3A32A]">
             Coming Soon
           </span>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#1A1A2E] tracking-tight leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-black text-text tracking-tight leading-tight">
             {title}
           </h1>
           <p className="text-base text-gray-500 leading-relaxed">

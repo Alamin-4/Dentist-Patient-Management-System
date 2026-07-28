@@ -60,6 +60,7 @@ export function HeadshotUpload({ onChange, existingImageUrl, disabled, error }: 
     }
 
     // 3. Safe Preview Generation (Only reached if file is valid)
+    setLocalError(null);
     if (uploadedPreview && uploadedPreview.startsWith("blob:")) {
       URL.revokeObjectURL(uploadedPreview);
     }

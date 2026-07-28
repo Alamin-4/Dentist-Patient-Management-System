@@ -11,10 +11,10 @@ export function VerificationQueue({ queue = [], total = 0 }: VerificationQueuePr
     <div className="flex flex-col rounded-lg border border-gray-100 bg-white p-5 shadow-sm h-full">
 
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-[15px] font-bold text-[#1A1A2E]">
+        <h3 className="text-[15px] font-bold text-text">
           Verification Queue
         </h3>
-        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-[#1A1A2E] px-2 text-[11px] font-bold text-white">
+        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-text px-2 text-[11px] font-bold text-white">
           {total}
         </span>
       </div>
@@ -37,7 +37,7 @@ export function VerificationQueue({ queue = [], total = 0 }: VerificationQueuePr
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold text-[#1A1A2E] truncate">
+                <p className="text-[13px] font-semibold text-text truncate">
                   {doc.name}
                 </p>
                 <p className="text-[11px] text-gray-400 mt-0.5">

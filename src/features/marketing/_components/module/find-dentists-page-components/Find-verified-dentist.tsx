@@ -16,7 +16,7 @@ import FilterSheet from "./FilterSheet";
 import TopBar from "./TopBar";
 import CompareStickyBar from "./CompareStickyBar";
 
-import { Dentist, cityOptions, countryOptions } from "./types";
+import { Dentist, mapApiDentist, cityOptions, countryOptions } from "./types";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory, useDirectoryCountries } from "@/hooks/dentist/useDentistDirectory";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
@@ -139,7 +139,7 @@ export default function FindDentist() {
   // ── Reset page whenever any server-side filter changes ────────────────────
   useEffect(() => { setPage(1); }, [
     city, country, procedure, showVerifiedOnly,
-    selectedScoreRanges, selectedRatings,
+    selectedScoreRanges, selectedRatings, selectedLanguages,
   ]);
 
   // ── Derive numeric params from multi-select filter state ──────────────────
@@ -166,16 +166,19 @@ export default function FindDentist() {
     if (selectedRatings.length > 0) {
       params.ratings = selectedRatings.join(",");
     }
+    if (selectedLanguages.length > 0) {
+      params.languages = selectedLanguages.join(",");
+    }
     return params;
   }, [
     page, debouncedQuery, city, country, procedure,
-    debouncedPrice, showVerifiedOnly, rdvScoreMin, selectedRatings,
+    debouncedPrice, showVerifiedOnly, rdvScoreMin, selectedRatings, selectedLanguages,
   ]);
 
   const { data: directoryResponse, isLoading: isDirLoading } = useDentistDirectory(serverParams);
+  // console.log("dentists directory form find denist: ", directoryResponse)
   const { data: dynamicCountryOptions } = useDirectoryCountries();
   const { data: globalProcedures } = useGlobalProcedures();
-
   const procedureOptions = useMemo(() => {
     if (!globalProcedures) return ["All Procedures"];
     const list = Array.isArray(globalProcedures) ? globalProcedures : (globalProcedures as any).data || [];
@@ -183,51 +186,10 @@ export default function FindDentist() {
     return ["All Procedures", ...names];
   }, [globalProcedures]);
 
-  // ── Map flat API response → Dentist shape with nested rating/location ──────
   const apiDentists = useMemo<Dentist[]>(() => {
-    return (directoryResponse?.data ?? []).map((d: any): Dentist => {
-      const google: number | null = d.googleRating ?? null;
-      const doctoralia: number | null = d.doctoraliaRating ?? null;
-      const combined: number | null =
-        google != null && doctoralia != null
-          ? (google + doctoralia) / 2
-          : google ?? doctoralia ?? null;
-
-      const accountType: Dentist['accountType'] =
-        d.isClaimable === false
-          ? 'REGISTERED'
-          : d.status === 'CLAIMED' || d.status === 'VERIFIED'
-            ? 'CLAIMED'
-            : 'CLAIMABLE';
-
-      const hasCoords = typeof d.latitude === "number" && typeof d.longitude === "number";
-
-      return {
-        ...d,
-        coords: hasCoords ? { lat: d.latitude, lng: d.longitude } : undefined,
-        rating: {
-          google,
-          googleReviewCount: d.googleReviewCount ?? null,
-          doctoralia,
-          doctoraliaReviewCount: d.doctoraliaReviewCount ?? null,
-          combined,
-        },
-        location: {
-          city: d.city ?? null,
-          country: d.country ?? '',
-          fullAddress: d.fullAddress ?? null,
-          googleMapsUrl: d.googleMapsUrl ?? null,
-        },
-        accountType,
-        isClaimed: d.status === 'CLAIMED' || d.status === 'VERIFIED',
-        isVerified: d.status === 'VERIFIED',
-        surpriseGuarantee: d.surpriseGuarantee ?? false,
-        verificationPhase: d.verificationPhase ?? null,
-      };
-    });
+    return (directoryResponse?.data ?? []).map(mapApiDentist);
   }, [directoryResponse]);
-
-  // Languages filter is client-side only (field not yet in DB schema)
+  // console.log("api denists : ", apiDentists)
   const filteredDentists = useMemo<Dentist[]>(() => {
     if (selectedLanguages.length === 0) return apiDentists;
     return apiDentists.filter((d) =>
@@ -248,7 +210,6 @@ export default function FindDentist() {
     setShowCompareModal,
   } = useStateContext();
 
-  // ── Filter helpers ────────────────────────────────────────────────────────
   const toggleRating = (rating: number) =>
     setSelectedRatings((prev) =>
       prev.includes(rating) ? prev.filter((v) => v !== rating) : [...prev, rating],
@@ -280,7 +241,6 @@ export default function FindDentist() {
     setPage(1);
   };
 
-  // ── Compare helpers ───────────────────────────────────────────────────────
   const handleCompareToggle = (dentist: Dentist) => {
     const exists = compareList.some((item) => item.id === dentist.id);
     if (exists) {
@@ -361,6 +321,7 @@ export default function FindDentist() {
         open={isMobileFilterOpen}
         onClose={() => setIsMobileFilterOpen(false)}
         {...sharedFilterProps}
+        availableLanguages={directoryResponse?.meta?.facets?.languages}
       />
 
       <main className="pb-16">
@@ -373,7 +334,10 @@ export default function FindDentist() {
                 exit={{ opacity: 0, x: -24 }}
                 className="hidden lg:block max-w-80 w-full"
               >
-                <FilterSidebar {...sharedFilterProps} />
+                <FilterSidebar
+                  {...sharedFilterProps}
+                  availableLanguages={directoryResponse?.meta?.facets?.languages}
+                />
               </motion.aside>
             )}
           </AnimatePresence>
@@ -489,8 +453,7 @@ export default function FindDentist() {
                   )}
                 </div>
 
-                {/* Server-driven pagination */}
-                {!isDirLoading && totalPages > 1 && (
+                {!isDirLoading && totalPages > 1 && filteredDentists.length > 0 && (
                   <Pagination
                     page={page}
                     totalPages={totalPages}

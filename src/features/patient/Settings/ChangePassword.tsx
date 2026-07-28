@@ -55,7 +55,7 @@ export function ChangePasswordForm() {
   return (
     <div>
       <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-        <h2 className="text-xl font-bold text-[#1A1A2E]">Change Password</h2>
+        <h2 className="text-xl font-bold text-text">Change Password</h2>
         <button
           type="button"
           onClick={() => {
@@ -65,11 +65,10 @@ export function ChangePasswordForm() {
               setIsEditing(true);
             }
           }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${
-            isEditing
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
               ? "text-red-500 hover:bg-red-50 border-red-200"
               : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
-          }`}
+            }`}
         >
           <Pencil className="h-3.5 w-3.5" />
           {isEditing ? "Cancel" : "Edit"}
@@ -86,9 +85,8 @@ export function ChangePasswordForm() {
               placeholder="Enter old password"
               disabled={!isEditing || changePasswordMutation.isPending}
               {...register("oldPassword", { required: "Old password is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${
-                errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {isEditing && (
               <button
@@ -117,9 +115,8 @@ export function ChangePasswordForm() {
                 required: "New password is required",
                 minLength: { value: 8, message: "New password must be at least 8 characters long" },
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${
-                errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {isEditing && (
               <button
@@ -148,9 +145,8 @@ export function ChangePasswordForm() {
                 required: "Confirm password is required",
                 validate: (val) => val === newPasswordVal || "Passwords do not match",
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${
-                errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
-              }`}
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+                }`}
             />
             {isEditing && (
               <button

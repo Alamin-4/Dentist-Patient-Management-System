@@ -50,7 +50,7 @@ export default function ProfileAndSettings() {
   return (
     <div className="space-y-6 lg:space-y-8">
       <header>
-        <h1 className="text-[28px] font-semibold text-[#1A1A2E]">Settings</h1>
+        <h1 className="text-[28px] font-semibold text-text">Settings</h1>
       </header>
 
       <div className="grid grid-cols-1 gap-6">

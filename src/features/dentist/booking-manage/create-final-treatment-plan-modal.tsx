@@ -103,12 +103,21 @@ export default function CreateFinalTreatmentPlanModal({
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) setUploadedFile(file);
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) return; // silently ignore oversized drops
+    setUploadedFile(file);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setUploadedFile(file);
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      // reset input so user can try again
+      e.target.value = "";
+      setUploadedFile(null);
+      return;
+    }
+    setUploadedFile(file);
   };
 
   return (
@@ -118,7 +127,7 @@ export default function CreateFinalTreatmentPlanModal({
         <DialogContent className="w-[95vw] sm:max-w-3xl rounded-lg p-0 overflow-hidden border-none shadow-2xl bg-white focus:outline-none max-h-[95vh] flex flex-col">
           {/* ── Modal Header ── */}
           <div className="flex items-center justify-between px-7 py-5 border-b border-slate-100 shrink-0">
-            <DialogTitle className="text-lg font-bold text-[#1A1A2E]">
+            <DialogTitle className="text-lg font-bold text-text">
               Create Final Treatment Plan
             </DialogTitle>
             <button
@@ -173,11 +182,11 @@ export default function CreateFinalTreatmentPlanModal({
                   </div>
                   <div className="grid grid-cols-2 divide-x divide-slate-100">
                     <div className="p-3">
-                      <p className="text-[11px] text-[#6B7280] mb-1">Last Visited</p>
+                      <p className="text-[11px] text-sec-text mb-1">Last Visited</p>
                       <p className="text-[13px] font-bold text-slate-800">{patient.lastVisited}</p>
                     </div>
                     <div className="p-3">
-                      <p className="text-[11px] text-[#6B7280] mb-1">Any existing dental conditions?</p>
+                      <p className="text-[11px] text-sec-text mb-1">Any existing dental conditions?</p>
                       <p className="text-[13px] font-bold text-slate-800">{patient.conditions}</p>
                     </div>
                   </div>
@@ -341,7 +350,7 @@ export default function CreateFinalTreatmentPlanModal({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#0E3E65] hover:bg-[#082f46] text-white h-12 px-8 rounded-lg font-semibold text-sm"
+                className="bg-primary hover:bg-[#082f46] text-white h-12 px-8 rounded-lg font-semibold text-sm"
               >
                 {isSubmitting ? "Submitting…" : "Submit Final Treatment Plan"}
               </Button>

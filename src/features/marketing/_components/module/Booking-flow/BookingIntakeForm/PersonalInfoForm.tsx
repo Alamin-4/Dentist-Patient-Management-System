@@ -93,7 +93,7 @@ export default function PersonalInfoForm({
     }
   };
 
-  const labelCls = "block text-[#1A1A2E] font-medium text-sm mb-2.5";
+  const labelCls = "block text-text font-medium text-sm mb-2.5";
   const getInputCls = (name: string) => {
     const hasError = !!errors[name];
     return `w-full px-4 py-4 border rounded-lg focus:outline-none transition-all bg-white disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-500 ${hasError
@@ -104,7 +104,7 @@ export default function PersonalInfoForm({
 
   return (
     <div className="animate-in fade-in duration-500">
-      <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-8">
+      <h2 className="text-[22px] font-bold text-text mb-8">
         Provide your personal Information
       </h2>
 
@@ -189,7 +189,7 @@ export default function PersonalInfoForm({
               }}
               className={`${getInputCls("dateOfBirth")} pr-12 cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-0 [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
             />
-            <CalendarDays className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280] pointer-events-none" />
+            <CalendarDays className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sec-text pointer-events-none" />
           </div>
           {errors.dateOfBirth && (
             <p className="text-xs text-red-500 font-semibold mt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">

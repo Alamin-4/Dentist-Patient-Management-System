@@ -76,7 +76,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
         <div className="flex flex-col xl:flex-row gap-12 items-start">
           {/* Mobile Section Selector */}
           {outline.length > 0 && (
-            <div className="w-full xl:hidden mb-4 bg-white border border-[#CEE0F4] rounded-2xl p-4">
+            <div className="w-full xl:hidden mb-4 bg-white border border-border rounded-2xl p-4">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 items-center gap-2">
                 <List className="h-4 w-4 text-[#10436B]" />
                 Jump to Section
@@ -88,13 +88,13 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
                 placeholder="Select a section..."
                 allowClear={false}
                 showSearch={false}
-                triggerClassName="bg-slate-50 font-bold border-[#CEE0F4] h-11 text-slate-800 focus:ring-[#10436B]/10 focus:border-[#10436B]"
+                triggerClassName="bg-slate-50 font-bold border-border h-11 text-slate-800 focus:ring-[#10436B]/10 focus:border-[#10436B]"
               />
             </div>
           )}
 
           {/* Left: Outline Navigator (Desktop) */}
-          <div className="hidden xl:block w-full xl:w-64 shrink-0 rounded-2xl border border-[#CEE0F4] bg-white p-6 sticky top-28 space-y-4">
+          <div className="hidden xl:block w-full xl:w-64 shrink-0 rounded-2xl border border-border bg-white p-6 sticky top-28 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
               <List className="h-4 w-4 text-[#10436B]" />
               Table of Contents
@@ -121,14 +121,14 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
           </div>
 
           {/* Right: Policy Document Paper Container */}
-          <div className="flex-1 w-full bg-white border border-[#CEE0F4] rounded-3xl p-6 md:p-12 space-y-8">
+          <div className="flex-1 w-full bg-white border border-border rounded-3xl p-6 md:p-12 space-y-8">
             {/* Header branding */}
             <div className="border-b border-slate-100 pb-6 space-y-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-[#10436B] text-xs font-bold rounded-full border border-[#CEE0F4]/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-[#10436B] text-xs font-bold rounded-full border border-border/60">
                 <Shield className="h-3.5 w-3.5" />
                 Legal Agreements
               </span>
-              <h1 className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-black text-text tracking-tight">
                 {title}
               </h1>
 
@@ -141,11 +141,11 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
             {/* Document Render Canvas */}
             {isHtml ? (
               <div
-                className="policy-rendered-content prose prose-slate max-w-none text-[#1A1A2E] text-[15px] leading-relaxed"
+                className="policy-rendered-content prose prose-slate max-w-none text-text text-[15px] leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             ) : (
-              <div className="prose prose-slate max-w-none text-[#1A1A2E] text-[15px] leading-relaxed">
+              <div className="prose prose-slate max-w-none text-text text-[15px] leading-relaxed">
                 {content.split("\n").map((line, idx) => {
                   if (line.startsWith("# ")) return null;
                   if (line.startsWith("## ")) {
@@ -155,7 +155,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
                       <h2
                         key={idx}
                         id={id}
-                        className="text-xl font-bold text-[#1A1A2E] mt-8 mb-4 border-b pb-1.5 border-slate-100 scroll-mt-28"
+                        className="text-xl font-bold text-text mt-8 mb-4 border-b pb-1.5 border-slate-100 scroll-mt-28"
                       >
                         {text}
                       </h2>

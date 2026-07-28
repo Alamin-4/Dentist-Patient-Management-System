@@ -2,7 +2,7 @@ import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import type { Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
+import type { Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 
 interface DoctorProfileHeaderProps {
     dentist: Dentist;
@@ -27,7 +27,7 @@ export function DoctorProfileHeader({ dentist }: DoctorProfileHeaderProps) {
                     <p className="text-sm text-gray-500">{dentist.specialty}</p>
                     <p className="flex items-center gap-1 text-xs text-gray-400 mt-1">
                         <MapPin className="size-3.5 shrink-0" />
-                        <span className="truncate max-w-[200px]">{location}</span>
+                        <span className="truncate max-w-50">{location}</span>
                     </p>
                 </div>
             </div>
@@ -39,9 +39,7 @@ export function DoctorProfileHeader({ dentist }: DoctorProfileHeaderProps) {
                 <p className="text-xl font-black text-[#113254]">
                     ${estimateLow(dentist.price).toLocaleString()}
                 </p>
-                <Badge variant="secondary" className="bg-blue-50 text-[#113254] border-blue-100 text-[10px] font-semibold">
-                    96% Accuracy
-                </Badge>
+                {/* Accuracy badge hidden until real data is available */}
             </div>
         </div>
     );

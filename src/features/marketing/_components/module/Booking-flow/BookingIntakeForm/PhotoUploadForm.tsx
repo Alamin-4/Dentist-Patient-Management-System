@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Trash2, Upload } from "lucide-react";
+import { Trash2, Upload, AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,14 +11,25 @@ import {
   setDentalPhoto,
 } from "@/lib/storage/bookingService";
 
-const maxFileValidation = (message: string) =>
+const maxFileValidation = (requiredMessage: string) =>
   z
     .any()
-    .refine((file) => file instanceof File, { message })
-    .refine(
-      (file) => !(file instanceof File) || file.size <= 5 * 1024 * 1024,
-      { message: "File size exceeds 5MB limit. Please choose a smaller file." }
-    );
+    .superRefine((file, ctx) => {
+      if (!(file instanceof File)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: requiredMessage,
+        });
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `File size is too large (${sizeMB} MB). Maximum allowed size is 5 MB. Please select a smaller photo.`,
+        });
+      }
+    });
 
 export const photoUploadSchema = z.object({
   frontSmile: maxFileValidation("Front smile photo is required"),
@@ -110,17 +121,17 @@ export default function PhotoUploadForm({
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
-      <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-6">
+      <h2 className="text-[22px] font-bold text-text mb-6">
         Upload your dental photos
       </h2>
 
       {/* Tip banner */}
       <div className="flex items-start justify-between gap-4 p-5 bg-[#F0F9FF] border border-[#E0F2FE] rounded-lg mb-8">
         <div>
-          <p className="font-bold text-[#1A1A2E] text-[15px] mb-1">
+          <p className="font-bold text-text text-[15px] mb-1">
             Tip for best results
           </p>
-          <p className="text-[#6B7280] text-sm leading-relaxed">
+          <p className="text-sec-text text-sm leading-relaxed">
             Stand near a window in natural light. Use your phone&apos;s front
             camera. Avoid flash — it washes out detail doctors need for an
             accurate estimate.
@@ -152,7 +163,8 @@ export default function PhotoUploadForm({
                 error={activeErrors[field.name] ? String(activeErrors[field.name]?.message || activeErrors[field.name]) : undefined}
               />
               {activeErrors[field.name] && (
-                <p className="text-xs text-red-500 font-semibold mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                <p className="flex items-center gap-1.5 text-xs text-red-500 font-semibold mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-500" />
                   {String(activeErrors[field.name]?.message || activeErrors[field.name])}
                 </p>
               )}
@@ -168,8 +180,6 @@ export default function PhotoUploadForm({
     </div>
   );
 }
-
-// ─── UploadCard ───────────────────────────────────────────────────────────────
 
 interface UploadCardProps {
   label: string;
@@ -194,6 +204,11 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+
+    // Clear input so selecting the same file after an error works
+    e.target.value = "";
+
     onChange(file);
   };
 
@@ -216,7 +231,6 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
 
       {preview ? (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt={label}
@@ -239,7 +253,7 @@ function UploadCard({ label, value, onChange, error }: UploadCardProps) {
           className="flex flex-col items-center justify-center gap-3 w-full h-full min-h-40 p-6 text-center"
         >
           <Upload className={`w-6 h-6 transition-colors ${error ? "text-red-400" : "text-[#9CA3AF] group-hover:text-[#113254]"}`} />
-          <span className="text-[13px] font-semibold text-[#1A1A2E] leading-snug">
+          <span className="text-[13px] font-semibold text-text leading-snug">
             {label}
           </span>
         </button>

@@ -62,7 +62,7 @@ export function BookingsRevenueChart({ chartData = [] }: BookingsRevenueChartPro
   // Compute dynamic min/max bounds based on real data
   const maxBookings = Math.max(...chartData.map(d => d.bookings), 5);
   const minBookings = 0;
-  
+
   const maxRevenue = Math.max(...chartData.map(d => d.revenue), 500);
   const minRevenue = 0;
 
@@ -77,11 +77,11 @@ export function BookingsRevenueChart({ chartData = [] }: BookingsRevenueChartPro
   }
 
   // Generate tick marks
-  const bTicks = Array.from({ length: 5 }, (_, i) => 
+  const bTicks = Array.from({ length: 5 }, (_, i) =>
     Math.round(minBookings + (i / 4) * (maxBookings - minBookings))
   );
 
-  const rTicks = Array.from({ length: 5 }, (_, i) => 
+  const rTicks = Array.from({ length: 5 }, (_, i) =>
     Math.round(minRevenue + (i / 4) * (maxRevenue - minRevenue))
   );
 
@@ -103,7 +103,7 @@ export function BookingsRevenueChart({ chartData = [] }: BookingsRevenueChartPro
       className={cn(
         "px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors",
         view === key
-          ? "border border-gray-200 bg-white text-[#1A1A2E] shadow-xs"
+          ? "border border-gray-200 bg-white text-text shadow-xs"
           : "text-gray-400 hover:text-gray-600"
       )}
     >
@@ -119,7 +119,7 @@ export function BookingsRevenueChart({ chartData = [] }: BookingsRevenueChartPro
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="text-[15px] font-bold text-[#1A1A2E]">
+          <h3 className="text-[15px] font-bold text-text">
             Bookings &amp; Revenue
           </h3>
           <p className="text-xs text-gray-400 mt-0.5">
@@ -138,7 +138,7 @@ export function BookingsRevenueChart({ chartData = [] }: BookingsRevenueChartPro
       <div className="mt-4 flex items-center gap-5">
         {showBooking && (
           <div className="flex items-center gap-2">
-            <div className="h-0.5 w-6 rounded-full bg-[#1A1A2E]" />
+            <div className="h-0.5 w-6 rounded-full bg-text" />
             <span className="text-[12px] text-gray-500">Bookings</span>
           </div>
         )}

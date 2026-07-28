@@ -18,14 +18,18 @@ export default function DentistDashboardLayout({
   const progress = progressData?.data as DentistVerificationProgress | undefined;
 
   useEffect(() => {
-    if (!dentistProfile.isPending && dentistProfile.data) {
+    if (!dentistProfile.isPending) {
+      if (dentistProfile.isError || !dentistProfile.data) {
+        router.replace("/register-doctor");
+        return;
+      }
       const dentist = dentistProfile.data?.data?.dentist;
       const hasProfData = !!dentist?.dentistProfessionalData?.legalName;
       if (!hasProfData) {
         router.replace("/register-doctor?dentist=professional-info");
       }
     }
-  }, [dentistProfile.isPending, dentistProfile.data, router]);
+  }, [dentistProfile.isPending, dentistProfile.isError, dentistProfile.data, router]);
 
   // Guard: claimed profile dentists who haven't paid must complete payment first
   useEffect(() => {
@@ -40,9 +44,13 @@ export default function DentistDashboardLayout({
   if (dentistProfile.isPending || isProgressLoading) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0E3E65]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
+  }
+
+  if (dentistProfile.isError || !dentistProfile.data) {
+    return null;
   }
 
   return <>{children}</>;

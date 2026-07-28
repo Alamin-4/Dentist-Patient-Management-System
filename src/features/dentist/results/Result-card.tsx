@@ -55,7 +55,7 @@ export default function ResultCard({
       <div className="space-y-3 px-4 py-4 sm:px-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-[17px] font-semibold leading-6 text-[#1A1A2E] sm:text-[18px]">
+            <h3 className="truncate text-[17px] font-semibold leading-6 text-text sm:text-[18px]">
               {title}
             </h3>
             <p className="mt-1 text-[13px] font-medium leading-5 text-[#7B8794] sm:text-[14px]">

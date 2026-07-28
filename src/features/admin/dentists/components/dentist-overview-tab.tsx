@@ -165,7 +165,7 @@ function ClinicCategory({
     <div className="border-t border-gray-100 first:border-t-0">
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-between px-0 py-3 text-sm font-semibold text-gray-700 transition-colors hover:text-[#1A1A2E]"
+        className="flex w-full items-center justify-between px-0 py-3 text-sm font-semibold text-gray-700 transition-colors hover:text-text"
       >
         {name}
         {expanded ? (
@@ -319,7 +319,7 @@ export function DentistOverviewTab({
           </div>
           <div>
             <p className="text-xs font-medium text-gray-400">Registration No</p>
-            <p className="mt-0.5 text-sm font-medium text-[#1A1A2E]">
+            <p className="mt-0.5 text-sm font-medium text-text">
               {verification.phase1.registration_no}
             </p>
           </div>
@@ -403,12 +403,12 @@ export function DentistOverviewTab({
             {(phase2.services ?? []).map((s, i) => (
               <div key={i} className="flex items-center justify-between py-2.5">
                 <div>
-                  <p className="text-sm font-semibold text-[#1A1A2E]">
+                  <p className="text-sm font-semibold text-text">
                     {s.name}
                   </p>
                   <p className="text-xs text-gray-400">{s.description}</p>
                 </div>
-                <p className="text-sm font-bold text-[#1A1A2E]">
+                <p className="text-sm font-bold text-text">
                   ${s.price.toLocaleString()}
                 </p>
               </div>

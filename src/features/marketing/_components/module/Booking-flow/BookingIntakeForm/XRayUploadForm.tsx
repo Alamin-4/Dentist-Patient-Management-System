@@ -17,18 +17,30 @@ export const xrayUploadSchema = z.object({
     .any()
     .optional()
     .nullable()
-    .refine(
-      (file) => !file || (file instanceof File && file.size <= 5 * 1024 * 1024),
-      { message: "File size exceeds 5MB limit. Please choose a smaller file." }
-    )
-    .refine(
-      (file) =>
-        !file ||
-        (file instanceof File &&
-          (file.type.startsWith("image/") ||
-            /\.(jpg|jpeg|png|dcm|dicom)$/i.test(file.name))),
-      { message: "Only JPG, PNG, and DICOM files are allowed." }
-    ),
+    .superRefine((file, ctx) => {
+      if (!file) return;
+      if (!(file instanceof File)) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `File size is too large (${sizeMB} MB). Maximum allowed size is 5 MB. Please select a smaller file.`,
+        });
+        return;
+      }
+
+      const isValidType =
+        file.type.startsWith("image/") ||
+        /\.(jpg|jpeg|png|dcm|dicom)$/i.test(file.name);
+
+      if (!isValidType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Only JPG, PNG, and DICOM files are allowed.",
+        });
+      }
+    }),
   notes: z.string().optional(),
 });
 
@@ -98,10 +110,10 @@ export default function XRayUploadForm({
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
       <div className="mb-8">
-        <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-2">
+        <h2 className="text-[22px] font-bold text-text mb-2">
           Do you have recent dental X-rays?
         </h2>
-        <p className="text-[#6B7280] text-[16px]">
+        <p className="text-sec-text text-[16px]">
           X-rays taken within the past 18 months help doctors give you a more
           precise quote.
         </p>
@@ -118,9 +130,12 @@ export default function XRayUploadForm({
           e.preventDefault();
           setIsDragging(false);
           const droppedFile = e.dataTransfer.files[0];
-          if (droppedFile) {
-            setValue("file", droppedFile, { shouldValidate: true });
+          if (!droppedFile) return;
+          if (droppedFile.size > 5 * 1024 * 1024) {
+            setValue("file", null, { shouldValidate: true });
+            return;
           }
+          setValue("file", droppedFile, { shouldValidate: true });
         }}
         onClick={() => fileInputRef.current?.click()}
         className={`
@@ -157,13 +172,13 @@ export default function XRayUploadForm({
                 <X className="w-3 h-3" />
               </button>
             </div>
-            <span className="text-[#1A1A2E] font-bold">{file.name}</span>
-            <span className="text-[#6B7280] text-sm">Click to change file</span>
+            <span className="text-text font-bold">{file.name}</span>
+            <span className="text-sec-text text-sm">Click to change file</span>
           </div>
         ) : (
           <div className="flex flex-col items-center text-center">
             <Upload className="w-8 h-8 text-[#9CA3AF] mb-4" />
-            <p className="text-[#1A1A2E] font-bold text-[18px]">
+            <p className="text-text font-bold text-[18px]">
               Drop files here or Tab to upload
             </p>
             <p className="text-[#9CA3AF] text-[15px] mt-1">
@@ -186,12 +201,12 @@ export default function XRayUploadForm({
         <textarea
           {...register("notes")}
           placeholder="Add any context about this file"
-          className="w-full min-h-28 rounded-lg border border-[#E5E7EB] p-4 text-[#1A1A2E] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#113254]"
+          className="w-full min-h-28 rounded-lg border border-[#E5E7EB] p-4 text-text outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#113254]"
         />
       </div>
 
       <div className="mt-10 p-6 bg-[#FFFBEB] border border-[#FEF3C7] rounded-lg">
-        <p className="text-[#1A1A2E] text-[15px] leading-relaxed font-medium">
+        <p className="text-text text-[15px] leading-relaxed font-medium">
           Without X-rays, your estimate range may be wider. Your doctors may
           also request them during your video consultation before confirming a
           final price.

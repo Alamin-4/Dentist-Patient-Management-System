@@ -27,7 +27,7 @@ export function FileRow({ fileName, fileSize, href, onPreview }: FileRowProps) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-[#1A1A2E]">
+          <p className="truncate text-sm font-medium text-text">
             {fileName}
           </p>
           <p className="text-xs text-gray-400">{fileSize}</p>

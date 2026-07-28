@@ -42,7 +42,7 @@ export function ProcedureTable({
                   }
                   onChange={(e) => onSelectAll(e.target.checked)}
                   aria-label="Select all procedures"
-                  className="h-4 w-4 rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
+                  className="h-4 w-4 rounded border-gray-300 text-text focus:ring-text"
                 />
               </th>
               {["NAME", "SLUG", "SPECIALTY", "CREATED AT", "ACTIONS"].map((h) => (
@@ -82,11 +82,11 @@ export function ProcedureTable({
                       checked={selectedIds.includes(p.id)}
                       onChange={(e) => onSelectOne(p.id, e.target.checked)}
                       aria-label={`Select procedure ${p.name}`}
-                      className="h-4 w-4 rounded border-gray-300 text-[#1A1A2E] focus:ring-[#1A1A2E]"
+                      className="h-4 w-4 rounded border-gray-300 text-text focus:ring-text"
                     />
                   </td>
                   {/* Name */}
-                  <td className="px-4 py-3.5 text-sm font-semibold text-[#1A1A2E]">
+                  <td className="px-4 py-3.5 text-sm font-semibold text-text">
                     {p.name}
                   </td>
                   {/* Slug */}

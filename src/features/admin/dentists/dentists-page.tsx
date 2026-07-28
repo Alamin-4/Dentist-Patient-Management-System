@@ -196,7 +196,7 @@ export default function DentistsPage() {
       {/* Header */}
       <div className="flex flex-wrap gap-4 sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Dentists Directory</h1>
+          <h1 className="text-2xl font-bold text-text">Dentists Directory</h1>
           <p className="mt-0.5 text-sm text-gray-500">
             Manage all practitioners on the platform — verification, status, performance.
           </p>
@@ -213,7 +213,7 @@ export default function DentistsPage() {
             <Download className="h-4 w-4" />
             Export
           </button>
-          <button className="flex truncate items-center gap-2 rounded-lg bg-[#1A1A2E] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1A1A2E]/90">
+          <button className="flex truncate items-center gap-2 rounded-lg bg-text px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-text/90">
             <UserPlus className="h-4 w-4" />
             <span className="truncate">Invite dentist</span>
           </button>

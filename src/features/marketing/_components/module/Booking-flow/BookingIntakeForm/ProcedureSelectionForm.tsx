@@ -55,7 +55,7 @@ export default function ProcedureSelectionForm({
 
   return (
     <div className="w-full bg-white">
-      <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-6">
+      <h2 className="text-[22px] font-bold text-text mb-6">
         What procedure are you interested in?
       </h2>
 
@@ -66,7 +66,7 @@ export default function ProcedureSelectionForm({
       )}
 
       {isLoading && (
-        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-[#6B7280]">
+        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-sec-text">
           <Loader2 className="size-4 animate-spin" />
           Loading procedures...
         </div>
@@ -90,7 +90,7 @@ export default function ProcedureSelectionForm({
             >
               <div className="flex flex-col gap-1">
                 <span
-                  className={`text-[17px] font-bold ${isSelected ? "text-[#113254]" : "text-[#1A1A2E]"}`}
+                  className={`text-[17px] font-bold ${isSelected ? "text-[#113254]" : "text-text"}`}
                 >
                   {item.name}
                 </span>

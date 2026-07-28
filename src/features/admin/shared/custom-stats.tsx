@@ -31,7 +31,7 @@ export function CustomStats({ stats, className }: CustomStatsProps) {
               <span className="shrink-0 text-gray-300">{stat.icon}</span>
             )}
           </div>
-          <p className={cn("mt-1.5 text-2xl font-bold tracking-tight sm:text-[28px]", stat.valueColor ?? "text-[#1A1A2E]")}>
+          <p className={cn("mt-1.5 text-2xl font-bold tracking-tight sm:text-[28px]", stat.valueColor ?? "text-text")}>
             {stat.value}
           </p>
           {stat.sub && <p className="mt-1 text-xs text-gray-500">{stat.sub}</p>}

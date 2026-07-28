@@ -1,10 +1,9 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useStateContext } from "@/providers/StateProvider";
-import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/DentistAllComponents/types";
+import { useMe } from "@/hooks/auth/useAuth";
+import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
 import DentistScheduleCard, {
   type DentistSelection,
 } from "./DentistScheduleCard";
@@ -53,6 +52,29 @@ export default function ScheduleContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { setShowCompareModal } = useStateContext();
+  const { user } = useMe();
+
+  // ── Dentist role guard ───────────────────────────────────────────
+  if (user?.role === "DENTIST") {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
+        <div className="text-5xl">🦷</div>
+        <h2 className="text-2xl font-bold text-text">
+          Dentists cannot book consultations
+        </h2>
+        <p className="text-sec-text text-sm max-w-sm">
+          Your account is registered as a <strong>Dentist</strong>. Only patients can book consultation appointments. If you need help, please contact support.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push("/find-dentists")}
+          className="px-6 py-3 bg-[#113254] text-white font-semibold rounded-lg hover:bg-[#0d2844] transition-colors"
+        >
+          Back to Directory
+        </button>
+      </div>
+    );
+  }
 
   const dentistIdsParam = searchParams.get("dentistIds") ?? "";
   const consultationIdParam = searchParams.get("consultationId");
@@ -143,7 +165,7 @@ export default function ScheduleContent() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 bg-[#F9FAFB]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#113254]"></div>
-        <p className="text-[#6B7280] font-medium text-sm animate-pulse">Loading schedule details...</p>
+        <p className="text-sec-text font-medium text-sm animate-pulse">Loading schedule details...</p>
       </div>
     );
   }
@@ -217,9 +239,20 @@ export default function ScheduleContent() {
       clearBookingData();
       setShowSuccess(true);
     } catch (error) {
-      const errMsg = normalizeApiError(error).message;
-      setErrorMsg(errMsg);
-      toast.error(errMsg);
+      const normalized = normalizeApiError(error);
+      // 403 = role restriction — show a friendly message instead of the raw API error
+      const isForbidden =
+        (error as any)?.status === 403 ||
+        (error as any)?.response?.status === 403 ||
+        normalized.message.toLowerCase().includes("forbidden") ||
+        normalized.message.toLowerCase().includes("permission");
+
+      const friendlyMsg = isForbidden
+        ? "Only patients can book consultations. Dentist accounts are not permitted to make bookings."
+        : normalized.message;
+
+      setErrorMsg(friendlyMsg);
+      toast.error(friendlyMsg);
     } finally {
       setIsConfirming(false);
     }
@@ -236,10 +269,10 @@ export default function ScheduleContent() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-[26px] font-black text-[#1A1A2E] leading-tight">
+            <h1 className="text-[26px] font-black text-text leading-tight">
               Book your free 15-minute video consultation
             </h1>
-            <p className="mt-1 text-[14px] text-[#6B7280]">
+            <p className="mt-1 text-[14px] text-sec-text">
               Choose a time that works for you. All times shown in your timezone
               (Eastern Time, UTC&#8209;5).
             </p>
@@ -248,7 +281,7 @@ export default function ScheduleContent() {
             <button
               type="button"
               onClick={() => setShowCompareModal(true)}
-              className="shrink-0 px-5 py-2.5 border border-[#E5E7EB] rounded-lg text-[14px] font-semibold text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors"
+              className="shrink-0 px-5 py-2.5 border border-[#E5E7EB] rounded-lg text-[14px] font-semibold text-text hover:bg-[#F9FAFB] transition-colors"
             >
               View Comparison
             </button>

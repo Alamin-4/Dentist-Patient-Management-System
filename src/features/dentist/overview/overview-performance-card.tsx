@@ -80,7 +80,7 @@ export function OverviewPerformanceCard({ chart }: Props) {
               </p>
               <span
                 className={cn(
-                  "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold bg-[#4CA30D]/11 text-[#4CA30D]",
+                  "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold bg-badge/11 text-badge",
                 )}
               >
                 {item.badge}

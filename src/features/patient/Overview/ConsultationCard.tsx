@@ -39,20 +39,20 @@ const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: 
   const year = dObj.getUTCFullYear();
   const month = dObj.getUTCMonth();
   const day = dObj.getUTCDate();
-  
+
   const timeParts = scheduledTime.split(":");
   let hours = parseInt(timeParts[0], 10);
   let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
-  
+
   if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
     hours += 12;
   } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
     hours = 0;
   }
-  
+
   if (isNaN(hours)) hours = 0;
   if (isNaN(minutes)) minutes = 0;
-  
+
   const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
   const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
   return localUtcMs - offsetMinutes * 60 * 1000;
@@ -89,7 +89,7 @@ export function ConsultationCard({
         const hrs = Math.floor(diff / (3600 * 1000));
         const mins = Math.floor((diff % (3600 * 1000)) / (60 * 1000));
         const secs = Math.floor((diff % (60 * 1000)) / 1000);
-        
+
         const pad = (num: number) => String(num).padStart(2, '0');
         setTimeRemaining(`${pad(hrs)}:${pad(mins)}:${pad(secs)}`);
       }
@@ -190,16 +190,14 @@ export function ConsultationCard({
 
   return (
     <>
-      <div className="rounded-lg border border-[#CEE0F4] bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
+      <div className="rounded-lg border border-border bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
         {alertMessage ? (
-          <div className={`mb-4 flex items-start gap-3 rounded-lg border px-4 py-3 text-[12px] leading-relaxed ${
-            isCompleted
-              ? "border-[#10B981]/30 bg-[#E8F8F5] text-[#065F46]"
-              : "border-[#FACC15]/40 bg-[#FFF7E6] text-[#7A4A00]"
-          }`}>
-            <div className={`mt-0.5 size-5 rounded-full bg-white flex items-center justify-center shrink-0 ${
-              isCompleted ? "text-[#10B981]" : "text-[#F59E0B]"
+          <div className={`mb-4 flex items-start gap-3 rounded-lg border px-4 py-3 text-[12px] leading-relaxed ${isCompleted
+            ? "border-[#10B981]/30 bg-[#E8F8F5] text-[#065F46]"
+            : "border-[#FACC15]/40 bg-[#FFF7E6] text-[#7A4A00]"
             }`}>
+            <div className={`mt-0.5 size-5 rounded-full bg-white flex items-center justify-center shrink-0 ${isCompleted ? "text-[#10B981]" : "text-[#F59E0B]"
+              }`}>
               <CalendarDays className="size-3.5" />
             </div>
             <p>{alertMessage}</p>
@@ -220,7 +218,7 @@ export function ConsultationCard({
             <div className="min-w-0 space-y-1">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[16px] font-bold text-[#1A1A2E]">
+                  <h3 className="text-[16px] font-bold text-text">
                     {doctorName}
                   </h3>
                   <button
@@ -235,7 +233,7 @@ export function ConsultationCard({
                     <MessageSquare size={13} />
                   </button>
                 </div>
-                <p className="text-[13px] font-medium text-[#6B7280]">
+                <p className="text-[13px] font-medium text-sec-text">
                   {specialty}
                 </p>
               </div>
@@ -264,9 +262,9 @@ export function ConsultationCard({
               </div>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="inline-flex items-center gap-1.5 rounded-lg border border-[#CEE0F4] px-3 py-1.5 text-[#1A1A2E]">
+                <div className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-text">
                   <span className="text-[14px] font-black">{rdvScore}</span>
-                  <span className="text-[11px] font-medium text-[#6B7280]">RDV Score</span>
+                  <span className="text-[11px] font-medium text-sec-text">RDV Score</span>
                 </div>
 
                 {completedCount !== undefined && completedCount > 0 && (
@@ -283,10 +281,10 @@ export function ConsultationCard({
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">
               Procedure
             </p>
-            <p className="text-[15px] font-bold text-[#1A1A2E]">
+            <p className="text-[15px] font-bold text-text">
               {procedure}
             </p>
-            <p className="text-[13px] text-[#6B7280]">{timezone}</p>
+            <p className="text-[13px] text-sec-text">{timezone}</p>
           </div>
 
           {isCompleted ? (
@@ -294,7 +292,7 @@ export function ConsultationCard({
               <span className="inline-flex items-center rounded-lg bg-[#FFF7E6] px-3 py-1.5 text-[12px] font-bold text-[#F79009] border border-[#FACC15]/20">
                 Estimate Pending
               </span>
-              <p className="text-[18px] font-mono font-bold text-[#1A1A2E] mt-1 leading-none">
+              <p className="text-[18px] font-mono font-bold text-text mt-1 leading-none">
                 {timeRemaining}
               </p>
               <p className="text-[11px] font-medium text-[#9CA3AF]">
@@ -325,8 +323,8 @@ export function ConsultationCard({
         ) : (
           <div className="mt-5 flex flex-col gap-4 border-t border-[#EEF2F6] pt-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1">
-              <p className="text-[15px] font-bold text-[#1A1A2E]">{dateStr}</p>
-              <p className="text-[13px] font-medium text-[#6B7280]">
+              <p className="text-[15px] font-bold text-text">{dateStr}</p>
+              <p className="text-[13px] font-medium text-sec-text">
                 {timeStr === "N/A" && (isPending || isAccepted) ? "Awaiting scheduling" : timeStr} · {duration}
               </p>
               {!isPending && !isAccepted && consultation.scheduledDate && (

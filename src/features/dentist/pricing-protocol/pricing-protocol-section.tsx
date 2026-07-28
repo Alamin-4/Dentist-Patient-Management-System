@@ -19,7 +19,7 @@ export default function PricingProtocolSection() {
   if (isLoading) {
     return (
       <div className="flex min-h-[200px] items-center justify-center bg-white border border-gray-100 rounded-lg p-6 shadow-sm">
-        <Loader2 className="h-6 w-6 animate-spin text-[#0E3E65]" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
   }

@@ -62,10 +62,10 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
         </div>
 
         <div className="max-w-lg space-y-3 mb-8">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1A1A2E]">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
             Something went wrong
           </h1>
-          <p className="text-base sm:text-lg text-[#6B7280] leading-relaxed">
+          <p className="text-base sm:text-lg text-sec-text leading-relaxed">
             We ran into an unexpected problem. This has been noted. You can try
             again or return to the home page.
           </p>
@@ -94,7 +94,7 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
               >
                 {copied ? (
                   <>
-                    <CheckCheck className="size-3.5 text-[#4CA30D]" />
+                    <CheckCheck className="size-3.5 text-badge" />
                     Copied
                   </>
                 ) : (
@@ -143,7 +143,7 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
           </button>
           <Link
             href="/"
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#003366] px-6 py-3.5 text-sm font-bold text-[#003366] hover:bg-[#EEF8FF] transition-all"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#003366] px-6 py-3.5 text-sm font-bold text-[#003366] hover:bg-secondary transition-all"
           >
             <Home className="size-4" />
             Go Home
@@ -151,8 +151,8 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
         </div>
 
         {/* Branding */}
-        <div className="mt-10 flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-[#6B7280] shadow-sm">
-          <span className="size-2 rounded-full bg-[#4CA30D]" />
+        <div className="mt-10 flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-sec-text shadow-sm">
+          <span className="size-2 rounded-full bg-badge" />
           RatedDocs — Find Verified Dental Professionals
         </div>
       </main>

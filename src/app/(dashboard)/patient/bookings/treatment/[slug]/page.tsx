@@ -240,7 +240,7 @@ export default function TreatmentDetailsPage() {
       </button>
 
       <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
-        <h1 className="text-2xl font-bold text-[#1A1A2E]">Treatment Detail</h1>
+        <h1 className="text-2xl font-bold text-text">Treatment Detail</h1>
         {isCancelled && (
           <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-full uppercase tracking-wider">
             Rejected
@@ -248,7 +248,7 @@ export default function TreatmentDetailsPage() {
         )}
       </div>
 
-      <div className="bg-white border border-[#CEE0F4] rounded-lg p-5 md:p-6 mb-6">
+      <div className="bg-white border border-border rounded-lg p-5 md:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
           <div className="flex flex-col items-center gap-1.5 shrink-0">
             <div className="relative w-16 h-16 rounded-full overflow-hidden bg-slate-100">
@@ -260,21 +260,21 @@ export default function TreatmentDetailsPage() {
               />
             </div>
             {booking.doctor.isVerified && (
-              <div className="flex items-center gap-1 text-xs font-medium text-[#1A1A2E]">
-                <ShieldCheck className="size-3.5 text-[#4CA30D]" />
+              <div className="flex items-center gap-1 text-xs font-medium text-text">
+                <ShieldCheck className="size-3.5 text-badge" />
                 <span>VERIFIED</span>
               </div>
             )}
-            <div className="border border-slate-200 rounded px-2 py-0.5 text-[11px] text-[#1A1A2E]">
+            <div className="border border-slate-200 rounded px-2 py-0.5 text-[11px] text-text">
               {booking.doctor.rdvScore} RDV Score
             </div>
           </div>
 
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-bold text-[#1A1A2E]">{booking.doctor.name}</h2>
+            <h2 className="text-xl font-bold text-text">{booking.doctor.name}</h2>
             <p className="text-sm text-[#475569] mt-0.5">{booking.doctor.specialty}</p>
             <div className="flex items-center gap-1 mt-1.5">
-              <span className="font-semibold text-sm text-[#1A1A2E] mr-0.5">
+              <span className="font-semibold text-sm text-text mr-0.5">
                 {booking.doctor.rating}
               </span>
               {[...Array(5)].map((_, i) => (
@@ -297,19 +297,19 @@ export default function TreatmentDetailsPage() {
           {/* Procedure */}
           <div className="shrink-0 space-y-1 min-w-32.5">
             <p className="text-xs text-slate-500 font-medium">Procedure</p>
-            <p className="text-sm font-semibold text-[#1A1A2E]">{booking.procedure}</p>
+            <p className="text-sm font-semibold text-text">{booking.procedure}</p>
           </div>
 
           {/* Appointment Dates */}
           <div className="shrink-0 space-y-1 min-w-40">
             <p className="text-xs text-slate-500 font-medium">Appointment Dates</p>
-            <p className="text-sm font-semibold text-[#1A1A2E]">{booking.appointmentDate}</p>
+            <p className="text-sm font-semibold text-text">{booking.appointmentDate}</p>
           </div>
 
           {/* Budget / Status */}
           <div className="shrink-0 space-y-1 text-right">
             <p className="text-xs text-slate-500 font-medium">Estimate Budget</p>
-            <p className="text-xl font-bold text-[#0E3E65]">
+            <p className="text-xl font-bold text-primary">
               ${booking.estimateBudget.toLocaleString()}
             </p>
             {booking.paymentStatus === "refunded" || isCancelled ? (
@@ -328,7 +328,7 @@ export default function TreatmentDetailsPage() {
               </>
             ) : booking.paymentStatus === "paid" ? (
               <>
-                <p className="text-xs font-bold text-[#4CA30D] mt-0.5">Paid</p>
+                <p className="text-xs font-bold text-badge mt-0.5">Paid</p>
                 {booking.finalPlan?.finalTotal && (
                   <p className="text-xs font-semibold text-slate-600 mt-0.5">
                     Final Price: ${Number(booking.finalPlan.finalTotal).toLocaleString()}
@@ -362,7 +362,7 @@ export default function TreatmentDetailsPage() {
               onClick={() => setEstimatePlanOpen((v) => !v)}
               className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
             >
-              <h4 className="font-bold text-[#1A1A2E]">Estimate Treatment plan</h4>
+              <h4 className="font-bold text-text">Estimate Treatment plan</h4>
               <ChevronDown
                 className={cn(
                   "size-5 text-slate-400 transition-transform",
@@ -379,7 +379,7 @@ export default function TreatmentDetailsPage() {
                   total={booking.treatmentPlan.totalEstimate}
                 />
                 <div className="mt-4 bg-[#F0F9FF] p-4 rounded-lg border border-[#B3D8FF]">
-                  <p className="text-[#0E3E65] font-bold text-sm mb-1">
+                  <p className="text-primary font-bold text-sm mb-1">
                     {booking.treatmentPlan.leewayPercent}% leeway
                   </p>
                   <p className="text-[#203A55] text-xs leading-relaxed">
@@ -401,7 +401,7 @@ export default function TreatmentDetailsPage() {
                 className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
               >
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h4 className="font-bold text-[#1A1A2E]">Final treatment Plan</h4>
+                  <h4 className="font-bold text-text">Final treatment Plan</h4>
                   {isWithinLeeway ? (
                     <span className="flex items-center gap-1 text-xs font-semibold text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5">
                       <ShieldCheck className="size-3" />
@@ -452,7 +452,7 @@ export default function TreatmentDetailsPage() {
                 onClick={() => setJourneyOpen((v) => !v)}
                 className="w-full flex justify-between items-center px-5 md:px-6 py-4 cursor-pointer"
               >
-                <h4 className="font-bold text-[#1A1A2E]">Journey Completed</h4>
+                <h4 className="font-bold text-text">Journey Completed</h4>
                 <ChevronDown
                   className={cn(
                     "size-5 text-slate-400 transition-transform",
@@ -488,7 +488,7 @@ export default function TreatmentDetailsPage() {
 
           {/* Treatment Timeline */}
           <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
-            <h4 className="font-bold text-[#1A1A2E] mb-6">Treatment Timeline</h4>
+            <h4 className="font-bold text-text mb-6">Treatment Timeline</h4>
             <div className="space-y-0">
               {booking.timeline.map((step, i) => (
                 <TimelineStepItem
@@ -506,9 +506,9 @@ export default function TreatmentDetailsPage() {
           {/* Arrival Code (visible when arrival date is today, booking is CONFIRMED, and arrival code exists) */}
           {plan.treatmentBooking?.status === "CONFIRMED" && isArrivalToday && booking.arrivalCode && (
             <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
-              <p className="text-sm font-bold text-[#1A1A2E] mb-3">Arrival Code</p>
+              <p className="text-sm font-bold text-text mb-3">Arrival Code</p>
               <div className="flex items-center justify-between">
-                <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">
+                <span className="text-5xl font-bold tracking-widest text-text">
                   {booking.arrivalCode}
                 </span>
                 <button
@@ -528,9 +528,9 @@ export default function TreatmentDetailsPage() {
           {/* Payment Code (visible when approved but not yet fully completed/paid) */}
           {isApproved && booking.paymentCode && plan.treatmentBooking?.status !== "COMPLETED" && (
             <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
-              <p className="text-sm font-bold text-[#1A1A2E] mb-3">Payment Code</p>
+              <p className="text-sm font-bold text-text mb-3">Payment Code</p>
               <div className="flex items-center justify-between">
-                <span className="text-5xl font-bold tracking-widest text-[#1A1A2E]">
+                <span className="text-5xl font-bold tracking-widest text-text">
                   {booking.paymentCode}
                 </span>
                 <button
@@ -554,7 +554,7 @@ export default function TreatmentDetailsPage() {
         <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-40 bg-white border-t border-slate-200 px-6 md:px-10 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             {plan.treatmentBooking?.status === "IN_PROGRESS" && (
-              <button className="text-sm text-[#1A1A2E] underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
+              <button className="text-sm text-text underline underline-offset-2 cursor-pointer hover:text-slate-600 transition-colors">
                 Dispute
               </button>
             )}
@@ -572,7 +572,7 @@ export default function TreatmentDetailsPage() {
                 <>
                   <button
                     onClick={() => router.push("/patient/documents")}
-                    className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="border border-slate-300 text-text px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
                   >
                     View Document
                   </button>
@@ -594,7 +594,7 @@ export default function TreatmentDetailsPage() {
                         <button
                           onClick={() => setRejectModalOpen(true)}
                           disabled={respondFinalPlanMutation.isPending}
-                          className="border border-slate-300 text-[#1A1A2E] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+                          className="border border-slate-300 text-text px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Reject Plan
                         </button>
@@ -652,8 +652,8 @@ function PlanTable({
         ))}
       </div>
       <div className="flex justify-between bg-slate-50 px-4 py-3.5 border-t border-slate-100">
-        <span className="font-bold text-[#0E3E65] text-sm">{totalLabel}</span>
-        <span className="font-bold text-[#0E3E65] text-sm">${total.toLocaleString()}</span>
+        <span className="font-bold text-primary text-sm">{totalLabel}</span>
+        <span className="font-bold text-primary text-sm">${total.toLocaleString()}</span>
       </div>
     </div>
   );
@@ -663,7 +663,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between py-3 text-sm">
       <span className="text-slate-500">{label}</span>
-      <span className="font-semibold text-[#1A1A2E]">{value}</span>
+      <span className="font-semibold text-text">{value}</span>
     </div>
   );
 }
@@ -684,17 +684,17 @@ function TimelineStepItem({
           className={cn(
             "size-5.5 rounded-full flex items-center justify-center shrink-0 border",
             step.completed
-              ? "bg-[#0E3E65] border-[#0E3E65] text-white"
+              ? "bg-primary border-primary text-white"
               : "bg-white border-slate-200 text-slate-300"
           )}
         >
-          {step.completed && <CheckCircle2 className="size-3.5 fill-current text-white bg-[#0E3E65] rounded-full" />}
+          {step.completed && <CheckCircle2 className="size-3.5 fill-current text-white bg-primary rounded-full" />}
         </div>
         {!isLast && (
           <div
             className={cn(
               "w-0.5 flex-1 min-h-8 my-1",
-              step.completed ? "bg-[#0E3E65]" : "bg-slate-100"
+              step.completed ? "bg-primary" : "bg-slate-100"
             )}
           />
         )}
@@ -703,7 +703,7 @@ function TimelineStepItem({
         <h5
           className={cn(
             "text-sm font-bold leading-tight",
-            step.completed ? "text-[#1A1A2E]" : "text-slate-400"
+            step.completed ? "text-text" : "text-slate-400"
           )}
         >
           {step.title}
@@ -712,7 +712,7 @@ function TimelineStepItem({
         {step.link && onViewMap && (
           <button
             onClick={onViewMap}
-            className="flex items-center gap-1 text-[#0E3E65] text-xs font-bold mt-2 hover:underline cursor-pointer"
+            className="flex items-center gap-1 text-primary text-xs font-bold mt-2 hover:underline cursor-pointer"
           >
             <MapPin className="size-3" />
             <span>{step.link.label}</span>

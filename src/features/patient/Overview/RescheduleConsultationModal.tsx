@@ -92,10 +92,10 @@ export function RescheduleConsultationModal({
       const absoluteHours = Math.abs(offsetHours);
       const formattedOffset = `${sign}${absoluteHours}`;
 
-      const matched = TIME_ZONES.find((tz) => 
-        tz.includes(`UTC${formattedOffset}`) || 
-        tz.includes(`GMT${formattedOffset}`) || 
-        tz.includes(`UTC${sign}0${absoluteHours}`) || 
+      const matched = TIME_ZONES.find((tz) =>
+        tz.includes(`UTC${formattedOffset}`) ||
+        tz.includes(`GMT${formattedOffset}`) ||
+        tz.includes(`UTC${sign}0${absoluteHours}`) ||
         tz.includes(`GMT${sign}0${absoluteHours}`) ||
         (offsetHours === 0 && (tz.includes("UTC+0") || tz.includes("GMT+0") || tz.includes("UTC-0") || tz.includes("GMT-0")))
       );
@@ -257,8 +257,8 @@ export function RescheduleConsultationModal({
       >
         {phase === "choose" ? (
           <div className="flex flex-col flex-1 overflow-hidden">
-             <div className="flex items-center justify-between border-b border-[#EEF2F6] px-5 py-4 md:px-6 shrink-0">
-              <DialogTitle className="text-[18px] font-bold text-[#1A1A2E]">
+            <div className="flex items-center justify-between border-b border-[#EEF2F6] px-5 py-4 md:px-6 shrink-0">
+              <DialogTitle className="text-[18px] font-bold text-text">
                 {isBookNewSlot
                   ? "Book New Consultation"
                   : (isInitialScheduling ? "Schedule Consultation" : "Book new slot")}
@@ -266,7 +266,7 @@ export function RescheduleConsultationModal({
               <button
                 type="button"
                 onClick={handleClose}
-                className="size-9 rounded-full flex items-center justify-center text-[#6B7280] transition-colors hover:bg-slate-100 hover:text-[#1A1A2E]"
+                className="size-9 rounded-full flex items-center justify-center text-sec-text transition-colors hover:bg-slate-100 hover:text-text"
               >
                 <X className="size-5" />
               </button>
@@ -274,15 +274,15 @@ export function RescheduleConsultationModal({
 
             <div className="flex-1 overflow-y-auto space-y-5 px-5 py-5 md:px-6">
               <div>
-                <p className="text-[16px] font-bold text-[#1A1A2E]">
+                <p className="text-[16px] font-bold text-text">
                   Pick an available slot
                 </p>
-                <p className="mt-1 text-[12px] text-[#6B7280]">
+                <p className="mt-1 text-[12px] text-sec-text">
                   {isBookNewSlot
                     ? `Choose a preferred date and time to book your new video consultation with ${doctorName}.`
                     : (isInitialScheduling
-                        ? `Choose a preferred date and time to schedule your video consultation with ${doctorName}.`
-                        : `These are ${doctorName}'s available times in the next 24 hours. Choose one to rebook your consultation.`)}
+                      ? `Choose a preferred date and time to schedule your video consultation with ${doctorName}.`
+                      : `These are ${doctorName}'s available times in the next 24 hours. Choose one to rebook your consultation.`)}
                 </p>
               </div>
 
@@ -290,7 +290,7 @@ export function RescheduleConsultationModal({
                 {/* Left column: Select Date */}
                 <div className="md:col-span-7 rounded-2xl border border-[#E6EEF6] bg-white p-4 flex flex-col justify-between">
                   <div>
-                    <p className="text-[13px] font-semibold text-[#1A1A2E] mb-3">
+                    <p className="text-[13px] font-semibold text-text mb-3">
                       Select Date
                     </p>
                     <MiniCalendar
@@ -314,7 +314,7 @@ export function RescheduleConsultationModal({
                 <div className="md:col-span-5 rounded-2xl border border-[#E6EEF6] bg-white p-4 flex flex-col justify-between min-h-[300px] md:min-h-auto">
                   <div className="space-y-4">
                     <div>
-                      <label className="mb-2 block text-[13px] font-semibold text-[#1A1A2E]">
+                      <label className="mb-2 block text-[13px] font-semibold text-text">
                         Select Time Zone
                       </label>
                       <Select
@@ -324,7 +324,7 @@ export function RescheduleConsultationModal({
                           setErrorMsg(null);
                         }}
                       >
-                        <SelectTrigger className="h-11 rounded-lg border-[#E5E7EB] bg-white text-[13px] text-[#1A1A2E] focus:ring-[#113254]">
+                        <SelectTrigger className="h-11 rounded-lg border-[#E5E7EB] bg-white text-[13px] text-text focus:ring-[#113254]">
                           <SelectValue placeholder="Select Time Zone" />
                         </SelectTrigger>
                         <SelectContent className="rounded-lg border-[#E5E7EB] bg-white">
@@ -338,7 +338,7 @@ export function RescheduleConsultationModal({
                     </div>
 
                     <div>
-                      <p className="mb-2.5 text-[13px] font-semibold text-[#1A1A2E]">
+                      <p className="mb-2.5 text-[13px] font-semibold text-text">
                         Select Time
                       </p>
                       <div className="flex flex-wrap gap-2 max-h-56 md:max-h-64 overflow-y-auto p-1 border border-slate-100 rounded-lg">
@@ -354,7 +354,7 @@ export function RescheduleConsultationModal({
                               }}
                               className={`rounded-full border px-3 py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${isSelected
                                 ? "border-[#113254] bg-[#F1F6FB] text-[#113254]"
-                                : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#113254]/30"
+                                : "border-[#E5E7EB] bg-white text-sec-text hover:border-[#113254]/30"
                                 }`}
                             >
                               {slot.display}
@@ -391,7 +391,7 @@ export function RescheduleConsultationModal({
             <div className="flex size-20 items-center justify-center rounded-full bg-[#113254] text-white shadow-[0_8px_24px_rgba(17,50,84,0.25)]">
               <Check className="size-10 stroke-[3px]" />
             </div>
-            <h3 className="mt-8 text-[28px] font-bold text-[#1A1A2E]">
+            <h3 className="mt-8 text-[28px] font-bold text-text">
               {isBookNewSlot
                 ? "New consultation booked"
                 : (isInitialScheduling ? "Consultation scheduled" : "New slot confirmed")}
@@ -400,9 +400,9 @@ export function RescheduleConsultationModal({
               {isBookNewSlot
                 ? `Your new consultation slot with ${doctorName} has been successfully booked for ${selectedDateReadable} during ${selectedSlotDisplay} in ${selectedZone}.`
                 : (isInitialScheduling
-                    ? `Your consultation with ${doctorName} has been successfully scheduled for ${selectedDateReadable} during ${selectedSlotDisplay} in ${selectedZone}.`
-                    : `Your consultation with ${doctorName} is rebooked for ${selectedDateReadable} during ${selectedSlotDisplay} in ${selectedZone}. Don't miss it, this is your last chance.`
-                  )
+                  ? `Your consultation with ${doctorName} has been successfully scheduled for ${selectedDateReadable} during ${selectedSlotDisplay} in ${selectedZone}.`
+                  : `Your consultation with ${doctorName} is rebooked for ${selectedDateReadable} during ${selectedSlotDisplay} in ${selectedZone}. Don't miss it, this is your last chance.`
+                )
               }
             </p>
             <button

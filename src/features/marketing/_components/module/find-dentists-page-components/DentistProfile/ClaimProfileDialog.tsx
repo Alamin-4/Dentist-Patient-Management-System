@@ -253,10 +253,10 @@ export default function ClaimProfileDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-135 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0 bg-white">
         <DialogHeader className="mb-6 text-left">
-          <DialogTitle className="mb-2 text-2xl font-bold leading-tight text-[#1A1A2E]">
+          <DialogTitle className="mb-2 text-2xl font-bold leading-tight text-text">
             Claim Dentist Profile
           </DialogTitle>
-          <DialogDescription className="text-sm leading-snug text-[#6B7280]">
+          <DialogDescription className="text-sm leading-snug text-sec-text">
             Verify your identity, select a premium plan, and start getting international patient leads.
           </DialogDescription>
 
@@ -267,7 +267,7 @@ export default function ClaimProfileDialog({
                 <div key={s} className="flex items-center gap-1">
                   <div
                     className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${claimStep > s
-                      ? "bg-[#4CA30D] text-white animate-scaleUp"
+                      ? "bg-badge text-white animate-scaleUp"
                       : claimStep === s
                         ? "bg-[#113254] text-white scale-110 ring-4 ring-[#113254]/15 font-extrabold"
                         : "bg-slate-50 border border-slate-200 text-slate-400"
@@ -277,7 +277,7 @@ export default function ClaimProfileDialog({
                   </div>
                   {s < 4 && (
                     <div
-                      className={`w-10 h-0.5 transition-colors duration-300 ${claimStep > s ? "bg-[#4CA30D]" : "bg-slate-200"
+                      className={`w-10 h-0.5 transition-colors duration-300 ${claimStep > s ? "bg-badge" : "bg-slate-200"
                         }`}
                     />
                   )}

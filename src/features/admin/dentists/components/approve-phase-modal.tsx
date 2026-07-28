@@ -42,7 +42,7 @@ export function ApprovePhaseModal({
                 <CheckCircle2 className="h-5 w-5 text-emerald-500" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#1A1A2E]">
+                <h3 className="text-base font-bold text-text">
                   Approve {phaseLabel}?
                 </h3>
                 <p className="mt-0.5 text-sm text-gray-500">
@@ -72,7 +72,7 @@ export function ApprovePhaseModal({
             <button
               disabled={isPending}
               onClick={onClose}
-              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-gray-50 disabled:opacity-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-semibold text-text transition-colors hover:bg-gray-50 disabled:opacity-50"
             >
               Cancel
             </button>

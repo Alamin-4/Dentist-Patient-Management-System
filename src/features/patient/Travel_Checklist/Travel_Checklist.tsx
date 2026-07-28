@@ -69,7 +69,7 @@ export default function TravelChecklistPageComponent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
-      <h1 className="text-2xl font-bold text-[#1A1A2E] mb-10">
+      <h1 className="text-2xl font-bold text-text mb-10">
         Travel Checklist
       </h1>
 
@@ -83,7 +83,7 @@ export default function TravelChecklistPageComponent() {
           {/* Before you travel Section */}
           {beforeItems.length > 0 && (
             <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
+              <h2 className="text-xl font-bold text-text mb-8">
                 Before you travel
               </h2>
               <div className="space-y-5">
@@ -101,7 +101,7 @@ export default function TravelChecklistPageComponent() {
           {/* After you travel Section */}
           {afterItems.length > 0 && (
             <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-[#1A1A2E] mb-8">
+              <h2 className="text-xl font-bold text-text mb-8">
                 After you travel
               </h2>
               <div className="space-y-5">

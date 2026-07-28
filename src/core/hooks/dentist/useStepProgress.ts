@@ -41,9 +41,9 @@ export default function useVerificationProgress() {
             status: progressData.step_one_status || "PENDING",
             note: progressData.step_one_note || null,
             data: progressData.dentistLicense || {
-                country: "Bangladesh",
-                city: "Dhaka",
-                registration_authority: 1,
+                country: "",
+                city: "",
+                registration_authority: "",
                 registration_no: "",
             }
         } : undefined,

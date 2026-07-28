@@ -32,7 +32,7 @@ function StatCardItem({ card }: { card: StatCard }) {
 
       <div>
         <p className="text-sm text-gray-500">{card.label}</p>
-        <p className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-[#1A1A2E]">
+        <p className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-text">
           {card.value}
         </p>
       </div>

@@ -91,7 +91,7 @@ export default function BlogPostPage() {
           Back to Resource Center
         </Link>
 
-        <div className="w-full h-64 sm:h-95 rounded-3xl overflow-hidden border border-[#CEE0F4] relative bg-slate-200">
+        <div className="w-full h-64 sm:h-95 rounded-3xl overflow-hidden border border-border relative bg-slate-200">
           <img
             src={post.coverImage}
             alt={post.title}
@@ -99,10 +99,10 @@ export default function BlogPostPage() {
           />
         </div>
 
-        <div className="bg-white border border-[#CEE0F4] rounded-3xl p-6 md:p-12 space-y-8">
+        <div className="bg-white border border-border rounded-3xl p-6 md:p-12 space-y-8">
 
           <div className="border-b border-slate-100 pb-6 space-y-4">
-            <h1 className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tight leading-snug">
+            <h1 className="text-3xl md:text-4xl font-black text-text tracking-tight leading-snug">
               {post.title}
             </h1>
 
@@ -113,7 +113,7 @@ export default function BlogPostPage() {
                   <User className="h-5 w-5 text-[#10436B]" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[#1A1A2E]">{post.author}</p>
+                  <p className="text-xs font-bold text-text">{post.author}</p>
                   <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>
@@ -149,18 +149,18 @@ export default function BlogPostPage() {
           {/* Document Content Parser */}
           {isHtml ? (
             <div
-              className="blog-rendered-content prose prose-slate max-w-none text-[#1A1A2E] text-[15px] leading-relaxed"
+              className="blog-rendered-content prose prose-slate max-w-none text-text text-[15px] leading-relaxed"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           ) : (
-            <div className="prose prose-slate max-w-none text-[#1A1A2E] text-[15px] leading-relaxed">
+            <div className="prose prose-slate max-w-none text-text text-[15px] leading-relaxed">
               {post.content.split("\n").map((line, idx) => {
                 if (line.startsWith("# ")) return null;
                 if (line.startsWith("## ")) {
                   return (
                     <h2
                       key={idx}
-                      className="text-xl font-bold text-[#1A1A2E] mt-8 mb-4 border-b pb-1.5 border-slate-100"
+                      className="text-xl font-bold text-text mt-8 mb-4 border-b pb-1.5 border-slate-100"
                     >
                       {line.replace("## ", "")}
                     </h2>

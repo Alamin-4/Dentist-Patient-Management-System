@@ -32,7 +32,7 @@ export function NoSurpriseRejectModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
       <DialogContent className="sm:max-w-lg p-8 gap-6 border-none rounded-3xl shadow">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#1A1A2E] text-left leading-snug">
+          <DialogTitle className="text-2xl font-bold text-text text-left leading-snug">
             Rejected Plan No Surprise Guarantee
           </DialogTitle>
         </DialogHeader>
@@ -43,14 +43,14 @@ export function NoSurpriseRejectModal({
         </p>
 
         <div className="space-y-2">
-          <label className="text-[15px] font-semibold text-[#1A1A2E]">Reason</label>
+          <label className="text-[15px] font-semibold text-text">Reason</label>
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter Reason"
             rows={4}
             disabled={isLoading}
-            className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F3659] resize-none"
+            className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-text placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F3659] resize-none"
           />
         </div>
 
@@ -59,7 +59,7 @@ export function NoSurpriseRejectModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 py-3 rounded-lg border border-slate-300 font-bold text-[#1A1A2E] hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex-1 py-3 rounded-lg border border-slate-300 font-bold text-text hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
           >
             Cancel
           </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, MapPin, Award } from "lucide-react";
+import { Star, MapPin, Award, Globe } from "lucide-react";
 import { GoShieldCheck } from "react-icons/go";
 import { cn } from "@/lib/utils";
 
@@ -62,18 +62,17 @@ export default function DentistCard({
   };
 
   const statusInfo = getStatusInfo();
-
+  console.log("dentist from home:", dentist)
   const isVerified = dentist.verified === "VERIFIED" || dentist.status === "VERIFIED";
 
   return (
     <div
       className={cn(
-        "group relative rounded-xl p-4 sm:p-6 flex flex-col transition-all duration-300 border border-[#CEE0F4] hover:shadow-md bg-white",
+        "group relative rounded-xl p-4 sm:p-6 flex flex-col transition-all duration-300 border border-border hover:shadow-md bg-white",
         isSelected ? "border-[#10436B] bg-slate-50/20 ring-1 ring-[#10436B]/20" : "",
         isCompareMode && isVerified && "pl-10 sm:pl-12"
       )}
     >
-      {/* Compare Checkbox */}
       {isCompareMode && isVerified && (
         <button
           onClick={() => onSelect(dentist.id)}
@@ -90,13 +89,10 @@ export default function DentistCard({
         </button>
       )}
 
-      {/* Main Content */}
       <div className="flex flex-col gap-4 w-full">
 
-        {/* Top Section: Avatar, Info, Price (Horizontal on all devices) */}
         <div className="flex items-start gap-3 sm:gap-4">
 
-          {/* Left: Avatar + Status */}
           <div className="relative flex flex-col items-center gap-2 shrink-0">
             <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50">
               <img
@@ -124,14 +120,13 @@ export default function DentistCard({
           </div>
 
           <div className="flex-1 min-w-0 text-left">
-            <h4 className="font-bold text-[#1A1A2E] text-base sm:text-lg mb-0.5 truncate">
+            <h4 className="font-bold text-text text-base sm:text-lg mb-0.5 truncate">
               {dentist.name}
             </h4>
             <p className="text-[#10436B] text-xs sm:text-sm font-semibold mb-2 truncate">
               {dentist.specialty}
             </p>
 
-            {/* Rating */}
             <div className="flex items-center gap-1 flex-wrap text-xs sm:text-sm mb-2">
               <span className="text-[#10436B] font-bold">{dentist.rating?.toFixed(1) || "0.0"}</span>
               <div className="flex gap-0.5">
@@ -149,7 +144,6 @@ export default function DentistCard({
               </span>
             </div>
 
-            {/* Location */}
             <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mb-1">
               <MapPin size={12} className="text-gray-400 shrink-0" />
               <span className="truncate">
@@ -158,25 +152,30 @@ export default function DentistCard({
                   : dentist.location || "Location not specified"}
               </span>
             </div>
+
+            {dentist.languages && dentist.languages.length > 0 && (
+              <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                <Globe size={12} className="text-[#10436B] shrink-0" />
+                <span className="truncate">
+                  <span className="font-semibold text-slate-800">Languages:</span>{" "}
+                  {dentist.languages.join(", ")}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Right: Price */}
           <div className="text-right shrink-0">
-            <p className="text-[#6B7280] text-[10px] sm:text-xs font-medium">Starting from</p>
-            <p className="text-[#0E3E65] font-extrabold text-lg sm:text-xl lg:text-2xl mt-0.5">
+            <p className="text-sec-text text-[10px] sm:text-xs font-medium">Starting from</p>
+            <p className="text-primary font-extrabold text-lg sm:text-xl lg:text-2xl mt-0.5">
               ${dentist.price ? dentist.price.toLocaleString() : "0"}
             </p>
             <p className="text-[9px] sm:text-[10px] text-gray-400">Estimate</p>
           </div>
         </div>
 
-        {/* Bottom Section: RDV, Experience, Procedures (Separated by a subtle divider) */}
         <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {/* RDV Score Badge (Fixed invalid bg-linear-to-r class) */}
 
-
-            {/* Experience */}
             {dentist.experience > 0 && (
               <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600">
                 <Award size={12} className="text-gray-400 shrink-0" />
@@ -185,7 +184,6 @@ export default function DentistCard({
             )}
           </div>
 
-          {/* Procedures */}
           {dentist.procedures && dentist.procedures.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {dentist.procedures.slice(0, 3).map((proc: string, idx: number) => (

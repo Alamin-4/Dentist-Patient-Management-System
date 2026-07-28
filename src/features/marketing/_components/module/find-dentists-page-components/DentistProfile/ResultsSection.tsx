@@ -10,17 +10,17 @@ interface DentistResult {
   afterImage: string;
 }
 
-export default function ResultsSection({ 
+export default function ResultsSection({
   results = [],
   dentistName = "",
-}: { 
+}: {
   results?: DentistResult[];
   dentistName?: string;
 }) {
   return (
     <section id="results" className="rounded-lg border border-slate-200 bg-white p-6 space-y-6">
       <div>
-        <h2 className="text-xl lg:text-2xl font-bold text-[#0E3E65]">
+        <h2 className="text-xl lg:text-2xl font-bold text-primary">
           Patient Results
         </h2>
       </div>
@@ -76,8 +76,8 @@ export default function ResultsSection({
                     <MapPin className="size-3.5 text-slate-400" />
                     <span>{c.location || "Istanbul, Turkey"}</span>
                   </div>
-                  <span className="font-bold text-[#4CA30D] flex items-center gap-1">
-                    <span className="size-1.5 rounded-full bg-[#4CA30D]" />
+                  <span className="font-bold text-badge flex items-center gap-1">
+                    <span className="size-1.5 rounded-full bg-badge" />
                     Public
                   </span>
                 </div>

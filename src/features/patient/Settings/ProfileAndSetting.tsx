@@ -31,6 +31,18 @@ export default function ProfileSettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Client-side guard: size & type
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image is too large. Maximum allowed size is 5 MB.");
+      e.target.value = "";
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files (JPG, PNG, WEBP) are allowed.");
+      e.target.value = "";
+      return;
+    }
+
     try {
       setUploading(true);
       const res = await apiClient.files.upload(file);
@@ -67,7 +79,7 @@ export default function ProfileSettingsPage() {
 
   return (
     <div className="">
-      <h1 className="text-2xl lg:text-3xl font-bold text-[#1A1A2E] mb-8">
+      <h1 className="text-2xl lg:text-3xl font-bold text-text mb-8">
         Profile & Settings
       </h1>
 
@@ -104,7 +116,7 @@ export default function ProfileSettingsPage() {
             />
           </div>
 
-          <h3 className="text-2xl font-bold text-[#1A1A2E] text-center">{displayName}</h3>
+          <h3 className="text-2xl font-bold text-text text-center">{displayName}</h3>
           <p className="text-slate-400 font-medium text-sm mb-10 text-center">
             {user?.email || ""}
           </p>

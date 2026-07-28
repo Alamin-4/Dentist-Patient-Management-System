@@ -43,26 +43,37 @@ export default function UploadDocumentModal({
     e.preventDefault();
     setIsDragging(false);
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      setFile(droppedFile);
-      setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy.file;
-        return copy;
-      });
+    if (!droppedFile) return;
+
+    if (droppedFile.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, file: `File is too large (${(droppedFile.size / (1024 * 1024)).toFixed(2)} MB). Maximum allowed size is 5 MB.` }));
+      return;
     }
+
+    setFile(droppedFile);
+    setErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.file;
+      return copy;
+    });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
-    if (selectedFile) {
-      setFile(selectedFile);
-      setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy.file;
-        return copy;
-      });
+    if (!selectedFile) return;
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, file: `File is too large (${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB). Maximum allowed size is 5 MB.` }));
+      e.target.value = "";
+      return;
     }
+
+    setFile(selectedFile);
+    setErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.file;
+      return copy;
+    });
   };
 
   const handleRemoveFile = (e: React.MouseEvent) => {
@@ -125,7 +136,7 @@ export default function UploadDocumentModal({
       <DialogContent className="sm:max-w-175 w-full p-0 border-none rounded-lg overflow-hidden bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
-          <DialogTitle className="text-[22px] font-bold text-[#1A1A2E]">
+          <DialogTitle className="text-[22px] font-bold text-text">
             Upload Document
           </DialogTitle>
         </div>
@@ -134,7 +145,7 @@ export default function UploadDocumentModal({
         <div className="p-8 space-y-6">
           {/* Document Title */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-[15px] font-semibold text-[#1A1A2E]">
+            <label className="text-[15px] font-semibold text-text">
               Document Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -163,13 +174,13 @@ export default function UploadDocumentModal({
 
           {/* Category Dropdown */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-[15px] font-semibold text-[#1A1A2E]">
+            <label className="text-[15px] font-semibold text-text">
               Category <span className="text-red-500">*</span>
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="h-14 w-full border border-[#E5E7EB] rounded-lg px-4 font-normal focus:border-[#113254] focus:outline-none bg-white text-[#1A1A2E] cursor-pointer"
+              className="h-14 w-full border border-[#E5E7EB] rounded-lg px-4 font-normal focus:border-[#113254] focus:outline-none bg-white text-text cursor-pointer"
             >
               <option value="X-Ray">X-Ray</option>
               <option value="Invoice / Receipt">Invoice / Receipt</option>
@@ -181,7 +192,7 @@ export default function UploadDocumentModal({
 
           {/* Upload Area */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-[15px] font-semibold text-[#1A1A2E]">
+            <label className="text-[15px] font-semibold text-text">
               File <span className="text-red-500">*</span>
             </label>
             <div
@@ -215,16 +226,16 @@ export default function UploadDocumentModal({
                       <X className="w-3 h-3" />
                     </button>
                   </div>
-                  <span className="text-[#1A1A2E] font-bold text-sm">{file.name}</span>
-                  <span className="text-[#6B7280] text-xs mt-1">Click or drag another to change</span>
+                  <span className="text-text font-bold text-sm">{file.name}</span>
+                  <span className="text-sec-text text-xs mt-1">Click or drag another to change</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center text-center px-4">
                   <Upload className="w-8 h-8 text-[#9CA3AF] mb-3" />
-                  <p className="text-[#1A1A2E] font-bold text-[16px]">
+                  <p className="text-text font-bold text-[16px]">
                     Drop files here or click to upload
                   </p>
-                  <p className="text-[#6B7280] text-[13px] mt-1 font-medium">
+                  <p className="text-sec-text text-[13px] mt-1 font-medium">
                     JPG, PNG, PDF, DICOM accepted (Max 5MB)
                   </p>
                 </div>

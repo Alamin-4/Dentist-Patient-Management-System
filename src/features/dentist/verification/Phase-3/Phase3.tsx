@@ -43,8 +43,8 @@ const materialsSchema = z.object({
 
 const clinicAddressSchema = z.object({
   address: z.string().min(1, "Clinic address is required"),
-  lat: z.string().optional(),
-  lng: z.string().optional(),
+  lat: z.string().min(1, "Location coordinates (latitude) are required. Please select your clinic on the map."),
+  lng: z.string().min(1, "Location coordinates (longitude) are required. Please select your clinic on the map."),
 });
 
 const phase3Schema = z.object({
@@ -249,29 +249,52 @@ export default function Phase3() {
               <div className="space-y-6">
                 <div>
                   <label className="text-sm font-medium text-[#0A2533] inline-block mb-2">
-                    Clinic Address
+                    Clinic Address &amp; Map Location <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative flex gap-2">
+                  <div
+                    onClick={() => !isFormLocked && setIsMapOpen(true)}
+                    className="relative flex gap-2 cursor-pointer"
+                  >
                     <input
                       type="text"
+                      readOnly
                       disabled={isFormLocked}
                       {...methods.register("clinic_address.address")}
-                      className="border border-gray-200 rounded-md p-3 w-full pr-12 disabled:opacity-60 disabled:cursor-not-allowed text-sm"
-                      placeholder="Enter your clinic address"
+                      className="border border-gray-200 rounded-md p-3 w-full pr-12 disabled:opacity-60 cursor-pointer bg-white text-sm focus:outline-none"
+                      placeholder="Click 'Select on Map' to set your clinic location..."
                     />
                     <button
                       type="button"
                       disabled={isFormLocked}
                       onClick={() => setIsMapOpen(true)}
-                      className="p-3 border border-gray-200 rounded-md hover:bg-slate-50 transition-colors text-slate-500 hover:text-[#0E3E65] disabled:opacity-60 shrink-0"
+                      className="p-3 bg-primary text-white rounded-md hover:bg-[#082842] transition-colors disabled:opacity-60 shrink-0 flex items-center gap-1.5 font-semibold text-sm cursor-pointer"
                       title="Select on Map"
                     >
                       <MapPin className="h-5 w-5" />
+                      <span>{selectedAddress.lat && selectedAddress.lng ? "Change Location" : "Select on Map"}</span>
                     </button>
                   </div>
+
+                  {/* Status Indicator */}
+                  {selectedAddress.lat && selectedAddress.lng ? (
+                    <p className="text-xs text-emerald-600 font-semibold mt-1.5 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Map coordinates saved (Lat: {Number(selectedAddress.lat).toFixed(4)}, Lng: {Number(selectedAddress.lng).toFixed(4)})
+                    </p>
+                  ) : (
+                    <p className="text-xs text-amber-600 font-semibold mt-1.5 flex items-center gap-1">
+                      ⚠️ Map pin location required. Click &quot;Select on Map&quot; to pick location &amp; get coordinates.
+                    </p>
+                  )}
+
                   {methods.formState.errors?.clinic_address?.address && (
                     <p className="text-xs text-red-500 mt-1">
                       {methods.formState.errors.clinic_address.address.message}
+                    </p>
+                  )}
+                  {methods.formState.errors?.clinic_address?.lat && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {methods.formState.errors.clinic_address.lat.message}
                     </p>
                   )}
 
@@ -419,7 +442,7 @@ export default function Phase3() {
               </div>
             )}
           </div>
-          
+
           <MapPickerModal
             isOpen={isMapOpen}
             onClose={() => setIsMapOpen(false)}

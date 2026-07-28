@@ -112,14 +112,14 @@ export default function DentalHistoryForm({
 
   return (
     <div className="w-full bg-white animate-in fade-in duration-500">
-      <h2 className="text-[22px] font-bold text-[#1A1A2E] mb-8">
+      <h2 className="text-[22px] font-bold text-text mb-8">
         Tell us about your dental history
       </h2>
 
       <div className="space-y-8">
         {/* Last Visit Select */}
         <div className="flex flex-col gap-3">
-          <label className="text-[15px] font-medium text-[#6B7280]">
+          <label className="text-[15px] font-medium text-sec-text">
             When did you last visit a dentist?
             <span className="text-red-500">*</span>
           </label>
@@ -130,24 +130,22 @@ export default function DentalHistoryForm({
                 setIsDropdownOpen(!isDropdownOpen);
                 setIsTouched(true);
               }}
-              className={`w-full h-14 pl-5 pr-12 text-left bg-white border rounded-lg outline-none transition-all flex items-center justify-between cursor-pointer ${
-                hasLastVisitError
-                  ? "border-red-500 ring-2 ring-red-100/50"
-                  : isDropdownOpen
+              className={`w-full h-14 pl-5 pr-12 text-left bg-white border rounded-lg outline-none transition-all flex items-center justify-between cursor-pointer ${hasLastVisitError
+                ? "border-red-500 ring-2 ring-red-100/50"
+                : isDropdownOpen
                   ? "border-[#113254] ring-2 ring-[#113254]/5"
                   : "border-[#E5E7EB] hover:border-[#D1D5DB]"
-              } ${lastVisit ? "text-[#1A1A2E] font-medium" : "text-[#9CA3AF]"}`}
+                } ${lastVisit ? "text-text font-medium" : "text-[#9CA3AF]"}`}
             >
               <span>
                 {lastVisit
                   ? lastVisitOptions.find((opt) => opt.value === lastVisit)
-                      ?.label || lastVisit
+                    ?.label || lastVisit
                   : "Select time period"}
               </span>
               <ChevronDown
-                className={`w-5 h-5 text-[#9CA3AF] transition-transform duration-200 ${
-                  isDropdownOpen ? "rotate-180 text-[#113254]" : ""
-                }`}
+                className={`w-5 h-5 text-[#9CA3AF] transition-transform duration-200 ${isDropdownOpen ? "rotate-180 text-[#113254]" : ""
+                  }`}
               />
             </button>
 
@@ -166,11 +164,10 @@ export default function DentalHistoryForm({
                       key={option.value}
                       type="button"
                       onClick={() => handleSelectOption(option.value)}
-                      className={`w-full text-left px-5 py-3.5 text-[15px] transition-colors flex items-center justify-between cursor-pointer ${
-                        isSelected
-                          ? "bg-[#113254]/5 text-[#113254] font-semibold"
-                          : "text-[#4B5563] hover:bg-slate-50 hover:text-[#1A1A2E]"
-                      }`}
+                      className={`w-full text-left px-5 py-3.5 text-[15px] transition-colors flex items-center justify-between cursor-pointer ${isSelected
+                        ? "bg-[#113254]/5 text-[#113254] font-semibold"
+                        : "text-[#4B5563] hover:bg-slate-50 hover:text-text"
+                        }`}
                     >
                       <span>{option.label}</span>
                       {isSelected && (
@@ -186,7 +183,7 @@ export default function DentalHistoryForm({
 
         {/* Multi-select Pills */}
         <div className="flex flex-col gap-4">
-          <label className="text-[15px] font-medium text-[#6B7280]">
+          <label className="text-[15px] font-medium text-sec-text">
             Any existing dental conditions?
           </label>
           <div className="flex flex-wrap gap-3">
@@ -197,10 +194,9 @@ export default function DentalHistoryForm({
                   key={item}
                   onClick={() => toggleCondition(item)}
                   className={`px-6 py-2.5 rounded-full border text-[14px] font-medium transition-all
-                    ${
-                      isActive
-                        ? "bg-[#113254] border-[#113254] text-white"
-                        : "bg-white border-[#E5E7EB] text-[#4B5563] hover:border-[#D1D5DB]"
+                    ${isActive
+                      ? "bg-[#113254] border-[#113254] text-white"
+                      : "bg-white border-[#E5E7EB] text-[#4B5563] hover:border-[#D1D5DB]"
                     }`}
                 >
                   {item}
@@ -212,18 +208,17 @@ export default function DentalHistoryForm({
 
         {/* Text Area */}
         <div className="flex flex-col gap-3">
-          <label className="text-[15px] font-medium text-[#6B7280]">
+          <label className="text-[15px] font-medium text-sec-text">
             Any other information to share?
           </label>
           <textarea
             placeholder="Enter here"
             value={additionalInfo}
             onChange={handleAdditionalInfoChange}
-            className={`w-full min-h-32 p-5 border rounded-lg outline-none transition-all resize-none ${
-              errors.additionalInfo
-                ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-100/50"
-                : "border-[#E5E7EB] focus:border-[#113254]"
-            } text-[#1A1A2E] placeholder:text-[#9CA3AF]`}
+            className={`w-full min-h-32 p-5 border rounded-lg outline-none transition-all resize-none ${errors.additionalInfo
+              ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-100/50"
+              : "border-[#E5E7EB] focus:border-[#113254]"
+              } text-text placeholder:text-[#9CA3AF]`}
           />
           {errors.additionalInfo && (
             <p className="text-xs text-red-500 font-semibold mt-1 animate-in fade-in slide-in-from-top-1 duration-150">

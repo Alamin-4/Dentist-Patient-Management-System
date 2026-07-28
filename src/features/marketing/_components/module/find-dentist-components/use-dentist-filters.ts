@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useRef, useTransition } from "react";
+import { useCallback, useMemo, useRef, useTransition, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { DEFAULT_FILTERS, DEFAULT_PRICE_RANGE, DEBOUNCE_DELAYS } from "./constants";
 import { useGlobalProcedures } from "@/hooks/procedures/useProcedures";
+import { getCountries, type CSCCountry } from "@/lib/countryApi";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -31,7 +32,39 @@ export const useDentistFilters = () => {
     const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const priceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // ── Procedures (single source of truth) ─────────────────────────────────
+    // ── Country lookup (name ↔ ISO2) ─────────────────────────────────────────
+    // We store ISO2 codes in the URL (e.g. "US") so the backend can match
+    // the `country` column which also stores ISO2 codes. The sidebar displays
+    // full names, so we need a two-way lookup.
+    const [countriesMap, setCountriesMap] = useState<CSCCountry[]>([]);
+    useEffect(() => {
+        getCountries().then(setCountriesMap);
+    }, []);
+
+    /** Convert full name → ISO2 for API/URL storage */
+    const nameToIso2 = useCallback(
+        (name: string): string => {
+            if (!name || name === DEFAULT_FILTERS.country) return name;
+            const found = countriesMap.find(
+                (c) => c.name.toLowerCase() === name.toLowerCase()
+            );
+            return found ? found.iso2 : name; // fall back to raw value
+        },
+        [countriesMap]
+    );
+
+    /** Convert ISO2 → full name for display */
+    const iso2ToName = useCallback(
+        (iso2: string): string => {
+            if (!iso2 || iso2 === DEFAULT_FILTERS.country) return iso2;
+            const found = countriesMap.find(
+                (c) => c.iso2.toLowerCase() === iso2.toLowerCase()
+            );
+            return found ? found.name : iso2; // fall back to raw value
+        },
+        [countriesMap]
+    );
+
     const { data: globalProcedures } = useGlobalProcedures();
     const procedureOptions = useMemo(() => {
         if (!globalProcedures) return ["All Procedures"];
@@ -124,13 +157,14 @@ export const useDentistFilters = () => {
 
     const setCountry = useCallback(
         (value: string) => {
-            // Reset city when country changes
+            // Translate full name → ISO2 before storing in URL so the backend
+            // country column (which stores ISO2 codes like "US") matches correctly.
+            const iso2 = nameToIso2(value);
             setParams({
-                country: value !== DEFAULT_FILTERS.country ? value : null,
-                city: null,
+                country: iso2 !== DEFAULT_FILTERS.country ? iso2 : null,
             });
         },
-        [setParams],
+        [setParams, nameToIso2],
     );
 
     const setProcedure = useCallback(
@@ -267,7 +301,7 @@ export const useDentistFilters = () => {
     const sharedFilterProps = {
         procedure,
         onProcedureChange: setProcedure,
-        country,
+        country: iso2ToName(country), // display full name in sidebar
         onCountryChange: setCountry,
         city,
         onCityChange: setCity,

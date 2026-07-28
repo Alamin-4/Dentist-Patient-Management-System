@@ -105,7 +105,7 @@ export function BlogManager() {
         {/* Header */}
         <div className="border-b border-slate-200 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-[#1A1A2E]">Blog Articles Manager</h2>
+            <h2 className="text-base font-bold text-text">Blog Articles Manager</h2>
             <p className="mt-0.5 text-xs text-slate-500">
               Publish news, guides, clinical verification updates, and oral hygiene resources.
             </p>
@@ -153,7 +153,7 @@ export function BlogManager() {
 
                 <div className="p-5 flex-1 flex flex-col justify-between gap-4">
                   <div className="space-y-2">
-                    <h3 className="font-bold text-base text-[#1A1A2E] leading-snug line-clamp-2">
+                    <h3 className="font-bold text-base text-text leading-snug line-clamp-2">
                       {post.title}
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">
@@ -197,7 +197,7 @@ export function BlogManager() {
         <button
           type="button"
           onClick={() => setView("list")}
-          className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#1A1A2E] cursor-pointer"
+          className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-text cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Articles List
@@ -216,7 +216,7 @@ export function BlogManager() {
 
       {/* Article Configuration Sidebar & Editor */}
       <div className="flex flex-col xl:flex-row gap-6 items-start">
-        
+
         {/* Sidebar settings */}
         <div className="w-full xl:w-72 shrink-0 rounded-xl border border-slate-200 bg-slate-50/60 p-4 space-y-4">
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">

@@ -47,7 +47,7 @@ function StarRatingInput({
   return (
     <div className="flex flex-col py-3 border-b border-slate-100 last:border-b-0 gap-1">
       <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-semibold text-[#1A1A2E]">{label}</span>
+        <span className="text-sm font-semibold text-text">{label}</span>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -152,10 +152,10 @@ export default function WriteReviewDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-150 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0 bg-white">
         <DialogHeader className="mb-6 text-left">
-          <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-[#1A1A2E]">
+          <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-text">
             Write a Review
           </DialogTitle>
-          <DialogDescription className="text-[16px] leading-snug text-[#6B7280]">
+          <DialogDescription className="text-[16px] leading-snug text-sec-text">
             Share your verified treatment experience with Dr. {dentistName}.
           </DialogDescription>
         </DialogHeader>
@@ -188,13 +188,13 @@ export default function WriteReviewDialog({
             />
 
             <div className="space-y-2 pt-4">
-              <label className="text-[15px] font-semibold text-[#1A1A2E] block">
+              <label className="text-[15px] font-semibold text-text block">
                 Review Comments <span className="text-red-500">*</span>
               </label>
               <textarea
                 placeholder="Tell other patients about your consultation, cleanings, procedures, or treatment plan details..."
                 {...register("text")}
-                className={`w-full min-h-30 rounded-lg border px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm ${errors.text ? "border-red-500 bg-red-50/10" : "border-[#E5E7EB] focus:border-[#0E3E65]"
+                className={`w-full min-h-30 rounded-lg border px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm ${errors.text ? "border-red-500 bg-red-50/10" : "border-[#E5E7EB] focus:border-primary"
                   }`}
               />
               {errors.text ? (

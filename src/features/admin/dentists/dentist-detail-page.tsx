@@ -60,7 +60,7 @@ const STATUS_LABEL: Record<string, string> = {
 function PerformanceBar({ label, value }: { label: string; value: number }) {
   const color =
     value >= 90
-      ? "bg-[#1A1A2E]"
+      ? "bg-text"
       : value >= 70
         ? "bg-amber-400"
         : "bg-orange-400";
@@ -72,7 +72,7 @@ function PerformanceBar({ label, value }: { label: string; value: number }) {
         <p
           className={cn(
             "text-xs font-bold",
-            value >= 90 ? "text-[#1A1A2E]" : "text-amber-500",
+            value >= 90 ? "text-text" : "text-amber-500",
           )}
         >
           {value >= 90 ? `${value}%` : `${value}%`}
@@ -217,13 +217,13 @@ export default function DentistDetailPage({
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link
           href="/admin/dentists"
-          className="flex items-center gap-1.5 font-medium text-gray-500 transition-colors hover:text-[#1A1A2E]"
+          className="flex items-center gap-1.5 font-medium text-gray-500 transition-colors hover:text-text"
         >
           <ArrowLeft className="h-4 w-4" />
           Dentists
         </Link>
         <span>/</span>
-        <span className="font-medium text-[#1A1A2E]">{dentist.name}</span>
+        <span className="font-medium text-text">{dentist.name}</span>
       </div>
 
       <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
@@ -238,11 +238,11 @@ export default function DentistDetailPage({
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-bold text-[#1A1A2E] sm:text-2xl">
+                <h2 className="text-xl font-bold text-text sm:text-2xl">
                   {dentist.name}
                 </h2>
                 {dentist.rdv_verified && (
-                  <span className="flex items-center gap-1 rounded-full bg-[#1A1A2E] px-2.5 py-0.5 text-xs font-bold text-white">
+                  <span className="flex items-center gap-1 rounded-full bg-text px-2.5 py-0.5 text-xs font-bold text-white">
                     <CheckCircle2 className="h-3 w-3" />
                     RDV Verified · {dentist.rdv_score}
                   </span>
@@ -308,7 +308,7 @@ export default function DentistDetailPage({
                       }`}
                   />
                 ))}
-                <span className="ml-1 text-xl font-bold text-[#1A1A2E]">
+                <span className="ml-1 text-xl font-bold text-text">
                   {dentist.rating}
                 </span>
               </div>
@@ -330,7 +330,7 @@ export default function DentistDetailPage({
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
               {s.label}
             </p>
-            <p className="mt-1 text-xl font-bold tracking-tight text-[#1A1A2E]">
+            <p className="mt-1 text-xl font-bold tracking-tight text-text">
               {s.value}
             </p>
             <p className="mt-0.5 text-xs text-gray-500">{s.sub}</p>
@@ -390,7 +390,7 @@ export default function DentistDetailPage({
         <div className="hidden w-64 shrink-0 flex-col gap-4 lg:flex">
           {/* Performance */}
           <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-            <p className="mb-1 text-sm font-bold text-[#1A1A2E]">Performance</p>
+            <p className="mb-1 text-sm font-bold text-text">Performance</p>
             <p className="mb-3 text-xs text-gray-400">Based on last 90 days</p>
             <div className="flex flex-col gap-3">
               <PerformanceBar
@@ -415,7 +415,7 @@ export default function DentistDetailPage({
           {/* Verification (consultations tab only) */}
           {showVerificationSidebar ? (
             <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-3 text-sm font-bold text-[#1A1A2E]">
+              <p className="mb-3 text-sm font-bold text-text">
                 Verification
               </p>
               <div className="divide-y divide-gray-50">
@@ -438,7 +438,7 @@ export default function DentistDetailPage({
             </div>
           ) : (
             <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-3 text-sm font-bold text-[#1A1A2E]">
+              <p className="mb-3 text-sm font-bold text-text">
                 Admin actions
               </p>
               <div className="flex flex-col gap-2">

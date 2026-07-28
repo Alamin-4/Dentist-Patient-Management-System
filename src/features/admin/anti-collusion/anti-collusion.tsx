@@ -112,7 +112,7 @@ function CountryDropdown({ countries, value, onChange }: {
         onClick={() => setOpen((o) => !o)}
         className={cn(
           "flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors",
-          open ? "border-[#1A1A2E] bg-gray-50" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+          open ? "border-text bg-gray-50" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
         )}
       >
         {value || "All countries"}
@@ -124,7 +124,7 @@ function CountryDropdown({ countries, value, onChange }: {
           <div className="absolute top-full z-20 mt-1 min-w-40 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={() => { onChange(""); setOpen(false); }}
-              className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors", !value ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
+              className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors", !value ? "font-semibold text-text" : "text-gray-600")}
             >
               All countries
             </button>
@@ -132,7 +132,7 @@ function CountryDropdown({ countries, value, onChange }: {
               <button
                 key={c}
                 onClick={() => { onChange(c); setOpen(false); }}
-                className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors", value === c ? "font-semibold text-[#1A1A2E]" : "text-gray-600")}
+                className={cn("w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors", value === c ? "font-semibold text-text" : "text-gray-600")}
               >
                 {c}
               </button>
@@ -145,7 +145,7 @@ function CountryDropdown({ countries, value, onChange }: {
 }
 
 /* ─── Stat Card ───────────────────────────────────────────────────────────── */
-function StatCard({ icon, label, value, valueColor = "text-[#1A1A2E]" }: {
+function StatCard({ icon, label, value, valueColor = "text-text" }: {
   icon: React.ReactNode;
   label: string;
   value: number;
@@ -172,7 +172,7 @@ function DentistCard({ dentist, onView }: { dentist: Dentist; onView: () => void
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="font-bold text-[#1A1A2E]">{dentist.name}</p>
+              <p className="font-bold text-text">{dentist.name}</p>
               <p className="text-xs text-gray-400">{dentist.dentist_id} · {dentist.country}</p>
             </div>
             <StatusBadge status={dentist.status} />
@@ -198,8 +198,8 @@ function DentistCard({ dentist, onView }: { dentist: Dentist; onView: () => void
           className={cn(
             "flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors",
             isSuspended
-              ? "bg-[#1A1A2E] text-white hover:bg-[#1A1A2E]/90"
-              : "border border-gray-200 bg-white text-[#1A1A2E] hover:bg-gray-50"
+              ? "bg-text text-white hover:bg-text/90"
+              : "border border-gray-200 bg-white text-text hover:bg-gray-50"
           )}
         >
           {isSuspended ? <SearchCheck className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -255,7 +255,7 @@ export default function AntiCollusion() {
       if (patch.investigation_opened !== undefined) payload.investigationOpened = patch.investigation_opened;
       if (patch.suspended_date !== undefined) payload.suspendedDate = patch.suspended_date;
       if (patch.archived_date !== undefined) payload.archivedDate = patch.archived_date;
-      
+
       return apiClient.admin.updateAntiCollusion(id, payload);
     },
     onSuccess: () => {
@@ -335,7 +335,7 @@ export default function AntiCollusion() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A2E] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-text border-t-transparent" />
       </div>
     );
   }
@@ -345,7 +345,7 @@ export default function AntiCollusion() {
       <div className="flex flex-col gap-5 pb-8">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1A2E]">Anti-Collusion</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text">Anti-Collusion</h1>
           <p className="mt-0.5 text-sm text-gray-500">
             Monitor price variance flags and manage dentist suspension decisions.
           </p>
@@ -396,7 +396,7 @@ export default function AntiCollusion() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by dentist name..."
-                className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-[#1A1A2E] focus:ring-1 focus:ring-[#1A1A2E]"
+                className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-gray-400 focus:border-text focus:ring-1 focus:ring-text"
               />
             </div>
             <CountryDropdown
@@ -443,7 +443,7 @@ export default function AntiCollusion() {
                         <div className="flex items-center gap-3">
                           <Avatar initials={d.initials} color={d.avatar_color} />
                           <div>
-                            <p className="text-sm font-bold text-[#1A1A2E]">{d.name}</p>
+                            <p className="text-sm font-bold text-text">{d.name}</p>
                             <p className="text-xs text-gray-400">{d.dentist_id}</p>
                           </div>
                         </div>
@@ -477,7 +477,7 @@ export default function AntiCollusion() {
                         {d.status === "suspended" ? (
                           <button
                             onClick={() => setDrawerDentist(d)}
-                            className="flex items-center gap-1.5 rounded-lg bg-[#1A1A2E] px-3.5 py-2 text-xs font-semibold text-white hover:bg-[#1A1A2E]/90 transition-colors"
+                            className="flex items-center gap-1.5 rounded-lg bg-text px-3.5 py-2 text-xs font-semibold text-white hover:bg-text/90 transition-colors"
                           >
                             <SearchCheck className="h-3.5 w-3.5" />
                             Investigate
@@ -485,7 +485,7 @@ export default function AntiCollusion() {
                         ) : (
                           <button
                             onClick={() => setDrawerDentist(d)}
-                            className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-[#1A1A2E] hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-text hover:bg-gray-50 transition-colors"
                           >
                             <Eye className="h-3.5 w-3.5" />
                             View

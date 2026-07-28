@@ -9,17 +9,17 @@ import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistDirectory } from "@/hooks/dentist/useDentistDirectory";
 
-import TopBar from "../DentistAllComponents/TopBar";
-import FilterSheet from "../DentistAllComponents/FilterSheet";
-import CompareStickyBar from "../DentistAllComponents/CompareStickyBar";
+import TopBar from "../find-dentists-page-components/TopBar";
+import FilterSheet from "../find-dentists-page-components/FilterSheet";
+import CompareStickyBar from "../find-dentists-page-components/CompareStickyBar";
 import ResultsHeader from "./ResultsHeader";
 import DentistList from "./DentistList";
 import Pagination from "./Pagination";
 import { useDentistFilters } from "./use-dentist-filters";
 import { useDentistCompare } from "./use-dentist-compare";
-import { Dentist } from "../DentistAllComponents/types";
+import { Dentist } from "../find-dentists-page-components/types";
 import { PAGE_SIZE } from "./constants";
-import FilterSidebar from "../DentistAllComponents/SideBar";
+import FilterSidebar from "../find-dentists-page-components/SideBar";
 
 // Extracted Components
 import AddDentistModal from "./AddDentistModal";
@@ -100,7 +100,9 @@ export default function FindDentistComponents() {
 
     const filteredDentists = useMemo<Dentist[]>(() => {
         if (filters.selectedLanguages.length === 0) return apiDentists;
-        return apiDentists.filter((d) => filters.selectedLanguages.every((lang) => d.languages.includes(lang)));
+        return apiDentists.filter((d) =>
+            filters.selectedLanguages.every((lang) => d.languages?.includes(lang))
+        );
     }, [apiDentists, filters.selectedLanguages]);
 
     // Pagination & Meta
@@ -137,7 +139,7 @@ export default function FindDentistComponents() {
     };
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-dvh">
             <TopBar
                 query={filters.query}
                 onQueryChange={filters.setQuery}
@@ -155,9 +157,10 @@ export default function FindDentistComponents() {
                 open={isMobileFilterOpen}
                 onClose={() => setIsMobileFilterOpen(false)}
                 {...filters.sharedFilterProps}
+                availableLanguages={directoryResponse?.meta?.facets?.languages}
             />
 
-            <main className="pb-16">
+            <main className="pb-8">
                 <div className="flex gap-4">
                     <AnimatePresence initial={false}>
                         {(viewMode === "list" || (viewMode === "map" && showMapFilters)) && (
@@ -169,6 +172,7 @@ export default function FindDentistComponents() {
                             >
                                 <FilterSidebar
                                     {...filters.sharedFilterProps}
+                                    availableLanguages={directoryResponse?.meta?.facets?.languages}
                                 />
                             </motion.aside>
                         )}
@@ -214,7 +218,7 @@ export default function FindDentistComponents() {
                                     hasActiveFilters={filters.hasActiveFilters}
                                 />
 
-                                {!isDirLoading && totalPages > 1 && (
+                                {!isDirLoading && totalPages > 1 && filteredDentists.length > 0 && (
                                     <Pagination page={filters.page} totalPages={totalPages} onPageChange={handlePageChange} />
                                 )}
                             </div>

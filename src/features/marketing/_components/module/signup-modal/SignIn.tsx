@@ -195,10 +195,10 @@ export default function SigninModal() {
           {authView === "signin" ? (
             <>
               <DialogHeader className="mb-8 text-left">
-                <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-[#1A1A2E]">
+                <DialogTitle className="mb-2 text-[32px] font-semibold leading-tight text-text">
                   Sign in
                 </DialogTitle>
-                <DialogDescription className="text-[16px] leading-snug text-[#6B7280]">
+                <DialogDescription className="text-[16px] leading-snug text-sec-text">
                   Welcome back! Sign in to manage your appointments and consultations.
                 </DialogDescription>
               </DialogHeader>
@@ -210,7 +210,7 @@ export default function SigninModal() {
                   className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FcGoogle className="text-2xl" />
-                  <span className="text-[#6B7280]">Continue with Google</span>
+                  <span className="text-sec-text">Continue with Google</span>
                 </button>
 
                 <button
@@ -228,7 +228,7 @@ export default function SigninModal() {
                   className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaFacebook className="text-2xl text-[#1877F2]" />
-                  <span className="text-[#6B7280]">Continue with Facebook</span>
+                  <span className="text-sec-text">Continue with Facebook</span>
                 </button>
               </div>
 
@@ -242,14 +242,14 @@ export default function SigninModal() {
               {/* Form */}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
-                  <label className="mb-2 block text-[15px] font-semibold text-[#1A1A2E]">
+                  <label className="mb-2 block text-[15px] font-semibold text-text">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
                     placeholder="Enter Email"
                     {...register("email")}
-                    className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
+                    className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
                   />
                   {errors.email && (
                     <div className="mt-1.5 flex flex-col items-start gap-1">
@@ -272,7 +272,7 @@ export default function SigninModal() {
 
                 <div>
                   <div className="mb-2 flex items-center justify-between">
-                    <label className="block text-[15px] font-semibold text-[#1A1A2E]">
+                    <label className="block text-[15px] font-semibold text-text">
                       Password <span className="text-red-500">*</span>
                     </label>
                     <button
@@ -289,7 +289,7 @@ export default function SigninModal() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter Password"
                       {...register("password")}
-                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
+                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 lg:py-4"
                     />
                     <button
                       type="button"
@@ -346,7 +346,7 @@ export default function SigninModal() {
                 </button>
               </form>
 
-              <p className="mt-6 text-center text-sm text-[#6B7280]">
+              <p className="mt-6 text-center text-sm text-sec-text">
                 Don&apos;t have an account?{" "}
                 <button
                   type="button"
@@ -357,7 +357,7 @@ export default function SigninModal() {
                 </button>
               </p>
 
-              <p className="mt-2 text-center text-sm text-[#6B7280]">
+              <p className="mt-2 text-center text-sm text-sec-text">
                 Are you a dentist?{" "}
                 <button
                   type="button"

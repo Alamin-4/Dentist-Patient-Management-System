@@ -119,7 +119,7 @@ export const ConsultationDetailsSidebar = ({
       <div className="fixed right-4 top-4 bottom-4 w-full max-w-120 bg-white rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
         {/* Header */}
         <div className="px-6 py-5 border-b border-[#E5E7EB] flex justify-between items-center">
-          <h2 className="font-semibold text-[#6B7280]">Request Details</h2>
+          <h2 className="font-semibold text-sec-text">Request Details</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-slate-50 rounded-full transition-colors cursor-pointer"
@@ -147,7 +147,7 @@ export const ConsultationDetailsSidebar = ({
                     </span>
                   )}
                 </div>
-                <p className="text-sm font-medium text-[#1A1A2E]">
+                <p className="text-sm font-medium text-text">
                   {data.intake?.email}
                 </p>
               </div>
@@ -228,7 +228,7 @@ export const ConsultationDetailsSidebar = ({
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <p className="text-xs font-medium text-[#1A1A2E]">
+                      <p className="text-xs font-medium text-text">
                         Intake Photo {index + 1}
                       </p>
                     </div>
@@ -242,7 +242,7 @@ export const ConsultationDetailsSidebar = ({
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <p className="text-xs font-medium text-[#1A1A2E]">X-Ray</p>
+                      <p className="text-xs font-medium text-text">X-Ray</p>
                     </div>
                   )}
                 </div>

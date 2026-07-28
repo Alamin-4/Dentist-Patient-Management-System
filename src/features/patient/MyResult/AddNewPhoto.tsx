@@ -50,7 +50,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
           const name = dentist.user
             ? `Dr. ${dentist.user.firstName} ${dentist.user.lastName}`.trim()
             : dentist.dentistDirectory?.name || "Dentist";
-          
+
           const city = dentist.dentistDirectory?.city || "";
           const country = dentist.dentistDirectory?.country || dentist.user?.country || "";
           const location = city && country ? `${city}, ${country}` : city || country || "N/A";
@@ -84,16 +84,35 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
     type: "before" | "after"
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (type === "before") {
-        setBeforeFile(file);
-        setBeforePreview(URL.createObjectURL(file));
-        setFieldErrors((prev) => ({ ...prev, before: "" }));
-      } else {
-        setAfterFile(file);
-        setAfterPreview(URL.createObjectURL(file));
-        setFieldErrors((prev) => ({ ...prev, after: "" }));
-      }
+    if (!file) return;
+
+    // Size guard (5 MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [type]: `Image is too large (${(file.size / (1024 * 1024)).toFixed(2)} MB). Maximum allowed size is 5 MB.`,
+      }));
+      e.target.value = "";
+      return;
+    }
+    // Type guard
+    if (!file.type.startsWith("image/")) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [type]: "Only image files (JPG, PNG, WEBP) are allowed.",
+      }));
+      e.target.value = "";
+      return;
+    }
+
+    if (type === "before") {
+      setBeforeFile(file);
+      setBeforePreview(URL.createObjectURL(file));
+      setFieldErrors((prev) => ({ ...prev, before: "" }));
+    } else {
+      setAfterFile(file);
+      setAfterPreview(URL.createObjectURL(file));
+      setFieldErrors((prev) => ({ ...prev, after: "" }));
     }
   };
 
@@ -156,7 +175,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
         beforeImg: beforeImgUrl,
         afterImg: afterImgUrl,
       });
-      
+
       // Invalidate query to refresh the list automatically
       queryClient.invalidateQueries({ queryKey: ["patient-results"] });
 
@@ -164,7 +183,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
     } catch (err: any) {
       console.error("Upload error:", err);
       const apiErr = normalizeApiError(err);
-      
+
       if (apiErr.errors && Array.isArray(apiErr.errors)) {
         const errorsMap: Record<string, string> = {};
         (apiErr.errors as any[]).forEach((e: any) => {
@@ -185,7 +204,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
       <DialogContent className="sm:max-w-2xl p-0 overflow-hidden border-none rounded-3xl gap-0">
         {/* Custom Header with Title & Description */}
         <div className="flex flex-col p-6 border-b">
-          <DialogTitle className="text-3xl font-bold text-[#1A1A2E]">
+          <DialogTitle className="text-3xl font-bold text-text">
             Add New Photo
           </DialogTitle>
           <DialogDescription className="text-sm text-slate-500 mt-1">
@@ -205,14 +224,13 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
           )}
 
           <div className="space-y-3">
-            <p className="text-xl font-semibold text-[#1A1A2E]">Photos</p>
+            <p className="text-xl font-semibold text-text">Photos</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Before Upload */}
               <div>
                 {beforePreview ? (
-                  <div className={`relative border rounded-lg h-48 overflow-hidden group ${
-                    fieldErrors.before ? "border-red-500" : "border-slate-200"
-                  }`}>
+                  <div className={`relative border rounded-lg h-48 overflow-hidden group ${fieldErrors.before ? "border-red-500" : "border-slate-200"
+                    }`}>
                     <Image
                       src={beforePreview}
                       alt="Before Preview"
@@ -234,11 +252,10 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
                     </div>
                   </div>
                 ) : (
-                  <label className={`cursor-pointer border-2 border-dashed rounded-lg h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${
-                    fieldErrors.before ? "border-red-400 bg-red-50/5" : "border-slate-200"
-                  }`}>
+                  <label className={`cursor-pointer border-2 border-dashed rounded-lg h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${fieldErrors.before ? "border-red-400 bg-red-50/5" : "border-slate-200"
+                    }`}>
                     <Upload className="size-7 text-slate-400" />
-                    <span className="text-lg font-semibold text-[#1A1A2E]">
+                    <span className="text-lg font-semibold text-text">
                       Upload Before Image
                     </span>
                     <input
@@ -257,9 +274,8 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
               {/* After Upload */}
               <div>
                 {afterPreview ? (
-                  <div className={`relative border rounded-lg h-48 overflow-hidden group ${
-                    fieldErrors.after ? "border-red-500" : "border-slate-200"
-                  }`}>
+                  <div className={`relative border rounded-lg h-48 overflow-hidden group ${fieldErrors.after ? "border-red-500" : "border-slate-200"
+                    }`}>
                     <Image
                       src={afterPreview}
                       alt="After Preview"
@@ -281,11 +297,10 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
                     </div>
                   </div>
                 ) : (
-                  <label className={`cursor-pointer border-2 border-dashed rounded-lg h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${
-                    fieldErrors.after ? "border-red-400 bg-red-50/5" : "border-slate-200"
-                  }`}>
+                  <label className={`cursor-pointer border-2 border-dashed rounded-lg h-48 flex flex-col items-center justify-center gap-3 bg-[#F8FAFC]/30 hover:bg-slate-50 transition-colors ${fieldErrors.after ? "border-red-400 bg-red-50/5" : "border-slate-200"
+                    }`}>
                     <Upload className="size-7 text-slate-400" />
-                    <span className="text-lg font-semibold text-[#1A1A2E]">
+                    <span className="text-lg font-semibold text-text">
                       Upload After Image
                     </span>
                     <input
@@ -315,9 +330,8 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
                   setFieldErrors((prev) => ({ ...prev, dentist: "", treatment: "" }));
                 }}
               >
-                <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] bg-white ${
-                  fieldErrors.dentist ? "border-red-500" : "border-slate-200"
-                }`}>
+                <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] bg-white ${fieldErrors.dentist ? "border-red-500" : "border-slate-200"
+                  }`}>
                   <SelectValue placeholder="Choose your dentist" />
                 </SelectTrigger>
                 <SelectContent className="rounded-lg bg-white">
@@ -347,9 +361,8 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
                 }}
                 disabled={!selectedDentistId}
               >
-                <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] bg-white ${
-                  fieldErrors.treatment ? "border-red-500" : "border-slate-200"
-                }`}>
+                <SelectTrigger className={`h-12 rounded-lg border px-4 text-sm text-slate-700 focus:ring-[#0F3659] bg-white ${fieldErrors.treatment ? "border-red-500" : "border-slate-200"
+                  }`}>
                   <SelectValue placeholder={selectedDentistId ? "Choose treatment" : "Select dentist first"} />
                 </SelectTrigger>
                 <SelectContent className="rounded-lg bg-white">
@@ -375,7 +388,7 @@ export function AddPhotoModal({ isOpen, onClose }: AddPhotoModalProps) {
           <Button
             variant="outline"
             onClick={handleClose}
-            className="flex-1 h-16 rounded-lg border-slate-300 text-xl font-bold text-[#1A1A2E] hover:bg-slate-50"
+            className="flex-1 h-16 rounded-lg border-slate-300 text-xl font-bold text-text hover:bg-slate-50"
           >
             Cancel
           </Button>

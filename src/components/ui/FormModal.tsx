@@ -29,11 +29,11 @@ export function FormModal({
         className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
         onClick={onClose}
       />
-      
+
       {/* Modal Content */}
       <div className="relative z-10 w-full max-w-md rounded-lg border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
         <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-          <h3 className="text-lg font-semibold text-[#1A1A2E]">{title}</h3>
+          <h3 className="text-lg font-semibold text-text">{title}</h3>
           <button
             type="button"
             onClick={onClose}
@@ -43,7 +43,7 @@ export function FormModal({
             <X className="h-5 w-5" />
           </button>
         </div>
-        
+
         <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-4">
           {children}
 
@@ -59,7 +59,7 @@ export function FormModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex h-10 items-center rounded-lg bg-[#1A1A2E] px-4 text-sm font-medium text-white transition-colors hover:bg-[#2A2A3E] disabled:opacity-50"
+              className="inline-flex h-10 items-center rounded-lg bg-text px-4 text-sm font-medium text-white transition-colors hover:bg-[#2A2A3E] disabled:opacity-50"
             >
               {isSubmitting ? `${submitText}...` : submitText}
             </button>

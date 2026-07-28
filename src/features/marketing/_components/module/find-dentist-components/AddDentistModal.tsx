@@ -74,7 +74,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
                 <DialogHeader>
-                    <DialogTitle className="text-[#0E3E65] font-bold text-xl">Add a Dentist Profile</DialogTitle>
+                    <DialogTitle className="text-primary font-bold text-xl">Add a Dentist Profile</DialogTitle>
                     <DialogDescription className="text-slate-500">
                         Enter details to add a dentist who isn't already in the RatedDocs database directory, then proceed to claim it.
                     </DialogDescription>
@@ -89,7 +89,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                             placeholder="Dr. John Smith"
                             required
-                            className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                            className="border-slate-200 focus:border-primary h-10 text-sm"
                         />
                     </div>
 
@@ -101,7 +101,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                                 value={form.clinicName}
                                 onChange={(e) => setForm({ ...form, clinicName: e.target.value })}
                                 placeholder="Bright Smile Clinic"
-                                className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                className="border-slate-200 focus:border-primary h-10 text-sm"
                             />
                         </div>
                         <div className="space-y-2">
@@ -111,7 +111,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                                 value={form.specialty}
                                 onChange={(e) => setForm({ ...form, specialty: e.target.value })}
                                 placeholder="Implantology"
-                                className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                className="border-slate-200 focus:border-primary h-10 text-sm"
                             />
                         </div>
                     </div>
@@ -124,7 +124,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                                 value={form.city}
                                 onChange={(e) => setForm({ ...form, city: e.target.value })}
                                 placeholder="Tijuana"
-                                className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                className="border-slate-200 focus:border-primary h-10 text-sm"
                             />
                         </div>
                         <div className="space-y-2">
@@ -134,7 +134,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                                 value={form.country}
                                 onChange={(e) => setForm({ ...form, country: e.target.value })}
                                 placeholder="Mexico"
-                                className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                                className="border-slate-200 focus:border-primary h-10 text-sm"
                             />
                         </div>
                     </div>
@@ -146,7 +146,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
                             placeholder="+1 234 567 890"
-                            className="border-slate-200 focus:border-[#0E3E65] h-10 text-sm"
+                            className="border-slate-200 focus:border-primary h-10 text-sm"
                         />
                     </div>
 
@@ -162,7 +162,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                         <Button
                             type="submit"
                             disabled={addDentistMutation.isPending}
-                            className="bg-[#0E3E65] hover:bg-[#002850] text-white font-bold h-10 text-sm px-6"
+                            className="bg-primary hover:bg-[#002850] text-white font-bold h-10 text-sm px-6"
                         >
                             {addDentistMutation.isPending ? (
                                 <>

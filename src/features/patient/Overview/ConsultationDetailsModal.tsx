@@ -22,16 +22,16 @@ export function ConsultationDetailsModal({
   const dentistName = dentist?.user
     ? `Dr. ${dentist.user.firstName ?? ""} ${dentist.user.lastName ?? ""}`.trim()
     : consultation.directoryEntry?.name
-    ? `Dr. ${consultation.directoryEntry.name}`
-    : "Your Dentist";
+      ? `Dr. ${consultation.directoryEntry.name}`
+      : "Your Dentist";
 
   const scheduledDateStr = consultation.scheduledDate
     ? new Date(consultation.scheduledDate).toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
     : "Not scheduled";
 
   const scheduledTime = consultation.scheduledTime || "N/A";
@@ -48,33 +48,33 @@ export function ConsultationDetailsModal({
             <Video className="size-8 text-[#113254]" />
           </div>
 
-          <h2 className="text-[22px] font-black text-[#1A1A2E] mb-1">
+          <h2 className="text-[22px] font-black text-text mb-1">
             Upcoming Consultation
           </h2>
-          <p className="text-[13px] text-[#6B7280]">
+          <p className="text-[13px] text-sec-text">
             Your video session details are below
           </p>
 
           <div className="w-full mt-6 space-y-3 rounded-xl bg-[#F8FAFC] p-5 border border-gray-100 text-left">
             <div className="flex justify-between items-center text-sm border-b border-slate-100/50 pb-2">
               <span className="text-gray-500 font-medium">Dentist</span>
-              <span className="text-[#1A1A2E] font-semibold">{dentistName}</span>
+              <span className="text-text font-semibold">{dentistName}</span>
             </div>
             <div className="flex justify-between items-center text-sm border-b border-slate-100/50 pb-2">
               <span className="text-gray-500 font-medium">Procedure</span>
-              <span className="text-[#1A1A2E] font-semibold">{procedure}</span>
+              <span className="text-text font-semibold">{procedure}</span>
             </div>
             <div className="flex justify-between items-center text-sm border-b border-slate-100/50 pb-2">
               <span className="text-gray-500 font-medium">Date</span>
-              <span className="text-[#1A1A2E] font-semibold">{scheduledDateStr}</span>
+              <span className="text-text font-semibold">{scheduledDateStr}</span>
             </div>
             <div className="flex justify-between items-center text-sm border-b border-slate-100/50 pb-2">
               <span className="text-gray-500 font-medium">Time</span>
-              <span className="text-[#1A1A2E] font-semibold">{scheduledTime} ({timezone})</span>
+              <span className="text-text font-semibold">{scheduledTime} ({timezone})</span>
             </div>
             <div className="flex justify-between items-center text-sm pt-1">
               <span className="text-gray-500 font-medium">Duration</span>
-              <span className="text-[#1A1A2E] font-semibold">{duration} minutes</span>
+              <span className="text-text font-semibold">{duration} minutes</span>
             </div>
           </div>
 
@@ -86,7 +86,7 @@ export function ConsultationDetailsModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3.5 border border-slate-200 text-[#1A1A2E] hover:bg-slate-50 font-bold text-[15px] rounded-lg active:scale-95 transition-all cursor-pointer"
+              className="flex-1 px-6 py-3.5 border border-slate-200 text-text hover:bg-slate-50 font-bold text-[15px] rounded-lg active:scale-95 transition-all cursor-pointer"
             >
               Close Details
             </button>
