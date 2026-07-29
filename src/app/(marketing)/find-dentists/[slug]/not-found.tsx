@@ -33,7 +33,7 @@ export default function DentistNotFound() {
 
                     <Link
                         href="/find-dentists"
-                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#10436B] px-7 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#0d3558] active:scale-[0.97] sm:w-auto"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-7 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#0d3558] active:scale-[0.97] sm:w-auto"
                     >
                         <Search className="size-4" />
                         Find Verified Dentist

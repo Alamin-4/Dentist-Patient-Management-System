@@ -168,7 +168,7 @@ export function ContactMessagesTable() {
         <div className="absolute inset-0 bg-white border border-slate-300 rounded-xl p-6 flex flex-col z-30 animate-in fade-in duration-200">
           <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Mail className="h-4 w-4 text-[#10436B]" />
+              <Mail className="h-4 w-4 text-primary" />
               Inquiry Detail Reader
             </h3>
             <button
@@ -194,7 +194,7 @@ export function ContactMessagesTable() {
               </div>
               <div className="col-span-2">
                 <p className="text-[10px] uppercase font-bold text-slate-400">Email Address</p>
-                <p className="text-xs font-semibold text-[#10436B]">
+                <p className="text-xs font-semibold text-primary">
                   {selectedMessage.email}
                 </p>
               </div>
@@ -245,7 +245,7 @@ export function ContactMessagesTable() {
               </button>
               <a
                 href={`mailto:${selectedMessage.email}?subject=RE: ${selectedMessage.subject}`}
-                className="flex items-center gap-1.5 text-xs font-bold text-white bg-[#10436B] hover:bg-[#0d3656] px-4 py-2 rounded-lg transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-bold text-white bg-primary hover:bg-[#0d3656] px-4 py-2 rounded-lg transition-colors cursor-pointer"
               >
                 Reply via Email
                 <ArrowRight className="h-3.5 w-3.5" />

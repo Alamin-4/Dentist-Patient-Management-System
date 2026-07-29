@@ -75,14 +75,14 @@ export default function DentistProfilePage() {
         {/* Left Column: Details with Tab navigation */}
         <div className="flex flex-col gap-6">
           {/* Tab Navigation */}
-          <div className="flex border-b border-gray-200 gap-8">
+          <div className="flex border-b border-gray-200 gap-4 sm:gap-8 overflow-x-auto no-scrollbar scrollbar-none whitespace-nowrap pb-0.5">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`pb-4 text-sm font-bold transition-all relative ${isActive ? "text-[#163E5C]" : "text-gray-400 hover:text-gray-600"
+                  className={`pb-3.5 text-xs sm:text-sm font-bold transition-all relative shrink-0 ${isActive ? "text-[#163E5C]" : "text-gray-400 hover:text-gray-600"
                     }`}
                 >
                   {tab.label}
@@ -117,7 +117,7 @@ export default function DentistProfilePage() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contact us on WhatsApp"
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:bg-[#20ba5a] transition-all hover:scale-110 active:scale-95 duration-200"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:bg-[#20ba5a] transition-all hover:scale-110 active:scale-95 duration-200"
       >
         <svg
           className="h-7 w-7 fill-current"

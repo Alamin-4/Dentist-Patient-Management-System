@@ -24,7 +24,7 @@ export default function CompareToggle({ isCompareMode, onToggle }: CompareToggle
                     onClick={() => onToggle(!isCompareMode)}
                     className={cn(
                         "w-11 h-6 rounded-full transition-all relative flex items-center px-1 cursor-pointer",
-                        isCompareMode ? "bg-[#10436B]" : "bg-gray-300",
+                        isCompareMode ? "bg-primary" : "bg-gray-300",
                     )}
                 >
                     <div

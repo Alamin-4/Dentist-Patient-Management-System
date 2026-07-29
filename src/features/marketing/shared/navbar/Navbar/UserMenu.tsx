@@ -77,7 +77,7 @@ export default function UserMenu({
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <Avatar className="h-10 w-10 border border-gray-200">
                         <AvatarImage src={user?.image || undefined} />
-                        <AvatarFallback className="bg-[#10436B] text-white font-semibold text-sm">
+                        <AvatarFallback className="bg-primary text-white font-semibold text-sm">
                             {initials}
                         </AvatarFallback>
                     </Avatar>
@@ -112,7 +112,7 @@ export default function UserMenu({
                 <div className="relative">
                     <Avatar className="h-8 w-8 border border-gray-200">
                         <AvatarImage src={user?.image || undefined} />
-                        <AvatarFallback className="bg-[#10436B] text-white font-semibold text-xs">
+                        <AvatarFallback className="bg-primary text-white font-semibold text-xs">
                             {initials}
                         </AvatarFallback>
                     </Avatar>
@@ -123,7 +123,7 @@ export default function UserMenu({
                         status === "dnd" && "bg-rose-500"
                     )} />
                 </div>
-                <span className="hidden text-sm font-semibold text-slate-700 md:block max-w-25 w-full pr-2 truncate group-hover:text-[#10436B] transition-colors">
+                <span className="hidden text-sm font-semibold text-slate-700 md:block max-w-25 w-full pr-2 truncate group-hover:text-primary transition-colors">
                     {displayName.split(" ")[0].slice(0, 10)}
                 </span>
             </DropdownMenuTrigger>

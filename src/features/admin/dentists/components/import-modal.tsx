@@ -234,7 +234,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
               <button
                 type="button"
                 onClick={handleClose}
-                className="w-full bg-[#10436B] hover:bg-[#0D3658] text-white px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm cursor-pointer"
+                className="w-full bg-primary hover:bg-[#0D3658] text-white px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm cursor-pointer"
               >
                 Close Window
               </button>
@@ -263,7 +263,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
                 <button
                   onClick={downloadTemplate}
                   type="button"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#10436B] hover:text-[#0D3658] hover:bg-slate-100 rounded-lg transition-colors border border-[#10436B]/20 cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-primary hover:text-[#0D3658] hover:bg-slate-100 rounded-lg transition-colors border border-primary/20 cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5" />
                   Template.csv
@@ -278,7 +278,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 transition-colors cursor-pointer ${
                   dragActive
-                    ? "border-[#10436B] bg-[#10436B]/5"
+                    ? "border-primary bg-primary/5"
                     : file
                     ? "border-slate-200 bg-slate-50/50 hover:bg-slate-50"
                     : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
@@ -369,7 +369,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
                 type="button"
                 onClick={handleImportSubmit}
                 disabled={!file || validation.status === "error" || isPending}
-                className="flex items-center gap-1.5 bg-[#10436B] hover:bg-[#0D3658] text-white px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="flex items-center gap-1.5 bg-primary hover:bg-[#0D3658] text-white px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isPending ? (
                   <>

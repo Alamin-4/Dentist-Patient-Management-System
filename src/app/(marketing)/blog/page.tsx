@@ -19,6 +19,9 @@ interface BlogPost {
   createdAt: string;
 }
 
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [search, setSearch] = useState("");
@@ -51,16 +54,14 @@ export default function BlogPage() {
   }, [filteredPosts]);
 
   return (
-    <div className="bg-slate-50 min-h-dvh py-16 px-6 md:px-12">
-      <div className="max-w-400 w-11/12 mx-auto space-y-12">
+    <div className="bg-slate-50 min-h-dvh py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12">
+      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-6 sm:space-y-8 lg:space-y-10">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
-          <div className="space-y-2 max-w-xl text-left">
-            <h1 className="text-4xl font-black text-[#10436B] tracking-tight">RatedDocs Resource Center</h1>
-            <p className="text-gray-500 text-lg leading-relaxed">
-              Read vetted oral hygiene guidelines, verification procedures, and patient safety insights.
-            </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 border-b border-slate-200 pb-6 sm:pb-8">
+          <div className="space-y-1.5 max-w-xl text-left">
+            <CustomSectionHeading value="RatedDocs Resource Center" />
+            <CustomDesText value="Read vetted oral hygiene guidelines, verification procedures, and patient safety insights." />
           </div>
 
           {/* Search bar */}
@@ -70,14 +71,14 @@ export default function BlogPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search articles..."
-              className="h-10 w-full rounded-lg border border-gray-200 pl-10 pr-4 text-sm font-semibold outline-none focus:border-[#10436B] focus:ring-1 focus:ring-[#10436B] bg-white"
+              className="h-10 w-full rounded-lg border border-gray-200 pl-10 pr-4 text-sm font-semibold outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white"
             />
             <Search className="absolute left-3.5 top-3 h-4.5 w-4.5 text-gray-400" />
           </div>
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="text-center py-24 bg-white border border-border rounded-3xl text-gray-400 shadow-xs">
+          <div className="text-center py-10 sm:py-16 px-4 bg-white border border-border rounded-2xl text-sm font-medium text-gray-400 shadow-xs">
             No articles found matching "{search}".
           </div>
         ) : (
@@ -99,10 +100,10 @@ export default function BlogPage() {
 
                 <div className="lg:col-span-2 p-6 md:p-10 flex flex-col justify-between gap-6 text-left">
                   <div className="space-y-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-[#10436B] text-xs font-bold rounded-full">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-primary text-xs font-bold rounded-full">
                       Featured Article
                     </span>
-                    <h2 className="text-2xl md:text-3xl font-black text-text leading-snug group-hover:text-[#10436B] transition-colors">
+                    <h2 className="text-2xl md:text-3xl font-black text-text leading-snug group-hover:text-primary transition-colors">
                       {featuredPost.title}
                     </h2>
                     <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
@@ -112,8 +113,8 @@ export default function BlogPage() {
 
                   <div className="flex justify-between items-center border-t border-slate-100 pt-5">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-[#10436B]/10 flex items-center justify-center">
-                        <User className="h-4 w-4 text-[#10436B]" />
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="h-4 w-4 text-primary" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-text">{featuredPost.author}</p>
@@ -127,7 +128,7 @@ export default function BlogPage() {
                       </div>
                     </div>
 
-                    <span className="flex items-center gap-1 text-[#10436B] text-xs font-bold group-hover:translate-x-1 transition-transform">
+                    <span className="flex items-center gap-1 text-primary text-xs font-bold group-hover:translate-x-1 transition-transform">
                       Read Article
                       <ChevronRight className="h-4 w-4" />
                     </span>
@@ -155,7 +156,7 @@ export default function BlogPage() {
 
                     <div className="p-5 flex-1 flex flex-col justify-between gap-5 text-left">
                       <div className="space-y-3">
-                        <h3 className="font-bold text-base text-text group-hover:text-[#10436B] transition-colors leading-snug line-clamp-2">
+                        <h3 className="font-bold text-base text-text group-hover:text-primary transition-colors leading-snug line-clamp-2">
                           {post.title}
                         </h3>
                         <p className="text-xs text-gray-400 leading-relaxed line-clamp-3">
@@ -165,8 +166,8 @@ export default function BlogPage() {
 
                       <div className="flex justify-between items-center border-t border-slate-100 pt-4 mt-auto">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-[#10436B]/5 flex items-center justify-center">
-                            <User className="h-3.5 w-3.5 text-[#10436B]" />
+                          <div className="w-7 h-7 rounded-full bg-primary/5 flex items-center justify-center">
+                            <User className="h-3.5 w-3.5 text-primary" />
                           </div>
                           <div>
                             <p className="text-[10px] font-bold text-text">{post.author}</p>
@@ -176,7 +177,7 @@ export default function BlogPage() {
                           </div>
                         </div>
 
-                        <span className="flex items-center gap-0.5 text-xs font-bold text-[#10436B] group-hover:translate-x-0.5 transition-transform">
+                        <span className="flex items-center gap-0.5 text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
                           Read
                           <ChevronRight className="h-3.5 w-3.5" />
                         </span>

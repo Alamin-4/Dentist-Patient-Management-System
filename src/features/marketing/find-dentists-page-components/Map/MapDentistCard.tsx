@@ -144,7 +144,7 @@ export default function MapDentistCard({
           </p>
 
           <div className="flex items-center gap-1">
-            <span className="text-xs font-bold text-[#10436B]">
+            <span className="text-xs font-bold text-primary">
               {ratingValue > 0 ? ratingValue.toFixed(1) : "0"}
             </span>
             <div className="flex gap-0.5">
@@ -168,7 +168,7 @@ export default function MapDentistCard({
           {/* Languages */}
           {dentist.languages && dentist.languages.length > 0 && (
             <div className="flex items-center gap-1 text-slate-500">
-              <Globe className="size-3.5 shrink-0 text-[#10436B]" />
+              <Globe className="size-3.5 shrink-0 text-primary" />
               <span className="truncate text-[11px] text-[#4B5563]">
                 <span className="font-semibold text-text">Languages:</span>{" "}
                 {dentist.languages.join(", ")}

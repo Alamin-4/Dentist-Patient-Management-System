@@ -26,14 +26,14 @@ export default function AuthButtons({
             <div className="flex flex-col gap-3">
                 <button
                     onClick={() => handleClick(onSignInClick)}
-                    className="w-full rounded-lg border border-gray-200 py-3 text-center font-semibold text-[#10436B] hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="w-full rounded-lg border border-gray-200 py-3 text-center font-semibold text-primary hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                     Login
                 </button>
 
                 <button
                     onClick={() => handleClick(onSignUpClick)}
-                    className="w-full rounded-lg bg-[#10436B] py-3 text-center font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer text-sm"
+                    className="w-full rounded-lg bg-primary py-3 text-center font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer text-sm"
                 >
                     Sign Up
                 </button>
@@ -45,14 +45,14 @@ export default function AuthButtons({
         <div className="flex items-center gap-4">
             <button
                 onClick={onSignInClick}
-                className="text-sm lg:text-base font-semibold text-[#10436B] hover:text-[#0b2d49] transition-colors cursor-pointer"
+                className="text-sm lg:text-base font-semibold text-primary hover:text-[#0b2d49] transition-colors cursor-pointer"
             >
                 Login
             </button>
 
             <button
                 onClick={onSignUpClick}
-                className="rounded-lg bg-[#10436B] px-2.5 py-1.5 lg:px-6 lg:py-2.5 text-xs md:text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-sm cursor-pointer"
+                className="rounded-lg bg-primary px-2.5 py-1.5 lg:px-6 lg:py-2.5 text-xs md:text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-sm cursor-pointer"
             >
                 Sign Up
             </button>

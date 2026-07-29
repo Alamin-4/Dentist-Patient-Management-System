@@ -1,10 +1,10 @@
 import { cn } from "@/core/lib/utils"
 
-function CustomSectionHeading({ value, center_align }: { value: string, center_align?: boolean }) {
+function CustomSectionHeading({ value, center_align, className }: { value: string, center_align?: boolean, className?: string }) {
     return (
         <div>
             <h2 className={
-                cn("text-3xl md:text-4xl lg:text-[40px] text-text font-bold", center_align && "text-center")
+                cn("text-xl md:text-2xl lg:text-3xl text-text font-semibold", center_align && "text-center", className)
             }>
                 {value}
             </h2>

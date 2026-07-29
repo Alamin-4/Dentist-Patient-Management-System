@@ -134,7 +134,7 @@ export function RdvScoreWeights() {
                 }}
                 className={cn(
                   "h-9 w-20 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-right outline-none transition-colors",
-                  "focus:border-[#10436B]"
+                  "focus:border-primary"
                 )}
               />
               <span className="text-xs font-bold text-slate-400">%</span>
@@ -155,7 +155,7 @@ export function RdvScoreWeights() {
           className={cn(
             "flex items-center gap-2 rounded-lg px-5 py-2 text-xs font-bold text-white transition-all cursor-pointer",
             isValid && !updateMutation.isPending
-              ? "bg-[#10436B] hover:bg-[#0d3656]"
+              ? "bg-primary hover:bg-[#0d3656]"
               : "cursor-not-allowed bg-slate-300"
           )}
         >

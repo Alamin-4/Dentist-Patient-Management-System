@@ -44,7 +44,7 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
           </Link>
           <Link
             href="/find-dentists"
-            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#10436B] hover:bg-[#0d3558] px-6 py-3 text-sm font-bold text-white shadow-md shadow-[#10436B]/10 transition-all active:scale-[0.97]"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-primary hover:bg-[#0d3558] px-6 py-3 text-sm font-bold text-white shadow-md shadow-primary/10 transition-all active:scale-[0.97]"
           >
             <Search className="w-4 h-4" />
             Find Verified Dentist

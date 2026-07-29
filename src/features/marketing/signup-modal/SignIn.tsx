@@ -220,7 +220,7 @@ export default function SigninModal() {
                     disabled
                     className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200  lg:py-3.5"
                   >
-                    <FaApple className="text-2xl text-black" />
+                    <FaApple className="text-2xl text-text" />
                     <span className="text-text font-medium hidden md:block">Apple</span>
                   </button>
 

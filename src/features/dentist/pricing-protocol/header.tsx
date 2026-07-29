@@ -12,14 +12,14 @@ export default function Header() {
     router.push("/dentist/add-pricing");
   };
   return (
-    <div className="flex items-start justify-between">
+    <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
       <DashboardPageHeader
         heading="Pricing Protocol"
         subHeading="Manage and edit pricing protocols"
       />
       <div>
         <Button
-          className="h-14 px-6 bg-primary text-white lg:text-lg font-semibold cursor-pointer"
+          className="h-9 px-3.5 text-xs sm:h-11 sm:px-5 sm:text-sm font-semibold bg-primary text-white cursor-pointer hover:bg-primary/95 shrink-0"
           onClick={handleAddPricing}
         >
           Add Pricing

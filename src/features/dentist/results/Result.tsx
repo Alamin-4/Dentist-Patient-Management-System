@@ -63,28 +63,28 @@ export default function Result() {
       />
 
       <Dialog open={isModalOpen} onOpenChange={(open) => !isPending && setIsModalOpen(open)}>
-        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden border-none rounded-3xl gap-0 bg-white">
-          <div className="flex items-center justify-between p-6 border-b">
-            <DialogTitle className="text-2xl font-bold text-text">
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-none rounded-2xl sm:rounded-3xl gap-0 bg-white shadow-2xl">
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 border-b bg-white">
+            <DialogTitle className="text-lg sm:text-xl font-bold text-text">
               Add New Before/After Result
             </DialogTitle>
           </div>
 
           <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
               {errors.root && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl text-sm flex items-start gap-2.5 shadow-sm">
+                <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm flex items-start gap-2.5 shadow-sm">
                   <div className="font-bold">Error:</div>
                   <div>{errors.root.message}</div>
                 </div>
               )}
 
               <div className="space-y-3">
-                <label className="block text-sm font-semibold text-text">Images</label>
+                <label className="block text-xs sm:text-sm font-semibold text-text">Images</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {beforePreview ? (
                     <div className="space-y-1.5">
-                      <div className="relative border rounded-lg h-44 overflow-hidden group">
+                      <div className="relative border rounded-lg h-36 sm:h-44 overflow-hidden group">
                         <img src={beforePreview} alt="Before Preview" className="w-full h-full object-cover" />
                         <button
                           type="button"
@@ -111,7 +111,7 @@ export default function Result() {
 
                   {afterPreview ? (
                     <div className="space-y-1.5">
-                      <div className="relative border rounded-lg h-44 overflow-hidden group">
+                      <div className="relative border rounded-lg h-36 sm:h-44 overflow-hidden group">
                         <img src={afterPreview} alt="After Preview" className="w-full h-full object-cover" />
                         <button
                           type="button"
@@ -138,14 +138,14 @@ export default function Result() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-text">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs sm:text-sm font-semibold text-text">
                     Patient Name
                   </label>
                   <select
                     {...register("patientName")}
-                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground ${errors.patientName ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground ${errors.patientName ? "border-red-500" : "border-slate-200"}`}
                   >
                     <option value="">Select Patient</option>
                     {patients.map((pat: any) => (
@@ -161,14 +161,14 @@ export default function Result() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-text">
+                <div className="space-y-1.5">
+                  <label className="block text-xs sm:text-sm font-semibold text-text">
                     Treatment Title
                   </label>
                   <select
                     {...register("title")}
                     disabled={!selectedPatientName}
-                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.title ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.title ? "border-red-500" : "border-slate-200"}`}
                   >
                     {!selectedPatientName ? (
                       <option value="">Select patient first</option>
@@ -190,14 +190,14 @@ export default function Result() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-text">
+                <div className="space-y-1.5">
+                  <label className="block text-xs sm:text-sm font-semibold text-text">
                     Date
                   </label>
                   <select
                     {...register("date")}
                     disabled={!selectedPatientName}
-                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.date ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.date ? "border-red-500" : "border-slate-200"}`}
                   >
                     {!selectedPatientName ? (
                       <option value="">Select patient first</option>
@@ -219,14 +219,14 @@ export default function Result() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-text">
+                <div className="space-y-1.5">
+                  <label className="block text-xs sm:text-sm font-semibold text-text">
                     Location
                   </label>
                   <select
                     {...register("location")}
                     disabled={!selectedPatientName}
-                    className={`w-full h-12 rounded-lg border px-4 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.location ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.location ? "border-red-500" : "border-slate-200"}`}
                   >
                     {!selectedPatientName ? (
                       <option value="">Select patient first</option>
@@ -249,7 +249,7 @@ export default function Result() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+              <div className="flex flex-row gap-3 pt-3 border-t">
                 <Button
                   type="button"
                   variant="outline"
@@ -258,14 +258,14 @@ export default function Result() {
                     resetForm();
                     setIsModalOpen(false);
                   }}
-                  className="flex-1 h-12 rounded-xl border-slate-200 text-sm font-bold text-text hover:bg-slate-50 cursor-pointer"
+                  className="flex-1 h-10 sm:h-11 rounded-xl border-slate-200 text-xs sm:text-sm font-bold text-text hover:bg-slate-50 cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={isPending}
-                  className="flex-1 h-12 rounded-xl bg-[#0F3659] text-sm font-bold text-white hover:bg-[#0a2640] cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 h-10 sm:h-11 rounded-xl bg-[#0F3659] text-xs sm:text-sm font-bold text-white hover:bg-[#0a2640] cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   {isPending ? (
                     <>

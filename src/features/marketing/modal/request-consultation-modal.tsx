@@ -162,11 +162,11 @@ export default function RequestConsultationModal() {
     <Dialog open={showRequestConsultationModal} onOpenChange={handleClose}>
       <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[650px] p-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl transition-all duration-300">
         {/* Decorative top accent gradient */}
-        <div className="h-2 w-full bg-linear-to-r from-blue-600 via-[#10436B] to-emerald-500" />
+        <div className="h-2 w-full bg-linear-to-r from-blue-600 via-primary to-emerald-500" />
 
         <div className="p-6 md:p-8">
           <DialogHeader className="gap-2 text-left relative">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#10436B] border border-blue-100 w-fit">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-primary border border-blue-100 w-fit">
               <Sparkles className="size-3.5 text-blue-500 animate-pulse" />
               Direct Inquiry
             </div>
@@ -196,7 +196,7 @@ export default function RequestConsultationModal() {
                   <Input
                     placeholder="Enter your full name"
                     className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${
-                      errors.patientName ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
+                      errors.patientName ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
                     }`}
                     {...register("patientName")}
                   />
@@ -219,7 +219,7 @@ export default function RequestConsultationModal() {
                     type="email"
                     placeholder="name@example.com"
                     className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${
-                      errors.patientEmail ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
+                      errors.patientEmail ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
                     }`}
                     {...register("patientEmail")}
                   />
@@ -241,7 +241,7 @@ export default function RequestConsultationModal() {
                   <Input
                     placeholder="+1 (555) 000-0000"
                     className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${
-                      errors.patientPhone ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-[#10436B]"
+                      errors.patientPhone ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
                     }`}
                     {...register("patientPhone")}
                   />
@@ -261,7 +261,7 @@ export default function RequestConsultationModal() {
                     <Globe className="size-4" />
                   </span>
                   <select
-                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all text-sm w-full appearance-none`}
+                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-primary transition-all text-sm w-full appearance-none`}
                     {...register("country")}
                   >
                     {COUNTRIES.map((c) => (
@@ -286,7 +286,7 @@ export default function RequestConsultationModal() {
                     <Activity className="size-4" />
                   </span>
                   <select
-                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all text-sm w-full appearance-none`}
+                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-primary transition-all text-sm w-full appearance-none`}
                     {...register("procedureName")}
                   >
                     {PROCEDURES.map((p) => (
@@ -311,7 +311,7 @@ export default function RequestConsultationModal() {
                     <DollarSign className="size-4" />
                   </span>
                   <select
-                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all text-sm w-full appearance-none`}
+                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-primary transition-all text-sm w-full appearance-none`}
                     {...register("budget")}
                   >
                     {BUDGETS.map((b) => (
@@ -336,7 +336,7 @@ export default function RequestConsultationModal() {
                     <MessageCircle className="size-4" />
                   </span>
                   <select
-                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all text-sm w-full appearance-none`}
+                    className={`h-12 pl-11 pr-4 rounded-lg bg-slate-50 border border-slate-200 focus:border-primary transition-all text-sm w-full appearance-none`}
                     {...register("preferredContact")}
                   >
                     {CONTACT_METHODS.map((m) => (
@@ -363,7 +363,7 @@ export default function RequestConsultationModal() {
                 </span>
                 <Textarea
                   placeholder="Briefly describe your symptoms, requested treatment, or questions..."
-                  className="min-h-[90px] pl-11 rounded-lg bg-slate-50 border border-slate-200 focus:border-[#10436B] transition-all resize-none"
+                  className="min-h-[90px] pl-11 rounded-lg bg-slate-50 border border-slate-200 focus:border-primary transition-all resize-none"
                   {...register("message")}
                 />
               </div>
@@ -383,7 +383,7 @@ export default function RequestConsultationModal() {
               <Button
                 type="submit"
                 disabled={requestMutation.isPending}
-                className="h-11 px-6 rounded-lg bg-[#10436B] hover:bg-[#0c314f] text-white transition-all shadow-sm font-semibold flex items-center gap-2"
+                className="h-11 px-6 rounded-lg bg-primary hover:bg-[#0c314f] text-white transition-all shadow-sm font-semibold flex items-center gap-2"
               >
                 {requestMutation.isPending ? (
                   <>

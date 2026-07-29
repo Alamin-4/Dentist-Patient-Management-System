@@ -46,7 +46,7 @@ export default function GlobalError({ error, reset }: ErrorPageProps) {
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-lg bg-[#10436B] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0d3558] transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0d3558] transition-colors"
           >
             <Home className="size-4" />
             Go Home

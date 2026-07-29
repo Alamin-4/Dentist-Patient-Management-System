@@ -82,7 +82,7 @@ export default function VerifiedDentists() {
           <header className="mb-6 flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sec-text text-sm lg:text-base">
               Showing {isLoading ? "..." : dentists.length} dentist{dentists.length !== 1 && "s"} for{" "}
-              <span className="font-bold text-[#10436B]">"{procedure || "All Procedures"}"</span>
+              <span className="font-bold text-primary">"{procedure || "All Procedures"}"</span>
             </p>
 
             {verifiedDentists && verifiedDentists.length >= 2 && (
@@ -93,7 +93,7 @@ export default function VerifiedDentists() {
                 </div>
                 <button
                   onClick={() => { setCompareMode(!compareMode); setSelectedIds([]); }}
-                  className={cn("relative flex h-6 w-11 cursor-pointer items-center rounded-full px-1 transition-all", compareMode ? "bg-[#10436B]" : "bg-gray-300")}
+                  className={cn("relative flex h-6 w-11 cursor-pointer items-center rounded-full px-1 transition-all", compareMode ? "bg-primary" : "bg-gray-300")}
                 >
                   <div className={cn("h-4 w-4 rounded-full bg-white shadow-sm transition-all", compareMode ? "translate-x-5" : "translate-x-0")} />
                 </button>
@@ -150,7 +150,7 @@ export default function VerifiedDentists() {
           </div>
 
           <div className="mt-12 text-center">
-            <Link href="/find-dentists" className="text-sm font-bold text-[#10436B] underline-offset-4 hover:underline decoration-2">
+            <Link href="/find-dentists" className="text-sm font-bold text-primary underline-offset-4 hover:underline decoration-2">
               View all specialties
             </Link>
           </div>
