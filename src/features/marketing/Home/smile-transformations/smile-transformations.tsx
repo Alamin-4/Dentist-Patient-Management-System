@@ -9,6 +9,9 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+
 const CASE_STUDIES = [
   {
     id: 1,
@@ -52,23 +55,13 @@ export default function SmileTransformations() {
   };
 
   return (
-    <section className="py-12 md:py-16 lg:py-24 font-sans antialiased">
-      <div className="max-w-400 mx-auto w-11/12 space-y-12">
+    <section className="py-8 sm:py-12 md:py-16 font-sans antialiased">
+      <div className="max-w-400 mx-auto w-11/12 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-          <div className="max-w-2xl space-y-4">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A2E]">
-              Smile Transformations That Matter for Everyone
-            </h2>
-            <p className="text-sm md:text-base text-gray-400 leading-relaxed max-w-xl">
-              Every result shown here is tied to a patient who booked and paid
-              directly through RatedDocs. The before photo was submitted by the
-              patient at the time of booking. The after photo was submitted upon
-              returning from treatment and reviewed by our team before
-              publication.
-            </p>
+          <div className="max-w-2xl space-y-2">
+            <CustomSectionHeading value="Smile Transformations That Matter for Everyone" />
+            <CustomDesText value="Every result shown here is tied to a patient who booked and paid directly through RatedDocs. The before photo was submitted by the patient at the time of booking, and after photo was reviewed by our team before publication." />
           </div>
-
-
         </div>
 
         <div className="relative overflow-hidden">
