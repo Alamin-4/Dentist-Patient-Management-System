@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api/queryKeys";
 import { dentistService } from "@/services/dentistService";
-import { mapApiDentist, type Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
+import { mapApiDentist, type Dentist } from "@/features/marketing/find-dentists-page-components/types";
 
 export interface UseDentistComparisonProps {
   selectedDentistId?: string | null;

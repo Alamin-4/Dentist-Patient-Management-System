@@ -2,7 +2,7 @@ import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import type { Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
+import type { Dentist } from "@/features/marketing/find-dentists-page-components/types";
 
 interface DoctorProfileHeaderProps {
     dentist: Dentist;

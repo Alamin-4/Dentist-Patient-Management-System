@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import FindDentistComponents from "@/features/marketing/_components/find-dentist-components/FindDentist";
+import FindDentistComponents from "@/features/marketing/find-dentist-components/FindDentist";
 
 export default function FindVerifiedDentistPage() {
   return (

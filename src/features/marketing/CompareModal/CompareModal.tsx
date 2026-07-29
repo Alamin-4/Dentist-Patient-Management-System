@@ -4,7 +4,7 @@ import { CheckCircle2, Circle, ShieldCheck, Star, ShieldAlert, Sparkles } from "
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { type Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
+import { type Dentist } from "@/features/marketing/find-dentists-page-components/types";
 import {
   getBookingDraft,
   saveBookingDraft,

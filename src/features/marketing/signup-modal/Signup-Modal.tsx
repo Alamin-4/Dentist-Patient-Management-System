@@ -204,31 +204,35 @@ export default function SignupModal() {
             </div>
           ) : (
             <>
-              <div className="mb-4 space-y-3">
+              <div className="flex flex-wrap *:flex-1 gap-4 items-start justify-between">
                 <button
+                  type="button"
                   onClick={() => handleSocialLogin("Google")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FcGoogle className="text-2xl" />
-                  <span className="text-sec-text">Continue with Google</span>
+                  <span className="text-text font-medium hidden md:block">Google</span>
                 </button>
 
                 <button
-                  disabled
+                  type="button"
                   onClick={() => handleSocialLogin("Apple")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  disabled
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
-                  <FaApple className="text-2xl text-[#1A1A2E]" />
-                  <span className="text-[#6B7280]">Continue with Apple</span>
+                  <FaApple className="text-2xl text-black" />
+                  <span className="text-text font-medium hidden md:block">Apple</span>
                 </button>
 
                 <button
-                  disabled
+                  type="button"
                   onClick={() => handleSocialLogin("Facebook")}
-                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                  disabled
+                  className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
                 >
                   <FaFacebook className="text-2xl text-[#1877F2]" />
-                  <span className="text-sec-text">Continue with Facebook</span>
+                  <span className="text-text font-medium hidden md:block">Facebook</span>
                 </button>
               </div>
 

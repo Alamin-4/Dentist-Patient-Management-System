@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useStateContext } from "@/providers/StateProvider";
 import { useDentistComparison } from "./useDentistComparison";
-import { type Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
+import { type Dentist } from "@/features/marketing/find-dentists-page-components/types";
 
 export function useCompareModalController() {
   const {
