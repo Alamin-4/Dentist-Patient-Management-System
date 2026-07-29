@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
 import {
   ArrowLeft,
   ChevronDown,
@@ -13,15 +11,7 @@ import {
   Info,
 } from "lucide-react";
 import CreateFinalTreatmentPlanModal from "@/app/modules/dentist/booking-manage/create-final-treatment-plan-modal";
-import {
-  useTreatmentBookingById,
-  useVerifyArrivalCode,
-  useSubmitFinalPlan,
-  useVerifyPaymentCode,
-} from "@/hooks/treatment-booking/useTreatmentBooking";
-import { toast } from "react-hot-toast";
-import { apiClient } from "@/api/client";
-import { normalizeApiError } from "@/api/error-handler";
+import { useDentistBookingController } from "@/core/hooks/dentist/useDentistBookingController";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -47,214 +37,36 @@ function TimelineIcon({ status }: { status: "completed" | "current" | "pending" 
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function BookingDetailPage() {
-  const params = useParams();
-  const id = params?.id as string | undefined;
-  const router = useRouter();
-
-  const { data: response, isLoading } = useTreatmentBookingById(id || "");
-  const booking = response?.data;
-
-  const [arrivalCode, setArrivalCode] = useState("");
-  const [codeError, setCodeError] = useState(false);
-
-  const [paymentCode, setPaymentCode] = useState("");
-  const [paymentCodeError, setPaymentCodeError] = useState(false);
-  const [paymentErrorMessage, setPaymentErrorMessage] = useState("");
-
-  const [showFinalModal, setShowFinalModal] = useState(false);
-  const [treatmentPlanOpen, setTreatmentPlanOpen] = useState(true);
-  const [finalPlanOpen, setFinalPlanOpen] = useState(true);
-
-  const verifyArrivalMutation = useVerifyArrivalCode();
-  const submitFinalPlanMutation = useSubmitFinalPlan();
-  const verifyPaymentMutation = useVerifyPaymentCode();
-
-  // Determine booking step based on live booking status
-  let step: "day1_arrival" | "final_plan" | "payment_release" | "completed" | "cancelled" = "day1_arrival";
-
-  if (booking) {
-    if (booking.status === "CONFIRMED") {
-      step = "day1_arrival";
-    } else if (booking.status === "IN_PROGRESS") {
-      const metadata = booking.metadata || {};
-      if (metadata.finalPlanApproved) {
-        step = "payment_release";
-      } else {
-        step = "final_plan";
-      }
-    } else if (booking.status === "COMPLETED") {
-      step = "completed";
-    } else if (booking.status === "CANCELLED") {
-      step = "cancelled";
-    }
-  }
-
-  // Build display data
-  const display = booking
-    ? {
-      name: `${booking.patient?.user?.firstName || ""} ${booking.patient?.user?.lastName || ""}`,
-      email: booking.patient?.user?.email || "",
-      initials: `${booking.patient?.user?.firstName?.[0] || ""}${booking.patient?.user?.lastName?.[0] || ""}`.toUpperCase(),
-      procedure: booking.treatmentPlan?.lineItems?.[0]?.globalProcedure?.name || "Dental Treatment",
-      budget: `$${Number(booking.escrowAmount).toLocaleString()}`,
-      travelFrom: booking.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString() : "Pending scheduling",
-      lastVisited: "N/A",
-      conditions: "N/A",
-    }
-    : {
-      name: "",
-      email: "",
-      initials: "",
-      procedure: "",
-      budget: "$0",
-      travelFrom: "",
-      lastVisited: "N/A",
-      conditions: "N/A",
-    };
-
-  const formatDate = (dateInput: any) => {
-    if (!dateInput) return "";
-    const date = new Date(dateInput);
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const travelDate = booking?.scheduledDate ? new Date(booking.scheduledDate) : null;
-  const arrivalDate = travelDate ? new Date(travelDate.getTime() + 24 * 60 * 60 * 1000) : null;
-
-  // Timeline status per step
-  const timelineItems = [
-    {
-      label: "Payment Confirmed",
-      detail: booking ? `$${Number(booking.escrowAmount).toLocaleString()} held in escrow • ${formatDate(booking.createdAt)}` : "Held in escrow",
-      status: "completed" as const,
-    },
-    {
-      label: "Patient in Travel",
-      detail: booking?.scheduledDate ? formatDate(booking.scheduledDate) : "Scheduled date",
-      status: booking && booking.status !== "PENDING_PAYMENT" ? ("completed" as const) : ("pending" as const),
-    },
-    {
-      label: "Day 1 arrival, CBCT examination",
-      detail:
-        booking && booking.status !== "CONFIRMED" && booking.status !== "PENDING_PAYMENT"
-          ? arrivalDate
-            ? formatDate(arrivalDate)
-            : "Checked-in"
-          : "Waiting for check-in",
-      status:
-        booking && booking.status !== "CONFIRMED" && booking.status !== "PENDING_PAYMENT"
-          ? ("completed" as const)
-          : booking?.status === "CONFIRMED"
-            ? ("current" as const)
-            : ("pending" as const),
-    },
-    {
-      label: "Final Treatment Plan Confirmed",
-      detail: booking?.metadata?.finalPlanApproved
-        ? "Approved by patient"
-        : booking?.status === "CANCELLED"
-          ? "Rejected by patient"
-          : booking?.metadata?.finalPlan
-            ? "Awaiting patient approval"
-            : "Review final plan",
-      status: booking?.metadata?.finalPlanApproved
-        ? ("completed" as const)
-        : booking?.status === "CANCELLED"
-          ? ("pending" as const)
-          : booking?.metadata?.finalPlan
-            ? ("current" as const)
-            : ("pending" as const),
-    },
-    {
-      label: "Treatment Done",
-      detail:
-        booking?.status === "COMPLETED"
-          ? "Paid to your account"
-          : booking?.status === "CANCELLED"
-            ? "Cancelled"
-            : "Waiting for review",
-      status: booking?.status === "COMPLETED" ? ("completed" as const) : ("pending" as const),
-    },
-  ];
-
-  // Arrival verification handler
-  const handleVerify = async () => {
-    if (arrivalCode.length !== 4) {
-      setCodeError(true);
-      return;
-    }
-    setCodeError(false);
-    verifyArrivalMutation.mutate(
-      { id: id!, arrivalCode },
-      {
-        onError: () => {
-          setCodeError(true);
-        },
-      }
-    );
-  };
-
-  // Payment release verification handler
-  const handleVerifyPayment = async () => {
-    if (paymentCode.length !== 4) {
-      setPaymentCodeError(true);
-      setPaymentErrorMessage("Please enter a valid 4-digit payment code.");
-      return;
-    }
-    setPaymentCodeError(false);
-    setPaymentErrorMessage("");
-    verifyPaymentMutation.mutate(
-      { id: id!, paymentCode },
-      {
-        onError: async (err: any) => {
-          const apiErr = normalizeApiError(err);
-          const errorMsg = apiErr.message || "An error occurred during payment verification.";
-
-          if (errorMsg.includes("Stripe Connect") || errorMsg.includes("receive payouts")) {
-            const toastId = toast.loading("Stripe Connect required to receive payouts. Initializing onboarding...");
-            try {
-              const response = await apiClient.stripe.connectOnboard();
-              if (response?.data?.url) {
-                toast.success("Redirecting to Stripe onboarding...", { id: toastId });
-                window.location.href = response.data.url;
-              } else {
-                toast.error("Failed to start Stripe onboarding. Redirecting to Settings...", { id: toastId });
-                setTimeout(() => {
-                  router.push("/dentist/settings");
-                }, 2000);
-              }
-            } catch (stripeErr: any) {
-              console.error("Stripe Connect onboarding error:", stripeErr);
-              toast.error("Redirecting to Settings...", { id: toastId });
-              setTimeout(() => {
-                router.push("/dentist/settings");
-              }, 2000);
-            }
-          } else {
-            setPaymentErrorMessage(errorMsg);
-            setPaymentCodeError(true);
-          }
-        },
-      }
-    );
-  };
-
-  // Final plan modal submit
-  const handleFinalPlanSubmit = (data: any) => {
-    submitFinalPlanMutation.mutate({
-      id: id!,
-      payload: {
-        procedures: data.procedures,
-        notes: "Submitted via Create Final Treatment Plan Modal",
-      },
-    });
-  };
-
-  const planSubmitted = !!booking?.metadata?.finalPlan;
+  const {
+    id,
+    booking,
+    isLoading,
+    arrivalCode,
+    setArrivalCode,
+    codeError,
+    setCodeError,
+    paymentCode,
+    setPaymentCode,
+    paymentCodeError,
+    setPaymentCodeError,
+    paymentErrorMessage,
+    showFinalModal,
+    setShowFinalModal,
+    treatmentPlanOpen,
+    setTreatmentPlanOpen,
+    finalPlanOpen,
+    setFinalPlanOpen,
+    step,
+    display,
+    timelineItems,
+    planSubmitted,
+    handleVerify,
+    handleVerifyPayment,
+    handleFinalPlanSubmit,
+    isVerifyingArrival,
+    isReleasingFunds,
+    router,
+  } = useDentistBookingController();
 
   // ── Loading state ──
   if (isLoading) {
@@ -291,7 +103,7 @@ export default function BookingDetailPage() {
           <div>
             <button
               onClick={() => router.push("/dentist/bookings")}
-              className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 mb-4 transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 mb-4 transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -397,7 +209,7 @@ export default function BookingDetailPage() {
               <button
                 type="button"
                 onClick={() => setTreatmentPlanOpen((v) => !v)}
-                className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <span className="font-bold text-[#0F172A]">Estimate Treatment plan</span>
                 {treatmentPlanOpen ? (
@@ -459,7 +271,7 @@ export default function BookingDetailPage() {
                 <button
                   type="button"
                   onClick={() => setFinalPlanOpen((v) => !v)}
-                  className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3 flex-wrap">
                     <span className="font-bold text-[#0F172A]">Final treatment Plan</span>
@@ -574,11 +386,11 @@ export default function BookingDetailPage() {
                     <button
                       type="button"
                       onClick={handleVerify}
-                      disabled={arrivalCode.length !== 4 || verifyArrivalMutation.isPending}
-                      className="h-12 px-6 rounded-lg bg-[#0A2540] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#0d2f50] transition-colors"
+                      disabled={arrivalCode.length !== 4 || isVerifyingArrival}
+                      className="h-12 px-6 rounded-lg bg-[#0A2540] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#0d2f50] transition-colors cursor-pointer"
                     >
                       <ShieldCheck className="w-4 h-4" />
-                      {verifyArrivalMutation.isPending ? "Verifying…" : "Verify"}
+                      {isVerifyingArrival ? "Verifying…" : "Verify"}
                     </button>
                   </div>
                   {codeError && (
@@ -623,7 +435,7 @@ export default function BookingDetailPage() {
                     <button
                       type="button"
                       onClick={() => setShowFinalModal(true)}
-                      className="w-full max-w-sm h-12 bg-[#0A2540] hover:bg-[#0d2f50] text-white font-semibold rounded-lg text-sm transition-colors"
+                      className="w-full max-w-sm h-12 bg-[#0A2540] hover:bg-[#0d2f50] text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer"
                     >
                       Create Final Plan
                     </button>
@@ -680,11 +492,11 @@ export default function BookingDetailPage() {
                     <button
                       type="button"
                       onClick={handleVerifyPayment}
-                      disabled={paymentCode.length !== 4 || verifyPaymentMutation.isPending}
-                      className="h-12 px-6 rounded-lg bg-[#10B981] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#059669] transition-colors"
+                      disabled={paymentCode.length !== 4 || isReleasingFunds}
+                      className="h-12 px-6 rounded-lg bg-[#10B981] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#059669] transition-colors cursor-pointer"
                     >
                       <ShieldCheck className="w-4 h-4" />
-                      {verifyPaymentMutation.isPending ? "Verifying…" : "Release Funds"}
+                      {isReleasingFunds ? "Verifying…" : "Release Funds"}
                     </button>
                   </div>
                   {paymentCodeError && (

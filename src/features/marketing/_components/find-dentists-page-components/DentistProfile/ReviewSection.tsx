@@ -1,6 +1,8 @@
-import { Star, Loader2, MessageSquare } from "lucide-react";
+import { Star, MessageSquare } from "lucide-react";
 import { useDentistDirectoryReviews } from "@/hooks/dentist/useDentistDirectory";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 
 export default function ReviewSection({
   slug,
@@ -15,7 +17,7 @@ export default function ReviewSection({
   setIsReviewModalOpen?: (open: boolean) => void;
   onSeeAllReviews?: () => void;
 }) {
-  const { data: reviewsData, isLoading } = useDentistDirectoryReviews(slug);
+  const { data: reviewsData, isLoading, isError, refetch } = useDentistDirectoryReviews(slug);
 
   const reviewsList = reviewsData?.data?.reviews || [];
   const displayedReviews = onSeeAllReviews ? reviewsList.slice(0, 5) : reviewsList;
@@ -37,10 +39,53 @@ export default function ReviewSection({
         </h2>
       </div>
 
-      {isLoading ? (
-        <div className="py-12 flex justify-center items-center gap-2 text-slate-500">
-          <Loader2 className="animate-spin size-6 text-primary" />
-          <span>Loading reviews...</span>
+      {isError ? (
+        <ErrorState
+          title="Reviews Load Failed"
+          message="We were unable to load the reviews at this moment. Please try again."
+          onRetry={() => refetch()}
+        />
+      ) : isLoading ? (
+        <div className="space-y-8 animate-pulse">
+          {/* Summary Section Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8 border-b border-slate-200">
+            <div className="bg-slate-50 rounded-xl p-5 text-center flex flex-col justify-center items-center border border-slate-100">
+              <Skeleton className="h-12 w-16 rounded mb-2" />
+              <Skeleton className="h-4 w-24 rounded mb-2" />
+              <Skeleton className="h-4 w-28 rounded" />
+            </div>
+            <div className="md:col-span-2 space-y-4 flex flex-col justify-center">
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <div key={idx} className="flex justify-between items-center">
+                  <Skeleton className="h-4 w-28 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* List Section Skeleton */}
+          <div className="space-y-6 divide-y divide-slate-100">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="pt-6 first:pt-0 space-y-3">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-9 rounded-full" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-28 rounded" />
+                      <Skeleton className="h-3 w-16 rounded" />
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <Skeleton className="h-3.5 w-20 ml-auto rounded" />
+                    <Skeleton className="h-3 w-16 ml-auto rounded" />
+                  </div>
+                </div>
+                <Skeleton className="h-4 w-full rounded" />
+                <Skeleton className="h-4 w-[90%] rounded" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="space-y-8">

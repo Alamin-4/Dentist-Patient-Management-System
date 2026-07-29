@@ -1,10 +1,10 @@
-import IntakeModal from "@/features/marketing/_components/module/Booking-flow/Book";
-import StartBookingModal from "@/features/marketing/_components/module/Booking-flow/StartBooking";
-import CompareModal from "@/features/marketing/_components/module/CompareModal/CompareModal";
+import IntakeModal from "@/features/marketing/_components/Booking-flow/Book";
+import StartBookingModal from "@/features/marketing/_components/Booking-flow/StartBooking";
+import CompareModal from "@/features/marketing/_components/CompareModal/CompareModal";
 import PersonalizeComparisonModal from "@/features/marketing/_components/modal/personalize-comparison-modal";
 import RequestConsultationModal from "@/features/marketing/_components/modal/request-consultation-modal";
-import SignupModal from "@/features/marketing/_components/module/signup-modal/Signup-Modal";
-import SigninModal from "@/features/marketing/_components/module/signup-modal/SignIn";
+import SignupModal from "@/features/marketing/_components/signup-modal/Signup-Modal";
+import SigninModal from "@/features/marketing/_components/signup-modal/SignIn";
 import Footer from "@/features/marketing/_components/shared/footer/footer";
 import NavbarPublic from "@/features/marketing/_components/shared/navbar/Navbar";
 

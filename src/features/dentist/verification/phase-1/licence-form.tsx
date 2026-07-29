@@ -86,7 +86,6 @@ export default function LicenceForm({
         (c) => c.name.toLowerCase() === selectedCountry.toLowerCase()
       );
       if (countryObj) {
-        // FIX: Pass the ISO code (e.g., "US", "BD") instead of the full name
         const list = await getCities(countryObj.iso2);
         setCitiesList(list);
       } else {

@@ -1,4 +1,4 @@
-import FindDentist from "@/features/marketing/_components/module/find-dentists-page-components/Find-verified-dentist";
+import FindDentist from "@/features/marketing/_components/find-dentists-page-components/Find-verified-dentist";
 
 export default function FindDentistsPage() {
   return (

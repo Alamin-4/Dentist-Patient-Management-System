@@ -64,11 +64,31 @@ export function SpecialtyTable({
           </thead>
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
-              <tr>
-                <td colSpan={6} className="py-16 text-center text-sm text-gray-400">
-                  Loading specialties...
-                </td>
-              </tr>
+              Array.from({ length: 5 }).map((_, rowIdx) => (
+                <tr key={rowIdx} className="animate-pulse">
+                  <td className="px-4 py-3.5">
+                    <div className="h-4 w-4 rounded border border-gray-200 bg-slate-100" />
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="h-4 w-28 rounded bg-slate-200" />
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="h-5 w-20 rounded bg-slate-100" />
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="h-4 w-48 rounded bg-slate-100" />
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="h-4 w-16 rounded bg-slate-100" />
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="flex gap-2">
+                      <div className="h-7 w-7 rounded bg-slate-100" />
+                      <div className="h-7 w-7 rounded bg-slate-100" />
+                    </div>
+                  </td>
+                </tr>
+              ))
             ) : paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-16 text-center text-sm text-gray-400">

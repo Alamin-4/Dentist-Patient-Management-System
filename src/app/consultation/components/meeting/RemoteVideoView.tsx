@@ -29,9 +29,9 @@ export function RemoteVideoView({ track, name, avatar, isRemoteConnected = false
                     </div>
                     <div>
                         <h3 className="text-md font-semibold text-slate-200">{name}</h3>
-                        <p className="text-xs text-slate-400 mt-1 max-w-[240px]">
-                            {isCameraOff 
-                                ? "Camera is turned off" 
+                        <p className="text-xs text-slate-400 mt-1 max-w-60">
+                            {isCameraOff
+                                ? "Camera is turned off"
                                 : "Waiting for the other participant to join the room..."}
                         </p>
                     </div>

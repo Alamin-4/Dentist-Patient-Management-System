@@ -303,7 +303,7 @@ export default function FindDentist() {
   };
 
   return (
-    <div className="min-h-dvh text-slate-900">
+    <div className="min-h-fit ">
       <TopBar
         query={query}
         onQueryChange={setQuery}
@@ -324,8 +324,8 @@ export default function FindDentist() {
         availableLanguages={directoryResponse?.meta?.facets?.languages}
       />
 
-      <main className="pb-16">
-        <div className="flex gap-4">
+      <main className="">
+        <div className="flex gap-4 ">
           <AnimatePresence initial={false}>
             {(viewMode === "list" || (viewMode === "map" && showMapFilters)) && (
               <motion.aside
@@ -415,7 +415,6 @@ export default function FindDentist() {
                   />
                 )}
 
-                {/* Dentist cards / skeletons / empty state */}
                 <div className="grid gap-4">
                   {isDirLoading ? (
                     Array.from({ length: 6 }).map((_, i) => (

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useChangePassword } from "@/hooks/user/useUser";
 import toast from "react-hot-toast";
-import { Pencil } from "lucide-react";
+import { Eye, EyeOff, Pencil } from "lucide-react";
 
 interface FormValues {
   oldPassword: string;
@@ -66,12 +66,12 @@ export function ChangePasswordForm() {
             }
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
-              ? "text-red-500 hover:bg-red-50 border-red-200"
-              : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
+            ? "text-red-500 hover:bg-red-50 border-red-200"
+            : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
             }`}
         >
           <Pencil className="h-3.5 w-3.5" />
-          {isEditing ? "Cancel" : "Edit"}
+          {isEditing ? "Cancel" : "Edit Password"}
         </button>
       </div>
 
@@ -94,7 +94,11 @@ export function ChangePasswordForm() {
                 onClick={() => setShowOld((s) => !s)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0F3659] hover:text-[#0a2640] cursor-pointer"
               >
-                {showOld ? "Hide" : "Show"}
+                {showOld ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             )}
           </div>
@@ -124,7 +128,11 @@ export function ChangePasswordForm() {
                 onClick={() => setShowNew((s) => !s)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0F3659] hover:text-[#0a2640] cursor-pointer"
               >
-                {showNew ? "Hide" : "Show"}
+                {showNew ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             )}
           </div>
@@ -154,7 +162,11 @@ export function ChangePasswordForm() {
                 onClick={() => setShowConfirm((s) => !s)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0F3659] hover:text-[#0a2640] cursor-pointer"
               >
-                {showConfirm ? "Hide" : "Show"}
+                {showConfirm ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             )}
           </div>
@@ -166,16 +178,9 @@ export function ChangePasswordForm() {
         {isEditing && (
           <div className="flex items-center justify-end gap-3 pt-4">
             <button
-              type="button"
-              onClick={handleCancel}
-              className="rounded-md border border-slate-200 px-6 py-3 text-sm font-semibold text-[#475569] hover:bg-slate-50 cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
               type="submit"
               disabled={changePasswordMutation.isPending}
-              className="rounded-md bg-[#0F3659] px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#0a2640] cursor-pointer flex items-center justify-center min-w-[150px]"
+              className="rounded-md bg-[#0F3659] px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#0a2640] cursor-pointer flex items-center justify-center min-w-37.5"
             >
               {changePasswordMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

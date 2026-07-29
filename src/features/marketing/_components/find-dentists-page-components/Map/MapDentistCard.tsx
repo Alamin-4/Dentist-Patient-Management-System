@@ -100,7 +100,6 @@ export default function MapDentistCard({
   return (
     <div className="w-full">
       <div className="flex items-start gap-4">
-        {/* Left Side: Avatar & Score */}
         <div className="flex flex-col items-center gap-2 shrink-0">
           <div className="relative h-16 w-16 overflow-hidden rounded-full bg-slate-100 ring-2 ring-slate-50">
             <Image
@@ -108,6 +107,7 @@ export default function MapDentistCard({
               alt={dentist.name}
               fill
               className="object-cover"
+              unoptimized
             />
           </div>
           <div>
