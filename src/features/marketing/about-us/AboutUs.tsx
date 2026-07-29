@@ -24,6 +24,9 @@ import {
     ExternalLink
 } from "lucide-react";
 
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+
 export default function AboutUs() {
     const { user } = useMe();
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -68,47 +71,35 @@ export default function AboutUs() {
     return (
         <div className="bg-[#FAFBFD] min-h-dvh text-text">
             {/* ── HERO SECTION ── */}
-            <section className="relative overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32 bg-linear-to-br from-[#113254]/5 via-[#F1F6FB] to-white border-b border-[#E6EEF6]">
+            <section className="relative overflow-hidden pt-10 pb-16 md:pt-14 md:pb-20 bg-linear-to-br from-[#113254]/5 via-[#F1F6FB] to-white border-b border-[#E6EEF6] px-4 sm:px-6">
                 {/* Background Decorative Blobs */}
                 <div className="absolute top-[-10%] right-[-10%] w-160 h-160 rounded-full bg-[#EBF4FF]/60 blur-3xl -z-10" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-120 h-120 rounded-full bg-[#113254]/5 blur-3xl -z-10" />
 
-                <div className="max-w-400 w-11/12 mx-auto text-center relative">
+                <div className="max-w-400 w-full md:w-11/12 mx-auto text-center relative space-y-4">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
+                        className="flex justify-center"
                     >
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EBF4FF] text-[#113254] text-[12px] font-bold tracking-wide uppercase mb-6">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EBF4FF] text-primary text-[12px] font-bold tracking-wide uppercase">
                             <Award className="size-4 shrink-0" />
                             Bridging the Dental Trust Gap
                         </span>
                     </motion.div>
 
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-[36px] md:text-[52px] font-black text-[#113254] leading-[1.1] mb-6 tracking-tight max-w-4xl mx-auto"
-                    >
-                        Empowering Patients with Verified, Transparent Dental Care
-                    </motion.h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-[16px] md:text-[18px] text-sec-text leading-relaxed max-w-2xl mx-auto mb-10"
-                    >
-                        RatedDocs is an enterprise-grade dental/patient platform designed to connect international and local patients directly with independently audited, top-tier dental clinics.
-                    </motion.p>
+                    <div className="space-y-2 max-w-4xl mx-auto">
+                        <CustomSectionHeading value="Empowering Patients with Verified, Transparent Dental Care" center_align />
+                        <CustomDesText value="RatedDocs is an enterprise-grade dental platform designed to connect international and local patients directly with independently audited, top-tier dental clinics." center_align />
+                    </div>
                 </div>
             </section>
 
             {/* ── STATS SECTION ── */}
-            <section className="relative -mt-10 z-10">
-                <div className="max-w-400 w-11/12 mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <section className="relative -mt-6 sm:-mt-8 z-10 px-4 sm:px-6 md:px-12">
+                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                         {[
                             {
                                 title: "3-Phase Verification",
@@ -128,16 +119,16 @@ export default function AboutUs() {
                         ].map((stat, idx) => (
                             <motion.div
                                 key={idx}
-                                initial={{ opacity: 0, y: 40 }}
+                                initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: 0.3 + idx * 0.1 }}
-                                className="bg-white rounded-2xl border border-stroke p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(17,50,84,0.06)] hover:-translate-y-1 transition-all duration-300"
+                                transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
+                                className="bg-white rounded-xl sm:rounded-2xl border border-stroke p-5 sm:p-6 shadow-xs hover:shadow-md transition-all duration-300"
                             >
-                                <div className="size-12 rounded-xl bg-[#EBF4FF] flex items-center justify-center mb-6 text-[#113254]">
-                                    <stat.icon className="size-6" />
+                                <div className="size-10 sm:size-12 rounded-xl bg-[#EBF4FF] flex items-center justify-center mb-4 text-primary">
+                                    <stat.icon className="size-5 sm:size-6" />
                                 </div>
-                                <h3 className="text-[18px] font-bold text-[#113254] mb-2">{stat.title}</h3>
-                                <p className="text-[14px] text-sec-text leading-relaxed">{stat.desc}</p>
+                                <h3 className="text-base sm:text-lg font-bold text-primary mb-1.5">{stat.title}</h3>
+                                <p className="text-xs sm:text-sm text-sec-text leading-relaxed">{stat.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -145,29 +136,25 @@ export default function AboutUs() {
             </section>
 
             {/* ── MISSION & VISION ── */}
-            <section className="py-20 ">
-                <div className="max-w-400 w-11/12 mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-12">
+                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="lg:col-span-6 space-y-6"
+                            className="lg:col-span-6 space-y-4"
                         >
-                            <h2 className="text-[28px] md:text-[36px] font-black text-[#113254] leading-tight">
-                                Our Mission: Transforming the Global Dental Experience
-                            </h2>
-                            <p className="text-[15px] text-[#4B5563] leading-relaxed">
-                                Finding the right dentist can be daunting, especially when crossing borders for treatments like implants, veneers, or full mouth reconstruction. Information is often fragmented, prices are opaque, and qualifications are hard to verify.
-                            </p>
-                            <p className="text-[15px] text-[#4B5563] leading-relaxed">
+                            <CustomSectionHeading value="Our Mission: Transforming Global Dental Care" />
+                            <CustomDesText value="Finding the right dentist can be daunting, especially when crossing borders for treatments like implants, veneers, or full mouth reconstruction." />
+                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                 RatedDocs was created to eliminate this uncertainty. We provide patients with a single, verified ecosystem to discover top-rated dental professionals, get real-time price comparisons, and build custom, binding treatment plans with doctors.
                             </p>
                             <div className="pt-2">
                                 <Link
                                     href="/find-dentists"
-                                    className="inline-flex items-center gap-2 rounded-lg bg-[#113254] px-6 py-3.5 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95 shadow-sm"
+                                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-xs sm:text-sm font-bold text-white transition-all hover:bg-primary/95 active:scale-95 shadow-xs"
                                 >
                                     Explore Verified Dentists
                                 </Link>
@@ -181,12 +168,12 @@ export default function AboutUs() {
                             transition={{ duration: 0.6 }}
                             className="lg:col-span-6 relative"
                         >
-                            <div className="bg-linear-to-tr from-[#113254] to-[#0F3659] rounded-3xl p-8 md:p-10 text-white shadow-2xl overflow-hidden relative">
+                            <div className="bg-linear-to-tr from-primary to-[#0F3659] rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-xl overflow-hidden relative">
                                 {/* Decorative overlay pattern */}
                                 <div className="absolute right-0 bottom-0 w-48 h-48 bg-white/5 rounded-full blur-2xl" />
 
-                                <h3 className="text-[22px] font-bold mb-4">Why RatedDocs is Different</h3>
-                                <div className="space-y-6">
+                                <h3 className="text-lg sm:text-xl font-bold mb-4">Why RatedDocs is Different</h3>
+                                <div className="space-y-4 sm:space-y-5">
                                     {[
                                         {
                                             label: "Verified Identity & Licensing",
@@ -194,20 +181,20 @@ export default function AboutUs() {
                                         },
                                         {
                                             label: "Clinical Rigor & Materials Proof",
-                                            detail: "Dentists share operational logs, guarantees, and CE certificates to verify the materials used (Zirconia, Titanium) are premium and safe.",
+                                            detail: "Dentists share operational logs, guarantees, and CE certificates to verify the materials used are premium and safe.",
                                         },
                                         {
                                             label: "Platform Integrity Guarantee",
-                                            detail: "Consultations and treatment bookings are managed securely, with escrow features and arrival-code verifications protecting patients.",
+                                            detail: "Consultations and treatment bookings are managed securely, protecting patients.",
                                         },
                                     ].map((item, idx) => (
-                                        <div key={idx} className="flex gap-4">
-                                            <div className="size-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-white font-bold text-[12px] mt-0.5">
+                                        <div key={idx} className="flex gap-3 sm:gap-4">
+                                            <div className="size-5 sm:size-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-white font-bold text-xs mt-0.5">
                                                 {idx + 1}
                                             </div>
                                             <div>
-                                                <p className="font-semibold text-[15px]">{item.label}</p>
-                                                <p className="text-[13px] text-white/80 mt-1 leading-relaxed">{item.detail}</p>
+                                                <p className="font-semibold text-xs sm:text-sm">{item.label}</p>
+                                                <p className="text-xs text-white/80 mt-0.5 leading-relaxed">{item.detail}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -219,29 +206,25 @@ export default function AboutUs() {
             </section>
 
             {/* ── THE RDV VERIFICATION SYSTEM ── */}
-            <section className="py-20 md:py-24 bg-white border-y border-[#EEF2F6]">
-                <div className="max-w-400 w-11/12 mx-auto">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-[28px] md:text-[36px] font-black text-[#113254]">
-                            The RatedDocs Verified Score
-                        </h2>
-                        <p className="text-[14px] md:text-[15px] text-sec-text mt-3 leading-relaxed">
-                            We don&apos;t rely on unverified online reviews. Instead, our proprietary verification system calculates an RDV score (out of 100) based on three independent clinical audits.
-                        </p>
+            <section className="py-8 sm:py-12 md:py-16 bg-white border-y border-[#EEF2F6] px-4 sm:px-6 md:px-12">
+                <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10">
+                    <div className="text-center max-w-2xl mx-auto space-y-1.5">
+                        <CustomSectionHeading value="The RatedDocs Verified Score" center_align />
+                        <CustomDesText value="We don't rely on unverified online reviews. Our proprietary verification system calculates an RDV score (out of 100) based on three independent clinical audits." center_align />
                     </div>
 
                     <motion.div
                         variants={containerVariants}
                         initial="hidden"
                         whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                        viewport={{ once: true, margin: "-50px" }}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6"
                     >
                         {[
                             {
                                 phase: "Phase 1",
                                 title: "License Verification",
-                                desc: "Rigorous verification of the dentist&apos;s registration authority, registration number, and board-certified dental license credentials.",
+                                desc: "Rigorous verification of the dentist's registration authority, registration number, and board-certified dental license credentials.",
                                 icon: FileCheck,
                             },
                             {
@@ -260,20 +243,19 @@ export default function AboutUs() {
                             <motion.div
                                 key={idx}
                                 variants={itemVariants}
-                                className="bg-[#FAFBFD] rounded-2xl border border-stroke p-6 md:p-8 flex flex-col justify-between"
+                                className="bg-[#FAFBFD] rounded-xl sm:rounded-2xl border border-stroke p-5 sm:p-6 flex flex-col justify-between"
                             >
                                 <div>
-                                    <div className="flex items-center justify-between gap-4 mb-6">
-                                        <span className="text-[12px] font-bold text-[#113254]/60 uppercase tracking-widest">
+                                    <div className="flex items-center justify-between gap-4 mb-4">
+                                        <span className="text-[11px] font-bold text-primary/70 uppercase tracking-widest">
                                             {step.phase}
                                         </span>
-
                                     </div>
-                                    <div className="size-12 rounded-xl bg-white border border-[#E6EEF6] flex items-center justify-center mb-6 text-[#113254] shadow-sm">
-                                        <step.icon className="size-6" />
+                                    <div className="size-10 sm:size-12 rounded-xl bg-white border border-[#E6EEF6] flex items-center justify-center mb-4 text-primary shadow-xs">
+                                        <step.icon className="size-5 sm:size-6" />
                                     </div>
-                                    <h3 className="text-[18px] font-bold text-[#113254] mb-3">{step.title}</h3>
-                                    <p className="text-[13px] text-sec-text leading-relaxed">{step.desc}</p>
+                                    <h3 className="text-base sm:text-lg font-bold text-primary mb-2">{step.title}</h3>
+                                    <p className="text-xs sm:text-sm text-sec-text leading-relaxed">{step.desc}</p>
                                 </div>
                             </motion.div>
                         ))}
@@ -282,27 +264,23 @@ export default function AboutUs() {
             </section>
 
             {/* ── CORE VALUES ── */}
-            <section className="py-20 ">
-                <div className="max-w-400 w-11/12 mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-12">
+                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="lg:col-span-5 space-y-4"
+                            className="lg:col-span-5 space-y-2"
                         >
-                            <span className="text-[12px] font-bold text-[#113254] uppercase tracking-wider">
+                            <span className="text-[11px] font-bold text-primary uppercase tracking-wider">
                                 What Guides Us
                             </span>
-                            <h2 className="text-[28px] md:text-[36px] font-black text-[#113254] leading-tight">
-                                Our Core Pillars of Practice
-                            </h2>
-                            <p className="text-[15px] text-sec-text leading-relaxed">
-                                At RatedDocs, we believe healthcare is built on honesty. These core pillars guide how we construct our platform, validate clinics, and support patients globally.
-                            </p>
+                            <CustomSectionHeading value="Our Core Pillars of Practice" />
+                            <CustomDesText value="At RatedDocs, we believe healthcare is built on honesty. These core pillars guide how we construct our platform, validate clinics, and support patients globally." />
                         </motion.div>
 
-                        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             {[
                                 {
                                     title: "Radical Transparency",
@@ -325,12 +303,12 @@ export default function AboutUs() {
                                     icon: FileCheck
                                 }
                             ].map((val, idx) => (
-                                <div key={idx} className="bg-white rounded-xl border border-stroke p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
-                                    <div className="size-10 rounded-lg bg-[#F1F6FB] flex items-center justify-center mb-4 text-[#113254]">
-                                        <val.icon className="size-5" />
+                                <div key={idx} className="bg-white rounded-xl border border-stroke p-4 sm:p-5 shadow-xs">
+                                    <div className="size-9 rounded-lg bg-[#F1F6FB] flex items-center justify-center mb-3 text-primary">
+                                        <val.icon className="size-4.5" />
                                     </div>
-                                    <h4 className="font-bold text-[15px] text-[#113254] mb-1">{val.title}</h4>
-                                    <p className="text-[12px] text-sec-text leading-relaxed">{val.desc}</p>
+                                    <h4 className="font-bold text-sm sm:text-base text-primary mb-1">{val.title}</h4>
+                                    <p className="text-xs text-sec-text leading-relaxed">{val.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -338,28 +316,30 @@ export default function AboutUs() {
                 </div>
             </section>
 
-            <section className="pb-24">
-                <div className="max-w-400 w-11/12 mx-auto">
+            <section className="pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-12">
+                <div className="max-w-400 w-full md:w-11/12 mx-auto">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.98 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="rounded-3xl bg-[#113254] bg-linear-to-br from-[#113254] via-[#0F3659] to-[#0A223C] p-8 md:p-16 text-center text-white shadow-2xl relative overflow-hidden"
+                        className="rounded-2xl sm:rounded-3xl bg-primary p-6 sm:p-10 md:p-14 text-center text-white shadow-xl relative overflow-hidden space-y-4"
                     >
                         <div className="absolute -top-24 -left-24 size-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
                         <div className="absolute -bottom-24 -right-24 size-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
 
-                        <h2 className="text-[28px] md:text-[42px] font-black leading-tight max-w-2xl mx-auto mb-4">
-                            Ready to schedule your verified consultation?
-                        </h2>
-                        <p className="text-[14px] md:text-[16px] text-white/80 max-w-xl mx-auto mb-10 leading-relaxed">
-                            Find verified dentists, compare qualifications and RDV scores, and securely book a direct video consultation today.
-                        </p>
+                        <div className="space-y-2 max-w-2xl mx-auto">
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight">
+                                Ready to schedule your verified consultation?
+                            </h2>
+                            <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+                                Find verified dentists, compare qualifications and RDV scores, and securely book a direct video consultation today.
+                            </p>
+                        </div>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                             <Link
                                 href="/find-dentists"
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 text-[14px] font-bold text-[#113254] transition-all hover:bg-slate-100 active:scale-95 shadow-md"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-xs sm:text-sm font-bold text-primary transition-all hover:bg-slate-100 active:scale-95 shadow-xs"
                             >
                                 Find a Verified Dentist
                             </Link>
@@ -368,7 +348,7 @@ export default function AboutUs() {
                                 <Link
                                     href="/register-doctor?role=dentist"
                                     onClick={handleJoinAsDentistClick}
-                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-[14px] font-bold text-white transition-all hover:bg-white/10 active:scale-95"
+                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3 text-xs sm:text-sm font-bold text-white transition-all hover:bg-white/10 active:scale-95"
                                 >
                                     Are you a Dentist? Join RatedDocs
                                     <ExternalLink className="size-4" />
