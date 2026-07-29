@@ -32,7 +32,7 @@ export default function SettingsRedirectPage() {
   return (
     <div className="flex min-h-dvh w-full items-center justify-center bg-[#F9FAFB]">
       <div className="flex flex-col items-center gap-4 p-8 rounded-2xl bg-white border border-gray-100 shadow-sm">
-        <Loader2 className="h-8 w-8 animate-spin text-[#10436B]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <div className="text-center">
           <p className="text-sm font-semibold text-text">Loading settings</p>
           <p className="text-xs text-gray-400 mt-1">Please wait while we redirect you...</p>

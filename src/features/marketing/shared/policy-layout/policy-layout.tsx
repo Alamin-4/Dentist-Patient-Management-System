@@ -5,6 +5,8 @@ import { List, Calendar, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SearchableDropdown from "@/components/ui/SearchableDropdown";
 
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+
 interface PolicyLayoutProps {
   title: string;
   content: string;
@@ -71,14 +73,14 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
   const isHtml = /<[a-z][\s\S]*>/i.test(content);
 
   return (
-    <div className="bg-slate-50 min-h-dvh py-16 px-6 md:px-12">
-      <div className="max-w-400 w-11/12 mx-auto">
-        <div className="flex flex-col xl:flex-row gap-12 items-start">
+    <div className="bg-slate-50 min-h-dvh py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12">
+      <div className="max-w-400 w-full md:w-11/12 mx-auto">
+        <div className="flex flex-col xl:flex-row gap-6 sm:gap-10 xl:gap-12 items-start">
           {/* Mobile Section Selector */}
           {outline.length > 0 && (
-            <div className="w-full xl:hidden mb-4 bg-white border border-border rounded-2xl p-4">
+            <div className="w-full xl:hidden mb-2 bg-white border border-border rounded-xl p-3.5 sm:p-4">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 items-center gap-2">
-                <List className="h-4 w-4 text-[#10436B]" />
+                <List className="h-4 w-4 text-primary" />
                 Jump to Section
               </label>
               <SearchableDropdown
@@ -88,7 +90,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
                 placeholder="Select a section..."
                 allowClear={false}
                 showSearch={false}
-                triggerClassName="bg-slate-50 font-bold border-border h-11 text-slate-800 focus:ring-[#10436B]/10 focus:border-[#10436B]"
+                triggerClassName="bg-slate-50 font-bold border-border h-10 text-slate-800 focus:ring-primary/10 focus:border-primary"
               />
             </div>
           )}
@@ -96,7 +98,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
           {/* Left: Outline Navigator (Desktop) */}
           <div className="hidden xl:block w-full xl:w-64 shrink-0 rounded-2xl border border-border bg-white p-6 sticky top-28 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-              <List className="h-4 w-4 text-[#10436B]" />
+              <List className="h-4 w-4 text-primary" />
               Table of Contents
             </h4>
 
@@ -109,7 +111,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
                     key={idx}
                     onClick={() => handleScrollTo(item.id)}
                     className={cn(
-                      "text-xs font-medium text-slate-500 hover:text-[#10436B] transition-colors cursor-pointer border-l-2 pl-2 hover:border-[#10436B]/60",
+                      "text-xs font-medium text-slate-500 hover:text-primary transition-colors cursor-pointer border-l-2 pl-2 hover:border-primary/60",
                       item.level === 2 ? "font-semibold border-slate-200" : "pl-4 border-transparent text-[11px]"
                     )}
                   >
@@ -121,18 +123,16 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
           </div>
 
           {/* Right: Policy Document Paper Container */}
-          <div className="flex-1 w-full bg-white border border-border rounded-3xl p-6 md:p-12 space-y-8">
+          <div className="flex-1 w-full bg-white border border-border rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-12 space-y-6 sm:space-y-8">
             {/* Header branding */}
-            <div className="border-b border-slate-100 pb-6 space-y-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-[#10436B] text-xs font-bold rounded-full border border-border/60">
+            <div className="border-b border-slate-100 pb-5 sm:pb-6 space-y-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-primary text-xs font-bold rounded-full border border-border/60">
                 <Shield className="h-3.5 w-3.5" />
                 Legal Agreements
               </span>
-              <h1 className="text-3xl md:text-4xl font-black text-text tracking-tight">
-                {title}
-              </h1>
+              <CustomSectionHeading value={title} />
 
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
                 <Calendar className="h-4 w-4" />
                 <span>Last Updated: {lastUpdated}</span>
               </div>
@@ -168,7 +168,7 @@ export function PolicyLayout({ title, content, lastUpdated = "July 23, 2026" }: 
                       <h3
                         key={idx}
                         id={id}
-                        className="text-lg font-bold text-[#10436B] mt-6 mb-3 scroll-mt-28"
+                        className="text-lg font-bold text-primary mt-6 mb-3 scroll-mt-28"
                       >
                         {text}
                       </h3>

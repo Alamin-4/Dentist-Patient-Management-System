@@ -12,6 +12,9 @@ import { ProfileSuccessState } from "./ProfileSuccessRate";
 import { useMe } from "@/hooks/auth/useAuth";
 import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+
 export default function RegisterPageComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -91,11 +94,11 @@ export default function RegisterPageComponent() {
       </section>
 
       {/* Right Form Section */}
-      <section className="flex flex-col items-center justify-center w-full min-h-dvh px-4 py-6 md:px-6 md:py-8 lg:w-2/5 mx-auto">
+      <section className="flex flex-col items-center justify-center w-full min-h-dvh px-4 py-4 md:px-6 md:py-6 lg:w-2/5 mx-auto">
         <div className={`w-full ${getFormMaxWidth()} transition-all duration-300 mx-auto`}>
           {/* Top Back Button & Title */}
           {step !== "success" && (
-            <div className="flex flex-col items-start gap-3 md:gap-4 mb-6 w-full">
+            <div className="flex flex-col items-start gap-3 md:gap-4 mb-5 w-full">
               <button
                 type="button"
                 onClick={() => {
@@ -114,15 +117,11 @@ export default function RegisterPageComponent() {
               </button>
 
               {step === "create-account" && (
-                <h2 className="text-xl md:text-2xl font-semibold text-text">
-                  Create an Account
-                </h2>
+                <CustomSectionHeading value="Create an Account" />
               )}
 
               {step === "professional-info" && (
-                <h2 className="text-xl md:text-2xl font-semibold text-text">
-                  Enter your Professional Details
-                </h2>
+                <CustomSectionHeading value="Enter your Professional Details" />
               )}
             </div>
           )}
@@ -130,14 +129,9 @@ export default function RegisterPageComponent() {
           {/* Form Content */}
           <div className="w-full">
             {step === "verify-email" && (
-              <div className="space-y-4 mb-6 text-center w-full">
-                <h2 className="text-xl md:text-2xl font-semibold text-text">
-                  Check your inbox!
-                </h2>
-                <p className="text-sec-text text-xs md:text-sm leading-relaxed">
-                  We've sent you a temporary 6-digit verification code to
-                  <span className="font-medium text-text"> {registerEmail}</span>.
-                </p>
+              <div className="space-y-2 mb-5 text-center w-full">
+                <CustomSectionHeading value="Check your inbox!" center_align={true} />
+                <CustomDesText value={`We've sent you a temporary 6-digit verification code to ${registerEmail || ""}.`} center_align={true} />
               </div>
             )}
 

@@ -46,7 +46,7 @@ export default function TestimonialCard({
 
       {/* Identity */}
       <div>
-        <h4 className="font-bold text-[#10436B] text-lg">{name}</h4>
+        <h4 className="font-bold text-primary text-lg">{name}</h4>
         <p className="text-gray-400 text-xs mt-1 uppercase tracking-wider">
           {treatment}
         </p>

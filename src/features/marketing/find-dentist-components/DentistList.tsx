@@ -53,7 +53,7 @@ export default function DentistList({
     }
 
     return (
-        <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6", mapView ? "xl:grid-cols-1" : "xl:grid-cols-2")}>
+        <div className={cn("grid grid-cols-1 gap-4 md:gap-6")}>
             {dentists.map((dentist) => (
                 <DentistCard
                     key={dentist.id}

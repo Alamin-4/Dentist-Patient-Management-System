@@ -102,7 +102,7 @@ function SearchInputContent({
                 onChange={(e) => setLocalValue(e.target.value)}
                 className={cn(
                     "w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-4 pr-20 text-sm outline-none transition-all duration-200",
-                    "focus:bg-white focus:border-[#10436B] focus:ring-4 focus:ring-[#10436B]/10 focus:shadow-sm",
+                    "focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 focus:shadow-sm",
                     variant === "desktop" ? "py-2.5" : "py-2.5",
                 )}
             />
@@ -119,7 +119,7 @@ function SearchInputContent({
                 )}
                 <button
                     type="submit"
-                    className="p-1.5 rounded-lg bg-[#10436B] hover:bg-[#0D3658] text-white transition-all shadow-sm active:scale-95 flex items-center justify-center cursor-pointer"
+                    className="p-1.5 rounded-lg bg-primary hover:bg-[#0D3658] text-white transition-all shadow-sm active:scale-95 flex items-center justify-center cursor-pointer"
                     aria-label="Search"
                 >
                     <Search size={15} />

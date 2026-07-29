@@ -4,6 +4,9 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+
 export function ProfileSuccessState() {
   const email = typeof window !== "undefined" ? localStorage.getItem("registerEmail") : null;
   const router = useRouter();
@@ -15,18 +18,14 @@ export function ProfileSuccessState() {
       </div>
 
       {/* Heading */}
-      <h2 className="text-xl md:text-2xl font-semibold text-text leading-tight mb-3">
-        Confirm your email
-      </h2>
+      <div className="mb-3">
+        <CustomSectionHeading value="Confirm your email" center_align={true} />
+      </div>
 
       {/* Description */}
-      <p className="text-sec-text text-xs md:text-sm leading-relaxed mb-8 max-w-sm">
-        We've sent a confirmation link to{" "}
-        <span className="font-medium text-text">
-          {email}
-        </span>
-        .
-      </p>
+      <div className="mb-8 max-w-sm">
+        <CustomDesText value={`We've sent a confirmation link to ${email || ""}.`} center_align={true} />
+      </div>
 
       {/* Action Button */}
       <Button

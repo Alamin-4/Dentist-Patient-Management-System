@@ -270,7 +270,7 @@ export default function AddPricing() {
         {/* Form Card */}
         <div className="rounded-lg border border-border bg-card shadow-sm">
           {/* ─── Sterilization ─── */}
-          <div className="grid grid-cols-1 gap-8 p-8 lg:grid-cols-12">
+          <div className="grid grid-cols-1 gap-6 p-4 sm:p-6 lg:p-8 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <h2 className="text-base font-semibold text-foreground">
                 Sterilization
@@ -328,7 +328,7 @@ export default function AddPricing() {
           <hr className="border-border" />
 
           {/* ─── Procedure Pricing ─── */}
-          <div className="grid grid-cols-1 gap-8 p-8 lg:grid-cols-12">
+          <div className="grid grid-cols-1 gap-6 p-4 sm:p-6 lg:p-8 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <h2 className="text-base font-semibold text-foreground">
                 Procedure pricing
@@ -337,7 +337,7 @@ export default function AddPricing() {
 
             <div className="space-y-3 lg:col-span-8">
               {/* Column headers */}
-              <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-3">
                 <div className="grid flex-1 grid-cols-12 gap-3">
                   <span className="col-span-5 text-xs font-medium text-muted-foreground">
                     Name
@@ -354,10 +354,11 @@ export default function AddPricing() {
 
               {/* Rows */}
               {fields.map((field, index) => (
-                <div key={field.id} className="flex items-center gap-3">
-                  <div className="grid flex-1 grid-cols-12 gap-3">
+                <div key={field.id} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-0 rounded-lg border sm:border-0 border-slate-100 bg-slate-50/50 sm:bg-transparent">
+                  <div className="grid flex-1 grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3">
                     {/* Name */}
-                    <div className="col-span-5">
+                    <div className="sm:col-span-5">
+                      <label className="text-[11px] font-medium text-muted-foreground sm:hidden">Procedure Name</label>
                       <input
                         type="text"
                         placeholder="Procedure name"
@@ -372,7 +373,8 @@ export default function AddPricing() {
                     </div>
 
                     {/* Pricing */}
-                    <div className="col-span-3">
+                    <div className="sm:col-span-3">
+                      <label className="text-[11px] font-medium text-muted-foreground sm:hidden">Price ($)</label>
                       <div className="relative flex items-center">
                         <span className="absolute left-3 text-sm text-muted-foreground">
                           $
@@ -394,7 +396,8 @@ export default function AddPricing() {
                     </div>
 
                     {/* Option Notes */}
-                    <div className="col-span-4">
+                    <div className="sm:col-span-4">
+                      <label className="text-[11px] font-medium text-muted-foreground sm:hidden">Option Notes</label>
                       <input
                         type="text"
                         placeholder="Optional note"
@@ -408,7 +411,7 @@ export default function AddPricing() {
                   <button
                     type="button"
                     onClick={() => remove(index)}
-                    className="shrink-0 text-red-400 transition-colors hover:text-red-500"
+                    className="self-end sm:self-center shrink-0 text-red-400 transition-colors hover:text-red-500 cursor-pointer pt-1 sm:pt-0"
                     aria-label="Remove procedure"
                   >
                     <XCircle className="h-5 w-5" />
@@ -440,7 +443,7 @@ export default function AddPricing() {
           <hr className="border-border" />
 
           {/* ─── No Surprise Guarantee ─── */}
-          <div className="grid grid-cols-1 gap-8 p-8 lg:grid-cols-12">
+          <div className="grid grid-cols-1 gap-6 p-4 sm:p-6 lg:p-8 lg:grid-cols-12">
             <div className="space-y-3 lg:col-span-4">
               <h2 className="text-base font-semibold text-foreground">
                 No Surprise Guarantee
@@ -510,8 +513,8 @@ export default function AddPricing() {
         </div>
 
         {/* ─── Sticky Save Bar ─── */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card px-6 py-4">
-          <div className="flex flex-col items-end gap-2">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card px-4 py-3 sm:px-6 sm:py-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-lg">
+          <div className="flex flex-col items-end gap-2 max-w-7xl mx-auto">
             {stepTwoMutation.error && (
               <p className="text-sm font-semibold text-red-500 animate-in fade-in slide-in-from-bottom-1">
                 {mapApiErrorToUserMessage(stepTwoMutation.error, "Failed to save pricing protocols. Please try again.")}
@@ -521,7 +524,7 @@ export default function AddPricing() {
               <button
                 type="submit"
                 disabled={isSubmitting || !methods.formState.isValid || Object.keys(methods.formState.errors).length > 0}
-                className="h-11 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer disabled:opacity-50 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed disabled:pointer-events-none"
+                className="h-10 sm:h-11 rounded-lg bg-primary px-6 sm:px-8 text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer disabled:opacity-50 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed disabled:pointer-events-none"
               >
                 {isSubmitting ? "Saving..." : "Save"}
               </button>

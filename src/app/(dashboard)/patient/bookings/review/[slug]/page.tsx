@@ -287,21 +287,21 @@ export default function ReviewPlanPage() {
               <div className="relative flex items-start gap-4">
                 <div className="absolute -left-5.75 top-1.5 size-3.5 rounded-full bg-primary border-4 border-white shrink-0 z-10" />
                 <p className="text-sec-text text-sm font-semibold leading-relaxed">
-                  You selected : <span className="text-black font-bold">{travelRange}</span>
+                  You selected : <span className="text-text font-bold">{travelRange}</span>
                 </p>
               </div>
               {/* Bullet 2 */}
               <div className="relative flex items-start gap-4">
                 <div className="absolute -left-5.75 top-1.5 size-3.5 rounded-full bg-primary border-4 border-white shrink-0 z-10" />
                 <p className="text-sec-text text-sm font-semibold leading-relaxed">
-                  Treatment takes : <span className="text-black font-bold">4–5 days once you arrive</span>
+                  Treatment takes : <span className="text-text font-bold">4–5 days once you arrive</span>
                 </p>
               </div>
               {/* Bullet 3 */}
               <div className="relative flex items-start gap-4">
                 <div className="absolute -left-5.75 top-1.5 size-3.5 rounded-full bg-primary border-4 border-white shrink-0 z-10" />
                 <p className="text-sec-text text-sm font-semibold leading-relaxed">
-                  Appointment Date : <span className="text-black font-bold">{scheduledDate}</span>
+                  Appointment Date : <span className="text-text font-bold">{scheduledDate}</span>
                 </p>
               </div>
             </div>

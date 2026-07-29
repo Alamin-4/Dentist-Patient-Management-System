@@ -136,7 +136,7 @@ export default function SettingPage() {
                       className={cn(
                         "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-all cursor-pointer",
                         isSelected
-                          ? "bg-[#10436B]/10 text-[#10436B] font-bold"
+                          ? "bg-primary/10 text-primary font-bold"
                           : "text-slate-700 hover:bg-slate-50"
                       )}
                     >
@@ -144,19 +144,19 @@ export default function SettingPage() {
                         <span
                           className={cn(
                             "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
-                            isSelected ? "bg-[#10436B] text-white" : "bg-slate-100 text-[#10436B]"
+                            isSelected ? "bg-primary text-white" : "bg-slate-100 text-primary"
                           )}
                         >
                           {item.icon}
                         </span>
                         <div className="min-w-0">
-                          <p className={cn("text-xs truncate", isSelected ? "font-black text-[#10436B]" : "font-bold text-text")}>
+                          <p className={cn("text-xs truncate", isSelected ? "font-black text-primary" : "font-bold text-text")}>
                             {item.label}
                           </p>
                           <p className="text-[11px] truncate text-slate-400">{item.sub}</p>
                         </div>
                       </div>
-                      {isSelected && <Check className="h-4 w-4 text-[#10436B] shrink-0 ml-2" />}
+                      {isSelected && <Check className="h-4 w-4 text-primary shrink-0 ml-2" />}
                     </button>
                   );
                 })}
@@ -184,7 +184,7 @@ export default function SettingPage() {
                 <span
                   className={cn(
                     "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
-                    active === item.id ? "bg-white/10 text-white" : "bg-slate-100 text-[#10436B]"
+                    active === item.id ? "bg-white/10 text-white" : "bg-slate-100 text-primary"
                   )}
                 >
                   {item.icon}

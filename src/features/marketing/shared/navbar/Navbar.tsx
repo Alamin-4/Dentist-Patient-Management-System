@@ -69,8 +69,8 @@ export default function NavbarPublic() {
               className={cn(
                 "group flex gap-1 text-[15px] font-medium transition-colors",
                 pathname === item.href
-                  ? "text-[#10436B] border-b-2 border-[#10436B] pb-1"
-                  : "text-gray-600 hover:text-[#10436B]",
+                  ? "text-primary border-b-2 border-primary pb-1"
+                  : "text-gray-600 hover:text-primary",
               )}
             >
               {item.label}

@@ -113,13 +113,12 @@ export default function StepButton() {
   const isDisabled = isSubmitting || (!isAlreadySubmitted && !isStepReady);
 
   return (
-    <div className="flex w-full justify-end px-4 sm:px-6 lg:px-8">
+    <div className="flex w-full justify-end">
       <Button
         {...buttonProps}
-        // onClick={handleClick}
         size="lg"
         disabled={isDisabled}
-        className="h-12 rounded-lg px-10 font-semibold bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
+        className="w-full sm:w-auto h-10 sm:h-12 rounded-lg px-6 sm:px-10 text-sm font-semibold bg-primary text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
       >
         {isSubmitting ? (
           <>

@@ -81,7 +81,7 @@ export function PoliciesEditor() {
             className={cn(
               "px-4 py-2 text-xs font-bold rounded-lg transition-all whitespace-nowrap cursor-pointer",
               activeTab === tab
-                ? "bg-[#10436B] text-white"
+                ? "bg-primary text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             )}
           >

@@ -105,9 +105,9 @@ export default function VerificationLayout({
         </div>
       </header>
 
-      <main className="flex-1 py-10">
-        <div >
-          <div className="rounded-lg border border-gray-100 bg-white shadow-sm p-6">
+      <main className="flex-1 py-4 sm:py-8">
+        <div>
+          <div className="rounded-xl border border-gray-100 bg-white shadow-xs p-4 sm:p-6">
             {isProgressLoading ? (
               <div className="flex min-h-80 items-center justify-center">
                 <Loader2 className="h-7 w-7 animate-spin text-primary" />
@@ -119,7 +119,7 @@ export default function VerificationLayout({
         </div>
       </main>
 
-      <footer className="sticky bottom-0 border-t bg-white py-4 z-40 -mx-6 -mb-6 px-6 mt-12">
+      <footer className="sticky bottom-0 z-40 border-t border-gray-200 bg-white p-3.5 sm:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] -mx-4 sm:-mx-6 -mb-4 sm:-mb-6 shadow-md mt-6">
         <StepButton />
       </footer>
     </div>

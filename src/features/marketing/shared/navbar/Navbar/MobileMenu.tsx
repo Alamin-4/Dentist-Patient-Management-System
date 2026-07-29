@@ -73,7 +73,7 @@ export default function MobileMenu({
                 className="w-75 sm:w-87.5 p-6 bg-white flex flex-col gap-6 overflow-y-auto border-l border-gray-100 shadow-xl"
             >
                 <SheetHeader ref={headerRef} tabIndex={-1} className="p-0 border-b border-gray-100 pb-4 outline-none" >
-                    <SheetTitle className="text-left font-semibold text-lg text-[#10436B] flex items-center gap-2">
+                    <SheetTitle className="text-left font-semibold text-lg text-primary flex items-center gap-2">
                         <Link href={"/"} onClick={onNavClick("/")}>
                             <Image
                                 src="/logos/mainlogo.png"
@@ -101,9 +101,9 @@ export default function MobileMenu({
                             href={item.href}
                             onClick={handleClose}
                             className={cn(
-                                "text-base font-semibold py-2.5 px-3 rounded-lg hover:bg-gray-50 hover:text-[#10436B] transition-all duration-200 flex items-center justify-between",
+                                "text-base font-semibold py-2.5 px-3 rounded-lg hover:bg-gray-50 hover:text-primary transition-all duration-200 flex items-center justify-between",
                                 pathname === item.href
-                                    ? "text-[#10436B] bg-blue-50/50"
+                                    ? "text-primary bg-blue-50/50"
                                     : "text-gray-700",
                             )}
                         >

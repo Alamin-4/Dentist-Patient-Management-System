@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -134,18 +136,14 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   // Early return for the "Verify Email" state
   if (needVerifyEmail) {
     return (
-      <div className="flex w-full flex-col items-center justify-center space-y-6 text-center animate-in fade-in zoom-in duration-300">
+      <div className="flex w-full flex-col items-center justify-center space-y-5 text-center animate-in fade-in zoom-in duration-300">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
           <MailCheck className="h-8 w-8" />
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-lg md:text-xl font-semibold text-text">
-            Email Verification Required
-          </h3>
-          <p className="text-sm md:text-base text-sec-text max-w-sm mx-auto leading-relaxed">
-            Your email <span className="font-medium text-text">{needVerifyEmail}</span> is registered but not yet verified.
-          </p>
+          <CustomSectionHeading value="Email Verification Required" center_align={true} />
+          <CustomDesText value={`Your email ${needVerifyEmail} is registered but not yet verified.`} center_align={true} />
         </div>
 
         <div className="w-full space-y-3 pt-2">

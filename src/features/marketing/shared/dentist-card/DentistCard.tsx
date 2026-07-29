@@ -51,7 +51,7 @@ export interface DentistCardProps {
   onCompareToggle?: () => void;
   onViewOnMap?: (dentist: Dentist) => void;
   isButtonShow?: boolean;
-  mapView?: boolean
+  mapView?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -64,8 +64,8 @@ export default function DentistCard({
   isSelectedForCompare = false,
   onCompareToggle,
   onViewOnMap,
-  isButtonShow,
-  mapView
+  isButtonShow = true,
+  mapView = false,
 }: DentistCardProps) {
   const router = useRouter();
   const { user } = useMe();
@@ -123,24 +123,24 @@ export default function DentistCard({
       ? { icon: "text-emerald-500", text: "text-emerald-600", showIcon: true }
       : dentist.status === "CLAIMED"
         ? { icon: "text-amber-500", text: "text-amber-600", showIcon: true }
-        : { icon: "text-[#505050]", text: "text-[#505050]", showIcon: false };
+        : { icon: "text-slate-400", text: "text-slate-400", showIcon: false };
 
   const ratingValue =
     dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
   const reviewCount =
     dentist.rating.googleReviewCount ?? dentist.rating.doctoraliaReviewCount ?? 0;
 
-  const locationText =
-    dentist.location?.fullAddress ?? dentist.location?.city ?? dentist.country ?? "";
+  const formattedLocation = [dentist.location?.city, dentist.location?.country]
+    .filter(Boolean)
+    .join(", ") || dentist.location?.fullAddress || "";
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <div
       onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
       className={cn(
-        "relative w-full overflow-hidden border border-border bg-white transition-all duration-300 rounded-[10px] shadow-[0px_0px_12px_0px_#EEF8FF] cursor-pointer",
+        "relative w-full overflow-hidden border border-border bg-white transition-all duration-300 rounded-[12px] shadow-xs hover:shadow-md cursor-pointer p-4 sm:p-5",
         floating && "w-[min(100%,34rem)] shadow-lg",
-        isSelectedForCompare && "border-[#10436B] bg-slate-50/20",
+        isSelectedForCompare && "border-primary bg-slate-50/40",
       )}
     >
       {isCompareMode && dentist.status === "VERIFIED" && (
@@ -148,176 +148,181 @@ export default function DentistCard({
           <Checkbox
             checked={isSelectedForCompare}
             onCheckedChange={onCompareToggle}
-            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-[#10436B]"
+            className="size-5 rounded border-slate-300 data-[state=checked]:border-[#5f7e9c] data-[state=checked]:bg-primary"
           />
         </div>
       )}
 
-      <div className={cn("flex flex-col  justify-between gap-4 p-4 xl:p-6", mapView ? "xl:flex-row" : "2xl:flex-row")}>
-        <div className="flex flex-row gap-4 max-w-sm w-fit">
-          <div className="flex shrink-0 flex-col items-center gap-3 xl:w-35">
-            <div className="relative h-15 w-15 md:h-20 md:w-20 overflow-hidden rounded-full bg-white">
+      {/* Main Container Layout */}
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6">
+        
+        {/* Left Side: Avatar + Details */}
+        <div className="flex flex-row items-start gap-3.5 sm:gap-4 min-w-0 flex-1 w-full">
+          
+          {/* Avatar Column */}
+          <div className="flex shrink-0 flex-col items-center gap-2 w-20 sm:w-24">
+            <div className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full bg-slate-100 border border-slate-100 shadow-xs">
               <Image
                 src={dentist.image ?? "/images/man-avatar.png"}
-                alt={dentist.name.split(" ")[0].slice(0, 4)}
+                alt={dentist.name.split(" ")[0] || "Dentist"}
                 fill
                 className="object-cover"
                 unoptimized
               />
             </div>
 
-            <div className="flex w-full flex-col items-center gap-2">
-              <div className="flex items-center gap-1.5 text-xs font-medium">
-                {badgeConfig.showIcon && (
-                  <ShieldCheck className={cn("size-4", badgeConfig.icon)} />
-                )}
-                <span className={cn("text-xs uppercase whitespace-nowrap", badgeConfig.text)}>
-                  {dentist.status}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-center text-xs gap-2 rounded-sm border border-border px-3 py-1 text-center">
-                <div className="text-primary font-semibold">
-                  {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
-                </div>
-                <div className="text-text">RDV Score</div>
-              </div>
-
-              {dentist.accountType !== "CLAIMABLE" && (
-                <VerificationDots phase={dentist.verificationPhase} />
+            {/* Status Badge */}
+            <div className="flex items-center gap-1 text-[11px] font-medium tracking-tight">
+              {badgeConfig.showIcon && (
+                <ShieldCheck className={cn("size-3.5 shrink-0", badgeConfig.icon)} />
               )}
+              <span className={cn("uppercase whitespace-nowrap font-bold", badgeConfig.text)}>
+                {dentist.status}
+              </span>
             </div>
+
+            {/* RDV Score */}
+            <div className="flex items-center justify-center text-[11px] gap-1.5 rounded-md border border-slate-200 px-2 py-0.5 text-center bg-slate-50/50 w-full">
+              <span className="text-primary font-bold">
+                {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
+              </span>
+              <span className="text-slate-600 font-medium truncate">RDV Score</span>
+            </div>
+
+            {dentist.accountType !== "CLAIMABLE" && (
+              <VerificationDots phase={dentist.verificationPhase} />
+            )}
           </div>
 
-          <div className="min-w-0 w-full space-y-3">
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="space-y-1">
-                <h3 className="lg:text-lg font-semibold text-text">
-                  {dentist.name}
-                </h3>
-                <p className="text-[14px] font-semibold text-[#10436B]">
-                  {dentist.specialty ?? ""}
-                </p>
-              </div>
+          {/* Details Column */}
+          <div className="min-w-0 flex-1 space-y-2">
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-text leading-tight group-hover:text-primary transition-colors line-clamp-1">
+                {dentist.name}
+              </h3>
+              <p className="text-xs sm:text-sm font-semibold text-primary mt-0.5">
+                {dentist.specialty || "Dentist"}
+              </p>
             </div>
 
-            <div className="space-y-2">
-              {/* Rating */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-[14px] font-bold text-[#10436B]">
-                  {ratingValue > 0 ? ratingValue.toFixed(1) : "0"}
-                </span>
-                <div className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={cn(
-                        "size-4",
-                        i < Math.floor(ratingValue)
-                          ? "fill-amber-400 text-amber-400"
-                          : "text-slate-200",
-                      )}
-                    />
-                  ))}
-                </div>
-                <span className="text-xs truncate text-sec-text">
-                  ({reviewCount} Ratings)
-                </span>
+            {/* Rating */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs sm:text-sm font-bold text-primary">
+                {ratingValue > 0 ? ratingValue.toFixed(1) : "5.0"}
+              </span>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={cn(
+                      "size-3.5",
+                      i < Math.floor(ratingValue || 5)
+                        ? "fill-amber-400 text-amber-400"
+                        : "text-slate-200",
+                    )}
+                  />
+                ))}
               </div>
-
-              {/* Location */}
-              {
-                isButtonShow && (
-                  <div className="flex items-center gap-1.5 text-slate-500">
-                    <MapPin className="size-4 shrink-0" />
-                    <span className="block truncate text-[14px] text-sec-text">
-                      {dentist.location.country} {dentist.location.country && ","}  {dentist.location.city}
-                    </span>
-
-                  </div>
-                )
-              }
-
-
-              {/* Languages */}
-              {dentist.languages && dentist.languages.length > 0 && (
-                <div className="flex items-center gap-1.5 text-slate-500">
-                  <Globe className="size-4 shrink-0 text-[#10436B]" />
-                  <span className="block truncate text-[13px] text-[#4B5563]">
-                    <span className="font-semibold text-text">Languages:</span>{" "}
-                    {dentist.languages.join(", ")}
-                  </span>
-                </div>
-              )}
+              <span className="text-xs text-sec-text font-medium">
+                ({reviewCount} Ratings)
+              </span>
             </div>
 
-            {/* Tags */}
-            <div className="flex flex-wrap items-center gap-2">
-              {dentist.surpriseGuarantee && (
-                <Badge className="whitespace-nowrap border-none bg-secondary px-3 py-1 text-[12px] font-medium text-primary hover:bg-sky-50">
-                  <BadgeCheck className="size-4" />
+            {/* Location (Shown when available) */}
+            {formattedLocation && (
+              <div className="flex items-center gap-1.5 text-slate-500 pt-0.5">
+                <MapPin className="size-3.5 shrink-0 text-slate-400" />
+                <span className="truncate text-xs text-sec-text font-medium">
+                  {formattedLocation}
+                </span>
+              </div>
+            )}
+
+            {/* Languages (Only shown on find-dentists / when buttons are enabled) */}
+            {isButtonShow && dentist.languages && dentist.languages.length > 0 && (
+              <div className="flex items-center gap-1.5 text-slate-500 pt-0.5">
+                <Globe className="size-3.5 shrink-0 text-primary" />
+                <span className="truncate text-xs text-slate-600">
+                  <span className="font-semibold text-text">Languages:</span>{" "}
+                  {dentist.languages.join(", ")}
+                </span>
+              </div>
+            )}
+
+            {/* Tags (Only shown on find-dentists / when buttons are enabled) */}
+            {isButtonShow && dentist.surpriseGuarantee && (
+              <div className="pt-1">
+                <Badge className="inline-flex items-center gap-1 whitespace-nowrap border-none bg-sky-50 px-2.5 py-0.5 text-[11px] font-semibold text-primary hover:bg-sky-100">
+                  <BadgeCheck className="size-3.5 text-primary" />
                   No Surprise Guarantee
                 </Badge>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className={
-          cn("flex flex-row xl:flex-col items-end gap-3", isButtonShow ? "justify-between " : "justify-end")
-        }>
-          <div className="text-right">
-            <div className="text-[12px] text-sec-text truncate">Starting from</div>
-            <div className="text-primary font-bold text-xl lg:text-2xl mt-1">
-              ${dentist.price.toLocaleString()}
+        {/* Right Side: Price & Action Buttons */}
+        <div className={cn(
+          "flex shrink-0 w-full sm:w-auto flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-3 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100",
+          !isButtonShow && "sm:items-end justify-end border-t-0 pt-0"
+        )}>
+          {/* Price Block */}
+          <div className="text-left sm:text-right">
+            <div className="text-[11px] sm:text-xs text-sec-text font-medium">Starting from</div>
+            <div className="text-primary font-bold text-lg sm:text-xl lg:text-2xl leading-none mt-0.5">
+              ${dentist.price ? dentist.price.toLocaleString() : "0"}
             </div>
-            <div className="text-[10px] text-[#9CA3AF]">Estimate</div>
+            <div className="text-[10px] text-slate-400">Estimate</div>
           </div>
-          {
-            isButtonShow && (
-              <div className="flex flex-wrap items-end justify-end gap-2 sm:w-auto">
-                {/* View Profile — always shown */}
+
+          {/* Action Buttons */}
+          {isButtonShow && (
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <Button
+                variant="outline"
+                className="h-9 px-3.5 text-xs font-bold text-primary border-primary hover:bg-slate-50 transition-all cursor-pointer rounded-lg"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/find-dentists/${dentist.slug}`);
+                }}
+              >
+                View Profile
+              </Button>
+
+              {isVerified ? (
                 <Button
-                  variant="outline"
-                  className="h-10 rounded-lg border-[#003366] px-5 text-xs font-bold text-[#003366] hover:bg-slate-50 transition-all"
+                  className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs cursor-pointer transition-all rounded-lg"
                   onClick={(e) => {
                     e.stopPropagation();
-                    router.push(`/find-dentists/${dentist.slug}`);
+                    handleBookConsultation();
                   }}
                 >
-                  View Profile
+                  Book Consultation
                 </Button>
-
-                {/* Primary CTA */}
-                {isVerified ? (
-                  <Button
-                    className="h-10 rounded-lg bg-primary px-5 text-xs font-bold text-white shadow-sm hover:bg-primary/95 cursor-pointer transition-all"
-                    onClick={(e) => { e.stopPropagation(); handleBookConsultation(); }}
-                  >
-                    Book Consultation
-                  </Button>
-                ) : isClaimableProfile ? (
-                  <Button
-                    variant="secondary"
-                    className="h-10 rounded-lg border border-accent bg-amber-50 px-5 text-xs font-bold text-accent hover:bg-accent/5 cursor-pointer transition-all"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/find-dentists/${dentist.slug}/claim`);
-                    }}
-                  >
-                    Claim Profile
-                  </Button>
-                ) : (
-                  <Button
-                    className="h-10 rounded-lg bg-[#003366] px-5 text-xs font-bold text-white shadow-sm hover:bg-[#002850] transition-all"
-                    onClick={(e) => { e.stopPropagation(); handleRequestConsultation(); }}
-                  >
-                    Request Consultation
-                  </Button>
-                )}
-              </div>
-            )
-          }
+              ) : isClaimableProfile ? (
+                <Button
+                  variant="secondary"
+                  className="h-9 px-3.5 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100 cursor-pointer transition-all rounded-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/find-dentists/${dentist.slug}/claim`);
+                  }}
+                >
+                  Claim Profile
+                </Button>
+              ) : (
+                <Button
+                  className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs transition-all cursor-pointer rounded-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRequestConsultation();
+                  }}
+                >
+                  Request Consultation
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

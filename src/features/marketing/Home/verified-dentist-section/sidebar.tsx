@@ -34,11 +34,11 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
         onClick={() => { onChange("All Procedures"); if (isMobile) setIsMobileOpen(false); }}
         className={cn(
           "w-full flex items-center justify-between rounded-lg px-4 py-3 text-left text-sm transition-all duration-150",
-          (!active || active === "All Procedures") ? "bg-[#F4F9FD] text-[#10436B] font-bold" : "text-gray-600 hover:bg-gray-50 hover:text-[#10436B]"
+          (!active || active === "All Procedures") ? "bg-[#F4F9FD] text-primary font-bold" : "text-gray-600 hover:bg-gray-50 hover:text-primary"
         )}
       >
         All Procedures
-        {(!active || active === "All Procedures") && <Check size={16} className="text-[#10436B]" />}
+        {(!active || active === "All Procedures") && <Check size={16} className="text-primary" />}
       </button>
       {(showAll ? procedureList : procedureList.slice(0, 16)).map((p) => (
         <button
@@ -46,11 +46,11 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
           onClick={() => { onChange(p); if (isMobile) setIsMobileOpen(false); }}
           className={cn(
             "w-full flex items-center justify-between rounded-lg px-4 py-3 text-left text-sm transition-all duration-150",
-            active === p ? "bg-[#F4F9FD] text-[#10436B] font-bold" : "text-gray-600 hover:bg-gray-50 hover:text-[#10436B]"
+            active === p ? "bg-[#F4F9FD] text-primary font-bold" : "text-gray-600 hover:bg-gray-50 hover:text-primary"
           )}
         >
           {p}
-          {active === p && <Check size={16} className="text-[#10436B]" />}
+          {active === p && <Check size={16} className="text-primary" />}
         </button>
       ))}
     </>
@@ -59,17 +59,17 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
   return (
     <>
       <div className="lg:hidden w-full px-4 py-3" ref={mobileDropdownRef}>
-        <label className="mb-2 block text-sm font-semibold text-[#10436B]">Select Procedure</label>
+        <label className="mb-2 block text-sm font-semibold text-primary">Select Procedure</label>
         <div className="relative">
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] font-medium shadow-sm transition-all hover:shadow-md focus:border-[#10436B] focus:outline-none focus:ring-2 focus:ring-[#10436B]/20"
+            className="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] font-medium shadow-sm transition-all hover:shadow-md focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#10436B]/10 text-[#10436B]">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Stethoscope size={16} />
               </div>
-              <span className={cn("truncate", !active || active === "All Procedures" ? "text-gray-500" : "text-[#10436B]")}>
+              <span className={cn("truncate", !active || active === "All Procedures" ? "text-gray-500" : "text-primary")}>
                 {active || "All Procedures"}
               </span>
             </div>
@@ -94,7 +94,7 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
       </div>
 
       <aside className="hidden w-72 flex-col border-r border-border p-6 lg:flex">
-        <h3 className="mb-6 px-2 text-lg font-bold text-[#10436B]">Select Procedure</h3>
+        <h3 className="mb-6 px-2 text-lg font-bold text-primary">Select Procedure</h3>
 
         <div
           className={cn(

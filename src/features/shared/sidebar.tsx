@@ -186,7 +186,7 @@ export function Sidebar() {
         >
           <Avatar className="h-9 w-9 border border-slate-200 group-hover:border-red-200">
             <AvatarImage src={user?.image || undefined} referrerPolicy="no-referrer" />
-            <AvatarFallback className="bg-[#10436B] text-white font-semibold text-xs uppercase group-hover:bg-red-600 transition-colors">
+            <AvatarFallback className="bg-primary text-white font-semibold text-xs uppercase group-hover:bg-red-600 transition-colors">
               {initials}
             </AvatarFallback>
           </Avatar>

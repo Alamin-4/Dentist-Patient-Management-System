@@ -70,7 +70,7 @@ export function Navbar() {
                 <div className="relative">
                   <Avatar className="h-10 w-10 border-2 border-white">
                     <AvatarImage src={user?.image || undefined} />
-                    <AvatarFallback className="bg-[#10436B] text-white font-semibold text-xs uppercase">
+                    <AvatarFallback className="bg-primary text-white font-semibold text-xs uppercase">
                       {user?.email ? user.email.slice(0, 2).toUpperCase() : "US"}
                     </AvatarFallback>
                   </Avatar>
@@ -81,7 +81,7 @@ export function Navbar() {
                     status === "dnd" && "bg-rose-500"
                   )} />
                 </div>
-                <span className="hidden text-sm font-semibold text-slate-700 md:block max-w-24 truncate group-hover:text-[#10436B] transition-colors">
+                <span className="hidden text-sm font-semibold text-slate-700 md:block max-w-24 truncate group-hover:text-primary transition-colors">
                   {displayName.split(" ")[0].slice(0, 10)}
                 </span>
               </DropdownMenuTrigger>

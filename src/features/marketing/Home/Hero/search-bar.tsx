@@ -75,7 +75,7 @@ export default function SearchBar() {
           <div className="flex flex-1 items-center justify-between overflow-hidden">
             <span className={cn(
               "truncate text-sm font-medium",
-              selectedProcedure ? "text-[#10436B]" : "text-gray-500"
+              selectedProcedure ? "text-primary" : "text-gray-500"
             )}>
               {selectedProcedure || "Select procedures"}
             </span>
@@ -94,7 +94,7 @@ export default function SearchBar() {
                 placeholder="Search procedure..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-md border border-gray-200 px-3 py-1.5 text-xs outline-none focus:border-[#10436B] focus:ring-1 focus:ring-[#10436B] text-slate-700 font-medium"
+                className="w-full rounded-md border border-gray-200 px-3 py-1.5 text-xs outline-none focus:border-primary focus:ring-1 focus:ring-primary text-slate-700 font-medium"
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
@@ -109,7 +109,7 @@ export default function SearchBar() {
                     setSelectedProcedure("");
                     setIsOpen(false);
                   }}
-                  className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-[#10436B] transition-colors font-medium border-b border-gray-50"
+                  className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-primary transition-colors font-medium border-b border-gray-50"
                 >
                   All Procedures
                 </button>
@@ -120,7 +120,7 @@ export default function SearchBar() {
                       setSelectedProcedure(p.name);
                       setIsOpen(false);
                     }}
-                    className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-[#10436B] transition-colors"
+                    className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#F4F9FD] hover:text-primary transition-colors"
                   >
                     {p.name}
                   </button>
@@ -140,7 +140,7 @@ export default function SearchBar() {
             pattern="[0-9]*"
             placeholder="Min"
             value={budget.min}
-            className="w-16 bg-transparent text-sm font-semibold text-[#10436B] outline-none placeholder:text-gray-300"
+            className="w-16 bg-transparent text-sm font-semibold text-primary outline-none placeholder:text-gray-300"
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, "");
               setBudget({ ...budget, min: val });
@@ -153,7 +153,7 @@ export default function SearchBar() {
             pattern="[0-9]*"
             placeholder="Max"
             value={budget.max}
-            className="w-16 bg-transparent text-sm font-semibold text-[#10436B] outline-none placeholder:text-gray-300"
+            className="w-16 bg-transparent text-sm font-semibold text-primary outline-none placeholder:text-gray-300"
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, "");
               setBudget({ ...budget, max: val });
@@ -164,7 +164,7 @@ export default function SearchBar() {
 
       <button
         onClick={handleSearch}
-        className="group flex w-full items-center justify-center gap-2 rounded-md bg-[#10436B] py-3.5 px-6 text-sm font-bold text-white transition-all active:scale-95 md:w-auto md:px-8 hover:bg-[#0D3658] hover:shadow-lg"
+        className="group flex w-full items-center justify-center gap-2 rounded-md bg-primary py-3.5 px-6 text-sm font-bold text-white transition-all active:scale-95 md:w-auto md:px-8 hover:bg-[#0D3658] hover:shadow-lg"
       >
         <Search size={18} className="transition-transform group-hover:scale-110" />
         <span className="truncate">Find a Dentist</span>

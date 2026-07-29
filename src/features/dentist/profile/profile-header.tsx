@@ -40,9 +40,9 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
   const hasSubmittedAny = !!(dentist?.dentistLicense || (dentist?.dentistOperationsVerifications?.length ?? 0) > 0 || dentist?.dentistClinicDepthVerification);
 
   return (
-    <div className="flex flex-col items-center justify-between rounded-xl border border-gray-100 bg-white p-8 md:flex-row gap-6">
-      <div className="flex items-center gap-6">
-        <Avatar className="h-20 w-20 bg-[#E8F1F8]">
+    <div className="flex flex-col items-center justify-between rounded-xl border border-gray-100 bg-white p-4 sm:p-6 md:p-8 md:flex-row gap-6">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 w-full md:w-auto">
+        <Avatar className="h-20 w-20 bg-[#E8F1F8] shrink-0">
           {image && (
             <AvatarImage src={image} alt={name} className="object-cover" />
           )}
@@ -50,16 +50,16 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             {initials}
           </AvatarFallback>
         </Avatar>
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold text-gray-900">
+        <div className="space-y-1 w-full">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             Dr. {name}
           </h1>
           <p className="text-gray-500 font-medium text-sm">{specialtyName}</p>
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2">
             {isFullyVerified && !isPaymentPending ? (
               <Badge
                 variant="secondary"
-                className="bg-badge/11 text-badge hover:bg-[#DEF7EC] border-none px-2 py-2 font-semibold text-xs rounded-md flex items-center gap-1"
+                className="bg-badge/11 text-badge hover:bg-[#DEF7EC] border-none px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
               >
                 <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,21 +72,21 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             ) : isPaymentPending ? (
               <Badge
                 variant="secondary"
-                className="bg-amber-50 text-amber-600 hover:bg-amber-50 border border-amber-200 px-3 py-1 font-semibold text-xs rounded-md flex items-center gap-1"
+                className="bg-amber-50 text-amber-600 hover:bg-amber-50 border border-amber-200 px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
               >
                 ⚠️ Payment Pending
               </Badge>
             ) : hasSubmittedAny ? (
               <Badge
                 variant="secondary"
-                className="bg-amber-50 text-amber-600 hover:bg-amber-50 border-none px-3 py-1 font-semibold text-xs rounded-md"
+                className="bg-amber-50 text-amber-600 hover:bg-amber-50 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
                 Pending Verification
               </Badge>
             ) : (
               <Badge
                 variant="secondary"
-                className="bg-red-50 text-red-500 hover:bg-red-50 border-none px-3 py-1 font-semibold text-xs rounded-md"
+                className="bg-red-50 text-red-500 hover:bg-red-50 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
                 Unverified Profile
               </Badge>
@@ -95,14 +95,14 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             {isSearchable ? (
               <Badge
                 variant="secondary"
-                className="bg-[#CDA555]/11 text-[#CDA555] border-none p-2 font-semibold text-xs rounded-md"
+                className="bg-[#CDA555]/11 text-[#CDA555] border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
                 Live in Search
               </Badge>
             ) : (
               <Badge
                 variant="secondary"
-                className="bg-gray-100 text-gray-500 hover:bg-gray-100 border-none px-3 py-1 font-semibold text-xs rounded-md"
+                className="bg-gray-100 text-gray-500 hover:bg-gray-100 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
                 Not Live in Search
               </Badge>
@@ -111,36 +111,19 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col items-center gap-1 md:mt-0">
-        <div className="relative h-28 w-28 lg:h-36 lg:w-36">
+      <div className="mt-2 md:mt-0 flex flex-col items-center justify-center shrink-0">
+        <div className="relative h-28 w-28 lg:h-32 lg:w-32 flex items-center justify-center">
           <svg
             className="w-full h-full transform -rotate-90"
             viewBox="0 0 100 100"
           >
-            {/* Background ring */}
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              stroke="#FFFDF5"
-              strokeWidth="15"
-              fill="#FFFDF5"
-            />
             {/* Progress ring track */}
             <circle
               cx="50"
               cy="50"
               r="40"
-              stroke="#FEE2E2"
-              strokeWidth="0"
-              fill="transparent"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
               stroke="#FFF2CC"
-              strokeWidth="15"
+              strokeWidth="12"
               fill="transparent"
             />
             {/* Progress indicator */}
@@ -149,7 +132,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
               cy="50"
               r="40"
               stroke="#F3C043"
-              strokeWidth="15"
+              strokeWidth="12"
               fill="transparent"
               strokeDasharray="251.2"
               strokeDashoffset={251.2 - (251.2 * rdvScore) / 100}
@@ -157,9 +140,9 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
               className="transition-all duration-500 ease-out"
             />
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-lg lg:text-xl font-bold text-[#D48D1D]">{rdvScore}%</span>
-            <span className="text-[9px] uppercase text-[#D48D1D] font-bold tracking-wider mt-1">
+            <span className="text-[9px] uppercase text-[#D48D1D] font-bold tracking-wider mt-0.5">
               RDV Score
             </span>
           </div>

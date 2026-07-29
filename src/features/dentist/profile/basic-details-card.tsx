@@ -113,15 +113,15 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {details.map((item, index) => (
-            <div key={index} className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+            <div key={index} className="flex items-center gap-3.5 min-w-0">
+              <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
                 <item.icon className="h-5 w-5" />
               </div>
-              <div className="space-y-0.5">
+              <div className="space-y-0.5 min-w-0 flex-1">
                 <p className="text-xs font-medium text-gray-400">{item.label}</p>
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-900 truncate">
                   {item.value}
                 </p>
               </div>

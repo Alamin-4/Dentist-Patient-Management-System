@@ -60,7 +60,7 @@ export default function LanguageSelector({
                 <button
                     type="button"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#10436B]/20 focus:border-[#10436B] transition-all"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 >
                     <div className="flex items-center gap-3">
                         <Image
@@ -99,7 +99,7 @@ export default function LanguageSelector({
                                 className={cn(
                                     "w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all",
                                     selectedLang.code === lang.code
-                                        ? "bg-white text-[#10436B] font-semibold shadow-sm border border-[#10436B]/20"
+                                        ? "bg-white text-primary font-semibold shadow-sm border border-primary/20"
                                         : "text-gray-700 hover:bg-white hover:shadow-sm"
                                 )}
                             >
@@ -112,7 +112,7 @@ export default function LanguageSelector({
                                 />
                                 <span className="flex-1 text-left">{lang.name}</span>
                                 {selectedLang.code === lang.code && (
-                                    <Check size={16} className="text-[#10436B]" />
+                                    <Check size={16} className="text-primary" />
                                 )}
                             </button>
                         ))}
@@ -148,7 +148,7 @@ export default function LanguageSelector({
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors focus:bg-gray-50 focus:outline-none",
                             selectedLang.code === lang.code &&
-                            "bg-blue-50/50 text-[#10436B] font-semibold",
+                            "bg-blue-50/50 text-primary font-semibold",
                         )}
                     >
                         <Image

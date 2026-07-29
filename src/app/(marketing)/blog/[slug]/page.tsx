@@ -57,7 +57,7 @@ export default function BlogPostPage() {
   if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center bg-slate-50">
-        <div className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-[#10436B] animate-spin" />
+        <div className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-primary animate-spin" />
       </div>
     );
   }
@@ -69,7 +69,7 @@ export default function BlogPostPage() {
         <p className="text-slate-400 text-xs mt-2 mb-6">The article you are trying to view does not exist or has been archived.</p>
         <Link
           href="/blog"
-          className="flex items-center gap-1.5 px-5 py-2.5 bg-[#10436B] text-white font-bold text-xs rounded-lg hover:bg-[#0d3656] transition-all"
+          className="flex items-center gap-1.5 px-5 py-2.5 bg-primary text-white font-bold text-xs rounded-lg hover:bg-[#0d3656] transition-all"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Resource Center
@@ -85,7 +85,7 @@ export default function BlogPostPage() {
         {/* Navigation */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#10436B] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Resource Center
@@ -109,8 +109,8 @@ export default function BlogPostPage() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               {/* Author details */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#10436B]/10 flex items-center justify-center">
-                  <User className="h-5 w-5 text-[#10436B]" />
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-text">{post.author}</p>
@@ -130,11 +130,11 @@ export default function BlogPostPage() {
               {/* Read stats details */}
               <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200/60">
                 <span className="flex items-center gap-1.5">
-                  <BookOpen className="h-4 w-4 text-[#10436B]" />
+                  <BookOpen className="h-4 w-4 text-primary" />
                   {wordCount} words
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-[#10436B]" />
+                  <Clock className="h-4 w-4 text-primary" />
                   {readTime} min read
                 </span>
               </div>
@@ -142,7 +142,7 @@ export default function BlogPostPage() {
           </div>
 
           {/* Excerpt */}
-          <p className="text-[#10436B] font-bold text-sm leading-relaxed bg-[#F4F9FD] p-4 border-l-4 border-[#10436B] rounded-r-xl">
+          <p className="text-primary font-bold text-sm leading-relaxed bg-[#F4F9FD] p-4 border-l-4 border-primary rounded-r-xl">
             {post.summary}
           </p>
 
@@ -170,7 +170,7 @@ export default function BlogPostPage() {
                   return (
                     <h3
                       key={idx}
-                      className="text-lg font-bold text-[#10436B] mt-6 mb-3"
+                      className="text-lg font-bold text-primary mt-6 mb-3"
                     >
                       {line.replace("### ", "")}
                     </h3>
