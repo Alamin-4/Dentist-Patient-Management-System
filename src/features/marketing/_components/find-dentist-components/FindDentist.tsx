@@ -139,7 +139,7 @@ export default function FindDentistComponents() {
     };
 
     return (
-        <div className="min-h-dvh">
+        <div className="min-h-fit">
             <TopBar
                 query={filters.query}
                 onQueryChange={filters.setQuery}
@@ -160,7 +160,7 @@ export default function FindDentistComponents() {
                 availableLanguages={directoryResponse?.meta?.facets?.languages}
             />
 
-            <main className="pb-8">
+            <main className="">
                 <div className="flex gap-4">
                     <AnimatePresence initial={false}>
                         {(viewMode === "list" || (viewMode === "map" && showMapFilters)) && (
@@ -181,7 +181,7 @@ export default function FindDentistComponents() {
                     <section className="min-w-0 w-full">
                         <div
                             className={cn(
-                                "grid gap-6",
+                                "grid gap-6 ",
                                 viewMode === "list" || showMapFilters
                                     ? "grid-cols-1"
                                     : "grid-cols-1 xl:grid-cols-[minmax(0,1.10fr)_minmax(350px,0.90fr)]"

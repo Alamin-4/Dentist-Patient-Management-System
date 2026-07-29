@@ -3,7 +3,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
-import { mapApiDentist, type Dentist } from "@/features/marketing/_components/module/find-dentists-page-components/types";
+import { mapApiDentist, type Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
 import DentistScheduleCard, {
   type DentistSelection,
 } from "./DentistScheduleCard";

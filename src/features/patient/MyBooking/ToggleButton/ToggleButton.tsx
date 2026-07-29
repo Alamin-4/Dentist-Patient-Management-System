@@ -27,7 +27,7 @@ export default function ToggleButton({ value, onChange, tabs }: ToggleButtonProp
           >
             <span>{tab.label}</span>
             {tab.count !== undefined && (
-              <span className={`flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold ${isActive ? "bg-[#163E5C] text-white" : "bg-gray-100 text-gray-500"
+              <span className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold ${isActive ? "bg-[#163E5C] text-white" : "bg-gray-100 text-gray-500"
                 }`}>
                 {tab.count}
               </span>

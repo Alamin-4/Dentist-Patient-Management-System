@@ -62,7 +62,7 @@ export function CustomTab({
           key={tab.key}
           onClick={() => onChange(tab.key)}
           className={cn(
-            "relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors",
+            "relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors ",
             active === tab.key
               ? "text-text after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-text"
               : "text-gray-500 hover:text-gray-700"

@@ -72,3 +72,23 @@ export const announcementSchema = z.object({
   }),
 });
 export type AnnouncementFormValues = z.infer<typeof announcementSchema>;
+
+// 6. Avatar Upload Schema
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+
+export const avatarUploadSchema = z.object({
+  avatar: z
+    .custom<FileList>()
+    .refine((files) => files && files.length > 0, "A file is required.")
+    .refine((files) => {
+      const file = files && files[0];
+      return file && file.size <= MAX_FILE_SIZE;
+    }, "File size must be less than 5MB.")
+    .refine((files) => {
+      const file = files && files[0];
+      return file && ALLOWED_MIME_TYPES.includes(file.type);
+    }, "Only JPG, PNG, and PDF files are allowed."),
+});
+
+export type AvatarUploadFormValues = z.infer<typeof avatarUploadSchema>;

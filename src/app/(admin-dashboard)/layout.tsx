@@ -51,7 +51,7 @@ export default function AdminDashboardLayout({
           <section className="flex-1 h-dvh overflow-y-auto">
             <AdminNavbar />
             <main className="overflow-y-auto">
-              <div className="min-h-full overflow-y-auto p-6">{children}</div>
+              <div className="min-h-full overflow-y-auto p-4 md:p-6">{children}</div>
             </main>
           </section>
         </div>

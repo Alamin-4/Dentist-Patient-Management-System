@@ -32,8 +32,8 @@ export function PatientRow({ patient, onClick }: Props) {
                     </div>
                 </div>
             </td>
-            <td className="px-4 py-3.5 text-sm text-gray-600">{patient.phone || "—"}</td>
-            <td className="px-4 py-3.5 text-sm text-gray-600">{patient.city || "—"}</td>
+            <td className="px-4 py-3.5 text-sm text-gray-600">{patient.phone || "N/A"}</td>
+            <td className="px-4 py-3.5 text-sm text-gray-600">{patient.city || "N/A"}</td>
             <td className="px-4 py-3.5"><StatusBadge status={patient.status} /></td>
             <td className="px-4 py-3.5 text-sm text-gray-600">{patient.total_bookings}</td>
             <td className="px-4 py-3.5 text-sm text-gray-600">{patient.last_booking}</td>

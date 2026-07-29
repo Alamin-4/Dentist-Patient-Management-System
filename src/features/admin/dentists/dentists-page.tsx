@@ -119,7 +119,7 @@ export default function DentistsPage() {
     { key: "all", label: "All", count: (apiMeta?.total_verifications ?? 0) + (apiMeta?.totalDirectory ?? 0) },
     { key: "active", label: "Active", count: meta.tab_counts.active },
     { key: "pending", label: "Pending", count: apiMeta?.pending_review ?? 0 },
-    { key: "unclaimed", label: "Unclaimed Directory", count: apiMeta?.totalDirectory ?? 0 },
+    { key: "unclaimed", label: "Unclaimed", count: apiMeta?.totalDirectory ?? 0 },
     { key: "suspended", label: "Suspended", count: meta.tab_counts.suspended },
     { key: "rejected", label: "Rejected", count: meta.tab_counts.rejected },
   ];
@@ -201,7 +201,7 @@ export default function DentistsPage() {
             Manage all practitioners on the platform — verification, status, performance.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap justify-end items-center gap-2">
           <button
             onClick={handleImportCSV}
             className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 truncate"
