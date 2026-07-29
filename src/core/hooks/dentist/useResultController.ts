@@ -156,7 +156,17 @@ export function useResultController() {
       resetForm();
       setIsModalOpen(false);
     } catch (err: any) {
-      toast.error(err?.message || "Failed to create result");
+      const errMsg = err?.message || "Failed to create result";
+      if (errMsg.toLowerCase().includes("before image")) {
+        methods.setError("beforeImage", { type: "server", message: errMsg });
+      } else if (errMsg.toLowerCase().includes("after image")) {
+        methods.setError("afterImage", { type: "server", message: errMsg });
+      } else if (errMsg.toLowerCase().includes("file is too large") || errMsg.toLowerCase().includes("size")) {
+        methods.setError("beforeImage", { type: "server", message: errMsg });
+        methods.setError("afterImage", { type: "server", message: errMsg });
+      } else {
+        methods.setError("root", { type: "server", message: errMsg });
+      }
     } finally {
       toast.dismiss("upload-progress");
     }

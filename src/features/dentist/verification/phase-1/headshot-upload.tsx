@@ -65,8 +65,17 @@ export function HeadshotUpload({ onChange, existingImageUrl, disabled, error }: 
       URL.revokeObjectURL(uploadedPreview);
     }
 
-    const newPreview = URL.createObjectURL(file);
-    setUploadedPreview(newPreview);
+    let newPreview = "";
+    if (file && file instanceof Blob) {
+      try {
+        newPreview = URL.createObjectURL(file);
+      } catch (err) {
+        console.error("Failed to create object URL for headshot preview:", err);
+      }
+    }
+    if (newPreview) {
+      setUploadedPreview(newPreview);
+    }
     onChange?.(file);
   };
 
