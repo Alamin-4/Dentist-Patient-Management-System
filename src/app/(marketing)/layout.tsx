@@ -1,12 +1,12 @@
-import IntakeModal from "@/features/marketing/_components/Booking-flow/Book";
-import StartBookingModal from "@/features/marketing/_components/Booking-flow/StartBooking";
-import CompareModal from "@/features/marketing/_components/CompareModal/CompareModal";
-import PersonalizeComparisonModal from "@/features/marketing/_components/modal/personalize-comparison-modal";
-import RequestConsultationModal from "@/features/marketing/_components/modal/request-consultation-modal";
-import SignupModal from "@/features/marketing/_components/signup-modal/Signup-Modal";
-import SigninModal from "@/features/marketing/_components/signup-modal/SignIn";
-import Footer from "@/features/marketing/_components/shared/footer/footer";
-import NavbarPublic from "@/features/marketing/_components/shared/navbar/Navbar";
+import IntakeModal from "@/features/marketing/Booking-flow/Book";
+import StartBookingModal from "@/features/marketing/Booking-flow/StartBooking";
+import CompareModal from "@/features/marketing/CompareModal/CompareModal";
+import PersonalizeComparisonModal from "@/features/marketing/modal/personalize-comparison-modal";
+import RequestConsultationModal from "@/features/marketing/modal/request-consultation-modal";
+import SignupModal from "@/features/marketing/signup-modal/Signup-Modal";
+import SigninModal from "@/features/marketing/signup-modal/SignIn";
+import Footer from "@/features/marketing/shared/footer/footer";
+import NavbarPublic from "@/features/marketing/shared/navbar/Navbar";
 
 export default function PublicLayout({
   children,

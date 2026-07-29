@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, Video } from "lucide-react";
 import Image from "next/image";
-import { Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
+import { Dentist } from "@/features/marketing/find-dentists-page-components/types";
 import { DentistSelection, formatSlotToAmPm } from "./DentistScheduleCard";
 
 interface ScheduleSuccessModalProps {
