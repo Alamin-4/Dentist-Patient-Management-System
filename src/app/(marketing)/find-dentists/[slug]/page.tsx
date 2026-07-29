@@ -72,7 +72,7 @@ export default function ViewDentistProfile() {
     return <ProfilePageSkeleton />;
   }
 
-  if (isError || !mappedDentist || !mappedDentist.verified) {
+  if (isError || !mappedDentist) {
     return <DentistNotFound />;
   }
 
