@@ -11,7 +11,7 @@ import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
-import type { Dentist } from "@/features/marketing/_components/find-dentists-page-components/types";
+import type { Dentist } from "@/features/marketing/find-dentists-page-components/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Verification phase dots

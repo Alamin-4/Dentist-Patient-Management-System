@@ -194,7 +194,7 @@ export default function SigninModal() {
             {authView === "signin" ? (
               <>
                 <DialogHeader className="mb-8 text-left">
-                  <DialogTitle className="mb-3 text-4xl font-bold leading-tight text-[#1A1A2E]">
+                  <DialogTitle className="mb-3 text-4xl font-bold leading-tight text-text">
                     Sign in
                   </DialogTitle>
                   <DialogDescription className="text-base leading-snug text-[#6B7280]">
@@ -202,35 +202,35 @@ export default function SigninModal() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="mb-4 space-y-3">
+                <div className="flex flex-wrap *:flex-1 gap-4 items-start justify-between">
                   <button
                     type="button"
                     onClick={() => handleSocialLogin("Google")}
-                    disabled={isGooglePending}
-                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+
+                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-border lg:py-3.5"
                   >
                     <FcGoogle className="text-2xl" />
-                    <span className="text-[#1A1A2E] font-medium">Continue with Google</span>
+                    <span className="text-text font-medium hidden md:block">Google</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSocialLogin("Apple")}
-                    disabled={isGooglePending}
-                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                    disabled
+                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200  lg:py-3.5"
                   >
                     <FaApple className="text-2xl text-black" />
-                    <span className="text-[#1A1A2E] font-medium">Continue with Apple</span>
+                    <span className="text-text font-medium hidden md:block">Apple</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSocialLogin("Facebook")}
-                    disabled={isGooglePending}
-                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200 hover:bg-[#E5E7EB] lg:py-3.5"
+                    disabled
+                    className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#F3F4F6] px-4 py-2.5 transition-colors duration-200  lg:py-3.5"
                   >
                     <FaFacebook className="text-2xl text-[#1877F2]" />
-                    <span className="text-[#1A1A2E] font-medium">Continue with Facebook</span>
+                    <span className="text-text font-medium hidden md:block">Facebook</span>
                   </button>
                 </div>
 
@@ -244,7 +244,7 @@ export default function SigninModal() {
                 {/* Form */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-[#1A1A2E]">
+                    <label className="mb-2 block text-sm font-semibold text-text">
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -272,7 +272,7 @@ export default function SigninModal() {
 
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <label className="block text-sm font-semibold text-[#1A1A2E]">
+                      <label className="block text-sm font-semibold text-text">
                         Password <span className="text-red-500">*</span>
                       </label>
                       <button

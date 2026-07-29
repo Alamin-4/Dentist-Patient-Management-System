@@ -186,7 +186,7 @@ export default function AiSmilePreview() {
   return (
     <section className="bg-white py-20">
       <div className="mx-auto max-w-7xl w-11/12 space-y-14">
-        <div className="flex justify-between flex-wrap *:flex-1 items-start gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="flex flex-col md:flex-row justify-between flex-wrap *:flex-1 items-start gap-10 lg:gap-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -202,6 +202,7 @@ export default function AiSmilePreview() {
 
             <button
               onClick={() => setIsModalOpen(true)}
+              disabled
               className="inline-flex items-center overflow-hidden rounded-lg bg-primary pl-6 pr-2 py-2 transition-all hover:bg-[#002850] active:scale-[0.98] text-white gap-3 shadow-md"
             >
               <span className="text-sm font-semibold">
@@ -244,7 +245,7 @@ export default function AiSmilePreview() {
         </div>
 
         <motion.div
-          onClick={() => setIsModalOpen(true)}
+          // onClick={() => setIsModalOpen(true)}
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
@@ -328,11 +329,7 @@ export default function AiSmilePreview() {
 
           <div className="pointer-events-none absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400 shadow-[0_0_12px_6px_rgb(34_211_238/0.4)]" />
 
-          <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <span className="bg-accent text-primary font-bold text-sm px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-              <Sparkles className="size-4" /> Try Live Smile Preview
-            </span>
-          </div>
+
 
           <motion.div
             className="pointer-events-none absolute left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-400/55 to-transparent"
@@ -396,6 +393,7 @@ export default function AiSmilePreview() {
                         type="button"
                         variant="secondary"
                         onClick={handleUseSample}
+                        disabled
                         className="bg-primary hover:bg-primary text-white border border-sky-900/50 h-12 text-sm font-semibold"
                       >
                         <FileImage className="size-4 mr-2" />
