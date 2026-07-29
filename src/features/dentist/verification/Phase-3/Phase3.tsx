@@ -66,6 +66,7 @@ export default function Phase3() {
   const { checkIdVerifyProgress, step3Status, step3Note } = useVerificationProgress();
 
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const progressData = checkIdVerifyProgress?.data;
   // Form is locked only when APPROVED; REJECTED allows resubmission
@@ -166,6 +167,7 @@ export default function Phase3() {
   });
 
   const onSubmit = (payload: Phase3Values) => {
+    setSubmitError(null);
     const formattedPayload: StepThreeI = {
       clinic_address: {
         address: payload.clinic_address.address,
@@ -186,14 +188,17 @@ export default function Phase3() {
         router.push("/dentist");
       },
 
-      onError: (error: unknown) => {
-        const errMsg =
-          typeof error === "object" && error !== null
-            ? (error as { response?: { data?: { message?: string } } }).response
-              ?.data?.message ||
-            "Clinical depth submission failed. Please try again."
-            : "Clinical depth submission failed. Please try again.";
-        toast.error(errMsg);
+      onError: (error: any) => {
+        if (error && typeof error === "object" && "field" in error && "index" in error) {
+          const { field, index, message } = error;
+          methods.setError(`materials.${index}.${field}` as any, {
+            type: "server",
+            message: message || "Upload failed",
+          });
+        } else {
+          const errMsg = error?.message || "Clinical depth submission failed. Please try again.";
+          setSubmitError(errMsg);
+        }
       },
     });
   };
@@ -240,6 +245,11 @@ export default function Phase3() {
           id="phase-3-verification-form"
           onSubmit={methods.handleSubmit(onSubmit)}
         >
+          {submitError && (
+            <div className="bg-red-50 border border-red-200 text-red-750 p-4 rounded-xl text-sm font-semibold mx-6 my-2">
+              {submitError}
+            </div>
+          )}
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 p-6">
               <div className="space-y-2">

@@ -72,19 +72,31 @@ export default function Result() {
 
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
+              {errors.root && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl text-sm flex items-start gap-2.5 shadow-sm">
+                  <div className="font-bold">Error:</div>
+                  <div>{errors.root.message}</div>
+                </div>
+              )}
+
               <div className="space-y-3">
                 <label className="block text-sm font-semibold text-text">Images</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {beforePreview ? (
-                    <div className="relative border rounded-lg h-44 overflow-hidden group">
-                      <img src={beforePreview} alt="Before Preview" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => setValue("beforeImage", null, { shouldValidate: true })}
-                        className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors cursor-pointer"
-                      >
-                        <span className="text-xs font-bold">✕</span>
-                      </button>
+                    <div className="space-y-1.5">
+                      <div className="relative border rounded-lg h-44 overflow-hidden group">
+                        <img src={beforePreview} alt="Before Preview" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setValue("beforeImage", null, { shouldValidate: true })}
+                          className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors cursor-pointer"
+                        >
+                          <span className="text-xs font-bold">✕</span>
+                        </button>
+                      </div>
+                      {errors.beforeImage && (
+                        <p className="text-xs font-semibold text-red-500">{String(errors.beforeImage.message)}</p>
+                      )}
                     </div>
                   ) : (
                     <FileUploadField
@@ -98,15 +110,20 @@ export default function Result() {
                   )}
 
                   {afterPreview ? (
-                    <div className="relative border rounded-lg h-44 overflow-hidden group">
-                      <img src={afterPreview} alt="After Preview" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => setValue("afterImage", null, { shouldValidate: true })}
-                        className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors cursor-pointer"
-                      >
-                        <span className="text-xs font-bold">✕</span>
-                      </button>
+                    <div className="space-y-1.5">
+                      <div className="relative border rounded-lg h-44 overflow-hidden group">
+                        <img src={afterPreview} alt="After Preview" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setValue("afterImage", null, { shouldValidate: true })}
+                          className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors cursor-pointer"
+                        >
+                          <span className="text-xs font-bold">✕</span>
+                        </button>
+                      </div>
+                      {errors.afterImage && (
+                        <p className="text-xs font-semibold text-red-500">{String(errors.afterImage.message)}</p>
+                      )}
                     </div>
                   ) : (
                     <FileUploadField

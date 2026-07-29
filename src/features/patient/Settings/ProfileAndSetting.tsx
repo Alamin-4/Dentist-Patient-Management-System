@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { User, Lock, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,17 @@ export default function ProfileSettingsPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const user = (response as any)?.data || response;
+
+  useEffect(() => {
+    if (user?.image && previewUrl) {
+      try {
+        URL.revokeObjectURL(previewUrl);
+      } catch (err) {
+        console.error("Failed to revoke object URL:", err);
+      }
+      setPreviewUrl(null);
+    }
+  }, [user?.image]);
 
   const tabs = [
     { id: "personal", label: "Personal Information", icon: User },
@@ -44,37 +55,51 @@ export default function ProfileSettingsPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    setValue("avatar", files, { shouldValidate: true });
+    // Validate using the schema directly
+    const result = avatarUploadSchema.safeParse({ avatar: files });
+    if (!result.success) {
+      const errorMessage = result.error.issues[0]?.message || "Invalid file";
+      setError("avatar", { type: "manual", message: errorMessage });
+      return;
+    }
 
+    // Clear previous errors
+    setError("avatar", { type: "manual", message: "" });
+
+    // Preview
     const file = files[0];
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
+    if (file && file instanceof Blob) {
+      try {
+        const objectUrl = URL.createObjectURL(file);
+        setPreviewUrl(objectUrl);
+      } catch (err) {
+        console.error("Failed to create object URL for preview:", err);
+      }
+    }
 
-    handleSubmit(onSubmit)();
+    setValue("avatar", files);
+    onSubmit({ avatar: files });
   };
 
   const onSubmit = async (data: AvatarUploadFormValues) => {
     try {
       const file = data.avatar[0];
       await uploadProfileImageMutation.mutateAsync(file);
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-        setPreviewUrl(null);
-      }
     } catch (error: any) {
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
         setPreviewUrl(null);
       }
-      const serverErrors = error?.response?.data?.errors;
+      // error is normalized to AppError by API interceptors
+      const serverErrors = error?.errors || error?.response?.data?.errors;
       if (Array.isArray(serverErrors)) {
         serverErrors.forEach((err: { field: string; message: string }) => {
-          if (err.field === "file" || err.field === "avatar") {
+          if (err.field === "file" || err.field === "avatar" || err.field === "image") {
             setError("avatar", { type: "server", message: err.message });
           }
         });
       } else {
-        const fallbackMsg = error?.response?.data?.message || "Failed to upload profile photo";
+        const fallbackMsg = error?.message || error?.response?.data?.message || "Failed to upload profile photo";
         setError("avatar", { type: "server", message: fallbackMsg });
       }
     }
@@ -167,16 +192,11 @@ export default function ProfileSettingsPage() {
             </button>
             <input
               type="file"
-              accept=".jpg,.jpeg,.png,.pdf"
-              {...register("avatar")}
+              accept=".jpg,.jpeg,.png,.webp"
               ref={(e) => {
-                register("avatar").ref(e);
                 (fileInputRef as any).current = e;
               }}
-              onChange={(e) => {
-                register("avatar").onChange(e);
-                handleFileChange(e);
-              }}
+              onChange={handleFileChange}
               className="hidden"
             />
           </div>

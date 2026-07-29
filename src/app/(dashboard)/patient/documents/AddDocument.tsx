@@ -110,7 +110,10 @@ export default function UploadDocumentModal({
       handleClose();
     },
     onError: (err: any) => {
-      toast.error(err?.message || "Failed to upload document.");
+      setErrors((prev) => ({
+        ...prev,
+        file: err?.message || "Failed to upload document.",
+      }));
     },
   });
 
