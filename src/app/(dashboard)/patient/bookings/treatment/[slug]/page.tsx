@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   ChevronLeft,
@@ -12,72 +11,54 @@ import {
   Copy,
   ShieldAlert,
 } from "lucide-react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useTreatmentPlanById } from "@/hooks/treatment-plan/useTreatmentPlan";
-import { mapPlanToBooking } from "@/app/modules/patient/MyBooking/MyBooking";
-import { InProgressBooking } from "@/app/modules/patient/MyBooking/data";
 import ClinicLocationModal from "@/app/modules/patient/MyBooking/Modal/ClinicLocationModal";
 import { ConfirmReleaseModal } from "@/app/modules/patient/MyBooking/Modal/ApproveModal";
 import { LeaveReviewModal } from "@/app/modules/patient/MyBooking/Modal/LeaveReviewModal";
 import { RejectPlanModal } from "@/app/modules/patient/MyBooking/Modal/RejectModal";
 import { NoSurpriseRejectModal } from "@/app/modules/patient/MyBooking/Modal/NoSurpriseRejectModal";
-import {
-  useCreateEscrowSession,
-  useRespondFinalPlan,
-  useSubmitReview,
-} from "@/hooks/treatment-booking/useTreatmentBooking";
-import { apiClient } from "@/api/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { usePatientTreatmentController } from "@/core/hooks/patient/usePatientTreatmentController";
 
 export default function TreatmentDetailsPage() {
-  const { slug } = useParams();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
-
-  const { data: treatmentPlanResponse, isLoading } = useTreatmentPlanById(slug as string);
-
-  // Confirm escrow payment when Stripe redirects back with ?success=true&session_id=...
-  useEffect(() => {
-    const isSuccess = searchParams.get("success") === "true";
-    const sessionId = searchParams.get("session_id");
-    if (!isSuccess || !sessionId) return;
-
-    const confirm = async () => {
-      try {
-        await apiClient.treatmentBookings.confirmEscrowPayment(sessionId);
-        // Invalidate queries so status refreshes
-        await queryClient.invalidateQueries({ queryKey: ["treatmentPlan", slug] });
-        await queryClient.invalidateQueries({ queryKey: ["patientTreatmentPlans"] });
-        // Clean URL without reload
-        const url = new URL(window.location.href);
-        url.searchParams.delete("success");
-        url.searchParams.delete("session_id");
-        window.history.replaceState({}, "", url.toString());
-      } catch (err) {
-        console.error("Failed to confirm escrow payment:", err);
-      }
-    };
-
-    confirm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [estimatePlanOpen, setEstimatePlanOpen] = useState(true);
-  const [finalPlanOpen, setFinalPlanOpen] = useState(true);
-  const [journeyOpen, setJourneyOpen] = useState(true);
-  const [locationModalOpen, setLocationModalOpen] = useState(false);
-  const [approveModalOpen, setApproveModalOpen] = useState(false);
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [noSurpriseRejectModalOpen, setNoSurpriseRejectModalOpen] = useState(false);
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [codeCopied, setCodeCopied] = useState(false);
-  const [arrivalCodeCopied, setArrivalCodeCopied] = useState(false);
-
-  const createEscrowSessionMutation = useCreateEscrowSession();
-  const respondFinalPlanMutation = useRespondFinalPlan();
-  const submitReviewMutation = useSubmitReview();
+  const {
+    plan,
+    booking,
+    finalPlan,
+    isWithinLeeway,
+    isApproved,
+    isCancelled,
+    isArrivalToday,
+    isLoading,
+    estimatePlanOpen,
+    setEstimatePlanOpen,
+    finalPlanOpen,
+    setFinalPlanOpen,
+    journeyOpen,
+    setJourneyOpen,
+    locationModalOpen,
+    setLocationModalOpen,
+    approveModalOpen,
+    setApproveModalOpen,
+    rejectModalOpen,
+    setRejectModalOpen,
+    noSurpriseRejectModalOpen,
+    setNoSurpriseRejectModalOpen,
+    reviewModalOpen,
+    setReviewModalOpen,
+    codeCopied,
+    arrivalCodeCopied,
+    handleCopyCode,
+    handleCopyArrivalCode,
+    handlePayDeposit,
+    handleApprovePlan,
+    handleRejectPlanConfirm,
+    handleNoSurpriseRejectConfirm,
+    handleReviewSubmit,
+    isPayingDeposit,
+    isRespondingPlan,
+    isSubmittingReview,
+    router,
+  } = usePatientTreatmentController();
 
   if (isLoading) {
     return (
@@ -87,107 +68,19 @@ export default function TreatmentDetailsPage() {
     );
   }
 
-  const plan = treatmentPlanResponse?.data;
-  if (!plan) {
+  if (!plan || !booking) {
     return (
       <div className="text-center py-20 bg-white border border-slate-100 rounded-lg shadow-sm">
         <p className="text-red-500 font-medium">Treatment booking not found.</p>
         <button
           onClick={() => router.push("/patient")}
-          className="mt-4 px-6 py-2 bg-[#0F3659] text-white rounded-lg text-sm"
+          className="mt-4 px-6 py-2 bg-[#0F3659] text-white rounded-lg text-sm cursor-pointer"
         >
           Go Back
         </button>
       </div>
     );
   }
-
-  const booking: InProgressBooking & { treatmentBookingId?: string } = mapPlanToBooking(plan);
-  const finalPlan = booking.finalPlan;
-  const isWithinLeeway = finalPlan?.isWithinLeeway ?? true;
-  const isApproved = booking.isApproved;
-  const isCancelled = plan.treatmentBooking?.status === "CANCELLED";
-
-  const travelFromDateStr = plan.consultation?.intake?.travelFrom;
-  const isArrivalToday = (() => {
-    if (searchParams.get("mockArrival") === "true") return true;
-    if (!travelFromDateStr) return false;
-    const tFrom = new Date(travelFromDateStr);
-    const day1Arrival = new Date(tFrom.getTime() + 24 * 60 * 60 * 1000);
-    const today = new Date();
-
-    const isToday = (d: Date) =>
-      d.getFullYear() === today.getFullYear() &&
-      d.getMonth() === today.getMonth() &&
-      d.getDate() === today.getDate();
-
-    return isToday(tFrom) || isToday(day1Arrival);
-  })();
-
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(booking.paymentCode);
-    setCodeCopied(true);
-    setTimeout(() => setCodeCopied(false), 2000);
-  };
-
-  const handleCopyArrivalCode = () => {
-    navigator.clipboard.writeText(booking.arrivalCode);
-    setArrivalCodeCopied(true);
-    setTimeout(() => setArrivalCodeCopied(false), 2000);
-  };
-
-  const handlePayDeposit = () => {
-    if (booking.treatmentBookingId) {
-      createEscrowSessionMutation.mutate(booking.treatmentBookingId);
-    }
-  };
-
-  const handleApprovePlan = () => {
-    if (booking.treatmentBookingId) {
-      respondFinalPlanMutation.mutate({
-        id: booking.treatmentBookingId,
-        payload: { action: "APPROVE" },
-      }, {
-        onSuccess: () => {
-          setApproveModalOpen(true);
-        }
-      });
-    }
-  };
-
-  const handleRejectPlanConfirm = (reason: string) => {
-    if (booking.treatmentBookingId) {
-      respondFinalPlanMutation.mutate({
-        id: booking.treatmentBookingId,
-        payload: { action: "REJECT", reason },
-      });
-      setRejectModalOpen(false);
-    }
-  };
-
-  const handleNoSurpriseRejectConfirm = (reason: string) => {
-    if (booking.treatmentBookingId) {
-      respondFinalPlanMutation.mutate({
-        id: booking.treatmentBookingId,
-        payload: { action: "REJECT", reason },
-      });
-      setNoSurpriseRejectModalOpen(false);
-    }
-  };
-
-  const handleReviewSubmit = (reviewData: any) => {
-    if (booking.treatmentBookingId) {
-      submitReviewMutation.mutate({
-        id: booking.treatmentBookingId,
-        payload: {
-          ratingCommunication: reviewData.ratingCommunication,
-          ratingValueForMoney: reviewData.ratingValueForMoney,
-          ratingFollowThrough: reviewData.ratingFollowThrough,
-          comments: reviewData.comments,
-        },
-      });
-    }
-  };
 
   return (
     <div className="pb-24">
@@ -209,13 +102,13 @@ export default function TreatmentDetailsPage() {
         onClose={() => setRejectModalOpen(false)}
         onConfirm={handleRejectPlanConfirm}
         totalEstimate={booking.treatmentPlan.totalEstimate}
-        isLoading={respondFinalPlanMutation.isPending}
+        isLoading={isRespondingPlan}
       />
       <NoSurpriseRejectModal
         isOpen={noSurpriseRejectModalOpen}
         onClose={() => setNoSurpriseRejectModalOpen(false)}
         onConfirm={handleNoSurpriseRejectConfirm}
-        isLoading={respondFinalPlanMutation.isPending}
+        isLoading={isRespondingPlan}
       />
       <LeaveReviewModal
         isOpen={reviewModalOpen}
@@ -425,10 +318,10 @@ export default function TreatmentDetailsPage() {
               {finalPlanOpen && (
                 <div className="px-5 md:px-6 pb-5">
                   <PlanTable
-                    breakdown={finalPlan.breakdown}
-                    totalLabel="Final total"
-                    total={finalPlan.finalTotal}
-                    isFinal
+                     breakdown={finalPlan.breakdown}
+                     totalLabel="Final total"
+                     total={finalPlan.finalTotal}
+                     isFinal
                   />
 
                   {/* No Surprise Reject — only when exceeds leeway and booking is in progress */}
@@ -490,7 +383,7 @@ export default function TreatmentDetailsPage() {
           <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
             <h4 className="font-bold text-text mb-6">Treatment Timeline</h4>
             <div className="space-y-0">
-              {booking.timeline.map((step, i) => (
+              {booking.timeline.map((step: any, i: number) => (
                 <TimelineStepItem
                   key={i}
                   step={step}
@@ -563,10 +456,10 @@ export default function TreatmentDetailsPage() {
               {booking.paymentStatus === "pending" ? (
                 <button
                   onClick={handlePayDeposit}
-                  disabled={createEscrowSessionMutation.isPending}
+                  disabled={isPayingDeposit}
                   className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {createEscrowSessionMutation.isPending ? "Loading Stripe..." : "Pay Escrow Deposit"}
+                  {isPayingDeposit ? "Loading Stripe..." : "Pay Escrow Deposit"}
                 </button>
               ) : isApproved ? (
                 <>
@@ -579,7 +472,7 @@ export default function TreatmentDetailsPage() {
                   {plan.treatmentBooking?.status === "COMPLETED" && !plan.treatmentBooking?.metadata?.review && (
                     <button
                       onClick={() => setReviewModalOpen(true)}
-                      disabled={submitReviewMutation.isPending}
+                      disabled={isSubmittingReview}
                       className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                     >
                       Review Doctor
@@ -593,7 +486,7 @@ export default function TreatmentDetailsPage() {
                       {isWithinLeeway && (
                         <button
                           onClick={() => setRejectModalOpen(true)}
-                          disabled={respondFinalPlanMutation.isPending}
+                          disabled={isRespondingPlan}
                           className="border border-slate-300 text-text px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Reject Plan
@@ -601,10 +494,10 @@ export default function TreatmentDetailsPage() {
                       )}
                       <button
                         onClick={handleApprovePlan}
-                        disabled={respondFinalPlanMutation.isPending}
+                        disabled={isRespondingPlan}
                         className="bg-[#0F3659] hover:bg-[#0A2640] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
                       >
-                        {respondFinalPlanMutation.isPending ? "Approving..." : "Approve"}
+                        {isRespondingPlan ? "Approving..." : "Approve"}
                       </button>
                     </>
                   )}

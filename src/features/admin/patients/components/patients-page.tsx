@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { ErrorState } from "@/components/shared/error-state";
 import usePatients from "@/hooks/admin/patients/usePatients";
 import { CustomStats } from "@/app/(admin-dashboard)/modules/shared/custom-stats";
 
@@ -25,7 +25,7 @@ export default function PatientsPage() {
     const [page, setPage] = useState(1);
 
     // Call the backend API using our React Query hook
-    const { patientslistData, isPatientslistLoading, isPatientslistError } = usePatients({
+    const { patientslist, patientslistData, isPatientslistLoading, isPatientslistError } = usePatients({
         status: activeTab === "all" ? undefined : activeTab,
         city: cityFilter === "all" ? undefined : cityFilter,
         search: tableSearch || headerSearch || undefined,
@@ -113,16 +113,16 @@ export default function PatientsPage() {
                     setPage={setPage}
                 />
 
-                {isPatientslistLoading ? (
-                    <div className="flex min-h-[300px] items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-[#163E5C]" />
-                    </div>
-                ) : isPatientslistError ? (
-                    <div className="flex min-h-[300px] items-center justify-center text-red-500 font-medium">
-                        Failed to load patients list. Please check your connection and try again.
+                {isPatientslistError ? (
+                    <div className="py-8">
+                        <ErrorState
+                            title="Patients List Unavailable"
+                            message="Could not load the patients list. Please check your connection and try again."
+                            onRetry={() => patientslist.refetch()}
+                        />
                     </div>
                 ) : (
-                    <PatientsTable pageData={pageData} onRowClick={handleRowClick} />
+                    <PatientsTable pageData={pageData} isLoading={isPatientslistLoading} onRowClick={handleRowClick} />
                 )}
 
                 <PatientsPagination

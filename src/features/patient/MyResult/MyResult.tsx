@@ -5,9 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
-import { MapPin, ImagePlus, Loader2, UserCheck } from "lucide-react";
+import { MapPin, ImagePlus, UserCheck } from "lucide-react";
 import { AddPhotoModal } from "./AddNewPhoto";
 import { normalizeApiError } from "@/api/error-handler";
+import { SkeletonCard } from "@/components/shared/skeletons";
+import { ErrorState } from "@/components/shared/error-state";
 
 export interface PatientResult {
   id: string | number;
@@ -21,7 +23,7 @@ export interface PatientResult {
 export default function MyResultPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: results = [], isLoading, error } = useQuery<PatientResult[], Error>({
+  const { data: results = [], isLoading, isError, error, refetch } = useQuery<PatientResult[], Error>({
     queryKey: ["patient-results"],
     queryFn: async () => {
       const response = await apiClient.patients.getResults();
@@ -42,10 +44,30 @@ export default function MyResultPage() {
       <h1 className="text-3xl font-bold text-text mb-8">My Result</h1>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-[#0F3659] animate-spin" />
-          <p className="text-sm text-slate-500 mt-2">Loading results...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-pulse">
+              <div className="flex h-48 w-full bg-slate-100">
+                <div className="w-1/2 h-full border-r border-white/20 bg-slate-200" />
+                <div className="w-1/2 h-full bg-slate-200" />
+              </div>
+              <div className="p-5 space-y-3">
+                <div className="h-6 w-3/4 rounded bg-slate-200" />
+                <div className="h-4 w-1/2 rounded bg-slate-100" />
+                <div className="pt-3 border-t border-slate-50 mt-3 flex items-center gap-2">
+                  <div className="size-4 rounded-full bg-slate-100" />
+                  <div className="h-4 w-24 rounded bg-slate-150" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
+      ) : isError && !isPersonalizationMissing ? (
+        <ErrorState
+          title="Results Loading Failed"
+          message={apiError?.message || "We could not load your dental treatment results. Please try again."}
+          onRetry={() => refetch()}
+        />
       ) : isPersonalizationMissing ? (
         <div className="flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-slate-50/50 border border-slate-100 rounded-3xl max-w-xl mx-auto my-12 space-y-6 shadow-sm">
           <div className="size-16 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0F3659]">

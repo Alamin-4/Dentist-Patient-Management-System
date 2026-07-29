@@ -1,9 +1,9 @@
-import IntakeModal from "@/features/marketing/_components/module/Booking-flow/Book";
+import IntakeModal from "@/features/marketing/_components/Booking-flow/Book";
 import { Navbar } from "@/app/modules/shared/navbar";
 import { Sidebar } from "@/app/modules/shared/sidebar";
 import { MobileSidebarDrawer } from "@/app/modules/shared/mobile-sidebar-drawer";
-import StartBookingModal from "@/features/marketing/_components/module/Booking-flow/StartBooking";
-import CompareModal from "@/features/marketing/_components/module/CompareModal/CompareModal";
+import StartBookingModal from "@/features/marketing/_components/Booking-flow/StartBooking";
+import CompareModal from "@/features/marketing/_components/CompareModal/CompareModal";
 import { SidebarProvider } from "@/context/sidebar-context";
 
 export default function DashboardLayout({
@@ -17,16 +17,14 @@ export default function DashboardLayout({
         <Navbar />
 
         <div className="flex flex-1 overflow-hidden">
-          {/* Desktop sidebar — always visible on lg+ */}
           <aside className={`hidden h-full border-r border-border/80 lg:block`}>
             <Sidebar />
           </aside>
 
-          {/* Mobile drawer + backdrop — visible below lg */}
           <MobileSidebarDrawer />
 
-          <main className="flex-1 min-h-0 overflow-y-auto p-6">
-            <div className="min-h-full">{children}</div>
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 ">
+            <div className="">{children}</div>
           </main>
         </div>
 

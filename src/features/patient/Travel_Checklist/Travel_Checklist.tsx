@@ -7,6 +7,8 @@ import { Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
+import { ErrorState } from "@/components/shared/error-state";
+
 interface ChecklistItem {
   id: string;
   text: string;
@@ -17,17 +19,12 @@ interface ChecklistItem {
 export default function TravelChecklistPageComponent() {
   const queryClient = useQueryClient();
 
-  const { data: items = [], isLoading } = useQuery<ChecklistItem[]>({
+  const { data: items = [], isLoading, isError, refetch } = useQuery<ChecklistItem[]>({
     queryKey: ["patient-travel-checklist"],
     queryFn: async () => {
-      try {
-        const response = await apiClient.patients.getTravelChecklist();
-        const apiData = response?.data || response;
-        return Array.isArray(apiData) ? apiData : [];
-      } catch (err) {
-        console.warn("Patient Travel Checklist API route not found or ready:", err);
-        return [];
-      }
+      const response = await apiClient.patients.getTravelChecklist();
+      const apiData = response?.data || response;
+      return Array.isArray(apiData) ? apiData : [];
     },
   });
 
@@ -58,11 +55,42 @@ export default function TravelChecklistPageComponent() {
     toggleMutation.mutate({ id, completed: !currentStatus });
   };
 
+  if (isError) {
+    return (
+      <ErrorState
+        title="Checklist Unavailable"
+        message="Could not load your travel checklist. Please check your connection and try again."
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-[#0F3659] animate-spin" />
-        <p className="text-sm text-slate-500 mt-2">Loading travel checklist...</p>
+      <div className="space-y-8 animate-pulse">
+        <div className="h-8 w-48 bg-slate-200 rounded-md mb-10" />
+
+        {/* Section 1 Skeleton */}
+        <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm space-y-6">
+          <div className="h-6 w-36 bg-slate-200 rounded-md mb-4" />
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              <div className="size-5 rounded border-2 border-slate-200 bg-slate-100 shrink-0" />
+              <div className={`h-4 bg-slate-200 rounded-md ${idx % 2 === 0 ? "w-2/3" : "w-1/2"}`} />
+            </div>
+          ))}
+        </div>
+
+        {/* Section 2 Skeleton */}
+        <div className="bg-white rounded-lg border border-slate-100 p-8 shadow-sm space-y-6">
+          <div className="h-6 w-36 bg-slate-200 rounded-md mb-4" />
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              <div className="size-5 rounded border-2 border-slate-200 bg-slate-100 shrink-0" />
+              <div className={`h-4 bg-slate-200 rounded-md ${idx % 2 === 0 ? "w-1/2" : "w-3/4"}`} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

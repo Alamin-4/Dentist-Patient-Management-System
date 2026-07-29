@@ -311,7 +311,7 @@ export function RescheduleConsultationModal({
                 </div>
 
                 {/* Right column: Timezone and Time Slots */}
-                <div className="md:col-span-5 rounded-2xl border border-[#E6EEF6] bg-white p-4 flex flex-col justify-between min-h-[300px] md:min-h-auto">
+                <div className="md:col-span-5 rounded-2xl border border-[#E6EEF6] bg-white p-4 flex flex-col justify-between min-h-75 md:min-h-auto">
                   <div className="space-y-4">
                     <div>
                       <label className="mb-2 block text-[13px] font-semibold text-text">

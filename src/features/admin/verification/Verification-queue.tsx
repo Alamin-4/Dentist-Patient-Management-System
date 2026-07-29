@@ -24,7 +24,8 @@ import useVerifications, {
   useDentistVerificationPhases,
   useVerifyPhase,
 } from "@/hooks/admin/verifications/useVerifications";
-import { apiClient } from "@/api/client";
+import VerificationSkeleton from "./VerificationSkeleton";
+import { ErrorState } from "@/components/shared/error-state";
 
 const STAT_CARDS = [
   {
@@ -174,16 +175,18 @@ export default function VerificationQueue() {
 
   if (isVerificationslistLoading) {
     return (
-      <div className="flex min-h-100 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#163E5C]" />
-      </div>
+      <VerificationSkeleton />
     );
   }
 
   if (isVerificationslistError) {
     return (
-      <div className="flex min-h-100 items-center justify-center text-red-500">
-        Failed to load verification queue. Please try again.
+      <div className="py-12">
+        <ErrorState
+          title="Verification Queue Unavailable"
+          message="Could not load the verification queue lists. Please check your connection and try again."
+          onRetry={() => verificationslist.refetch()}
+        />
       </div>
     );
   }

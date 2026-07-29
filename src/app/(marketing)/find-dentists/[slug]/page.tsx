@@ -4,12 +4,12 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
-import ProfilePageSkeleton from "@/features/marketing/_components/module/find-dentists-page-components/DentistProfile/profile-page-skeleton";
+import ProfilePageSkeleton from "@/features/marketing/_components/find-dentists-page-components/DentistProfile/profile-page-skeleton";
 import DentistNotFound from "./not-found";
 
 const DentistProfile = dynamic(
   () =>
-    import("@/features/marketing/_components/module/find-dentists-page-components/DentistProfile/ProfilePage"),
+    import("@/features/marketing/_components/find-dentists-page-components/DentistProfile/ProfilePage"),
   { ssr: false },
 );
 
@@ -72,7 +72,7 @@ export default function ViewDentistProfile() {
     return <ProfilePageSkeleton />;
   }
 
-  if (isError || !mappedDentist || !mappedDentist.verified) {
+  if (isError || !mappedDentist) {
     return <DentistNotFound />;
   }
 
