@@ -9,6 +9,8 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useVerifyResetOtp, useResendOtp } from "@/hooks/auth/useAuth";
 
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
+
 const otpVerifySchema = z.object({
   otp: z.string().length(6, "Please enter the 6-digit verification code"),
 });
@@ -80,8 +82,7 @@ export default function ForgotOtpForm({ email, onBack, onSuccess }: ForgotOtpFor
           });
         },
         onError: (error: any) => {
-          const errMsg = error?.response?.data?.message || "Failed to resend verification code.";
-          toast.error(errMsg, { style: TOAST_STYLE });
+          toast.error(mapApiErrorToUserMessage(error, "Failed to resend verification code."), { style: TOAST_STYLE });
         },
       },
     );

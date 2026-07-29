@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useDentistPatients } from "@/core/hooks/dentist/useDentist";
 import { useDentistResults } from "./useDentistResults";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 
 const resultSchema = z.object({
@@ -143,7 +144,6 @@ export function useResultController() {
 
   const onSubmit = async (data: ResultFormValues) => {
     try {
-      toast.loading("Uploading photos and saving result...", { id: "upload-progress" });
       await createMutation.mutateAsync({
         title: data.title,
         patientName: data.patientName,
@@ -156,7 +156,7 @@ export function useResultController() {
       resetForm();
       setIsModalOpen(false);
     } catch (err: any) {
-      const errMsg = err?.message || "Failed to create result";
+      const errMsg = mapApiErrorToUserMessage(err, "Failed to create result");
       if (errMsg.toLowerCase().includes("before image")) {
         methods.setError("beforeImage", { type: "server", message: errMsg });
       } else if (errMsg.toLowerCase().includes("after image")) {
@@ -167,8 +167,6 @@ export function useResultController() {
       } else {
         methods.setError("root", { type: "server", message: errMsg });
       }
-    } finally {
-      toast.dismiss("upload-progress");
     }
   };
 

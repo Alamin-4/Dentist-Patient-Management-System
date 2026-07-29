@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/input-otp";
 import useAuth from "@/hooks/auth/useAuth";
 import { useOtpCountdown } from "@/hooks/auth/useOtpCountdown";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 
 const otpSchema = z.object({
   otp: z.string().length(6, "Please enter a valid 6-digit code"),
@@ -120,8 +121,10 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
           setStep("professional-info");
         },
         onError: (error: any) => {
-          const errorMessage =
-            error?.response?.data?.message || "Invalid OTP. Please try again.";
+          const errorMessage = mapApiErrorToUserMessage(
+            error,
+            "Invalid OTP. Please try again."
+          );
           setError("otp", { type: "manual", message: errorMessage });
         },
       }
@@ -133,7 +136,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">
       <div className="flex flex-col items-center space-y-6 md:space-y-8">
         <div className="flex flex-col items-center space-y-4 w-full">
-          {/* ── OTP Input ── */}
+          
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <Controller
               name="otp"
@@ -153,9 +156,9 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
                       <InputOTPSlot
                         key={index}
                         index={index}
-                        className={`h-14 lg:h-16 w-full max-w-17.5 rounded-lg bg-white text-xl font-semibold text-[#163E5C] border transition-all focus-within:ring-2 focus-within:ring-[#163E5C] focus-within:border-[#163E5C] ${errors.otp
-                          ? "border-red-500 bg-red-50/10"
-                          : "border-gray-300"
+                        className={`h-12 md:h-14 w-full max-w-17.5 rounded-lg bg-white text-xl font-semibold text-primary border transition-all focus-within:ring-2 focus-within:ring-primary focus-within:border-primary ${errors.otp
+                          ? "border-red-400 bg-red-50/10"
+                          : "border-border"
                           }`}
                       />
                     ))}
@@ -164,14 +167,14 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
               )}
             />
             {errors.otp && (
-              <p className="text-sm font-medium text-red-500 mt-2 w-full text-center">
+              <p className="text-xs text-red-500 mt-1 w-full text-center">
                 {errors.otp.message}
               </p>
             )}
           </div>
 
           {isActive ? (
-            <div className="flex items-center gap-1.5 text-sm text-[#163E5C]/70">
+            <div className="flex items-center gap-1.5 text-sm text-sec-text">
               <Clock className="h-3.5 w-3.5" />
               <span>
                 OTP expires in {" "}
@@ -179,22 +182,23 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
               </span>
             </div>
           ) : (
-            <button
+            <div className="flex items-center justify-end w-full">
+              <button
               type="button"
               disabled={otpVerifyMutation.isPending}
-              className={`font-semibold transition-all px-2 py-1 text-primary border-primary/95 cursor-pointer hover:underline"
-                `}
+              className={`font-medium text-sm md:text-base cursor-pointer text-primary hover:underline`}
               onClick={handleResendOtp}
             >
-              {otpVerifyMutation.isPending ? "Sending....." : "Resend OTP"}
+              {otpVerifyMutation.isPending ? "Sending....." : "Resend"}
             </button>
+            </div>
           )}
         </div>
 
         <Button
           type="submit"
           disabled={isOtpVerifyLoading}
-          className="h-14 w-full bg-[#163E5C] text-white hover:bg-[#113149] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg text-lg font-semibold transition-colors shadow-lg flex items-center justify-center gap-2"
+          className="h-10 md:h-11 w-full bg-primary text-white hover:bg-primary/95 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg font-medium cursor-pointer transition-colors shadow-lg flex items-center justify-center gap-2"
         >
           {isOtpVerifyLoading ? (
             <>

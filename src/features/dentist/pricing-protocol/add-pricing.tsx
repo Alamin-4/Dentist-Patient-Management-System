@@ -9,6 +9,7 @@ import { ArrowLeft, XCircle, Loader2 } from "lucide-react";
 import { useStepTwoMutation, useDentistProgress } from "@/hooks/dentist/useDentist";
 import { useBulkUploadProcedures } from "@/core/hooks/procedures/useProcedures";
 import { StepTwoI } from "@/hooks/dentist/dentist.interface";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import { FileUploadField } from "@/components/ui/file-upload-field";
 
@@ -225,14 +226,13 @@ export default function AddPricing() {
     const formData = new FormData();
     formData.append("csvFile", file);
 
-    const toastId = toast.loading("Uploading CSV...");
     bulkUploadMutation.mutate(formData, {
       onSuccess: (res: any) => {
-        toast.success(res?.message || "CSV procedures uploaded successfully!", { id: toastId });
+        toast.success(res?.message || "CSV procedures uploaded successfully!");
         refetch();
       },
       onError: (err: any) => {
-        toast.error(err?.response?.data?.message || "Failed to upload CSV.", { id: toastId });
+        toast.error(mapApiErrorToUserMessage(err, "Failed to upload CSV. Please check the file format."));
       },
     });
   };
@@ -514,7 +514,7 @@ export default function AddPricing() {
           <div className="flex flex-col items-end gap-2">
             {stepTwoMutation.error && (
               <p className="text-sm font-semibold text-red-500 animate-in fade-in slide-in-from-bottom-1">
-                {(stepTwoMutation.error as any)?.response?.data?.message || stepTwoMutation.error?.message || "Failed to save pricing protocols. Please try again."}
+                {mapApiErrorToUserMessage(stepTwoMutation.error, "Failed to save pricing protocols. Please try again.")}
               </p>
             )}
             <div className="flex justify-end w-full">

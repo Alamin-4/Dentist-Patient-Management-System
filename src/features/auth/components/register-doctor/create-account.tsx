@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2, Camera } from "lucide-react";
+import { Eye, EyeOff, Loader2, Camera, MailCheck, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -20,6 +20,7 @@ import {
 
 import useAuth, { useMe } from "@/hooks/auth/useAuth";
 import { IRegisterDentist, registerDentistSchema } from "@/hooks/auth/auth.validation";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 
 interface CreateAccountFormProps {
   setStep: (step: "verify-email" | "professional-info" | "success") => void;
@@ -87,7 +88,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           router.push(`${pathName}?dentist=verify-email`);
         },
         onError: (error: any) => {
-          const errorMessage = error?.response?.data?.message || "Failed to send verification OTP. Try again.";
+          const errorMessage = mapApiErrorToUserMessage(error, "Failed to send verification OTP. Try again.");
           toast.error(errorMessage);
         },
       }
@@ -112,7 +113,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
         const apiErrors = error?.errors || error?.response?.data?.errors;
 
         // Check if backend sent field-specific errors
-        if (apiErrors && Array.isArray(apiErrors)) {
+        if (apiErrors && Array.isArray(apiErrors) && apiErrors.length > 0) {
           apiErrors.forEach((fieldError: any) => {
             // Set error on the specific field
             setError(fieldError.field as keyof IRegisterDentist, {
@@ -124,7 +125,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
         }
 
         // Fallback to toast for general errors
-        const errorRes = error?.message || error?.response?.data?.message || "Failed to create account.";
+        const errorRes = mapApiErrorToUserMessage(error, "Failed to create account.");
         toast.error(errorRes);
       },
     });
@@ -133,91 +134,102 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   // Early return for the "Verify Email" state
   if (needVerifyEmail) {
     return (
-      <div className="flex flex-col items-center justify-center py-6 text-center space-y-6">
-        <div className="text-[#1A1A1A] font-semibold text-lg">
-          Your email ({needVerifyEmail}) is registered but not verified.
+      <div className="flex w-full flex-col items-center justify-center space-y-6 text-center animate-in fade-in zoom-in duration-300">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <MailCheck className="h-8 w-8" />
         </div>
-        <p className="text-sm text-gray-500">
-          Click the button below to receive a verification OTP on your email.
-        </p>
-        <Button
-          type="button"
-          onClick={handleSendVerificationOtp}
-          disabled={isOtpResendLoading}
-          className="h-11 w-full bg-[#163E5C] hover:bg-primary focus:ring-0 focus:ring-offset-0 cursor-pointer"
-        >
-          {isOtpResendLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Sending OTP...
-            </>
-          ) : (
-            "Verify Email"
-          )}
-        </Button>
-        <button
-          type="button"
-          onClick={() => setNeedVerifyEmail(null)}
-          className="text-sm font-semibold text-[#163E5C] hover:underline cursor-pointer"
-        >
-          Go back to Sign up
-        </button>
+
+        <div className="space-y-2">
+          <h3 className="text-lg md:text-xl font-semibold text-text">
+            Email Verification Required
+          </h3>
+          <p className="text-sm md:text-base text-sec-text max-w-sm mx-auto leading-relaxed">
+            Your email <span className="font-medium text-text">{needVerifyEmail}</span> is registered but not yet verified.
+          </p>
+        </div>
+
+        <div className="w-full space-y-3 pt-2">
+          <Button
+            type="button"
+            onClick={handleSendVerificationOtp}
+            disabled={isOtpResendLoading}
+            className="h-10 md:h-11 w-full bg-primary hover:bg-primary/95 text-white font-medium focus:ring-0 focus:outline-none cursor-pointer flex items-center justify-center gap-2"
+          >
+            {isOtpResendLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Sending Verification OTP...
+              </>
+            ) : (
+              "Send Verification Code"
+            )}
+          </Button>
+
+          <button
+            type="button"
+            onClick={() => setNeedVerifyEmail(null)}
+            className="flex items-center justify-center gap-1.5 w-full text-sm font-medium text-sec-text hover:text-text transition-colors cursor-pointer py-1"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Sign Up
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
+          <Label htmlFor="firstName" className="text-sm text-sec-text">First Name</Label>
           <Input
             id="firstName"
             {...register("firstName", { onChange: () => clearErrors("firstName") })}
             placeholder="John"
-            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.firstName ? "border-red-500" : ""}`}
+            className={`h-10 md:h-11 border-border bg-white focus:ring-0 focus:outline-none ${errors.firstName ? "border-red-400" : ""}`}
           />
           {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
+          <Label htmlFor="lastName" className="text-sm text-sec-text">Last Name</Label>
           <Input
             id="lastName"
             {...register("lastName", { onChange: () => clearErrors("lastName") })}
             placeholder="Doe"
-            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.lastName ? "border-red-500" : ""}`}
+            className={`h-10 md:h-11 border-border bg-white focus:ring-0 focus:outline-none ${errors.lastName ? "border-red-400" : ""}`}
           />
           {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
         </div>
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+        <Label htmlFor="email" className="text-sm text-sec-text">Email</Label>
         <Input
           id="email"
           type="email"
           {...register("email", { onChange: () => clearErrors("email") })}
           placeholder="example@gmail.com"
-          className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.email ? "border-red-500" : ""}`}
+          className={`h-10 md:h-11 border-border bg-white focus:ring-0 focus:outline-none ${errors.email ? "border-red-400" : ""}`}
         />
         {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700">Phone No</Label>
+        <Label htmlFor="phoneNumber" className="text-sm text-sec-text">Phone No</Label>
         <Input
           id="phoneNumber"
           type="tel"
           {...register("phoneNumber", { onChange: () => clearErrors("phoneNumber") })}
           placeholder="+1 234 *******"
-          className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.phoneNumber ? "border-red-500" : ""}`}
+          className={`h-10 md:h-11 border-border bg-white focus:ring-0 focus:outline-none ${errors.phoneNumber ? "border-red-400" : ""}`}
         />
         {errors.phoneNumber && <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="gender" className="text-sm font-medium text-gray-700">Gender</Label>
+          <Label htmlFor="gender" className="text-sm text-sec-text">Gender</Label>
           <Select
             onValueChange={(val) => {
               setValue("gender", val as "MALE" | "FEMALE" | "OTHER", { shouldValidate: true });
@@ -226,39 +238,39 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           >
             <SelectTrigger
               id="gender"
-              className={`h-11! w-full border-gray-300 bg-white ${errors.gender ? "border-red-500" : ""}`}
+              className={`h-10 md:h-11! w-full border-border bg-white ${errors.gender ? "border-red-400" : ""}`}
             >
               <SelectValue placeholder="Select Gender" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="MALE" className="h-11!">Male</SelectItem>
-              <SelectItem value="FEMALE" className="h-11!">Female</SelectItem>
-              <SelectItem value="OTHER" className="h-11!">Other</SelectItem>
+              <SelectItem value="MALE" className="h-10 md:h-11!">Male</SelectItem>
+              <SelectItem value="FEMALE" className="h-10 md:h-11!">Female</SelectItem>
+              <SelectItem value="OTHER" className="h-10 md:h-11!">Other</SelectItem>
             </SelectContent>
           </Select>
           {errors.gender && <p className="text-xs text-red-500">{errors.gender.message}</p>}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="referralCode" className="text-sm font-medium text-gray-700">Referral Code</Label>
+          <Label htmlFor="referralCode" className="text-sm text-sec-text">Referral Code</Label>
           <Input
             id="referralCode"
             {...register("referralCode", { onChange: () => clearErrors("referralCode") })}
             placeholder="JH-12 (Optional)"
-            className={`h-11 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.referralCode ? "border-red-500" : ""}`}
+            className={`h-10 md:h-11 border-border bg-white focus:ring-0 focus:outline-none ${errors.referralCode ? "border-red-400" : ""}`}
           />
           {errors.referralCode && <p className="text-xs text-red-500">{errors.referralCode.message}</p>}
         </div>
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+        <Label htmlFor="password" className="text-sm text-sec-text">Password</Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
             {...register("password", { onChange: () => clearErrors("password") })}
             placeholder="••••••••"
-            className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.password ? "border-red-500" : ""}`}
+            className={`h-10 md:h-11 pr-10 border-border bg-white focus:ring-0 focus:outline-none ${errors.password ? "border-red-400" : ""}`}
           />
           <button
             type="button"
@@ -273,14 +285,14 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+        <Label htmlFor="confirmPassword" className="text-sm text-sec-text">Confirm Password</Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
             placeholder="••••••••"
-            className={`h-11 pr-10 border-gray-300 bg-white focus:ring-0 focus:border-[#163E5C] ${errors.confirmPassword ? "border-red-500" : ""}`}
+            className={`h-10 md:h-11 pr-10 border-border bg-white focus:ring-0 focus:outline-none ${errors.confirmPassword ? "border-red-400" : ""}`}
           />
           <button
             type="button"
@@ -297,7 +309,7 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
       <Button
         type="submit"
         disabled={isRegisterDentistLoading}
-        className="h-11 bg-[#163E5C] hover:bg-primary focus:ring-0 focus:ring-offset-0 cursor-pointer w-full"
+        className="h-10 md:h-11 bg-primary hover:bg-primary/95 text-white font-medium focus:ring-0 focus:outline-none cursor-pointer w-full"
       >
         {isRegisterDentistLoading ? (
           <>

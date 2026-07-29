@@ -180,24 +180,17 @@ export function useDentistBookingController() {
           const errorMsg = apiErr.message || "An error occurred during payment verification.";
 
           if (errorMsg.includes("Stripe Connect") || errorMsg.includes("receive payouts")) {
-            const toastId = toast.loading("Stripe Connect required to receive payouts. Initializing onboarding...");
+            toast.error("Stripe Connect setup required to receive payouts.");
             try {
               const response = await apiClient.stripe.connectOnboard();
               if (response?.data?.url) {
-                toast.success("Redirecting to Stripe onboarding...", { id: toastId });
                 window.location.href = response.data.url;
               } else {
-                toast.error("Failed to start Stripe onboarding. Redirecting to Settings...", { id: toastId });
-                setTimeout(() => {
-                  router.push("/dentist/settings");
-                }, 2000);
+                router.push("/dentist/settings");
               }
             } catch (stripeErr: any) {
               console.error("Stripe Connect onboarding error:", stripeErr);
-              toast.error("Redirecting to Settings...", { id: toastId });
-              setTimeout(() => {
-                router.push("/dentist/settings");
-              }, 2000);
+              router.push("/dentist/settings");
             }
           } else {
             setPaymentErrorMessage(errorMsg);
