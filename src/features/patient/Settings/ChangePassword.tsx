@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useChangePassword } from "@/hooks/user/useUser";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, Pencil } from "lucide-react";
 
@@ -47,8 +48,7 @@ export function ChangePasswordForm() {
       reset();
       setIsEditing(false);
     } catch (error: any) {
-      const errMsg = error?.response?.data?.message || error?.message || "Failed to change password";
-      toast.error(errMsg);
+      toast.error(mapApiErrorToUserMessage(error, "Failed to change password. Please try again."));
     }
   };
 

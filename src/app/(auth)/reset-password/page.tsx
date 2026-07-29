@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useResetPassword } from "@/hooks/auth/useAuth";
 import { Eye, EyeOff, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 
 function ResetPasswordForm() {
@@ -39,16 +40,19 @@ function ResetPasswordForm() {
     );
   }
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
 
     if (password.length < 8) {
-      toast.error("Password must be at least 8 characters long.");
+      setValidationError("Password must be at least 8 characters long.");
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      setValidationError("Passwords do not match.");
       return;
     }
 
@@ -57,10 +61,9 @@ function ResetPasswordForm() {
       {
         onSuccess: () => {
           setIsSuccess(true);
-          toast.success("Password reset successfully!");
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || err?.message || "Failed to reset password.");
+          toast.error(mapApiErrorToUserMessage(err, "Failed to reset password. Please try again."));
         },
       }
     );
@@ -145,6 +148,10 @@ function ResetPasswordForm() {
             </button>
           </div>
         </div>
+
+        {validationError && (
+          <p className="text-xs text-red-500 font-medium">{validationError}</p>
+        )}
 
         <button
           type="submit"

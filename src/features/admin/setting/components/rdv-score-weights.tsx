@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Save, Info, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import {
   useVerificationWeights,
@@ -34,17 +35,15 @@ export function RdvScoreWeights() {
       return;
     }
 
-    const toastId = toast.loading("Saving score weights...");
     try {
       await updateMutation.mutateAsync({
         licenseWeight,
         operationsWeight,
         clinicDepthWeight,
       });
-      toast.success("Score weights saved successfully.", { id: toastId });
+      toast.success("Score weights saved successfully.");
     } catch (err: any) {
-      const errMsg = err?.response?.data?.message || err?.message || "Failed to save weights.";
-      toast.error(errMsg, { id: toastId });
+      toast.error(mapApiErrorToUserMessage(err, "Failed to save weights. Please try again."));
     }
   };
 

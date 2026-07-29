@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormSetError, FieldValues, Path } from "react-hook-form";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import { apiClient } from "@/core/api/client";
 
@@ -48,7 +49,7 @@ export function bindServerErrors<TFieldValues extends FieldValues>(
   }
 
   // Display generic toast error if no specific field error was populated
-  const message = responseData?.message || error?.message || "An unexpected error occurred.";
+  const message = mapApiErrorToUserMessage(error, "An unexpected error occurred.");
   if (!hasSetField) {
     toast.error(message);
   }

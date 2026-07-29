@@ -8,21 +8,21 @@ export function ProfileSuccessState() {
   const email = typeof window !== "undefined" ? localStorage.getItem("registerEmail") : null;
   const router = useRouter();
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 w-full max-w-130 mx-auto animate-in fade-in zoom-in duration-300">
+    <div className="flex flex-col items-center justify-center text-center px-4 w-full max-w-md mx-auto animate-in fade-in zoom-in duration-300">
       {/* Icon Circle */}
-      <div className="flex items-center justify-center w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-[#163E5C] mb-8">
-        <Check className="w-10 h-10 lg:w-12 lg:h-12 text-white stroke-3" />
+      <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary mb-6">
+        <Check className="w-8 h-8 md:w-10 md:h-10 text-white stroke-3" />
       </div>
 
       {/* Heading */}
-      <h2 className="text-[28px] lg:text-[32px] font-bold text-[#0A2533] leading-tight mb-4">
+      <h2 className="text-xl md:text-2xl font-semibold text-text leading-tight mb-3">
         Confirm your email
       </h2>
 
       {/* Description */}
-      <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-10 max-w-100">
+      <p className="text-sec-text text-xs md:text-sm leading-relaxed mb-8 max-w-sm">
         We've sent a confirmation link to{" "}
-        <span className="font-semibold text-gray-900">
+        <span className="font-medium text-text">
           {email}
         </span>
         .
@@ -30,7 +30,7 @@ export function ProfileSuccessState() {
 
       {/* Action Button */}
       <Button
-        className="w-full h-14 bg-[#163E5C] hover:bg-[#113149] cursor-pointer text-white text-lg font-semibold rounded-lg transition-all shadow-md active:scale-[0.98]"
+        className="w-full h-10 md:h-11 bg-primary hover:bg-primary/95 cursor-pointer text-white font-medium rounded-lg transition-all focus:ring-0 focus:outline-none"
         onClick={() => router.push("/dentist/profile")}
       >
         Go To Dashboard

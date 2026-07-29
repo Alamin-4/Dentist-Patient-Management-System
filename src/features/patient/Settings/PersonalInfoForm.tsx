@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useUpdatePatientProfile } from "@/hooks/user/useUser";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import { Pencil } from "lucide-react";
 
@@ -84,8 +85,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
       toast.success(res?.message || "Profile updated successfully");
       setIsEditing(false);
     } catch (error: any) {
-      const errMsg = error?.response?.data?.message || error?.message || "Failed to update profile";
-      toast.error(errMsg);
+      toast.error(mapApiErrorToUserMessage(error, "Failed to update profile details. Please try again."));
     }
   };
 
@@ -220,7 +220,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
             <button
               type="submit"
               disabled={updateProfileMutation.isPending}
-              className="rounded-md bg-[#0F3659] px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#0a2640] cursor-pointer flex items-center justify-center min-w-[140px]"
+              className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-primary/90 cursor-pointer flex items-center justify-center min-w-35"
             >
               {updateProfileMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

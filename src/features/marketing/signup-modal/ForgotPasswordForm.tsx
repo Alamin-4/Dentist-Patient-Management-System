@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useForgotPassword } from "@/hooks/auth/useAuth";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
@@ -26,7 +27,7 @@ export default function ForgotPasswordForm({ onBack, onSuccess }: ForgotPassword
           onSuccess(email);
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || err?.message || "Failed to send reset link.");
+          toast.error(mapApiErrorToUserMessage(err, "Failed to send OTP. Please try again."));
         },
       }
     );

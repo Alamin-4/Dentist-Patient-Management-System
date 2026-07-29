@@ -18,6 +18,7 @@ import {
 import { useStateContext } from "@/providers/StateProvider";
 import OtpVerifyModal from "./Otp-Verify-Modal";
 
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import { IRegisterPatient, registerPatientSchema } from "@/hooks/auth/auth.validation";
 import useAuth, { useGoogleLogin, useMe } from "@/hooks/auth/useAuth";
 
@@ -105,6 +106,7 @@ export default function SignupModal() {
         setShowOtpModal(true);
       }
     } catch (error: unknown) {
+      toast.error(mapApiErrorToUserMessage(error, "Registration failed. Please check your details and try again."));
     }
   };
 

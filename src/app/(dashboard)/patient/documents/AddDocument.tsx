@@ -5,6 +5,7 @@ import { Upload, X, Loader2, FileText, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { apiClient } from "@/api/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 
 interface UploadModalProps {
@@ -112,7 +113,7 @@ export default function UploadDocumentModal({
     onError: (err: any) => {
       setErrors((prev) => ({
         ...prev,
-        file: err?.message || "Failed to upload document.",
+        file: mapApiErrorToUserMessage(err, "Failed to upload document. Please try again."),
       }));
     },
   });

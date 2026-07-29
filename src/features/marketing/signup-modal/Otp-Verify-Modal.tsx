@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/input-otp";
 import useAuth from "@/hooks/auth/useAuth";
 import { useOtpCountdown } from "@/hooks/auth/useOtpCountdown";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 
 const otpVerifySchema = z.object({
   otp: z.string().length(6, "Please enter the 6-digit verification code"),
@@ -88,11 +89,11 @@ export default function OtpVerifyModal({
           onVerified();
         },
         onError: (error: any) => {
-          const errMsg =
-            error?.message ||
-            "Verification code is incorrect. Please try again.";
+          const errMsg = mapApiErrorToUserMessage(
+            error,
+            "Verification code is incorrect. Please try again."
+          );
           setError("otp", { type: "server", message: errMsg });
-          console.log(error)
         },
       }
     );
@@ -136,9 +137,7 @@ export default function OtpVerifyModal({
           }
 
           // ── All other errors ──
-          const errMsg =
-            responseData?.message ||
-            "Failed to resend verification code. Please try again.";
+          const errMsg = mapApiErrorToUserMessage(error, "Failed to resend verification code. Please try again.");
           toast.error(errMsg, { style: TOAST_STYLE });
         },
       }

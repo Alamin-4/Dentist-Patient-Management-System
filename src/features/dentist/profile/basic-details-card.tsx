@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useProfessionalDetailsMutation } from "@/core/hooks/dentist/useDentist";
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 
 interface BasicDetailsCardProps {
@@ -93,8 +94,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
           setIsOpen(false);
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to update profile details";
-          toast.error(errMsg);
+          toast.error(mapApiErrorToUserMessage(err, "Failed to update profile details. Please try again."));
         },
       }
     );

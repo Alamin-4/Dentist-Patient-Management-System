@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import z from "zod";
 
+import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import {
   Dialog,
   DialogContent,
@@ -143,7 +144,7 @@ export default function SigninModal() {
           setShowOtpModal(true);
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || err?.message || "Failed to send verification code.");
+          toast.error(mapApiErrorToUserMessage(err, "Failed to send verification code."));
         },
       }
     );
