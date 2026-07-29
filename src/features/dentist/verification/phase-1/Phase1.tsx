@@ -238,12 +238,18 @@ export default function Phase1() {
 
           if (Object.keys(newErrors).length === 0) {
             const msg = resData?.message || error?.message || "Something went wrong. Please try again.";
-            if (msg.toLowerCase().includes("5mb") || msg.toLowerCase().includes("file size") || msg.toLowerCase().includes("multer")) {
-              if (licenseFile && licenseFile.size > 5 * 1024 * 1024) {
-                newErrors["licenseDocument"] = "File size is too large. Maximum allowed size is 5MB.";
+            if (
+              msg.toLowerCase().includes("5mb") ||
+              msg.toLowerCase().includes("file size") ||
+              msg.toLowerCase().includes("too large") ||
+              msg.toLowerCase().includes("large entity") ||
+              msg.toLowerCase().includes("multer")
+            ) {
+              if (licenseFile) {
+                newErrors["licenseDocument"] = msg;
               }
-              if (headshotFile && headshotFile.size > 5 * 1024 * 1024) {
-                newErrors["profilePicture"] = "File size is too large. Maximum allowed size is 5MB.";
+              if (headshotFile) {
+                newErrors["profilePicture"] = msg;
               }
             }
           }

@@ -1,6 +1,7 @@
 import { apiClient } from "@/api/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProfessionalDetailsI, StepOneI, StepThreeI, StepTwoI } from "./dentist.interface";
+import { normalizeApiError } from "@/api/error-handler";
 
 
 export function objectToFormData<T extends object>(obj: T): FormData {
@@ -181,30 +182,72 @@ export function useStepThreeMutation() {
           let invoiceUrl = "";
           let protocolPdfUrl = "";
 
+          const itemIndex = data.materials.indexOf(m);
+
           if (m.ce_certificate instanceof File) {
-            const res = await apiClient.files.upload(m.ce_certificate);
-            ceCertificateUrl = res.data?.secure_url || "";
+            try {
+              const res = await apiClient.files.upload(m.ce_certificate);
+              ceCertificateUrl = res.data?.secure_url || "";
+            } catch (err: any) {
+              const apiErr = normalizeApiError(err);
+              throw {
+                ...apiErr,
+                message: `CE Certificate error: ${apiErr.message}`,
+                field: "ceCertificate",
+                index: itemIndex,
+              };
+            }
           } else if (typeof m.ce_certificate === "string") {
             ceCertificateUrl = m.ce_certificate;
           }
 
           if (m.material_brands instanceof File) {
-            const res = await apiClient.files.upload(m.material_brands);
-            materialBrandsUrl = res.data?.secure_url || "";
+            try {
+              const res = await apiClient.files.upload(m.material_brands);
+              materialBrandsUrl = res.data?.secure_url || "";
+            } catch (err: any) {
+              const apiErr = normalizeApiError(err);
+              throw {
+                ...apiErr,
+                message: `Material Brands error: ${apiErr.message}`,
+                field: "materialBrands",
+                index: itemIndex,
+              };
+            }
           } else if (typeof m.material_brands === "string") {
             materialBrandsUrl = m.material_brands;
           }
 
           if (m.invoice instanceof File) {
-            const res = await apiClient.files.upload(m.invoice);
-            invoiceUrl = res.data?.secure_url || "";
+            try {
+              const res = await apiClient.files.upload(m.invoice);
+              invoiceUrl = res.data?.secure_url || "";
+            } catch (err: any) {
+              const apiErr = normalizeApiError(err);
+              throw {
+                ...apiErr,
+                message: `Invoice error: ${apiErr.message}`,
+                field: "invoice",
+                index: itemIndex,
+              };
+            }
           } else if (typeof m.invoice === "string") {
             invoiceUrl = m.invoice;
           }
 
           if (m.protocol_pdf instanceof File) {
-            const res = await apiClient.files.upload(m.protocol_pdf);
-            protocolPdfUrl = res.data?.secure_url || "";
+            try {
+              const res = await apiClient.files.upload(m.protocol_pdf);
+              protocolPdfUrl = res.data?.secure_url || "";
+            } catch (err: any) {
+              const apiErr = normalizeApiError(err);
+              throw {
+                ...apiErr,
+                message: `Protocol PDF error: ${apiErr.message}`,
+                field: "protocolPdf",
+                index: itemIndex,
+              };
+            }
           } else if (typeof m.protocol_pdf === "string") {
             protocolPdfUrl = m.protocol_pdf;
           }

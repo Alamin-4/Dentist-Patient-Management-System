@@ -12,6 +12,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
     const updateProfileMutation = useUpdateAdminProfile();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
 
     const {
         register,
@@ -50,18 +51,19 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
 
         // Client-side guard: size & type
         if (file.size > 5 * 1024 * 1024) {
-            toast.error("Image is too large. Maximum allowed size is 5 MB.");
+            setUploadError("Image is too large. Maximum allowed size is 5 MB.");
             e.target.value = "";
             return;
         }
         if (!file.type.startsWith("image/")) {
-            toast.error("Only image files (JPG, PNG, WEBP) are allowed.");
+            setUploadError("Only image files (JPG, PNG, WEBP) are allowed.");
             e.target.value = "";
             return;
         }
 
         try {
             setUploading(true);
+            setUploadError(null);
             const res = await apiClient.files.upload(file);
             const secureUrl = res?.data?.secure_url;
             if (!secureUrl) {
@@ -75,7 +77,7 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
             toast.success("Profile photo updated successfully");
             refetch();
         } catch (error: any) {
-            toast.error(error?.message || "Failed to upload photo");
+            setUploadError(error?.message || "Failed to upload photo");
         } finally {
             setUploading(false);
         }
@@ -129,6 +131,11 @@ export function ProfileInfo({ user, refetch }: { user: any; refetch: () => void 
                         <p className="text-sm text-gray-400">
                             {user?.role === "SUPER_ADMIN" ? "Super Admin" : "Administrator"}
                         </p>
+                        {uploadError && (
+                            <p className="text-xs font-semibold text-red-500 mt-1 max-w-60">
+                                {uploadError}
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>

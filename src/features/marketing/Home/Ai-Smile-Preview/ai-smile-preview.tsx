@@ -157,10 +157,14 @@ export default function AiSmilePreview() {
   // Upload handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setUploadedImage(url);
-      setStep("scanning");
+    if (file && file instanceof Blob) {
+      try {
+        const url = URL.createObjectURL(file);
+        setUploadedImage(url);
+        setStep("scanning");
+      } catch (err) {
+        console.error("Failed to create object URL for AI preview:", err);
+      }
     }
   };
 
