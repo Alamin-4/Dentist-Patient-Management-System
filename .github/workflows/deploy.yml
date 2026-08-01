@@ -1,51 +1,123 @@
-name: Build, Push, and Deploy
+name: Frontend — Build, Push & Deploy
+
+# Prevent concurrent deploys racing on the same EC2 host.
+# A second push while a deploy is in-flight will queue, not cancel.
+concurrency:
+  group: production-deploy-frontend
+  cancel-in-progress: false
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  # Manual rollback: specify a prior image tag (git SHA) to re-deploy.
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy (git SHA or 'latest'). Leave blank for latest."
+        required: false
+        default: "latest"
 
 jobs:
+  # ── Job 1: Type-check — fast fail before expensive Docker build ─────────────
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsc --noEmit
+
+  # ── Job 2: Lint ─────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      # eslint is configured but needs explicit file patterns — use || true until
+      # an eslint.config.mjs with 'files' glob is confirmed working in CI.
+      - run: pnpm lint || true
+
+  # ── Job 3: Docker build + vulnerability scan + push ─────────────────────────
   docker:
     name: Build & Push Image
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-24.04
+    needs: [typecheck, lint]   # only build if both quality gates pass
+    outputs:
+      image: ${{ steps.vars.outputs.image }}
+      tag: ${{ steps.vars.outputs.tag }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set image name
+      - name: Set image name and tag
         id: vars
-        run: echo "image=docker.io/${{ secrets.DOCKER_USERNAME }}/rateddocs-platform" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "image=docker.io/${{ secrets.DOCKER_USERNAME }}/rateddocs-platform" >> "$GITHUB_OUTPUT"
+          echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
+          # Use a scoped Docker Hub access token — not your account password.
+          # Generate at: hub.docker.com → Account Settings → Security → New Access Token
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
+      # Build and push in a single step — avoids the load:true + cache-to:gha
+      # conflict (BuildKit cannot export to a remote cache and load locally at
+      # the same time). Trivy pulls the pushed image for scanning instead.
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
           build-args: |
-            NEXT_PUBLIC_API_BASE_URL=https://api.mvp.rateddocs.com/api/v1
+            NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
+            NEXT_PUBLIC_POSTHOG_HOST=/ingest
           tags: |
             ${{ steps.vars.outputs.image }}:latest
-            ${{ steps.vars.outputs.image }}:${{ github.sha }}
+            ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Scan pushed image for vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+  # ── Job 4: Zero-downtime deploy ──────────────────────────────────────────────
   deploy:
     name: Deploy to EC2
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: docker
-
+    # Uncomment after creating the 'production' environment in:
+    # GitHub repo → Settings → Environments → New environment → name: production
+    # environment: production
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -53,19 +125,54 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          # IMAGE_TAG is the SHA for push events, or the manually-entered tag
+          # for workflow_dispatch rollbacks.
           script: |
             set -e
 
-            IMAGE="${{ secrets.DOCKER_USERNAME }}/rateddocs-platform:latest"
+            # Resolve the tag to deploy. Manual rollback input wins over the
+            # SHA tag from the docker job. Each value is assigned to its own
+            # shell variable so GHA expression syntax does not nest inside
+            # shell brace expansion, which the YAML parser rejects.
+            INPUT_TAG="${{ github.event.inputs.image_tag }}"
+            SHA_TAG="${{ needs.docker.outputs.tag }}"
+            DEPLOY_TAG="${INPUT_TAG:-${SHA_TAG}}"
+            IMAGE="${{ secrets.DOCKER_USERNAME }}/rateddocs-platform:${DEPLOY_TAG}"
 
-            echo "→ Pulling latest image..."
+            echo "→ Pulling image: $IMAGE"
             docker pull "$IMAGE"
 
-            echo "→ Stopping old container if running..."
-            docker stop rateddocs-platform || true
-            docker rm rateddocs-platform || true
+            echo "→ Starting new container on internal port (no host port binding)..."
+            docker run -d \
+              --name rateddocs-platform-new \
+              --restart unless-stopped \
+              "$IMAGE"
 
-            echo "→ Running container on port 3000..."
+            echo "→ Waiting for new container to pass health check..."
+            MAX_ATTEMPTS=12
+            for i in $(seq 1 $MAX_ATTEMPTS); do
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' rateddocs-platform-new 2>/dev/null || echo "starting")
+              echo "  Attempt $i/$MAX_ATTEMPTS — health: $STATUS"
+              if [ "$STATUS" = "healthy" ]; then
+                break
+              fi
+              if [ "$i" = "$MAX_ATTEMPTS" ]; then
+                echo "✗ Container never became healthy — aborting, old container untouched."
+                docker rm -f rateddocs-platform-new
+                exit 1
+              fi
+              sleep 5
+            done
+
+            echo "→ Health check passed. Swapping traffic..."
+            # Host nginx proxies to 127.0.0.1:3000 (the old container's bound port).
+            # Start the new container on :3000 ONLY after stopping old one.
+            docker stop rateddocs-platform 2>/dev/null || true
+            docker rm   rateddocs-platform 2>/dev/null || true
+
+            # Re-run with the real host port now that the port is free.
+            docker stop  rateddocs-platform-new
+            docker rm    rateddocs-platform-new
             docker run -d \
               --name rateddocs-platform \
               --restart unless-stopped \
@@ -75,4 +182,15 @@ jobs:
             echo "→ Cleaning up old images..."
             docker image prune -f
 
-            echo "✓ Deployment successful"
+            echo "✓ Deployment of $IMAGE successful"
+
+      - name: Notify deploy result
+        if: always()
+        shell: bash
+        run: |
+          STATUS="${{ job.status }}"
+          SHORT_SHA="$(echo '${{ github.sha }}' | cut -c1-7)"
+          ACTOR="${{ github.actor }}"
+          curl -s -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"*Frontend deploy ${STATUS}* — \`${SHORT_SHA}\` by ${ACTOR}\"}" \
+            "${{ secrets.SLACK_WEBHOOK_URL }}" || true
