@@ -44,6 +44,7 @@ ENV HOSTNAME=0.0.0.0
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN apk add --no-cache curl && \
+    rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /opt/yarn* /usr/local/bin/yarn /usr/local/bin/yarnpkg && \
     addgroup -S nodejs -g 1001 && \
     adduser -S nextjs -u 1001
 
