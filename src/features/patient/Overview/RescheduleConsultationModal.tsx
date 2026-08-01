@@ -305,7 +305,7 @@ export function RescheduleConsultationModal({
                       className="w-full border-0 p-0 shadow-none"
                     />
                   </div>
-                  <p className="mt-4 text-[13px] sm:text-[14px] font-bold text-[#0F3659] bg-[#F1F6FB] px-3.5 py-2.5 rounded-lg text-center md:text-left">
+                  <p className="mt-4 text-[13px] sm:text-[14px] font-bold text-brand-deep-navy bg-secondary px-3.5 py-2.5 rounded-lg text-center md:text-left">
                     Selected Date: {selectedDateReadable}
                   </p>
                 </div>
@@ -324,7 +324,7 @@ export function RescheduleConsultationModal({
                           setErrorMsg(null);
                         }}
                       >
-                        <SelectTrigger className="h-11 rounded-lg border-[#E5E7EB] bg-white text-[13px] text-text focus:ring-[#113254]">
+                        <SelectTrigger className="h-11 rounded-lg border-[#E5E7EB] bg-white text-[13px] text-text focus:ring-brand-deep-navy">
                           <SelectValue placeholder="Select Time Zone" />
                         </SelectTrigger>
                         <SelectContent className="rounded-lg border-[#E5E7EB] bg-white">
@@ -353,8 +353,8 @@ export function RescheduleConsultationModal({
                                 setErrorMsg(null);
                               }}
                               className={`rounded-full border px-3 py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${isSelected
-                                ? "border-[#113254] bg-[#F1F6FB] text-[#113254]"
-                                : "border-[#E5E7EB] bg-white text-sec-text hover:border-[#113254]/30"
+                                ? "border-brand-deep-navy bg-secondary text-brand-deep-navy"
+                                : "border-[#E5E7EB] bg-white text-sec-text hover:border-brand-deep-navy/30"
                                 }`}
                             >
                               {slot.display}
@@ -380,7 +380,7 @@ export function RescheduleConsultationModal({
                 type="button"
                 onClick={handleConfirm}
                 disabled={isPending}
-                className="rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="rounded-lg bg-brand-deep-navy px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-brand-deep-navy-hover active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isPending ? "Confirming..." : "Confirm Slot"}
               </button>
@@ -388,7 +388,7 @@ export function RescheduleConsultationModal({
           </div>
         ) : (
           <div className="flex flex-col items-center px-5 py-10 text-center md:px-10 md:py-14">
-            <div className="flex size-20 items-center justify-center rounded-full bg-[#113254] text-white shadow-[0_8px_24px_rgba(17,50,84,0.25)]">
+            <div className="flex size-20 items-center justify-center rounded-full bg-brand-deep-navy text-white shadow-[0_8px_24px_rgba(14,62,101,0.25)]">
               <Check className="size-10 stroke-[3px]" />
             </div>
             <h3 className="mt-8 text-[28px] font-bold text-text">
@@ -411,7 +411,7 @@ export function RescheduleConsultationModal({
                 onAddToCalendar?.();
                 handleClose();
               }}
-              className="mt-8 rounded-lg bg-[#113254] px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-[#0d2844] active:scale-95 cursor-pointer"
+              className="mt-8 rounded-lg bg-brand-deep-navy px-6 py-3 text-[14px] font-bold text-white transition-all hover:bg-brand-deep-navy-hover active:scale-95 cursor-pointer"
             >
               Add to calendar
             </button>

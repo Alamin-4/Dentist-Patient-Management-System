@@ -91,6 +91,7 @@ export default function MobileMenu({
                     onChange={onSearchChange}
                     placeholder="Search..."
                     variant="mobile"
+                    onSubmit={handleClose}
                 />
 
                 {/* Navigation Links */}

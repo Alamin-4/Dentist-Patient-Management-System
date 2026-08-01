@@ -4,10 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* based on my design/colors.md file update color theme */
 
 @theme inline {
-  /* Your explicit color preferences */
   --color-background: #ffffff;
   --color-text: #1A1A2E;
   --color-sec-text: #6B7280;
@@ -20,7 +18,15 @@
   --color-input: #757575;
   --color-stroke: #E9EDEE;
 
-  /* Mapped shadcn/ui standard variables to match your preferences */
+  /* Custom brand colors found in codebase */
+  --color-brand-deep-navy: var(--brand-deep-navy);
+  --color-brand-deep-navy-hover: var(--brand-deep-navy-hover);
+  --color-brand-medium-navy: var(--brand-medium-navy);
+  --color-brand-medium-navy-hover: var(--brand-medium-navy-hover);
+  --color-admin-primary: var(--admin-primary);
+  --color-admin-gold: var(--admin-gold);
+  --color-text-charcoal: var(--text-charcoal);
+
   --color-foreground: #1A1A2E;
   --color-card-foreground: #1A1A2E;
   --color-popover: #ffffff;
@@ -47,7 +53,6 @@
 }
 
 :root {
-  /* === YOUR EXPLICIT COLOR PREFERENCES === */
   --background: #ffffff;
   --text: #1A1A2E;
   --sec-text: #6B7280;
@@ -60,7 +65,15 @@
   --input: #757575;
   --stroke: #E9EDEE;
 
-  /* === MAPPED SHADCN/UI VARIABLES === */
+  /* Custom brand variables for codebase hex colors */
+  --brand-deep-navy: #113254;
+  --brand-deep-navy-hover: #0d2844;
+  --brand-medium-navy: #163E5C;
+  --brand-medium-navy-hover: #113149;
+  --admin-primary: #0D2B3E;
+  --admin-gold: #C9963F;
+  --text-charcoal: #777779;
+
   --foreground: #1A1A2E;
   --card-foreground: #1A1A2E;
   --popover: #ffffff;
@@ -74,17 +87,7 @@
   --destructive-foreground: #ffffff;
   --ring: #0E3E65;
 
-  /* === EXTENDED PALETTES (Kept for charts/sidebar compatibility) === */
-  --navy-50: #f0f4f8;
-  --navy-100: #d9e2ec;
-  --navy-200: #bcccdc;
-  --navy-300: #9fb3c8;
-  --navy-400: #829ab1;
-  --navy-500: #627d98;
-  --navy-600: #486581;
-  --navy-700: #334e68;
-  --navy-800: #243b53;
-  --navy-900: #102a43;
+
 
   --sky-50: #f0f9ff;
   --sky-100: #e0f2fe;
@@ -97,16 +100,7 @@
   --sky-800: #075985;
   --sky-900: #0c4a6e;
 
-  --gold-50: #fffbeb;
-  --gold-100: #fef3c7;
-  --gold-200: #fde68a;
-  --gold-300: #fcd34d;
-  --gold-400: #fbbf24;
-  --gold-500: #f59e0b;
-  --gold-600: #d97706;
-  --gold-700: #b45309;
-  --gold-800: #92400e;
-  --gold-900: #78350f;
+
 
   --success-50: #f0fdf4;
   --success-100: #dcfce7;
@@ -177,7 +171,6 @@
 }
 
 .dark {
-  /* Dark mode equivalents maintaining your brand identity */
   --background: #0B1120;
   --foreground: #F8FAFC;
   --card: #151E32;
@@ -185,7 +178,6 @@
   --popover: #151E32;
   --popover-foreground: #F8FAFC;
   --primary: #3B82F6;
-  /* Lighter navy/blue for dark mode contrast */
   --primary-foreground: #0B1120;
   --secondary: #1E293B;
   --secondary-foreground: #F8FAFC;
@@ -214,6 +206,15 @@
   --sidebar-accent-foreground: #F8FAFC;
   --sidebar-border: #2A3850;
   --sidebar-ring: #3B82F6;
+
+  /* Custom brand variables mapping for dark mode (initially identical to preserve design) */
+  --brand-deep-navy: #113254;
+  --brand-deep-navy-hover: #0d2844;
+  --brand-medium-navy: #163E5C;
+  --brand-medium-navy-hover: #113149;
+  --admin-primary: #0D2B3E;
+  --admin-gold: #C9963F;
+  --text-charcoal: #777779;
 }
 
 h1,

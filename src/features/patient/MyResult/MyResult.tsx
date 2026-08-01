@@ -10,6 +10,9 @@ import { AddPhotoModal } from "./AddNewPhoto";
 import { normalizeApiError } from "@/api/error-handler";
 import { SkeletonCard } from "@/components/shared/skeletons";
 import { ErrorState } from "@/components/shared/error-state";
+import { PageContainer } from "@/components/shared/page-container";
+import { HeadingGroup } from "@/components/shared/heading-group";
+import { SectionCard } from "@/components/shared/section-card";
 
 export interface PatientResult {
   id: string | number;
@@ -40,8 +43,8 @@ export default function MyResultPage() {
     apiError?.message?.includes("profile not found");
 
   return (
-    <div className="animate-in fade-in duration-300">
-      <h1 className="text-3xl font-bold text-text mb-8">My Result</h1>
+    <PageContainer className="space-y-6">
+      <HeadingGroup title="My Result" />
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -70,7 +73,7 @@ export default function MyResultPage() {
         />
       ) : isPersonalizationMissing ? (
         <div className="flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-slate-50/50 border border-slate-100 rounded-3xl max-w-xl mx-auto my-12 space-y-6 shadow-sm">
-          <div className="size-16 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0F3659]">
+          <div className="size-16 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-brand-medium-navy">
             <UserCheck className="size-8" />
           </div>
           <div className="space-y-2">
@@ -81,7 +84,7 @@ export default function MyResultPage() {
           </div>
           <Link
             href="/patient/settings"
-            className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-[#0F3659] text-white font-bold text-sm hover:bg-[#0a2640] transition-colors shadow-md shadow-[#0F3659]/10"
+            className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-brand-medium-navy text-white font-bold text-sm hover:bg-brand-medium-navy-hover transition-colors shadow-md shadow-brand-medium-navy/10"
           >
             Complete Personalization
           </Link>
@@ -90,9 +93,10 @@ export default function MyResultPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Existing Result Cards */}
           {results.map((result) => (
-            <div
+            <SectionCard
               key={result.id}
-              className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+              hoverEffect
+              className="overflow-hidden flex flex-col p-0 rounded-3xl"
             >
               <div className="flex h-48 w-full bg-slate-50">
                 <div className="relative w-1/2 h-full">
@@ -119,23 +123,23 @@ export default function MyResultPage() {
                 <p className="text-slate-400 font-medium text-sm">
                   {result.doctor}
                 </p>
-                <div className="pt-3 border-t border-slate-50 mt-3 flex items-center gap-1.6 text-[#0F3659]">
+                <div className="pt-3 border-t border-slate-50 mt-3 flex items-center gap-1.5 text-brand-medium-navy">
                   <MapPin className="size-4" />
                   <span className="text-sm font-semibold">{result.location}</span>
                 </div>
               </div>
-            </div>
+            </SectionCard>
           ))}
 
           {/* Add New Photo Trigger */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="group border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center gap-4 h-80 bg-[#F8FAFC]/50 hover:bg-slate-50 hover:border-[#0F3659] transition-all cursor-pointer shadow-sm"
+            className="group border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center gap-4 h-80 bg-[#F8FAFC]/50 hover:bg-slate-50 hover:border-brand-medium-navy transition-all cursor-pointer shadow-sm"
           >
             <div className="size-14 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-white transition-colors">
-              <ImagePlus className="size-6 text-[#0F3659]" />
+              <ImagePlus className="size-6 text-brand-medium-navy" />
             </div>
-            <span className="text-[#0F3659] font-bold text-lg">
+            <span className="text-brand-medium-navy font-bold text-lg">
               Add New Photo
             </span>
           </button>
@@ -146,6 +150,6 @@ export default function MyResultPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    </div>
+    </PageContainer>
   );
 }

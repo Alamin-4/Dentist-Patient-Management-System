@@ -95,7 +95,7 @@ export default function VerificationLayout({
             >
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
-            <h1 className="text-xl font-bold text-[#0A2533]">
+            <h1 className="text-xl font-bold text-text">
               Verification Progress
             </h1>
           </div>

@@ -51,7 +51,7 @@ export default function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps
             className={cn(
               "flex shrink-0 items-center gap-2 py-4 px-3 text-sm font-semibold border-b-2 transition-all whitespace-nowrap",
               activeTab === tab.id
-                ? "border-[#003366] text-[#003366]"
+                ? "border-brand-medium-navy text-brand-medium-navy"
                 : "border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-200",
             )}
           >

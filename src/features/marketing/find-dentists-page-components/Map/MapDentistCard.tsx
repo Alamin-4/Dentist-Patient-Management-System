@@ -121,7 +121,7 @@ export default function MapDentistCard({
             </div>
           </div>
           <div className="flex items-center gap-1 rounded-md bg-slate-50 px-2.5 py-1 border border-slate-200">
-            <span className="text-xs font-bold text-[#003366] leading-none">
+            <span className="text-xs font-bold text-brand-medium-navy leading-none">
               {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
             </span>
             <span className="text-[10px] font-medium text-sec-text">Score</span>
@@ -190,7 +190,7 @@ export default function MapDentistCard({
         <div className="flex flex-col">
           <div className="text-right shrink-0 space-y-1">
             <div className="text-[10px] text-sec-text">Starting from</div>
-            <div className="font-bold text-base text-[#003366] leading-none">
+            <div className="font-bold text-base text-brand-medium-navy leading-none">
               ${dentist.price.toLocaleString()}
             </div>
             <div className="text-[9px] text-[#9CA3AF]">Estimate</div>
@@ -201,7 +201,7 @@ export default function MapDentistCard({
               size={"sm"}
               variant="outline"
               onClick={handleViewProfile}
-              className="h-9 rounded-md cursor-pointer border border-[#003366] px-2.5 text-xs font-bold text-[#003366] hover:bg-slate-50 transition-colors"
+              className="h-9 rounded-md cursor-pointer border border-brand-medium-navy px-2.5 text-xs font-bold text-brand-medium-navy hover:bg-slate-50 transition-colors"
             >
               View Profile
             </Button>
@@ -210,7 +210,7 @@ export default function MapDentistCard({
                 type="button"
                 size={"sm"}
                 onClick={handleBookConsultation}
-                className="h-9 rounded-md cursor-pointer bg-[#003366] px-2.5 text-xs font-bold text-white hover:bg-[#002850] shadow-sm transition-all active:scale-[0.98]"
+                className="h-9 rounded-md cursor-pointer bg-brand-medium-navy px-2.5 text-xs font-bold text-white hover:bg-brand-medium-navy-hover shadow-sm transition-all active:scale-[0.98]"
               >
                 Book Consultation
               </Button>
@@ -231,7 +231,7 @@ export default function MapDentistCard({
                     type="button"
                     size={"sm"}
                     onClick={handleRequestConsultation}
-                    className="h-9 rounded-md cursor-pointer bg-[#003366] px-2.5 text-xs font-bold text-white hover:bg-[#002850] shadow-sm transition-all active:scale-[0.98]"
+                    className="h-9 rounded-md cursor-pointer bg-brand-medium-navy px-2.5 text-xs font-bold text-white hover:bg-brand-medium-navy-hover shadow-sm transition-all active:scale-[0.98]"
                   >
                     Request Consultation
                   </Button>

@@ -105,8 +105,8 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
             }
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
-              ? "text-red-500 hover:bg-red-50 border-red-200"
-              : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
+            ? "text-red-500 hover:bg-red-50 border-red-200"
+            : "text-brand-deep-navy hover:bg-slate-50 border-slate-200"
             }`}
         >
           <Pencil className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
               placeholder="First Name"
               disabled={!isEditing || updateProfileMutation.isPending}
               {...register("firstName", { required: "First name is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.firstName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.firstName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {errors.firstName && (
@@ -140,7 +140,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
               placeholder="Last Name"
               disabled={!isEditing || updateProfileMutation.isPending}
               {...register("lastName", { required: "Last name is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.lastName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.lastName ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {errors.lastName && (
@@ -168,7 +168,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
               placeholder="Phone Number"
               disabled={!isEditing || updateProfileMutation.isPending}
               {...register("phoneNumber", { required: "Phone number is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.phoneNumber ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.phoneNumber ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {errors.phoneNumber && (
@@ -183,7 +183,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
               type="date"
               disabled={!isEditing || updateProfileMutation.isPending}
               {...register("dateOfBirth", { required: "Date of birth is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.dateOfBirth ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.dateOfBirth ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {errors.dateOfBirth && (
@@ -199,7 +199,7 @@ export function PersonalInfoForm({ user }: PersonalInfoFormProps) {
               placeholder="Country"
               disabled={!isEditing || updateProfileMutation.isPending}
               {...register("country", { required: "Country is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.country ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.country ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {errors.country && (

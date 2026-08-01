@@ -175,7 +175,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
           (dentist.verified ? (
             <Button
               onClick={() => initiateBooking("book")}
-              className="h-12 sm:h-14 flex-1 bg-primary text-sm sm:text-base font-semibold text-white hover:bg-[#002850]"
+              className="h-12 sm:h-14 flex-1 bg-primary text-sm sm:text-base font-semibold text-white hover:bg-brand-medium-navy-hover"
             >
               Book consultation
             </Button>
@@ -194,7 +194,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
               )}
               {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
                 <Button
-                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-[#002850]"
+                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover"
                   onClick={() => initiateBooking("request")}
                 >
                   Request Consultation
@@ -223,14 +223,14 @@ function TrustPill({
       "text-amber-600 bg-amber-50 border-amber-200",
     slate:
       "text-slate-600 bg-slate-50 border-slate-200",
-    blue: "text-[#003366] bg-secondary border-[#003366]/10",
+    blue: "text-brand-medium-navy bg-secondary border-brand-medium-navy/10",
   };
 
   const iconColor: Record<string, string> = {
     green: "text-badge",
     amber: "text-amber-500",
     slate: "text-slate-400",
-    blue: "text-[#003366]",
+    blue: "text-brand-medium-navy",
   };
 
   return (

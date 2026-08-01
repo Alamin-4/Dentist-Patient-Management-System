@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPatientMoney } from "./overview-data";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface Props {
   activeBookings: any[];
@@ -52,7 +53,7 @@ function actionText(status: string) {
 
 export function OverviewActiveBookingsCard({ activeBookings }: Props) {
   return (
-    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
+    <SectionCard className="sm:p-8">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-lg font-bold text-gray-900">
@@ -60,7 +61,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
         </h2>
         <Link
           href="/dentist/bookings"
-          className="text-sm font-bold text-[#CDA555] transition-colors hover:text-[#b08c43]"
+          className="text-sm font-bold text-admin-gold transition-opacity hover:opacity-85"
         >
           View all
         </Link>
@@ -118,7 +119,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
 
                 {/* Price + action */}
                 <div>
-                  <p className="text-sm font-extrabold text-[#CDA555]">
+                  <p className="text-sm font-extrabold text-admin-gold">
                     {formatPatientMoney(booking.patient_info.final_budget)}
                   </p>
                   <p className="mt-0.5 text-xs text-gray-400">
@@ -187,7 +188,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-extrabold text-[#CDA555]">
+                  <p className="text-sm font-extrabold text-admin-gold">
                     {formatPatientMoney(booking.patient_info.final_budget)}
                   </p>
                   <p className="text-xs text-gray-400">
@@ -199,7 +200,7 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
               {/* View link */}
               <Link
                 href="/dentist/bookings"
-                className="mt-3 flex items-center gap-1 text-xs font-bold text-[#CDA555]"
+                className="mt-3 flex items-center gap-1 text-xs font-bold text-admin-gold transition-opacity hover:opacity-85"
               >
                 View booking <ChevronRight className="size-4" />
               </Link>
@@ -207,6 +208,6 @@ export function OverviewActiveBookingsCard({ activeBookings }: Props) {
           );
         })}
       </div>
-    </section>
+    </SectionCard>
   );
 }

@@ -35,7 +35,7 @@ export default function StepButton() {
         <Button
           size="lg"
           disabled
-          className="h-12 rounded-lg px-10 font-semibold bg-primary text-white"
+          className="h-12 rounded-lg px-10 font-semibold bg-brand-medium-navy text-white"
         >
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Loading...
@@ -118,7 +118,7 @@ export default function StepButton() {
         {...buttonProps}
         size="lg"
         disabled={isDisabled}
-        className="w-full sm:w-auto h-10 sm:h-12 rounded-lg px-6 sm:px-10 text-sm font-semibold bg-primary text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
+        className="w-full sm:w-auto h-10 sm:h-12 rounded-lg px-6 sm:px-10 text-sm font-semibold bg-brand-medium-navy text-white hover:bg-brand-medium-navy-hover disabled:opacity-50 cursor-pointer"
       >
         {isSubmitting ? (
           <>

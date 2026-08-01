@@ -129,11 +129,11 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="flex h-full w-72 flex-col bg-[#0D2B3E]">
+    <aside className="flex h-full w-72 flex-col bg-admin-primary">
       <div className="flex items-center justify-between px-5 py-5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2.5">
           <Link href={"/"} className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C9963F] shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-admin-gold shrink-0">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -207,7 +207,7 @@ export function AdminSidebar() {
                         className={cn(
                           "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold",
                           active
-                            ? "bg-white text-[#0D2B3E]"
+                            ? "bg-white text-admin-primary"
                             : "bg-white/20 text-white",
                         )}
                       >
@@ -225,7 +225,7 @@ export function AdminSidebar() {
       <div className="shrink-0 flex flex-row items-center justify-between border-t border-white/10 p-3">
         <div className="flex items-center gap-3 px-2 py-2 mb-1 rounded-lg">
           <Avatar className="h-8 w-8 shrink-0">
-            <AvatarFallback className="bg-[#1a4a6b] text-white text-xs font-bold">
+            <AvatarFallback className="bg-white/20 text-white text-xs font-bold">
               JS
             </AvatarFallback>
           </Avatar>

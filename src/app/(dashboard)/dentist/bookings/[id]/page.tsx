@@ -18,15 +18,15 @@ import { useDentistBookingController } from "@/core/hooks/dentist/useDentistBook
 function TimelineIcon({ status }: { status: "completed" | "current" | "pending" }) {
   if (status === "completed") {
     return (
-      <div className="shrink-0 w-6 h-6 rounded-full bg-[#0A2540] flex items-center justify-center">
+      <div className="shrink-0 w-6 h-6 rounded-full bg-brand-deep-navy flex items-center justify-center">
         <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
       </div>
     );
   }
   if (status === "current") {
     return (
-      <div className="shrink-0 w-6 h-6 rounded-full border-2 border-[#0A2540] flex items-center justify-center">
-        <div className="w-2.5 h-2.5 rounded-full bg-[#0A2540]" />
+      <div className="shrink-0 w-6 h-6 rounded-full border-2 border-brand-deep-navy flex items-center justify-center">
+        <div className="w-2.5 h-2.5 rounded-full bg-brand-deep-navy" />
       </div>
     );
   }
@@ -124,11 +124,11 @@ export default function BookingDetailPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             {/* Avatar + Name + Status */}
             <div className="flex items-start sm:items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[#E8EEF2] flex items-center justify-center text-[#163E5C] font-bold text-base shrink-0">
+              <div className="w-12 h-12 rounded-full bg-[#E8EEF2] flex items-center justify-center text-brand-medium-navy font-bold text-base shrink-0">
                 {display.initials}
               </div>
               <div>
-                <div className="font-bold text-lg text-[#0F172A]">{display.name}</div>
+                <div className="font-bold text-lg text-text">{display.name}</div>
                 <div className="text-sm text-slate-500 mb-2">{display.email}</div>
                 <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${booking?.status === "COMPLETED"
                   ? "bg-green-50 text-green-700 border border-green-100"
@@ -154,12 +154,12 @@ export default function BookingDetailPage() {
             {/* Budget */}
             <div className="sm:text-right">
               <div className="text-xs text-slate-500 mb-1">Estimate Budget</div>
-              <div className="text-2xl font-bold text-[#0A2540]">{display.budget}</div>
+              <div className="text-2xl font-bold text-brand-deep-navy">{display.budget}</div>
               <div className={`text-sm font-semibold ${booking?.paymentStatus === "REFUNDED"
-                ? "text-[#0284C7]"
+                ? "text-sky-600"
                 : booking?.paymentStatus === "PAID"
                   ? "text-green-700"
-                  : "text-[#D97706]"
+                  : "text-amber-600"
                 }`}>
                 {booking?.paymentStatus === "IN_ESCROW"
                   ? "In Escrow"
@@ -199,7 +199,7 @@ export default function BookingDetailPage() {
           <div className="lg:col-span-2 space-y-5">
             {/* Rejection / Cancelled Banner */}
             {booking?.status === "CANCELLED" && (
-              <div className="bg-[#FFF1F2] border border-[#FCA5A5] rounded-lg px-5 py-4 text-[#B91C1C] text-sm font-semibold shadow-sm leading-relaxed">
+              <div className="bg-red-50 border border-red-200 rounded-lg px-5 py-4 text-destructive text-sm font-semibold shadow-sm leading-relaxed">
                 {booking.metadata?.rejection?.reason || "I'm not ready to proceed with treatment at this time"}
               </div>
             )}
@@ -211,7 +211,7 @@ export default function BookingDetailPage() {
                 onClick={() => setTreatmentPlanOpen((v) => !v)}
                 className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors cursor-pointer"
               >
-                <span className="font-bold text-[#0F172A]">Estimate Treatment plan</span>
+                <span className="font-bold text-text">Estimate Treatment plan</span>
                 {treatmentPlanOpen ? (
                   <ChevronUp className="w-5 h-5 text-slate-400" />
                 ) : (
@@ -251,10 +251,10 @@ export default function BookingDetailPage() {
                             </tr>
                           )}
                         <tr className="border-t border-slate-100 bg-slate-50">
-                          <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">
+                          <td className="px-4 py-3 font-bold text-brand-medium-navy text-sm">
                             Estimate amount
                           </td>
-                          <td className="px-4 py-3 text-right font-bold text-[#163E5C] text-sm">
+                          <td className="px-4 py-3 text-right font-bold text-brand-medium-navy text-sm">
                             {display.budget}
                           </td>
                         </tr>
@@ -274,17 +274,17 @@ export default function BookingDetailPage() {
                   className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="font-bold text-[#0F172A]">Final treatment Plan</span>
+                    <span className="font-bold text-text">Final treatment Plan</span>
                     {(() => {
                       const estimateTotal = Number(booking.escrowAmount || 0);
                       const finalTotal = Number(booking.metadata.finalPlan.finalTotal || 0);
                       const isWithinLeeway = finalTotal <= estimateTotal * 1.15;
                       return isWithinLeeway ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-green-700 bg-green-50 border border-green-200 rounded-full px-2.5 py-0.5">
                           Within 15% protected range
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#BE185D] bg-[#FDF2F8] border border-[#FBCFE8] rounded-full px-2.5 py-0.5">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-full px-2.5 py-0.5">
                           Exceed 15% protected range
                         </span>
                       );
@@ -315,8 +315,8 @@ export default function BookingDetailPage() {
                             </tr>
                           ))}
                           <tr className="border-t border-slate-100 bg-slate-50">
-                            <td className="px-4 py-3 font-bold text-[#163E5C] text-sm">Final Total</td>
-                            <td className="px-4 py-3 text-right font-bold text-[#163E5C] text-sm">${Number(booking.metadata.finalPlan.finalTotal).toLocaleString()}</td>
+                            <td className="px-4 py-3 font-bold text-brand-medium-navy text-sm">Final Total</td>
+                            <td className="px-4 py-3 text-right font-bold text-brand-medium-navy text-sm">${Number(booking.metadata.finalPlan.finalTotal).toLocaleString()}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -332,7 +332,7 @@ export default function BookingDetailPage() {
             {step === "day1_arrival" && (
               <div className="space-y-4">
                 {/* Dark verification banner */}
-                <div className="bg-[#0A2540] rounded-lg px-5 py-4 flex items-center justify-between gap-4">
+                <div className="bg-brand-deep-navy rounded-lg px-5 py-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                       <KeyRound className="w-5 h-5 text-white" />
@@ -346,7 +346,7 @@ export default function BookingDetailPage() {
                       </div>
                     </div>
                   </div>
-                  <span className="shrink-0 text-xs font-bold text-[#D97706] bg-[#FEF3C7] px-3 py-1 rounded-full">
+                  <span className="shrink-0 text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
                     ACTION REQUIRED
                   </span>
                 </div>
@@ -380,14 +380,14 @@ export default function BookingDetailPage() {
                       placeholder="e.g. 7429"
                       className={`flex-1 h-12 rounded-lg border px-4 text-base tracking-widest text-center font-mono bg-white focus:outline-none focus:ring-2 transition-all ${codeError
                         ? "border-red-400 focus:ring-red-200"
-                        : "border-slate-200 focus:ring-[#163E5C]/20 focus:border-[#163E5C]"
+                        : "border-slate-200 focus:ring-brand-medium-navy/20 focus:border-brand-medium-navy"
                         }`}
                     />
                     <button
                       type="button"
                       onClick={handleVerify}
                       disabled={arrivalCode.length !== 4 || isVerifyingArrival}
-                      className="h-12 px-6 rounded-lg bg-[#0A2540] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#0d2f50] transition-colors cursor-pointer"
+                      className="h-12 px-6 rounded-lg bg-brand-deep-navy text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-brand-deep-navy-hover transition-colors cursor-pointer"
                     >
                       <ShieldCheck className="w-4 h-4" />
                       {isVerifyingArrival ? "Verifying…" : "Verify"}
@@ -405,7 +405,7 @@ export default function BookingDetailPage() {
             {/* Step: Final Treatment Plan */}
             {step === "final_plan" && (
               <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6">
-                <h3 className="font-bold text-[#0F172A] text-base mb-5">
+                <h3 className="font-bold text-text text-base mb-5">
                   Final Treatment plan
                 </h3>
 
@@ -435,7 +435,7 @@ export default function BookingDetailPage() {
                     <button
                       type="button"
                       onClick={() => setShowFinalModal(true)}
-                      className="w-full max-w-sm h-12 bg-[#0A2540] hover:bg-[#0d2f50] text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer"
+                      className="w-full max-w-sm h-12 bg-brand-deep-navy hover:bg-brand-deep-navy-hover text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer"
                     >
                       Create Final Plan
                     </button>
@@ -448,7 +448,7 @@ export default function BookingDetailPage() {
             {step === "payment_release" && (
               <div className="space-y-4">
                 {/* Dark payment release banner */}
-                <div className="bg-[#10B981] rounded-lg px-5 py-4 flex items-center justify-between gap-4">
+                <div className="bg-green-500 rounded-lg px-5 py-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                       <KeyRound className="w-5 h-5 text-white" />
@@ -493,7 +493,7 @@ export default function BookingDetailPage() {
                       type="button"
                       onClick={handleVerifyPayment}
                       disabled={paymentCode.length !== 4 || isReleasingFunds}
-                      className="h-12 px-6 rounded-lg bg-[#10B981] text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-[#059669] transition-colors cursor-pointer"
+                      className="h-12 px-6 rounded-lg bg-green-500 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-green-600 transition-colors cursor-pointer"
                     >
                       <ShieldCheck className="w-4 h-4" />
                       {isReleasingFunds ? "Verifying…" : "Release Funds"}
@@ -512,10 +512,10 @@ export default function BookingDetailPage() {
             {step === "completed" && (
               <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 flex flex-col items-center text-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center">
-                  <Check className="w-8 h-8 text-[#10B981]" />
+                  <Check className="w-8 h-8 text-green-500" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0F172A] text-lg">Treatment Completed</h3>
+                  <h3 className="font-bold text-text text-lg">Treatment Completed</h3>
                   <p className="text-sm text-slate-500 max-w-sm mt-1">
                     The escrow deposit has been released to your account successfully. Thank you for your service!
                   </p>
@@ -527,7 +527,7 @@ export default function BookingDetailPage() {
                       {Array.from({ length: 5 }).map((_, idx) => {
                         const score = (Number(booking.metadata.review.ratingCommunication) + Number(booking.metadata.review.ratingValueForMoney) + Number(booking.metadata.review.ratingFollowThrough)) / 3;
                         return (
-                          <span key={idx} className={idx < Math.round(score) ? "text-[#D97706] text-lg" : "text-slate-300 text-lg"}>★</span>
+                          <span key={idx} className={idx < Math.round(score) ? "text-amber-500 text-lg" : "text-slate-300 text-lg"}>★</span>
                         );
                       })}
                     </div>
@@ -544,7 +544,7 @@ export default function BookingDetailPage() {
 
           {/* ── Right Column: Patient Timeline ── */}
           <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 h-fit">
-            <h4 className="font-bold text-[#0F172A] mb-6">Patient Timeline</h4>
+            <h4 className="font-bold text-text mb-6">Patient Timeline</h4>
             <ol className="space-y-0">
               {timelineItems.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -553,7 +553,7 @@ export default function BookingDetailPage() {
                     <TimelineIcon status={item.status} />
                     {i < timelineItems.length - 1 && (
                       <div
-                        className={`w-px flex-1 min-h-7 my-1 ${item.status === "completed" ? "bg-[#0A2540]" : "bg-slate-200"
+                        className={`w-px flex-1 min-h-7 my-1 ${item.status === "completed" ? "bg-brand-deep-navy" : "bg-slate-200"
                           }`}
                       />
                     )}
@@ -561,7 +561,7 @@ export default function BookingDetailPage() {
                   {/* Content */}
                   <div className="pb-5">
                     <div
-                      className={`font-semibold text-sm leading-tight ${item.status === "pending" ? "text-slate-500" : "text-[#0F172A]"
+                      className={`font-semibold text-sm leading-tight ${item.status === "pending" ? "text-slate-500" : "text-text"
                         }`}
                     >
                       {item.label}

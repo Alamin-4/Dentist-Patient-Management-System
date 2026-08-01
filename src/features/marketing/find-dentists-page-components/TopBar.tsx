@@ -80,7 +80,7 @@ export default function TopBar({
             <Link
               href="/register-doctor"
               onClick={handleJoinAsDentistClick}
-              className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-6 text-[14px] font-semibold text-white transition-all hover:bg-[#002850] active:scale-95 shadow-sm shrink-0"
+              className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-6 text-[14px] font-semibold text-white transition-all hover:bg-brand-medium-navy-hover active:scale-95 shadow-sm shrink-0"
             >
               Join as a Dentist
             </Link>
@@ -109,11 +109,11 @@ export default function TopBar({
                 type="button"
                 variant="outline"
                 onClick={onOpenMobileFilters}
-                className="flex h-14 items-center rounded-lg border border-slate-200 bg-primary/3 px-5 text-[#003366] transition-all hover:bg-primary/10 lg:hidden"
+                className="flex h-14 items-center rounded-lg border border-slate-200 bg-primary/3 px-5 text-brand-medium-navy transition-all hover:bg-primary/10 lg:hidden"
               >
                 Filters
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
-                  <SlidersHorizontal className="size-4 text-[#003366]" />
+                  <SlidersHorizontal className="size-4 text-brand-medium-navy" />
                 </div>
               </Button>
             )}
@@ -123,12 +123,12 @@ export default function TopBar({
                 type="button"
                 variant="outline"
                 onClick={onToggleMapFilters}
-                className={`hidden h-14 items-center rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-primary/10 lg:flex ${showMapFilters ? "bg-primary/10" : "bg-primary/3"
+                className={`hidden h-14 items-center rounded-lg border border-slate-200 px-5 text-brand-medium-navy transition-all hover:bg-primary/10 lg:flex ${showMapFilters ? "bg-primary/10" : "bg-primary/3"
                   }`}
               >
                 Filters
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
-                  <SlidersHorizontal className="size-4 text-[#003366]" />
+                  <SlidersHorizontal className="size-4 text-brand-medium-navy" />
                 </div>
               </Button>
             )}
@@ -138,12 +138,12 @@ export default function TopBar({
                 type="button"
                 variant="outline"
                 onClick={onOpenMobileFilters}
-                className={`flex h-14 items-center rounded-lg border border-slate-200 px-5 text-[#003366] transition-all hover:bg-primary/10 lg:hidden ${showMapFilters ? "bg-primary/10" : "bg-primary/3"
+                className={`flex h-14 items-center rounded-lg border border-slate-200 px-5 text-brand-medium-navy transition-all hover:bg-primary/10 lg:hidden ${showMapFilters ? "bg-primary/10" : "bg-primary/3"
                   }`}
               >
                 Filters
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
-                  <SlidersHorizontal className="size-4 text-[#003366]" />
+                  <SlidersHorizontal className="size-4 text-brand-medium-navy" />
                 </div>
               </Button>
             )}
@@ -155,22 +155,22 @@ export default function TopBar({
                 onClick={() => {
                   onViewModeChange("list");
                 }}
-                className="flex h-14 items-center rounded-lg border border-slate-200 bg-primary/3 px-5 text-[#003366] transition-all hover:bg-primary/10"
+                className="flex h-14 items-center rounded-lg border border-slate-200 bg-primary/3 px-5 text-brand-medium-navy transition-all hover:bg-primary/10"
               >
                 List View
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
-                  <List className="size-4 text-[#003366]" />
+                  <List className="size-4 text-brand-medium-navy" />
                 </div>
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={() => onViewModeChange("map")}
-                className="flex h-14 items-center rounded-lg border border-slate-200 bg-primary/3 px-5 text-[#003366] shadow-none transition-all hover:bg-primary/10"
+                className="flex h-14 items-center rounded-lg border border-slate-200 bg-primary/3 px-5 text-brand-medium-navy shadow-none transition-all hover:bg-primary/10"
               >
                 Map View
                 <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFD86B]">
-                  <Map className="size-4 text-[#003366]" />
+                  <Map className="size-4 text-brand-medium-navy" />
                 </div>
               </Button>
             )}

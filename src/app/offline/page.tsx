@@ -69,7 +69,7 @@ export default function OfflinePage() {
         <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-xl dark:border-gray-800 dark:bg-card">
           {/* Decorative Background Gradient */}
           <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-sky-100 opacity-50 blur-2xl dark:bg-sky-900/20" />
-          <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-gold-100 opacity-50 blur-2xl dark:bg-gold-900/20" />
+          <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-accent/10 opacity-50 blur-2xl dark:bg-accent/20" />
 
           <div className="relative">
             {/* Wifi Off Icon */}
@@ -96,7 +96,7 @@ export default function OfflinePage() {
               <button
                 onClick={handleRetry}
                 disabled={isReconnecting}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-navy-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-navy-700 active:scale-[0.98] disabled:opacity-50 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/95"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-primary/95 active:scale-[0.98] disabled:opacity-50 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/95"
               >
                 <RefreshCw
                   className={`h-4 w-4 ${isReconnecting ? "animate-spin" : ""}`}

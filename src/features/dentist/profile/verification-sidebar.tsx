@@ -132,7 +132,7 @@ export function VerificationSidebar() {
       ) : (
         <Button
           onClick={handleStart}
-          className="mt-8 h-11 w-full bg-[#163E5C] hover:bg-[#113149] text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer"
+          className="mt-8 h-11 w-full bg-brand-medium-navy hover:bg-brand-medium-navy-hover text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer"
         >
           Start Phase {nextIncompleteStep}
           <ArrowRight className="ml-2 h-4 w-4" />

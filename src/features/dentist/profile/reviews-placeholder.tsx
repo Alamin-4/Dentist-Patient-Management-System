@@ -3,6 +3,7 @@
 import { DentistProfileData } from "./profile.types";
 import { useDentistDirectoryReviews } from "@/hooks/dentist/useDentistDirectory";
 import { Star, Loader2 } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface ReviewsPlaceholderProps {
   dentist?: DentistProfileData | null;
@@ -30,19 +31,19 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden p-6">
+      <SectionCard className="p-6">
         <div className="py-12 flex justify-center items-center gap-2 text-slate-500">
-          <Loader2 className="animate-spin size-6 text-[#163E5C]" />
+          <Loader2 className="animate-spin size-6 text-brand-medium-navy" />
           <span>Loading reviews...</span>
         </div>
-      </div>
+      </SectionCard>
     );
   }
 
   if (reviewsList.length > 0) {
     return (
-      <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden p-6 space-y-8">
-        <div className="border-b border-gray-100 pb-4">
+      <SectionCard className="p-6 space-y-8">
+        <div className="border-b border-border pb-4">
           <h3 className="text-lg font-bold text-gray-900">Reviews & Ratings</h3>
         </div>
 
@@ -50,7 +51,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8 border-b border-slate-200">
           {/* Left Card: Average score */}
           <div className="bg-slate-50 rounded-xl p-5 text-center flex flex-col justify-center items-center border border-slate-100">
-            <span className="text-4xl lg:text-5xl font-extrabold text-[#163E5C]">
+            <span className="text-4xl lg:text-5xl font-extrabold text-brand-medium-navy">
               {averageRating.toFixed(1)}
             </span>
             <span className="text-sm font-semibold text-slate-700 mt-2">Average Score</span>
@@ -72,7 +73,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             <div className="flex justify-between items-center text-sm font-semibold">
               <span className="text-sec-text">Communication</span>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-[#163E5C]">{metrics.communication.toFixed(1)}</span>
+                <span className="font-bold text-brand-medium-navy">{metrics.communication.toFixed(1)}</span>
                 <div className="flex gap-0.5 text-amber-400">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -87,7 +88,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             <div className="flex justify-between items-center text-sm font-semibold">
               <span className="text-sec-text">Value for money</span>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-[#163E5C]">{metrics.valueForMoney.toFixed(1)}</span>
+                <span className="font-bold text-brand-medium-navy">{metrics.valueForMoney.toFixed(1)}</span>
                 <div className="flex gap-0.5 text-amber-400">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -102,7 +103,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             <div className="flex justify-between items-center text-sm font-semibold">
               <span className="text-sec-text">Follow-through</span>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-[#163E5C]">{metrics.followThrough.toFixed(1)}</span>
+                <span className="font-bold text-brand-medium-navy">{metrics.followThrough.toFixed(1)}</span>
                 <div className="flex gap-0.5 text-amber-400">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -123,7 +124,7 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
               <div className="flex justify-between items-start gap-4 mb-2">
                 <div className="flex items-center gap-3">
                   {/* Avatar */}
-                  <div className="size-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-xs font-bold text-[#163E5C] uppercase">
+                  <div className="size-9 rounded-full bg-secondary border border-border flex items-center justify-center text-xs font-bold text-brand-medium-navy uppercase">
                     {review.user?.image ? (
                       <img
                         src={review.user.image}
@@ -167,13 +168,13 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             </div>
           ))}
         </div>
-      </div>
+      </SectionCard>
     );
   }
 
   return (
-    <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden">
-      <div className="border-b border-gray-50 px-6 py-4">
+    <SectionCard className="overflow-hidden">
+      <div className="border-b border-border px-6 py-4">
         <h3 className="text-lg font-bold text-gray-900">Reviews</h3>
       </div>
       <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
@@ -186,6 +187,6 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
             : "Currently your profile is not visible to the public, so patients cannot review or book consultations yet."}
         </p>
       </div>
-    </div>
+    </SectionCard>
   );
 }

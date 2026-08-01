@@ -148,7 +148,7 @@ export default function CreateFinalTreatmentPlanModal({
             <section className="px-7 py-6 bg-[#F9FAFB]">
               {/* Avatar + Name + Email */}
               <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-[#E8EEF2] flex items-center justify-center text-[#5B7083] font-bold text-base shrink-0">
+                <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-brand-medium-navy font-bold text-base shrink-0">
                   {patient.initials}
                 </div>
                 <div>
@@ -162,23 +162,23 @@ export default function CreateFinalTreatmentPlanModal({
                 {/* Treatment Details */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <p className="text-xs text-[#777779] font-medium">Treatment Procedure</p>
-                    <p className="text-sm font-semibold text-[#111113]">{patient.procedure}</p>
+                    <p className="text-xs text-text-charcoal font-medium">Treatment Procedure</p>
+                    <p className="text-sm font-semibold text-text">{patient.procedure}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-[#777779] font-medium">Appox Budget</p>
-                    <p className="text-sm font-semibold text-[#111113]">{patient.budget}</p>
+                    <p className="text-xs text-text-charcoal font-medium">Appox Budget</p>
+                    <p className="text-sm font-semibold text-text">{patient.budget}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-[#777779] font-medium">Traveling Dates</p>
-                    <p className="text-sm font-semibold text-[#111113]">{patient.travelDates}</p>
+                    <p className="text-xs text-text-charcoal font-medium">Traveling Dates</p>
+                    <p className="text-sm font-semibold text-text">{patient.travelDates}</p>
                   </div>
                 </div>
 
                 {/* Dental History Box */}
                 <div className="border border-slate-200 rounded-lg bg-white overflow-hidden">
                   <div className="px-4 py-2.5 border-b border-slate-100">
-                    <p className="text-sm font-semibold text-[#4A4A4C]">Dental History</p>
+                    <p className="text-sm font-semibold text-slate-700">Dental History</p>
                   </div>
                   <div className="grid grid-cols-2 divide-x divide-slate-100">
                     <div className="p-3">
@@ -200,7 +200,7 @@ export default function CreateFinalTreatmentPlanModal({
                 <h4 className="text-sm font-semibold text-slate-700 mb-3">Estimate</h4>
                 <div className="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-lg border border-slate-100">
                   <span className="text-sm text-slate-600">Estimate Total</span>
-                  <span className="text-sm font-bold text-[#0A2540]">{estimateTotal}</span>
+                  <span className="text-sm font-bold text-brand-medium-navy">{estimateTotal}</span>
                 </div>
               </div>
 
@@ -213,13 +213,13 @@ export default function CreateFinalTreatmentPlanModal({
                   onDragLeave={() => setIsDragging(false)}
                   onDrop={handleFileDrop}
                   className={`w-full border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${isDragging
-                    ? "border-[#163E5C] bg-[#F0F5FA]"
+                    ? "border-brand-medium-navy bg-secondary"
                     : "border-slate-200 bg-white hover:bg-slate-50"
                     }`}
                 >
                   <Upload className="w-5 h-5 text-slate-400" />
                   {uploadedFile ? (
-                    <p className="text-sm text-[#163E5C] font-medium">{uploadedFile.name}</p>
+                    <p className="text-sm text-brand-medium-navy font-medium">{uploadedFile.name}</p>
                   ) : (
                     <p className="text-sm text-slate-500">Click to upload or drag and drop</p>
                   )}
@@ -312,7 +312,7 @@ export default function CreateFinalTreatmentPlanModal({
                 <Button
                   type="button"
                   onClick={() => append({ name: "", price: 0, notes: "" })}
-                  className="mt-4 bg-[#0A3D5B] hover:bg-[#082f46] text-white font-semibold rounded-lg px-6 h-11 text-sm"
+                  className="mt-4 bg-brand-medium-navy hover:bg-brand-medium-navy-hover text-white font-semibold rounded-lg px-6 h-11 text-sm cursor-pointer"
                 >
                   Add Procedure
                 </Button>
@@ -334,7 +334,7 @@ export default function CreateFinalTreatmentPlanModal({
                     </span>
                   )}
                 </div>
-                <span className="text-base font-bold text-[#0A2540]">${finalTotal.toLocaleString()}</span>
+                <span className="text-base font-bold text-brand-medium-navy">${finalTotal.toLocaleString()}</span>
               </div>
 
               {/* ── Disclaimer ── */}
@@ -350,7 +350,7 @@ export default function CreateFinalTreatmentPlanModal({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-primary hover:bg-[#082f46] text-white h-12 px-8 rounded-lg font-semibold text-sm"
+                className="bg-brand-medium-navy hover:bg-brand-medium-navy-hover text-white h-12 px-8 rounded-lg font-semibold text-sm cursor-pointer"
               >
                 {isSubmitting ? "Submitting…" : "Submit Final Treatment Plan"}
               </Button>

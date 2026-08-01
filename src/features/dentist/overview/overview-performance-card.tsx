@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface Props {
   chart: {
@@ -24,7 +25,7 @@ export function OverviewPerformanceCard({ chart }: Props) {
   const strokeDashoffset = circumference - (pct / 100) * circumference;
 
   return (
-    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
+    <SectionCard className="sm:p-8">
       {/* Main layout: chart left + metrics right */}
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center">
         {/* SVG Donut chart */}
@@ -95,6 +96,6 @@ export function OverviewPerformanceCard({ chart }: Props) {
         Review sentiment is displayed separately and does not affect your RDV
         Score.
       </p>
-    </section>
+    </SectionCard>
   );
 }

@@ -11,6 +11,9 @@ import { useGetMe, useUpdateProfileImage } from "@/hooks/user/useUser";
 import { S3Image } from "@/components/ui/s3-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/shared/error-state";
+import { PageContainer } from "@/components/shared/page-container";
+import { HeadingGroup } from "@/components/shared/heading-group";
+import { SectionCard } from "@/components/shared/section-card";
 
 export default function ProfileSettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
@@ -119,12 +122,12 @@ export default function ProfileSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-8 animate-pulse">
+      <PageContainer className="space-y-6 animate-pulse">
         <Skeleton className="h-9 w-60 rounded-md" />
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column Sidebar Skeleton */}
-          <div className="w-full lg:w-[320px] bg-white rounded-lg border border-slate-100 p-8 flex flex-col items-center">
+          <SectionCard className="w-full lg:w-[320px] p-8 flex flex-col items-center">
             <Skeleton className="size-24 rounded-full mb-4" />
             <Skeleton className="h-5 w-32 rounded mb-2" />
             <Skeleton className="h-4 w-40 rounded mb-8" />
@@ -132,10 +135,10 @@ export default function ProfileSettingsPage() {
               <Skeleton className="h-11 w-full rounded-lg" />
               <Skeleton className="h-11 w-full rounded-lg" />
             </div>
-          </div>
+          </SectionCard>
 
           {/* Right Column Form Card Skeleton */}
-          <div className="flex-1 bg-white rounded-lg border border-slate-100 p-8">
+          <SectionCard className="flex-1 p-8">
             <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
               <Skeleton className="h-6 w-48 rounded" />
               <Skeleton className="h-8 w-24 rounded" />
@@ -148,9 +151,9 @@ export default function ProfileSettingsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </SectionCard>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -160,14 +163,12 @@ export default function ProfileSettingsPage() {
     "User";
 
   return (
-    <div className="">
-      <h1 className="text-2xl lg:text-3xl font-bold text-text mb-8">
-        Profile & Settings
-      </h1>
+    <PageContainer className="space-y-6">
+      <HeadingGroup title="Profile & Settings" />
 
       <div className="flex flex-col lg:flex-row gap-8">
 
-        <div className="w-full lg:w-[320px] bg-white rounded-lg border border-slate-100 p-8 flex flex-col items-center">
+        <SectionCard className="w-full lg:w-[320px] p-8 flex flex-col items-center">
           <div className="relative group mb-4">
             <div className="size-24 rounded-full overflow-hidden border-2 border-slate-50 relative bg-slate-100">
               <S3Image
@@ -186,7 +187,7 @@ export default function ProfileSettingsPage() {
             <button
               onClick={handleAvatarClick}
               disabled={uploadProfileImageMutation.isPending}
-              className="absolute bottom-0 right-0 size-8 bg-[#0F3659] rounded-full border-2 border-white flex items-center justify-center text-white hover:bg-[#0a2640] transition-colors disabled:opacity-50 cursor-pointer"
+              className="absolute bottom-0 right-0 size-8 bg-brand-deep-navy rounded-full border-2 border-white flex items-center justify-center text-white hover:bg-brand-deep-navy-hover transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Plus className="size-4" />
             </button>
@@ -218,25 +219,25 @@ export default function ProfileSettingsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-4 px-6 py-4 rounded-lg font-bold transition-all text-left cursor-pointer ${activeTab === tab.id
-                  ? "bg-[#F1F5F9] text-[#0F3659]"
+                  ? "bg-slate-100 text-brand-deep-navy"
                   : "text-slate-400 hover:text-slate-600"
                   }`}
               >
                 <tab.icon
-                  className={`size-5 ${activeTab === tab.id ? "text-[#0F3659]" : "text-slate-400"}`}
+                  className={`size-5 ${activeTab === tab.id ? "text-brand-deep-navy" : "text-slate-400"}`}
                 />
                 {tab.label}
               </button>
             ))}
           </div>
-        </div>
+        </SectionCard>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-lg border border-slate-100 p-8 lg:p-12">
+        <SectionCard className="flex-1 p-8 lg:p-12">
           {activeTab === "personal" && <PersonalInfoForm user={user} />}
           {activeTab === "password" && <ChangePasswordForm />}
-        </div>
+        </SectionCard>
       </div>
-    </div>
+    </PageContainer>
   );
 }

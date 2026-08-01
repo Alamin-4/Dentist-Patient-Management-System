@@ -105,12 +105,12 @@ export const ConsultationCard = ({
   const isMeetingActive = isWithinMeetingWindow(data);
 
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+    <div className="bg-white border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
       <div>
         {/* Header: Avatar & Info */}
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-4 min-w-0">
-            <div className="w-12 h-12 rounded-full bg-[#113254]/5 flex items-center justify-center text-[#113254] font-bold text-sm shrink-0">
+            <div className="w-12 h-12 rounded-full bg-brand-deep-navy/5 flex items-center justify-center text-brand-deep-navy font-bold text-sm shrink-0">
               {initials || "P"}
             </div>
             <div className="min-w-0">
@@ -135,7 +135,7 @@ export const ConsultationCard = ({
               router.push(`/dentist/messages?chatId=${data.id}`);
             }}
             title="Chat with Patient"
-            className="p-2.5 bg-slate-50 hover:bg-slate-100 text-[#113254] rounded-full border border-slate-200 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
+            className="p-2.5 bg-slate-50 hover:bg-slate-100 text-brand-deep-navy rounded-full border border-slate-200 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
           >
             <MessageSquare size={16} />
           </button>
@@ -151,7 +151,7 @@ export const ConsultationCard = ({
               </span>
               <span
                 className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${treatmentPlanStatus === "Not Sent"
-                  ? "bg-slate-100 text-[#777779]"
+                  ? "bg-slate-100 text-text-charcoal"
                   : treatmentPlanStatus === "Rejected"
                     ? "bg-red-50 text-red-500"
                     : treatmentPlanStatus === "Accepted"
@@ -203,7 +203,7 @@ export const ConsultationCard = ({
         {type === "Upcoming" ? (
           <button
             onClick={onClick}
-            className="w-full h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            className="w-full h-11 border border-brand-deep-navy text-brand-deep-navy rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
           >
             View Details
           </button>
@@ -213,13 +213,13 @@ export const ConsultationCard = ({
               <>
                 <button
                   onClick={onClick}
-                  className="flex-1 h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="flex-1 h-11 border border-brand-deep-navy text-brand-deep-navy rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   View Details
                 </button>
                 <button
                   onClick={onAction}
-                  className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                  className="flex-1 h-11 bg-brand-deep-navy hover:bg-brand-deep-navy-hover text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
                 >
                   Reschedule
                 </button>
@@ -228,7 +228,7 @@ export const ConsultationCard = ({
               <>
                 <button
                   onClick={onClick}
-                  className={`h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${isMeetingActive ? "flex-1" : "w-full"
+                  className={`h-11 border border-brand-deep-navy text-brand-deep-navy rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer ${isMeetingActive ? "flex-1" : "w-full"
                     }`}
                 >
                   View Details
@@ -236,7 +236,7 @@ export const ConsultationCard = ({
                 {isMeetingActive && (
                   <button
                     onClick={onJoinMeeting}
-                    className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                    className="flex-1 h-11 bg-brand-deep-navy hover:bg-brand-deep-navy-hover text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
                   >
                     Join Consultation
                   </button>
@@ -249,14 +249,14 @@ export const ConsultationCard = ({
           <>
             <button
               onClick={onClick}
-              className="flex-1 h-11 border border-[#113254] text-[#113254] rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+              className="flex-1 h-11 border border-brand-deep-navy text-brand-deep-navy rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
             >
               View Details
             </button>
             {treatmentPlanStatus !== "Accepted" ? (
               <button
                 onClick={onAction}
-                className="flex-1 h-11 bg-[#113254] hover:bg-[#0d2844] text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                className="flex-1 h-11 bg-brand-deep-navy hover:bg-brand-deep-navy-hover text-white rounded-lg font-bold text-sm transition-colors cursor-pointer"
               >
                 {treatmentPlanStatus === "Not Sent" ? "Create Treatment Plan" : "Update Treatment Plan"}
               </button>
