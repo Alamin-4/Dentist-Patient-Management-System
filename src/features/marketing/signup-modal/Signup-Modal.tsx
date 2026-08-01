@@ -91,15 +91,9 @@ export default function SignupModal() {
   });
 
   const onSubmit = async (data: IRegisterPatient) => {
-
     try {
-      const res = await registerPatientMutation.mutateAsync(data)
+      const res = await registerPatientMutation.mutateAsync(data);
       if (res) {
-        if (res?.data?.needEmailVerify) {
-          setNeedVerifyEmail(data.email);
-          return;
-        }
-
         setPendingEmail(data.email);
         reset();
         setShowSignupModal(false);

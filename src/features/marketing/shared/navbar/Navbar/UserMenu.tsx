@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User } from "./type";
 import { cn } from "@/lib/utils";
+import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 
 interface UserMenuProps {
     user: User;
@@ -52,6 +53,18 @@ export default function UserMenu({
         : "U";
 
     const role = user?.role?.toLowerCase() || "patient";
+
+    const { data: dentistProfile } = useDentistProfileQuery({
+        enabled: role === "dentist",
+    });
+    const dentist = dentistProfile?.data?.dentist;
+
+    const isDirectoryVerified = dentist?.dentistDirectory?.status === "VERIFIED";
+    const isLicenseVerified = dentist?.dentistLicense?.isVerified || dentist?.dentistLicense?.verificationStatus === "APPROVED";
+    const isOperationsVerified = dentist?.dentistOperationsVerifications?.[0]?.isVerified || dentist?.dentistOperationsVerifications?.[0]?.isApproved || dentist?.dentistOperationsVerifications?.[0]?.verificationStatus === "APPROVED";
+    const isClinicalVerified = dentist?.dentistClinicDepthVerification?.isVerified || dentist?.dentistClinicDepthVerification?.isApproved || dentist?.dentistClinicDepthVerification?.verificationStatus === "APPROVED";
+
+    const isVerified = isDirectoryVerified || (isLicenseVerified && isOperationsVerified && isClinicalVerified);
 
     // Determine dashboard route based on role
     const getDashboardRoute = () => {
@@ -168,11 +181,13 @@ export default function UserMenu({
                 <DropdownMenuGroup>
                     {role === "dentist" ? (
                         <>
-                            <DropdownMenuItem className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors" onClick={() => handleNavigation("/dentist/profile")}>
-                                <UserIcon className="h-4 w-4 text-slate-400" />
-                                <span>My Profile</span>
-                                <DropdownMenuShortcut className="text-slate-400">⌘P</DropdownMenuShortcut>
-                            </DropdownMenuItem>
+                            {isVerified && (
+                                <DropdownMenuItem className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors" onClick={() => handleNavigation("/dentist/profile")}>
+                                    <UserIcon className="h-4 w-4 text-slate-400" />
+                                    <span>My Profile</span>
+                                    <DropdownMenuShortcut className="text-slate-400">⌘P</DropdownMenuShortcut>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors" onClick={() => handleNavigation("/dentist/settings")}>
                                 <Settings className="h-4 w-4 text-slate-400" />
                                 <span>Settings</span>
