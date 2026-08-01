@@ -5,6 +5,7 @@ import { StateProvider } from "@/providers/StateProvider";
 import TanstackProvider from "@/providers/query-provider";
 import { Toaster } from "react-hot-toast";
 import { CSPostHogProvider } from "@/providers/posthog-provider";
+import PostHogPageview from "@/providers/PostHogPageview";
 
 
 
@@ -47,6 +48,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <CSPostHogProvider>
+          <PostHogPageview />
           <StateProvider>
             <TanstackProvider>{children}
 

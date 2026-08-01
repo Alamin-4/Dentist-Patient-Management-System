@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import { IRegisterDentist, IRegisterPatient } from "./auth.validation";
 import { LoginPayload, ResetPasswordPayload } from "@/types/api";
+import { identifyUser, resetUserSession } from "@/lib/posthog-identity";
 
 const hasSessionCookie = (): boolean => {
     if (typeof document === 'undefined') return false;
@@ -27,9 +28,20 @@ export function useSession() {
         queryFn: async () => {
             try {
                 const res = await apiClient.auth.getSession();
-                return res?.data || res;
+                const sessionData = res?.data || res;
+                const user = sessionData?.user || sessionData?.data?.user;
+                if (user && user.id && user.email) {
+                    identifyUser({
+                        id: user.id,
+                        email: user.email,
+                        name: user.name || `${user.first_name || ""} ${user.last_name || ""}`.trim() || undefined,
+                        role: user.role,
+                    });
+                }
+                return sessionData;
             } catch (error: any) {
                 if (error?.statusCode === 401 || error?.status === 401) {
+                    resetUserSession();
                     return null;
                 }
                 throw error;
@@ -175,6 +187,7 @@ export function useLogout(options?: { redirectTo?: string | null }) {
                 document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
                 document.cookie = "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
                 document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                resetUserSession();
                 queryClient.clear();
                 if (options?.redirectTo !== null) {
                     window.location.href = options?.redirectTo ?? "/";

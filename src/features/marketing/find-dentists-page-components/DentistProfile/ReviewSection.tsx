@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Star, MessageSquare } from "lucide-react";
 import { useDentistDirectoryReviews } from "@/hooks/dentist/useDentistDirectory";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/shared/error-state";
+import { useMe } from "@/hooks/auth/useAuth";
+import WriteReviewDialog from "./WriteReviewDialog";
 
 export default function ReviewSection({
   slug,
@@ -18,6 +21,10 @@ export default function ReviewSection({
   onSeeAllReviews?: () => void;
 }) {
   const { data: reviewsData, isLoading, isError, refetch } = useDentistDirectoryReviews(slug);
+  const [localOpen, setLocalOpen] = useState(false);
+  const { user } = useMe();
+  const isPatient = user?.role === "PATIENT";
+  const isDentistVerified = dentist?.verified || dentist?.dentistDirectory?.status === "VERIFIED";
 
   const reviewsList = reviewsData?.data?.reviews || [];
   const displayedReviews = onSeeAllReviews ? reviewsList.slice(0, 5) : reviewsList;
@@ -37,6 +44,16 @@ export default function ReviewSection({
         <h2 className="text-xl lg:text-2xl font-bold text-[#033355]">
           Reviews & Ratings
         </h2>
+        {isPatient && isDentistVerified && (
+          <Button
+            type="button"
+            onClick={() => setLocalOpen(true)}
+            className="w-full sm:w-auto h-10 rounded-lg bg-[#113254] hover:bg-[#0d2844] text-white font-bold transition-colors cursor-pointer flex items-center justify-center gap-2"
+          >
+            <MessageSquare className="size-4" />
+            Write a Review
+          </Button>
+        )}
       </div>
 
       {isError ? (
@@ -236,6 +253,15 @@ export default function ReviewSection({
             </div>
           )}
         </div>
+      )}
+
+      {isPatient && isDentistVerified && (
+        <WriteReviewDialog
+          isOpen={localOpen}
+          onOpenChange={setLocalOpen}
+          slug={slug}
+          dentistName={dentist.name}
+        />
       )}
     </section>
   );

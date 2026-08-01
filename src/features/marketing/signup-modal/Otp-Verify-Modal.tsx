@@ -188,7 +188,7 @@ export default function OtpVerifyModal({
                       <InputOTPSlot
                         key={index}
                         index={index}
-                        className={`size-12 rounded-lg border text-lg font-semibold text-[#113254] sm:size-14 ${errors.otp ? "border-red-500" : "border-[#E5E7EB]"
+                        className={`ph-no-capture ph-ignore-input size-12 rounded-lg border text-lg font-semibold text-[#113254] sm:size-14 ${errors.otp ? "border-red-500" : "border-[#E5E7EB]"
                           }`}
                       />
                     ))}
