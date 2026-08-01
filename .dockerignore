@@ -2,12 +2,21 @@ node_modules
 .next
 .git
 .github
-.agents
-.claude
-.codex
 .vscode
+.claude
+.agents
+.codex
 Dockerfile
+.dockerignore
 README.md
+*.md
 *.log
 pnpm-debug.log*
 .DS_Store
+# Test and CI artifacts
+coverage
+.nyc_output
+# Env files — never bake into image; pass at runtime
+.env
+.env.*
+!.env.example

@@ -1,45 +1,41 @@
-# -----------------------
-# Base Image
-# -----------------------
-FROM node:22-alpine AS base
-
-ENV NEXT_TELEMETRY_DISABLED=1
+# ── Stage 1: Install dependencies ────────────────────────────────────────────
+# Copy ONLY manifest + lockfile first so this layer is only invalidated when
+# dependencies actually change — not on every source file edit.
+FROM node:22-alpine AS deps
+WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
-FROM base AS deps
-WORKDIR /app
-
-RUN apk add --no-cache libc6-compat
-
-COPY package.json pnpm-lock.yaml ./
-
-RUN pnpm install --frozen-lockfile --prod
-
-
-FROM base AS dev
-WORKDIR /app
-
 COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
-CMD ["corepack", "pnpm", "dev", "--hostname", "0.0.0.0"]
-
-
-FROM base AS builder
+# ── Stage 2: Build ────────────────────────────────────────────────────────────
+FROM node:22-alpine AS builder
 WORKDIR /app
 
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+# Reuse installed node_modules — no second install.
+COPY --from=deps /app/node_modules ./node_modules
+
+# Source copy happens AFTER install so deps layer stays cached on code changes.
 COPY . .
 
-RUN pnpm install --frozen-lockfile
-
+# PostHog and API URL must be baked in at build time (NEXT_PUBLIC_ vars).
 ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_POSTHOG_KEY
+ARG NEXT_PUBLIC_POSTHOG_HOST=/ingest
+
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY
+ENV NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN pnpm exec next build
 
-FROM base AS runner
+# ── Stage 3: Runtime (minimal production image) ───────────────────────────────
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -47,27 +43,20 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Non-root user (SECURITY)
-RUN addgroup -S nodejs -g 1001 && adduser -S nextjs -u 1001
+RUN apk add --no-cache curl && \
+    addgroup -S nodejs -g 1001 && \
+    adduser -S nextjs -u 1001
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl libc6-compat
-
-# Copy standalone output
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# Fix permissions
-RUN chown -R nextjs:nodejs /app
+# Copy only the standalone output — smallest possible runtime image.
+COPY --from=builder --chown=nextjs:nodejs /app/public            ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone  ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static      ./.next/static
 
 USER nextjs
-
 EXPOSE 3000
 
-# Healthcheck (PROPER)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s \
-    CMD curl -f http://localhost:3000 || exit 1
+# Healthcheck used by the deploy script to gate traffic switch.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -f http://localhost:3000/ || exit 1
 
-# Start app
 CMD ["node", "server.js"]
