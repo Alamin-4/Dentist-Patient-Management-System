@@ -4,7 +4,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_API_BASE_URL: z
     .string()
     .min(1, "NEXT_PUBLIC_API_BASE_URL is required")
-    .default("https://api.mvp.rateddocs.com"),
+    .default("https://api.mvp.rateddocs.com/api/v1"),
   NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_HOST: z
     .string()
