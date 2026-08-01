@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
@@ -8,13 +8,14 @@ export default function TanstackProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // Putting the client in useState ensures data isn't shared between different users/requests
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, 
+            staleTime: 5 * 60 * 1000,
+            gcTime: 10 * 60 * 1000,
+            refetchOnWindowFocus: false,
           },
         },
       }),

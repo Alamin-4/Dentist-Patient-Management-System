@@ -12,6 +12,8 @@ import { useMe } from "@/hooks/auth/useAuth";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import type { Dentist } from "@/features/marketing/find-dentists-page-components/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Verification phase dots
@@ -69,6 +71,17 @@ export default function DentistCard({
 }: DentistCardProps) {
   const router = useRouter();
   const { user } = useMe();
+  const queryClient = useQueryClient();
+
+  const handlePrefetchDetails = () => {
+    if (!dentist.slug) return;
+    queryClient.prefetchQuery({
+      queryKey: ["dentistDirectoryDetail", dentist.slug],
+      queryFn: () => apiClient.dentists.getDirectoryDetail(dentist.slug),
+      staleTime: 5 * 60 * 1000,
+    });
+  };
+
   const {
     setSelectedDentistId,
     setShowBookingModal,
@@ -137,6 +150,7 @@ export default function DentistCard({
   return (
     <div
       onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
+      onMouseEnter={handlePrefetchDetails}
       className={cn(
         "relative w-full overflow-hidden border border-border bg-white transition-all duration-300 rounded-[12px] shadow-xs hover:shadow-md cursor-pointer p-4 sm:p-5",
         floating && "w-[min(100%,34rem)] shadow-lg",
