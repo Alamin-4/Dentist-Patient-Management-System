@@ -2,6 +2,7 @@
 
 import { Copy } from "lucide-react";
 import { useState } from "react";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface Props {
   referralCode: string;
@@ -18,7 +19,7 @@ export function OverviewReferralsCard({ referralCode }: Props) {
 
   return (
     <>
-      <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
+      <SectionCard className="sm:p-8">
         <p className="text-sm font-bold text-gray-900">
           Your referral code
         </p>
@@ -41,7 +42,7 @@ export function OverviewReferralsCard({ referralCode }: Props) {
         <p className="mt-3 text-xs font-semibold text-gray-400">
           Earn $150 for every colleague who joins and goes live.
         </p>
-      </section>
+      </SectionCard>
 
       <a
         href="https://wa.me/1234567890"

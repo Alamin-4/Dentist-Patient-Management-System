@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CreditCard, ShieldCheck, Loader2, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { apiClient } from "@/api/client";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface PaymentInfoProps {
   connected?: boolean;
@@ -68,8 +69,8 @@ export default function PaymentInfo({
   const isFullyOnboarded = connected && chargesEnabled && payoutsEnabled;
 
   return (
-    <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between border-b border-[#EEF2F7] pb-4 mb-4">
+    <SectionCard className="border-border">
+      <div className="flex items-center justify-between border-b border-border/60 pb-4 mb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-primary">Payout Settings</h2>
           <span className="text-xs text-[#475569] bg-slate-100 px-2 py-0.5 rounded-full font-medium">Stripe Connect</span>
@@ -79,7 +80,7 @@ export default function PaymentInfo({
             type="button"
             onClick={handleSyncStatus}
             disabled={isSyncing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border text-[#0F3659] hover:bg-slate-50 border-slate-200 disabled:opacity-60"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border text-brand-medium-navy hover:bg-slate-50 border-slate-200 disabled:opacity-60"
           >
             {isSyncing ? (
               <>
@@ -96,7 +97,7 @@ export default function PaymentInfo({
       <div className="mt-4">
         {isProgressLoading ? (
           <div className="flex items-center justify-center py-6">
-            <Loader2 className="h-6 w-6 animate-spin text-[#0F3659]" />
+            <Loader2 className="h-6 w-6 animate-spin text-brand-medium-navy" />
           </div>
         ) : !isVerified ? (
           <div className="rounded-lg border border-amber-200 p-4 bg-amber-50/50 flex items-start gap-3">
@@ -142,7 +143,7 @@ export default function PaymentInfo({
                 <button
                   onClick={handleConnect}
                   disabled={isLoading}
-                  className="ml-auto flex items-center gap-2 rounded-md bg-[#0F3659] hover:bg-[#0a2640] px-4 py-2 text-sm font-semibold text-white transition-colors cursor-pointer disabled:opacity-60"
+                  className="ml-auto flex items-center gap-2 rounded-md bg-brand-medium-navy hover:bg-brand-medium-navy-hover px-4 py-2 text-sm font-semibold text-white transition-colors cursor-pointer disabled:opacity-60"
                 >
                   {isLoading ? (
                     <>
@@ -190,7 +191,7 @@ export default function PaymentInfo({
                   <button
                     onClick={handleConnect}
                     disabled={isLoading}
-                    className="flex items-center gap-1 rounded-md bg-[#0F3659] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0a2640] transition-colors cursor-pointer disabled:opacity-60"
+                    className="flex items-center gap-1 rounded-md bg-brand-medium-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-medium-navy-hover transition-colors cursor-pointer disabled:opacity-60"
                   >
                     {isLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -206,6 +207,6 @@ export default function PaymentInfo({
           </>
         )}
       </div>
-    </section>
+    </SectionCard>
   );
 }

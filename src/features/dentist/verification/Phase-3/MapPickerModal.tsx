@@ -271,7 +271,7 @@ export default function MapPickerModal({
         {/* Header */}
         <div className="flex items-center justify-between px-5 sm:px-6 pb-4 pt-1 sm:py-4 border-b border-slate-100">
           <div>
-            <h3 className="text-lg font-extrabold text-[#0A2533]">
+            <h3 className="text-lg font-extrabold text-text">
               Select Clinic Location
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -304,7 +304,7 @@ export default function MapPickerModal({
                   }
                 }}
                 placeholder="Search for address, city, or clinic..."
-                className="w-full pl-10 pr-20 py-2.5 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full pl-10 pr-20 py-2.5 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-medium-navy focus:border-transparent transition-all"
               />
               <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
 
@@ -326,7 +326,7 @@ export default function MapPickerModal({
                   type="button"
                   onClick={handleSearch}
                   disabled={isSearching}
-                  className="px-3.5 py-1.5 bg-primary hover:bg-[#082842] text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50"
+                  className="px-3.5 py-1.5 bg-brand-medium-navy hover:bg-brand-medium-navy-hover text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50"
                 >
                   {isSearching ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -341,11 +341,11 @@ export default function MapPickerModal({
               type="button"
               onClick={detectUserLocation}
               disabled={isLocating}
-              className="p-2.5 bg-white border border-slate-200 rounded-lg text-gray-600 hover:text-primary hover:bg-slate-100 transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
+              className="p-2.5 bg-white border border-slate-200 rounded-lg text-gray-600 hover:text-brand-medium-navy hover:bg-slate-100 transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
               title="Use current location"
             >
               {isLocating ? (
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <Loader2 className="h-4 w-4 animate-spin text-brand-medium-navy" />
               ) : (
                 <Navigation className="h-4 w-4" />
               )}
@@ -422,7 +422,7 @@ export default function MapPickerModal({
                 >
                   <path
                     d="M12 2C7.58 2 4 5.58 4 10C4 15.25 12 22 12 22C12 22 20 15.25 20 10C20 5.58 16.42 2 12 2Z"
-                    fill="#0E3E65"
+                    fill="var(--brand-medium-navy)"
                     stroke="#ffffff"
                     strokeWidth="2.5"
                     strokeLinejoin="round"
@@ -444,7 +444,7 @@ export default function MapPickerModal({
         {/* Footer Area with Selected Details & Actions */}
         <div className="px-5 sm:px-6 py-4.5 border-t border-slate-100 bg-white flex flex-col gap-4 relative z-30">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 bg-slate-50 text-primary rounded-lg shrink-0 mt-0.5">
+            <div className="p-2.5 bg-slate-50 text-brand-medium-navy rounded-lg shrink-0 mt-0.5">
               <MapPin className="h-5 w-5" />
             </div>
             <div className="text-left flex-1 min-w-0">
@@ -474,7 +474,7 @@ export default function MapPickerModal({
               type="button"
               onClick={handleConfirm}
               disabled={!position || isMapMoving}
-              className="flex-1 px-6 py-3 bg-primary hover:bg-[#082842] disabled:bg-slate-100 disabled:text-slate-400 text-white text-sm font-bold rounded-lg transition-all disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
+              className="flex-1 px-6 py-3 bg-brand-medium-navy hover:bg-brand-medium-navy-hover disabled:bg-slate-100 disabled:text-slate-400 text-white text-sm font-bold rounded-lg transition-all disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
             >
               <Check className="h-4 w-4" />
               Confirm Location

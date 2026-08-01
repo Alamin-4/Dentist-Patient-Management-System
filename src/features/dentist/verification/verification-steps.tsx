@@ -77,11 +77,11 @@ export function VerificationSteps() {
               className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
                 isActive
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-brand-medium-navy text-brand-medium-navy font-semibold"
                   : step.unlocked
                     ? step.submitted
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-primary/40 text-primary"
+                      ? "border-brand-medium-navy bg-brand-medium-navy text-primary-foreground"
+                      : "border-brand-medium-navy/40 text-brand-medium-navy"
                     : "border-border bg-gray-50 text-muted-foreground",
               )}
             >

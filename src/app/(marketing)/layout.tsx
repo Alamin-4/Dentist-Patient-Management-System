@@ -8,15 +8,18 @@ import SigninModal from "@/features/marketing/signup-modal/SignIn";
 import Footer from "@/features/marketing/shared/footer/footer";
 import NavbarPublic from "@/features/marketing/shared/navbar/Navbar";
 
+import ScrollToTop from "@/components/shared/scroll-to-top";
+
 export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <NavbarPublic />
-      <main className="min-h-150 h-full">{children}</main>
+      <main className="flex-1 flex flex-col">{children}</main>
       <SignupModal />
       <SigninModal />
       <PersonalizeComparisonModal />
@@ -25,7 +28,6 @@ export default function PublicLayout({
       <IntakeModal />
       <RequestConsultationModal />
       <Footer />
-
     </div>
   );
 }

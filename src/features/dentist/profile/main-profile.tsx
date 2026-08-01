@@ -46,7 +46,7 @@ export default function DentistProfilePage() {
         </p>
         <button
           onClick={() => dentistProfile.refetch()}
-          className="mt-6 rounded-lg bg-[#163E5C] px-4 py-2 text-sm font-semibold text-white hover:bg-[#113149] transition-colors"
+          className="mt-6 rounded-lg bg-brand-medium-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-medium-navy-hover transition-colors"
         >
           Retry
         </button>
@@ -82,12 +82,12 @@ export default function DentistProfilePage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`pb-3.5 text-xs sm:text-sm font-bold transition-all relative shrink-0 ${isActive ? "text-[#163E5C]" : "text-gray-400 hover:text-gray-600"
+                  className={`pb-3.5 text-xs sm:text-sm font-bold transition-all relative shrink-0 ${isActive ? "text-brand-medium-navy" : "text-gray-400 hover:text-gray-600"
                     }`}
                 >
                   {tab.label}
                   {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#163E5C] rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-medium-navy rounded-full" />
                   )}
                 </button>
               );

@@ -113,7 +113,7 @@ export function BlogManager() {
 
           <button
             onClick={handleCreateNew}
-            className="flex items-center gap-2 rounded-lg bg-primary hover:bg-[#0d3656] text-white px-4 py-2 text-xs font-bold active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-2 rounded-lg bg-admin-primary hover:bg-admin-primary/90 text-white px-4 py-2 text-xs font-bold active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Create Article
@@ -130,7 +130,7 @@ export function BlogManager() {
             posts.map((post: BlogPost) => (
               <div
                 key={post.id}
-                className="group border border-slate-200 bg-white rounded-xl overflow-hidden flex flex-col transition-colors hover:border-primary/40"
+                className="group border border-slate-200 bg-white rounded-xl overflow-hidden flex flex-col transition-colors hover:border-admin-primary/40"
               >
                 {/* Cover Image */}
                 <div className="h-44 w-full bg-slate-100 overflow-hidden relative">
@@ -232,7 +232,7 @@ export function BlogManager() {
               placeholder="Short summary describing the article..."
               className={cn(
                 "w-full rounded-lg border p-2.5 text-xs font-medium outline-none transition-colors bg-white resize-none",
-                errors.summary ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                errors.summary ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
               )}
             />
             {errors.summary && (
@@ -249,7 +249,7 @@ export function BlogManager() {
               placeholder="E.g. Dr. Alexander Cross"
               className={cn(
                 "h-9 w-full rounded-lg border px-3 text-xs outline-none transition-colors bg-white",
-                errors.author ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                errors.author ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
               )}
             />
             {errors.author && (
@@ -267,7 +267,7 @@ export function BlogManager() {
                 placeholder="https://images.unsplash.com/..."
                 className={cn(
                   "h-9 w-full rounded-lg border pl-8 pr-3 text-xs outline-none transition-colors bg-white truncate",
-                  errors.coverImage ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                  errors.coverImage ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                 )}
               />
               <ImageIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
 import { useCreateDirectoryCheckoutSession } from "@/hooks/dentist/useDentistDirectory";
+import { SectionCard } from "@/components/shared/section-card";
 import type {
   DentistVerificationProgress,
   VerificationProgressStep,
@@ -63,7 +64,7 @@ export function VerificationBanner() {
     };
 
     return (
-      <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm animate-scaleUp">
+      <SectionCard className="mx-auto max-w-xl my-auto p-6 lg:p-8 animate-scaleUp">
         <div className="flex flex-col items-center text-center">
           <div className="mx-auto size-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-6">
             <CheckCircle2 className="size-10" />
@@ -120,7 +121,7 @@ export function VerificationBanner() {
                 <Button
                   size="lg"
                   disabled={checkoutMutation.isPending}
-                  className="w-full h-14 rounded-lg bg-primary hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
+                  className="w-full h-14 rounded-lg bg-primary hover:bg-brand-medium-navy-hover text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
                   onClick={handleProceedToPayment}
                 >
                   {checkoutMutation.isPending ? (
@@ -136,7 +137,7 @@ export function VerificationBanner() {
             </div>
           </div>
         </div>
-      </div>
+      </SectionCard>
     );
   }
 
@@ -267,7 +268,7 @@ export function VerificationBanner() {
     (step3Status === VerificationStatus.APPROVED || step3Status === VerificationStatus.SUBMITTED);
 
   return (
-    <div className="mx-auto max-w-xl my-auto bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm">
+    <SectionCard className="mx-auto max-w-xl my-auto p-6 lg:p-8">
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-8 h-44 w-44 sm:h-52 sm:w-52">
           <svg
@@ -278,7 +279,8 @@ export function VerificationBanner() {
               cx="50"
               cy="50"
               r="40"
-              stroke="#0E3E65"
+              stroke="var(--brand-medium-navy)"
+              strokeOpacity="0.1"
               strokeWidth="10"
               fill="transparent"
             />
@@ -355,7 +357,7 @@ export function VerificationBanner() {
             <Button
               size="lg"
               disabled={isAllApprovedOrSubmitted}
-              className="w-full h-14 rounded-lg bg-primary hover:bg-[#082842] text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="w-full h-14 rounded-lg bg-primary hover:bg-brand-medium-navy-hover text-white font-semibold shadow-sm cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
               onClick={() => {
                 router.push(`/dentist/verification?phase=${targetPhaseParam}`);
               }}
@@ -365,6 +367,6 @@ export function VerificationBanner() {
           </div>
         </div>
       </div>
-    </div>
+    </SectionCard>
   );
 }

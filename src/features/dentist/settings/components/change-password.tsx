@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useChangePassword } from "@/hooks/user/useUser";
 import { Pencil } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface FormValues {
   oldPassword: string;
@@ -51,8 +52,8 @@ export default function ChangePassword() {
   const newVal = watch("newPassword");
 
   return (
-    <section className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between border-b border-[#EEF2F7] pb-4 mb-4">
+    <SectionCard className="border-border">
+      <div className="flex items-center justify-between border-b border-border/60 pb-4 mb-4">
         <h2 className="text-lg font-semibold text-primary">Change Password</h2>
         <button
           type="button"
@@ -64,8 +65,8 @@ export default function ChangePassword() {
             }
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
-              ? "text-red-500 hover:bg-red-50 border-red-200"
-              : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
+            ? "text-red-500 hover:bg-red-50 border-red-200"
+            : "text-brand-medium-navy hover:bg-slate-50 border-slate-200"
             }`}
         >
           <Pencil className="h-3.5 w-3.5" />
@@ -82,7 +83,7 @@ export default function ChangePassword() {
               type={showOld ? "text" : "password"}
               disabled={!isEditing || changePasswordMutation.isPending}
               {...register("oldPassword", { required: "Old password is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {isEditing && (
@@ -111,7 +112,7 @@ export default function ChangePassword() {
                 required: "New password is required",
                 minLength: { value: 8, message: "New password must be at least 8 characters long" },
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {isEditing && (
@@ -140,7 +141,7 @@ export default function ChangePassword() {
                 required: "Please confirm your new password",
                 validate: (val) => val === newVal || "Passwords must match",
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {isEditing && (
@@ -171,7 +172,7 @@ export default function ChangePassword() {
             <button
               type="submit"
               disabled={changePasswordMutation.isPending}
-              className="rounded-md bg-[#0F3659] px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#0a2640] cursor-pointer flex items-center justify-center min-w-[140px]"
+              className="rounded-md bg-brand-medium-navy px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-brand-medium-navy-hover cursor-pointer flex items-center justify-center min-w-35"
             >
               {changePasswordMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -182,6 +183,6 @@ export default function ChangePassword() {
           </div>
         )}
       </form>
-    </section>
+    </SectionCard>
   );
 }

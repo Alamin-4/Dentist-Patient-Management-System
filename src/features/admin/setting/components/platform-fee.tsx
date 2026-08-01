@@ -74,7 +74,7 @@ export function PlatformFee() {
               }}
               className={cn(
                 "h-10 w-full rounded-lg border px-4 pr-10 text-xs font-semibold outline-none transition-colors bg-white",
-                errors.rate ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                 errors.rate ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
               )}
             />
             <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">%</span>
@@ -97,7 +97,7 @@ export function PlatformFee() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex items-center gap-2 rounded-lg bg-primary hover:bg-[#0d3656] text-white px-5 py-2.5 text-xs font-bold transition-all cursor-pointer disabled:bg-slate-300"
+          className="flex items-center gap-2 rounded-lg bg-admin-primary hover:bg-admin-primary/90 text-white px-5 py-2.5 text-xs font-bold transition-all cursor-pointer disabled:bg-slate-300"
         >
           <Save className="h-4 w-4" />
           {isSubmitting ? "Saving…" : "Save Fee Rate"}

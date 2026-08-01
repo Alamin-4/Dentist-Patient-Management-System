@@ -12,8 +12,8 @@ export const GuaranteeSection = ({ disabled }: { disabled?: boolean }) => {
           <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Step 3</span>
           <h2 className="mt-1 text-2xl font-semibold text-foreground">No Surprise Guarantee</h2>
         </div>
-        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 sm:p-5">
-          <p className="text-sm font-medium text-primary">
+        <div className="rounded-lg border border-brand-medium-navy/20 bg-brand-medium-navy/5 p-4 sm:p-5">
+          <p className="text-sm font-medium text-brand-medium-navy">
             You agree that final treatment prices will remain within 15% of your quoted estimate unless approved by the patient.
           </p>
         </div>
@@ -26,7 +26,7 @@ export const GuaranteeSection = ({ disabled }: { disabled?: boolean }) => {
             <input
               disabled={disabled}
               {...register("signerFullName")}
-              className="h-12 w-full rounded-lg border border-border bg-card px-4 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60"
+              className="h-12 w-full rounded-lg border border-border bg-card px-4 text-sm outline-none focus:border-brand-medium-navy focus:ring-1 focus:ring-brand-medium-navy/30 disabled:opacity-60"
             />
             {errors.signerFullName && <p className="text-xs font-semibold text-destructive">{String(errors.signerFullName.message)}</p>}
           </div>
@@ -36,7 +36,7 @@ export const GuaranteeSection = ({ disabled }: { disabled?: boolean }) => {
             <input
               disabled={disabled}
               {...register("typedSignature")}
-              className="h-12 w-full rounded-lg border border-border bg-card px-4 text-sm italic outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 disabled:opacity-60"
+              className="h-12 w-full rounded-lg border border-border bg-card px-4 text-sm italic outline-none focus:border-brand-medium-navy focus:ring-1 focus:ring-brand-medium-navy/30 disabled:opacity-60"
             />
             {errors.typedSignature && <p className="text-xs font-semibold text-destructive">{String(errors.typedSignature.message)}</p>}
           </div>
@@ -48,7 +48,7 @@ export const GuaranteeSection = ({ disabled }: { disabled?: boolean }) => {
               type="checkbox"
               disabled={disabled}
               {...register("agreeToGuarantee")}
-              className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary/40 disabled:cursor-not-allowed"
+              className="mt-0.5 size-4 rounded border-border text-brand-medium-navy focus:ring-brand-medium-navy/40 disabled:cursor-not-allowed"
             />
             <span className="text-sm leading-6 text-muted-foreground">
               I agree to keep final prices within 15% unless approved by the patient. *

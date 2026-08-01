@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Briefcase, PencilLine, Loader2 } from "lucide-react";
 import { DentistProfileData } from "./profile.types";
+import { SectionHeader } from "@/components/shared/section-header";
 import {
   Dialog,
   DialogContent,
@@ -103,15 +104,18 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
   return (
     <>
       <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-900">Basic Details</h3>
-          <button
-            onClick={() => setIsOpen(true)}
-            className="text-gray-400 hover:text-[#163E5C] transition-colors cursor-pointer"
-          >
-            <PencilLine className="h-5 w-5" />
-          </button>
-        </div>
+        <SectionHeader
+          title="Basic Details"
+          actions={
+            <button
+              onClick={() => setIsOpen(true)}
+              className="text-gray-400 hover:text-brand-medium-navy transition-colors cursor-pointer"
+            >
+              <PencilLine className="h-5 w-5" />
+            </button>
+          }
+          className="mb-6"
+        />
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {details.map((item, index) => (
@@ -133,7 +137,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-lg">
           <DialogHeader>
-            <DialogTitle className="text-[#0A2533] font-bold text-xl">Edit Basic Details</DialogTitle>
+            <DialogTitle className="text-text font-bold text-xl">Edit Basic Details</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -146,7 +150,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="+1 234 567 890"
-                className="border-slate-200 focus:border-[#163E5C] h-10 text-sm"
+                className="border-slate-200 focus:border-brand-medium-navy h-10 text-sm"
                 required
               />
             </div>
@@ -162,7 +166,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
                 value={yearsOfExperience}
                 onChange={(e) => setYearsOfExperience(e.target.value)}
                 placeholder="5"
-                className="border-slate-200 focus:border-[#163E5C] h-10 text-sm"
+                className="border-slate-200 focus:border-brand-medium-navy h-10 text-sm"
                 required
               />
             </div>
@@ -177,7 +181,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Monterrey"
-                  className="border-slate-200 focus:border-[#163E5C] h-10 text-sm"
+                  className="border-slate-200 focus:border-brand-medium-navy h-10 text-sm"
                   required
                 />
               </div>
@@ -190,7 +194,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   placeholder="Mexico"
-                  className="border-slate-200 focus:border-[#163E5C] h-10 text-sm"
+                  className="border-slate-200 focus:border-brand-medium-navy h-10 text-sm"
                   required
                 />
               </div>
@@ -208,7 +212,7 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
               </Button>
               <Button
                 type="submit"
-                className="bg-[#163E5C] hover:bg-[#113149] text-white font-semibold h-10 text-sm px-6 cursor-pointer flex items-center gap-2 transition-all active:scale-[0.98]"
+                className="bg-brand-medium-navy hover:bg-brand-medium-navy-hover text-white font-semibold h-10 text-sm px-6 cursor-pointer flex items-center gap-2 transition-all active:scale-[0.98]"
                 disabled={updateMutation.isPending}
               >
                 {updateMutation.isPending ? (

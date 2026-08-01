@@ -1,4 +1,5 @@
 import { ChevronRight, Clock, AlertCircle } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface Props {
   alerts: Array<{
@@ -9,7 +10,7 @@ interface Props {
 
 export function OverviewAlertsCard({ alerts }: Props) {
   return (
-    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)] sm:p-8">
+    <SectionCard className="sm:p-8">
       <h2 className="text-lg font-bold text-gray-900 mb-5">Alerts</h2>
 
       <div className="space-y-3">
@@ -18,14 +19,14 @@ export function OverviewAlertsCard({ alerts }: Props) {
           return (
             <div
               key={index}
-              className="flex cursor-pointer items-center gap-4 rounded-xl border border-blue-50/50 bg-[#F4F8FA] p-4 hover:bg-[#EBF3F8] transition-all duration-200"
+              className="flex cursor-pointer items-center gap-4 rounded-xl border border-slate-100/50 bg-slate-50 p-4 hover:bg-slate-100 transition-all duration-200"
             >
               {/* Icon */}
               <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                 {isBooking ? (
-                  <AlertCircle className="size-5 text-[#CDA555]" />
+                  <AlertCircle className="size-5 text-admin-gold" />
                 ) : (
-                  <Clock className="size-5 text-[#CDA555]" />
+                  <Clock className="size-5 text-admin-gold" />
                 )}
               </div>
 
@@ -45,6 +46,6 @@ export function OverviewAlertsCard({ alerts }: Props) {
           );
         })}
       </div>
-    </section>
+    </SectionCard>
   );
 }

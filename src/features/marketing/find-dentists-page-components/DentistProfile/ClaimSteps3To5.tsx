@@ -60,7 +60,7 @@ export function ClaimStep3({
       <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 space-y-3">
         {PROTOCOLS.map((protocol, idx) => (
           <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium leading-relaxed">
-            <div className="size-4 rounded-full bg-[#113254]/10 text-[#113254] flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">
+            <div className="size-4 rounded-full bg-brand-deep-navy/10 text-brand-deep-navy flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">
               {idx + 1}
             </div>
             <span>{protocol}</span>
@@ -75,7 +75,7 @@ export function ClaimStep3({
             id="agree-all-protocols"
             checked={isAgreed}
             onCheckedChange={(checked) => handleToggleAll(!!checked)}
-            className="mt-0.5 data-[state=checked]:bg-[#113254] data-[state=checked]:border-[#113254]"
+            className="mt-0.5 data-[state=checked]:bg-brand-deep-navy data-[state=checked]:border-brand-deep-navy"
           />
           <label
             htmlFor="agree-all-protocols"
@@ -102,7 +102,7 @@ export function ClaimStep3({
           type="button"
           disabled={!isAgreed || isPending}
           onClick={handleNextStep}
-          className={`${user ? "w-full" : ""} flex items-center justify-center gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-sm`}
+          className={`${user ? "w-full" : ""} flex items-center justify-center gap-2 rounded-lg bg-brand-deep-navy px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-sm`}
         >
           {isPending ? (
             <>
@@ -133,12 +133,12 @@ export function ClaimStep4({
           <div
             onClick={() => setSelectedPlan("6_MONTH")}
             className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selectedPlan === "6_MONTH"
-              ? "border-[#113254] bg-[#113254]/5 ring-2 ring-[#113254]/10"
+              ? "border-brand-deep-navy bg-brand-deep-navy/5 ring-2 ring-brand-deep-navy/10"
               : "border-slate-200 hover:bg-slate-50"
               }`}
           >
             <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">6 Months</span>
-            <span className="block text-2xl font-extrabold text-[#113254] mt-1">$899</span>
+            <span className="block text-2xl font-extrabold text-brand-deep-navy mt-1">$899</span>
             <span className="block text-[10px] text-slate-400 mt-1">~$149.83/mo</span>
           </div>
           <div
@@ -150,7 +150,7 @@ export function ClaimStep4({
           >
             <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-badge text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Best Value</span>
             <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">12 Months</span>
-            <span className="block text-2xl font-extrabold text-[#113254] mt-1">$1499</span>
+            <span className="block text-2xl font-extrabold text-brand-deep-navy mt-1">$1499</span>
             <span className="block text-[10px] text-slate-400 mt-1">~$124.92/mo</span>
           </div>
         </div>
@@ -176,7 +176,7 @@ export function ClaimStep4({
           type="button"
           onClick={handleProceedToPayment}
           disabled={checkoutMutation.isPending}
-          className="flex items-center justify-center w-full gap-2 rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer text-sm"
+          className="flex items-center justify-center w-full gap-2 rounded-lg bg-brand-deep-navy px-6 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer text-sm"
         >
           {checkoutMutation.isPending ? (
             <>
@@ -225,7 +225,7 @@ export function ClaimStep5({ dentist, queryClient, router, onOpenChange }: any) 
             await queryClient.invalidateQueries({ queryKey: ["auth"] });
             router.push("/dentist");
           }}
-          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#113254] px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] cursor-pointer text-sm"
+          className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-deep-navy px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] cursor-pointer text-sm"
         >
           Go to Dashboard →
         </button>

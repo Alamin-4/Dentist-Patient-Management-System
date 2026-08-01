@@ -54,8 +54,8 @@ export default function BlogPage() {
   }, [filteredPosts]);
 
   return (
-    <div className="bg-slate-50 min-h-dvh py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12">
-      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-6 sm:space-y-8 lg:space-y-10">
+    <div className="bg-slate-50 flex-1 py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12 flex flex-col">
+      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-6 sm:space-y-8 lg:space-y-10 flex-1 flex flex-col">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 border-b border-slate-200 pb-6 sm:pb-8">
@@ -78,7 +78,7 @@ export default function BlogPage() {
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="text-center py-10 sm:py-16 px-4 bg-white border border-border rounded-2xl text-sm font-medium text-gray-400 shadow-xs">
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-10 sm:py-16 px-4 bg-white border border-border rounded-2xl text-sm font-medium text-gray-400 shadow-xs min-h-[250px]">
             No articles found matching "{search}".
           </div>
         ) : (

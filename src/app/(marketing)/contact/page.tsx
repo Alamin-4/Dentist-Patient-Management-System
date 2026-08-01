@@ -77,8 +77,8 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-dvh py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12">
-      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-6 sm:space-y-8 lg:space-y-10">
+    <div className="bg-slate-50 flex-1 py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12 flex flex-col">
+      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-6 sm:space-y-8 lg:space-y-10 flex-1 flex flex-col">
 
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-1.5">

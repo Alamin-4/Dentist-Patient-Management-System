@@ -188,8 +188,8 @@ export default function AiSmilePreview() {
   };
 
   return (
-    <section className="bg-white py-20">
-      <div className="mx-auto max-w-7xl w-11/12 space-y-14">
+    <section className="bg-white py-16 md:py-24">
+      <div className="mx-auto max-w-7xl w-11/12 space-y-10 md:space-y-12">
         <div className="flex flex-col md:flex-row justify-between flex-wrap *:flex-1 items-start gap-10 lg:gap-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}

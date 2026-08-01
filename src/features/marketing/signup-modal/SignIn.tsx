@@ -252,7 +252,7 @@ export default function SigninModal() {
                       type="email"
                       placeholder="Enter Email"
                       {...register("email")}
-                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      className="w-full rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     />
                     {errors.email && (
                       <div className="mt-1.5 flex flex-col items-start gap-1">
@@ -262,7 +262,7 @@ export default function SigninModal() {
                             type="button"
                             disabled={resendOtpMutation.isPending}
                             onClick={handleStartVerification}
-                            className="text-xs font-semibold text-[#113254] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="text-xs font-semibold text-brand-deep-navy hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {resendOtpMutation.isPending ? "Sending OTP..." : "Verify your email now →"}
                           </button>
@@ -278,7 +278,7 @@ export default function SigninModal() {
                       </label>
                       <button
                         type="button"
-                        className="text-sm font-medium text-[#113254] hover:underline"
+                        className="text-sm font-medium text-brand-deep-navy hover:underline"
                         onClick={() => setAuthView("forgot")}
                       >
                         Forgot password?
@@ -290,7 +290,7 @@ export default function SigninModal() {
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter Password"
                         {...register("password")}
-                        className="w-full rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-[#0E3E65] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="w-full rounded-lg border border-[#E5E7EB] px-4 py-3 font-normal placeholder-[#9EA9AA] transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                       />
                       <button
                         type="button"
@@ -318,7 +318,7 @@ export default function SigninModal() {
                         type="button"
                         disabled={resendOtpMutation.isPending}
                         onClick={handleStartVerification}
-                        className="shrink-0 rounded-lg bg-[#113254] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0d2844] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="shrink-0 rounded-lg bg-brand-deep-navy px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-deep-navy-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {resendOtpMutation.isPending ? "Sending..." : "Verify Now"}
                       </button>
@@ -328,7 +328,7 @@ export default function SigninModal() {
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-deep-navy py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isPending ? (
                       <>
@@ -346,7 +346,7 @@ export default function SigninModal() {
                   <button
                     type="button"
                     onClick={switchToSignup}
-                    className="font-semibold text-[#113254] hover:underline"
+                    className="font-semibold text-brand-deep-navy hover:underline"
                   >
                     Sign up
                   </button>
@@ -360,7 +360,7 @@ export default function SigninModal() {
                       setShowSigninModal(false);
                       router.push("/register-doctor");
                     }}
-                    className="font-semibold text-[#113254] hover:underline"
+                    className="font-semibold text-brand-deep-navy hover:underline"
                   >
                     Join as a dentist
                   </button>

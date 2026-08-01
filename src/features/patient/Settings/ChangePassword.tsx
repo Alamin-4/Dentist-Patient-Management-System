@@ -67,7 +67,7 @@ export function ChangePasswordForm() {
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer border ${isEditing
             ? "text-red-500 hover:bg-red-50 border-red-200"
-            : "text-[#0F3659] hover:bg-slate-50 border-slate-200"
+            : "text-brand-deep-navy hover:bg-slate-50 border-slate-200"
             }`}
         >
           <Pencil className="h-3.5 w-3.5" />
@@ -85,14 +85,14 @@ export function ChangePasswordForm() {
               placeholder="Enter old password"
               disabled={!isEditing || changePasswordMutation.isPending}
               {...register("oldPassword", { required: "Old password is required" })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {isEditing && (
               <button
                 type="button"
                 onClick={() => setShowOld((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0F3659] hover:text-[#0a2640] cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-deep-navy hover:text-brand-deep-navy-hover cursor-pointer"
               >
                 {showOld ? (
                   <EyeOff className="h-4 w-4" />
@@ -119,14 +119,14 @@ export function ChangePasswordForm() {
                 required: "New password is required",
                 minLength: { value: 8, message: "New password must be at least 8 characters long" },
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {isEditing && (
               <button
                 type="button"
                 onClick={() => setShowNew((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0F3659] hover:text-[#0a2640] cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-deep-navy hover:text-brand-deep-navy-hover cursor-pointer"
               >
                 {showNew ? (
                   <EyeOff className="h-4 w-4" />
@@ -153,14 +153,14 @@ export function ChangePasswordForm() {
                 required: "Confirm password is required",
                 validate: (val) => val === newPasswordVal || "Passwords do not match",
               })}
-              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#0F3659] disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
+              className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-brand-deep-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 transition-all ${errors.confirmNewPassword ? "border-red-500 focus:ring-red-500" : "border-slate-200"
                 }`}
             />
             {isEditing && (
               <button
                 type="button"
                 onClick={() => setShowConfirm((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0F3659] hover:text-[#0a2640] cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-deep-navy hover:text-brand-deep-navy-hover cursor-pointer"
               >
                 {showConfirm ? (
                   <EyeOff className="h-4 w-4" />
@@ -180,7 +180,7 @@ export function ChangePasswordForm() {
             <button
               type="submit"
               disabled={changePasswordMutation.isPending}
-              className="rounded-md bg-[#0F3659] px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#0a2640] cursor-pointer flex items-center justify-center min-w-37.5"
+              className="rounded-md bg-brand-deep-navy px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed hover:bg-brand-deep-navy-hover cursor-pointer flex items-center justify-center min-w-37.5"
             >
               {changePasswordMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

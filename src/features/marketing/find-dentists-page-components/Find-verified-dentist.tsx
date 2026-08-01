@@ -74,7 +74,7 @@ function Pagination({
             className={cn(
               "flex h-9 w-9 items-center justify-center rounded-lg border text-[13px] font-medium transition-all",
               page === p
-                ? "border-[#003366] bg-[#003366] text-white"
+                ? "border-brand-medium-navy bg-brand-medium-navy text-white"
                 : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50",
             )}
           >
@@ -389,7 +389,7 @@ export default function FindDentist() {
 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <span className="block text-[12px] font-bold text-[#003366]">
+                      <span className="block text-[12px] font-bold text-brand-medium-navy">
                         Compare
                       </span>
                       <span className="block text-[10px] font-medium uppercase text-slate-400">
@@ -402,7 +402,7 @@ export default function FindDentist() {
                         setIsCompareMode(value);
                         if (!value) setCompareList([]);
                       }}
-                      className="data-[state=checked]:bg-[#003366]"
+                      className="data-[state=checked]:bg-brand-medium-navy"
                     />
                   </div>
                 </div>
@@ -431,7 +431,7 @@ export default function FindDentist() {
                       <button
                         type="button"
                         onClick={handleClearAllFilters}
-                        className="mt-4 rounded-lg bg-[#003366] px-5 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+                        className="mt-4 rounded-lg bg-brand-medium-navy px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-brand-medium-navy-hover"
                       >
                         Clear filters
                       </button>
