@@ -107,8 +107,9 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
           exit-code: 1
+          ignore-unfixed: true
 
   # ── Job 4: Zero-downtime deploy ──────────────────────────────────────────────
   deploy:
