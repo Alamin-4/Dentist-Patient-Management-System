@@ -16,6 +16,7 @@ import { StepThreeI } from "@/hooks/dentist/dentist.interface";
 import toast from "react-hot-toast";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
 import { VerificationStatusScreen } from "../VerificationStatusScreen";
+import { SectionHeader } from "@/components/shared/section-header";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
@@ -252,13 +253,15 @@ export default function Phase3() {
           )}
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 p-6">
-              <div className="space-y-2">
-                <p className="text-xl text-[#0A2533]">Clinic Location</p>
-              </div>
+              <SectionHeader
+                title="Clinic Location"
+                size="lg"
+                className="mb-0"
+              />
 
               <div className="space-y-6">
                 <div>
-                  <label className="text-sm font-medium text-[#0A2533] inline-block mb-2">
+                  <label className="text-sm font-medium text-text inline-block mb-2">
                     Clinic Address &amp; Map Location <span className="text-red-500">*</span>
                   </label>
                   <div
@@ -277,7 +280,7 @@ export default function Phase3() {
                       type="button"
                       disabled={isFormLocked}
                       onClick={() => setIsMapOpen(true)}
-                      className="p-3 bg-primary text-white rounded-md hover:bg-[#082842] transition-colors disabled:opacity-60 shrink-0 flex items-center gap-1.5 font-semibold text-sm cursor-pointer"
+                      className="p-3 bg-brand-medium-navy text-white rounded-md hover:bg-brand-medium-navy-hover transition-colors disabled:opacity-60 shrink-0 flex items-center gap-1.5 font-semibold text-sm cursor-pointer"
                       title="Select on Map"
                     >
                       <MapPin className="h-5 w-5" />
@@ -323,16 +326,16 @@ export default function Phase3() {
             {fields.map((field, index) => (
               <div key={field.id} className="divide-y divide-gray-100">
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 p-6 lg:p-8">
-                  <div className="space-y-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#163E5C]">
-                      STEP {index + 1}
-                    </p>
-                    <p className="text-xl text-[#0A2533]">Consultation Docs</p>
-                  </div>
+                  <SectionHeader
+                    title="Consultation Docs"
+                    description={`STEP ${index + 1}`}
+                    size="lg"
+                    className="mb-0 [&_p]:text-[10px] [&_p]:font-bold [&_p]:uppercase [&_p]:tracking-widest [&_p]:text-brand-medium-navy"
+                  />
 
                   <div className="space-y-6">
                     <div>
-                      <label className="text-sm font-medium text-[#0A2533] inline-block">
+                      <label className="text-sm font-medium text-text inline-block">
                         Procedure
                       </label>
                       <select

@@ -9,6 +9,9 @@ import PersonalInfo from "./components/personal-info";
 import { useGetMe } from "@/hooks/user/useUser";
 import { apiClient } from "@/api/client";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
+import { PageContainer } from "@/components/shared/page-container";
+import { HeadingGroup } from "@/components/shared/heading-group";
+import { SectionCard } from "@/components/shared/section-card";
 
 export default function ProfileAndSettings() {
   const { data: response, isLoading: isMeLoading, refetch } = useGetMe();
@@ -48,10 +51,8 @@ export default function ProfileAndSettings() {
   const isLoading = isMeLoading;
 
   return (
-    <div className="space-y-6 lg:space-y-8">
-      <header>
-        <h1 className="text-[28px] font-semibold text-text">Settings</h1>
-      </header>
+    <PageContainer className="space-y-6">
+      <HeadingGroup title="Settings" />
 
       <div className="grid grid-cols-1 gap-6">
         <div>
@@ -64,9 +65,9 @@ export default function ProfileAndSettings() {
 
         <div className="order-1 lg:order-2">
           {isLoading ? (
-            <div className="rounded-lg border border-[#EEF2F7] bg-white p-6 shadow-sm flex items-center justify-center h-32">
-              <div className="h-6 w-6 border-2 border-[#0F3659] border-t-transparent rounded-full animate-spin"></div>
-            </div>
+            <SectionCard className="flex items-center justify-center h-32">
+              <div className="h-6 w-6 border-2 border-brand-medium-navy border-t-transparent rounded-full animate-spin"></div>
+            </SectionCard>
           ) : (
             <PaymentInfo
               connected={isConnected}
@@ -79,6 +80,6 @@ export default function ProfileAndSettings() {
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

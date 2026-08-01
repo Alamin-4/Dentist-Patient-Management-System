@@ -228,7 +228,7 @@ export function ConsultationCard({
                       router.push(`/patient/messages?chatId=${consultation.id}`);
                     }}
                     title="Message Dentist"
-                    className="p-1 bg-slate-50 hover:bg-slate-100 text-[#113254] rounded-full border border-slate-200 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
+                    className="p-1 bg-slate-50 hover:bg-slate-100 text-brand-deep-navy rounded-full border border-slate-200 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
                   >
                     <MessageSquare size={13} />
                   </button>
@@ -241,7 +241,7 @@ export function ConsultationCard({
               <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#9CA3AF]">
                 {rating !== undefined ? (
                   <>
-                    <span className="flex items-center gap-1 text-[#113254] font-semibold">
+                    <span className="flex items-center gap-1 text-brand-deep-navy font-semibold">
                       <span className="text-[13px]">{rating}</span>
                       <span className="flex items-center gap-0.5 text-[#F5B000]">
                         {Array.from({ length: Math.round(rating) }).map((_, index) => (
@@ -304,7 +304,7 @@ export function ConsultationCard({
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">
                 Estimate Budget
               </p>
-              <p className="text-[18px] font-bold text-[#113254]">
+              <p className="text-[18px] font-bold text-brand-deep-navy">
                 {estimateBudget}
               </p>
             </div>
@@ -331,7 +331,7 @@ export function ConsultationCard({
                 <button
                   type="button"
                   onClick={() => setCalendarOpen(true)}
-                  className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[#113254] transition-opacity hover:opacity-80 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-[13px] font-bold text-brand-deep-navy transition-opacity hover:opacity-80 cursor-pointer"
                 >
                   <Plus className="size-4" />
                   Add to calendar
@@ -346,7 +346,7 @@ export function ConsultationCard({
                 disabled={isPending}
                 className={`w-full rounded-lg px-6 py-3 text-[14px] font-bold text-white transition-all sm:w-auto cursor-pointer ${isPending
                   ? "bg-slate-300 text-slate-500 cursor-not-allowed opacity-60"
-                  : "bg-[#113254] hover:bg-[#0d2844] active:scale-95"
+                  : "bg-brand-deep-navy hover:bg-brand-deep-navy-hover active:scale-95"
                   }`}
               >
                 {primaryActionLabel}
@@ -355,7 +355,7 @@ export function ConsultationCard({
                 <button
                   type="button"
                   onClick={onReschedule}
-                  className="text-[13px] font-semibold text-[#113254] transition-colors hover:text-[#0d2844] cursor-pointer"
+                  className="text-[13px] font-semibold text-brand-deep-navy transition-colors hover:text-brand-deep-navy-hover cursor-pointer"
                 >
                   Need another slot?
                 </button>

@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { FileUploadField } from "@/components/ui/file-upload-field";
 import { useResultController } from "@/hooks/dentist/useResultController";
 import { ErrorState } from "@/components/shared/error-state";
+import { PageContainer } from "@/components/shared/page-container";
+import { HeadingGroup } from "@/components/shared/heading-group";
 
 export default function Result() {
   const {
@@ -49,12 +51,22 @@ export default function Result() {
   }
 
   return (
-    <section className="space-y-6 lg:space-y-7">
-      <ResultHeader
-        onAddClick={() => {
-          resetForm();
-          setIsModalOpen(true);
-        }}
+    <PageContainer className="space-y-6">
+      <HeadingGroup
+        title="Results"
+        description="Upload AI-verified before/after imagery for your patients."
+        actions={
+          <button
+            onClick={() => {
+              resetForm();
+              setIsModalOpen(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-medium-navy px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-brand-medium-navy-hover cursor-pointer shadow-sm hover:shadow"
+          >
+            <Plus className="size-4" />
+            Add Result
+          </button>
+        }
       />
 
       <ResultsList
@@ -145,7 +157,7 @@ export default function Result() {
                   </label>
                   <select
                     {...register("patientName")}
-                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground ${errors.patientName ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy focus:border-brand-medium-navy bg-white text-foreground ${errors.patientName ? "border-red-500" : "border-slate-200"}`}
                   >
                     <option value="">Select Patient</option>
                     {patients.map((pat: any) => (
@@ -168,7 +180,7 @@ export default function Result() {
                   <select
                     {...register("title")}
                     disabled={!selectedPatientName}
-                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.title ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy focus:border-brand-medium-navy bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.title ? "border-red-500" : "border-slate-200"}`}
                   >
                     {!selectedPatientName ? (
                       <option value="">Select patient first</option>
@@ -197,7 +209,7 @@ export default function Result() {
                   <select
                     {...register("date")}
                     disabled={!selectedPatientName}
-                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.date ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy focus:border-brand-medium-navy bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.date ? "border-red-500" : "border-slate-200"}`}
                   >
                     {!selectedPatientName ? (
                       <option value="">Select patient first</option>
@@ -226,7 +238,7 @@ export default function Result() {
                   <select
                     {...register("location")}
                     disabled={!selectedPatientName}
-                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-[#0F3659] focus:border-[#0F3659] bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.location ? "border-red-500" : "border-slate-200"}`}
+                    className={`w-full h-10 sm:h-12 rounded-lg border px-3 sm:px-4 text-xs sm:text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy focus:border-brand-medium-navy bg-white text-foreground disabled:opacity-60 disabled:cursor-not-allowed ${errors.location ? "border-red-500" : "border-slate-200"}`}
                   >
                     {!selectedPatientName ? (
                       <option value="">Select patient first</option>
@@ -265,7 +277,7 @@ export default function Result() {
                 <Button
                   type="submit"
                   disabled={isPending}
-                  className="flex-1 h-10 sm:h-11 rounded-xl bg-[#0F3659] text-xs sm:text-sm font-bold text-white hover:bg-[#0a2640] cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 h-10 sm:h-11 rounded-xl bg-brand-medium-navy text-xs sm:text-sm font-bold text-white hover:bg-brand-medium-navy-hover cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   {isPending ? (
                     <>
@@ -281,33 +293,7 @@ export default function Result() {
           </FormProvider>
         </DialogContent>
       </Dialog>
-    </section>
-  );
-}
-
-interface ResultHeaderProps {
-  onAddClick: () => void;
-}
-
-function ResultHeader({ onAddClick }: ResultHeaderProps) {
-  return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="space-y-1.5">
-        <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-text sm:text-[30px]">
-          Results
-        </h1>
-        <p className="max-w-2xl text-[14px] leading-6 text-sec-text sm:text-[15px]">
-          Upload AI-verified before/after imagery for your patients.
-        </p>
-      </div>
-      <button
-        onClick={onAddClick}
-        className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0F3659] px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#0a2640] cursor-pointer shadow-sm hover:shadow"
-      >
-        <Plus className="size-4" />
-        Add Result
-      </button>
-    </header>
+    </PageContainer>
   );
 }
 

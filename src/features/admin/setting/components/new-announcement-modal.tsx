@@ -113,7 +113,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
                 placeholder="e.g. Scheduled maintenance on May 15"
                 className={cn(
                   "h-9 w-full rounded-lg border px-3 text-xs outline-none transition-colors",
-                  errors.title ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                  errors.title ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                 )}
               />
               {errors.title && (
@@ -132,7 +132,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
                 placeholder="Write the announcement body. Keep it clear and concise."
                 className={cn(
                   "w-full resize-none rounded-lg border p-3 text-xs outline-none transition-colors",
-                  errors.message ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                  errors.message ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                 )}
               />
               {errors.message && (
@@ -152,7 +152,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
                     className={cn(
                       "flex-1 rounded-lg border py-2 text-xs font-semibold transition-colors cursor-pointer",
                       selectedAudience === opt.value
-                        ? "border-primary bg-primary text-white"
+                        ? "border-admin-primary bg-admin-primary text-white"
                         : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                     )}
                   >
@@ -178,7 +178,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-primary hover:bg-[#0d3656] px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer disabled:bg-slate-300"
+              className="flex items-center gap-2 rounded-lg bg-admin-primary hover:bg-admin-primary/90 px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer disabled:bg-slate-300"
             >
               <Megaphone className="h-3.5 w-3.5" />
               {isSubmitting ? "Publishing…" : "Publish Now"}

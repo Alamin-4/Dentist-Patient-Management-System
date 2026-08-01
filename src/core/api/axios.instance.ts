@@ -2,6 +2,7 @@ import axios from "axios";
 import { normalizeApiError } from "./error-handler";
 import posthog from "posthog-js";
 import { getCookie, deleteCookie } from "cookies-next";
+import { resetUserSession } from "@/lib/posthog-identity";
 
 import { env } from "@/config/env";
 
@@ -73,6 +74,7 @@ api.interceptors.response.use(
       !error.config?.url?.includes("/auth/register")
     ) {
       if (typeof window !== "undefined") {
+        resetUserSession();
         // Clear local session cookies
         deleteCookie("accessToken", { path: "/" });
         deleteCookie("better-auth.session_token", { path: "/" });

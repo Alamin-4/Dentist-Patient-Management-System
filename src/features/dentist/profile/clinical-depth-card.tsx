@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FileText, ChevronDown, ChevronUp, PencilLine } from "lucide-react";
 import { DentistProfileData } from "./profile.types";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface ClinicalDepthCardProps {
   dentist?: DentistProfileData | null;
@@ -87,9 +88,9 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
   };
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+    <SectionCard className="p-6">
       {/* Header section */}
-      <div className="flex items-center justify-between border-b border-gray-100 pb-5">
+      <div className="flex items-center justify-between border-b border-border pb-5">
         <h2 className="text-xl font-bold text-gray-900">Clinical Depth</h2>
         <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors">
           <PencilLine className="h-5 w-5" />
@@ -109,7 +110,7 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
       }
 
 
-      <div className="border-t border-gray-100 pt-5 space-y-4">
+      <div className="border-t border-border pt-5 space-y-4">
         {groupKeys.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/30 p-8 text-center mt-2">
             <div className="rounded-full bg-gray-100 p-3 text-gray-400 mb-3">
@@ -140,7 +141,7 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
                 </button>
 
                 {isExpanded && (
-                  <div className="p-5 border-t border-gray-100 bg-white space-y-3">
+                  <div className="p-5 border-t border-border bg-white space-y-3">
                     {docs.length === 0 ? (
                       <p className="text-sm text-gray-400 text-center py-2">No files uploaded for this procedure</p>
                     ) : (
@@ -159,7 +160,7 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
                             <p className="truncate text-sm font-semibold text-gray-800">
                               {doc.name}
                             </p>
-                            <p className="text-xs text-[#163E5C] font-semibold mt-0.5 hover:underline flex items-center gap-1">
+                            <p className="text-xs text-brand-medium-navy font-semibold mt-0.5 hover:underline flex items-center gap-1">
                               {doc.type} <span className="text-gray-400 font-normal">(Click to view)</span>
                             </p>
                           </div>
@@ -173,6 +174,6 @@ export function ClinicalDepthCard({ dentist }: ClinicalDepthCardProps) {
           })
         )}
       </div>
-    </div>
+    </SectionCard>
   );
 }

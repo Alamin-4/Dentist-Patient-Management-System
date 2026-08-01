@@ -144,6 +144,7 @@ export function useCreateDentistDirectoryReview() {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["dentistDirectoryReviews", variables.slug] });
       queryClient.invalidateQueries({ queryKey: ["dentistDirectoryDetail", variables.slug] });
+      queryClient.invalidateQueries({ queryKey: ["dentistDirectoryList"] });
     },
   });
 }

@@ -1,6 +1,7 @@
 import { CalendarDays, Clock, DollarSign, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StatIcon, StatTrend } from "./overview-data";
+import { SectionCard } from "@/components/shared/section-card";
 
 const ICON_MAP: Record<StatIcon, React.ElementType> = {
   calendar: CalendarDays,
@@ -10,10 +11,10 @@ const ICON_MAP: Record<StatIcon, React.ElementType> = {
 };
 
 const ICON_STYLES: Record<StatIcon, { bg: string; text: string }> = {
-  calendar: { bg: "bg-[#E6F0FA]", text: "text-[#163E5C]" },
-  clock: { bg: "bg-[#FEF3C7]", text: "text-[#D97706]" },
-  dollar: { bg: "bg-[#E6F0FA]", text: "text-[#163E5C]" },
-  target: { bg: "bg-[#E6F0FA]", text: "text-[#163E5C]" },
+  calendar: { bg: "bg-secondary", text: "text-brand-medium-navy" },
+  clock: { bg: "bg-amber-100/70", text: "text-amber-700" },
+  dollar: { bg: "bg-secondary", text: "text-brand-medium-navy" },
+  target: { bg: "bg-secondary", text: "text-brand-medium-navy" },
 };
 
 interface OverviewStatCardProps {
@@ -39,9 +40,9 @@ export function OverviewStatCard({
   const style = ICON_STYLES[icon] || { bg: "bg-gray-100", text: "text-gray-500" };
 
   return (
-    <div
+    <SectionCard
       className={cn(
-        "rounded-xl border border-gray-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,35,61,0.03)]",
+        "p-6",
         className,
       )}
     >
@@ -71,6 +72,6 @@ export function OverviewStatCard({
       ) : (
         <p className="mt-2 text-xs font-semibold text-gray-400">{subLabel}</p>
       )}
-    </div>
+    </SectionCard>
   );
 }

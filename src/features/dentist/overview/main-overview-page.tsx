@@ -8,6 +8,8 @@ import { OverviewPageSkeleton } from "./overview-page-skeleton";
 import { OverviewPerformanceCard } from "./overview-performance-card";
 import { OverviewReferralsCard } from "./overview-referrals-card";
 import { OverviewStatsSection } from "./overview-stats-section";
+import { PageContainer } from "@/components/shared/page-container";
+import { HeadingGroup } from "@/components/shared/heading-group";
 
 export default function MainOverviewPage() {
   const { data, isLoading } = useDentistOverview();
@@ -30,16 +32,12 @@ export default function MainOverviewPage() {
     : "Dr. Mick";
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-500">
+    <PageContainer className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-gray-400 sm:text-base">
-          Welcome back, {displayName}. Here is your practice overview.
-        </p>
-      </div>
+      <HeadingGroup
+        title="Dashboard"
+        description={`Welcome back, ${displayName}. Here is your practice overview.`}
+      />
 
       {/* 4-stat cards */}
       <OverviewStatsSection stats={overview.stats} />
@@ -55,6 +53,6 @@ export default function MainOverviewPage() {
 
       {/* Referral code — full width */}
       <OverviewReferralsCard referralCode={overview.referralCode} />
-    </div>
+    </PageContainer>
   );
 }

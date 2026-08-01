@@ -10,6 +10,7 @@ import { GeneralSocials } from "./components/general-socials";
 import { PoliciesEditor } from "./components/policies-editor";
 import { ContactMessagesTable } from "./components/contact-messages-table";
 import { BlogManager } from "./components/blog-manager";
+import { SectionCard } from "@/components/shared/section-card";
 
 type Section =
   | "rdv-weights"
@@ -136,7 +137,7 @@ export default function SettingPage() {
                       className={cn(
                         "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-all cursor-pointer",
                         isSelected
-                          ? "bg-primary/10 text-primary font-bold"
+                          ? "bg-admin-primary/10 text-admin-primary font-bold"
                           : "text-slate-700 hover:bg-slate-50"
                       )}
                     >
@@ -144,19 +145,19 @@ export default function SettingPage() {
                         <span
                           className={cn(
                             "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
-                            isSelected ? "bg-primary text-white" : "bg-slate-100 text-primary"
+                            isSelected ? "bg-admin-primary text-white" : "bg-slate-100 text-admin-primary"
                           )}
                         >
                           {item.icon}
                         </span>
                         <div className="min-w-0">
-                          <p className={cn("text-xs truncate", isSelected ? "font-black text-primary" : "font-bold text-text")}>
+                          <p className={cn("text-xs truncate", isSelected ? "font-black text-admin-primary" : "font-bold text-text")}>
                             {item.label}
                           </p>
                           <p className="text-[11px] truncate text-slate-400">{item.sub}</p>
                         </div>
                       </div>
-                      {isSelected && <Check className="h-4 w-4 text-primary shrink-0 ml-2" />}
+                      {isSelected && <Check className="h-4 w-4 text-admin-primary shrink-0 ml-2" />}
                     </button>
                   );
                 })}
@@ -165,7 +166,7 @@ export default function SettingPage() {
           )}
         </div>
 
-        <aside className="hidden lg:block w-full shrink-0 rounded-xl border border-slate-200 bg-white p-3 lg:w-60 xl:w-64">
+        <SectionCard className="hidden lg:block w-full shrink-0 p-3 lg:w-60 xl:w-64">
           <p className="mb-2.5 px-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
             Navigation Menu
           </p>
@@ -184,7 +185,7 @@ export default function SettingPage() {
                 <span
                   className={cn(
                     "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
-                    active === item.id ? "bg-white/10 text-white" : "bg-slate-100 text-primary"
+                    active === item.id ? "bg-white/10 text-white" : "bg-slate-100 text-admin-primary"
                   )}
                 >
                   {item.icon}
@@ -210,10 +211,10 @@ export default function SettingPage() {
               </button>
             ))}
           </nav>
-        </aside>
+        </SectionCard>
 
         {/* Right Content Area */}
-        <div className="flex-1 rounded-xl border border-slate-200 bg-white p-4 md:p-6 min-w-0">
+        <SectionCard className="flex-1 p-4 md:p-6 min-w-0">
           {active === "rdv-weights" && <RdvScoreWeights />}
           {active === "platform-fee" && <PlatformFee />}
           {active === "announcements" && <Announcements />}
@@ -221,7 +222,7 @@ export default function SettingPage() {
           {active === "policies-editor" && <PoliciesEditor />}
           {/* {active === "contact-messages" && <ContactMessagesTable />} */}
           {active === "blog-manager" && <BlogManager />}
-        </div>
+        </SectionCard>
       </div>
     </div>
   );

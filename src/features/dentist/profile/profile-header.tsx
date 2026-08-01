@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DentistProfileData } from "./profile.types";
 import { Check, ShieldCheck, Verified } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface ProfileHeaderProps {
   dentist?: DentistProfileData | null;
@@ -19,7 +20,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
     .map((n: string) => n[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase() || "DP";
+    .toUpperCase() || "";
 
   // ── Primary check: use the DentistDirectory.status set by admin ──────────
   const isDirectoryVerified = dentist?.dentistDirectory?.status === "VERIFIED";
@@ -40,13 +41,13 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
   const hasSubmittedAny = !!(dentist?.dentistLicense || (dentist?.dentistOperationsVerifications?.length ?? 0) > 0 || dentist?.dentistClinicDepthVerification);
 
   return (
-    <div className="flex flex-col items-center justify-between rounded-xl border border-gray-100 bg-white p-4 sm:p-6 md:p-8 md:flex-row gap-6">
+    <SectionCard className="flex flex-col items-center justify-between p-4 sm:p-6 md:p-8 md:flex-row gap-6">
       <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 w-full md:w-auto">
-        <Avatar className="h-20 w-20 bg-[#E8F1F8] shrink-0">
+        <Avatar className="h-20 w-20 bg-secondary shrink-0">
           {image && (
             <AvatarImage src={image} alt={name} className="object-cover" />
           )}
-          <AvatarFallback className="bg-[#E8F1F8] text-2xl font-bold text-[#163E5C]">
+          <AvatarFallback className="bg-secondary text-2xl font-bold text-brand-medium-navy">
             {initials}
           </AvatarFallback>
         </Avatar>
@@ -95,7 +96,7 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             {isSearchable ? (
               <Badge
                 variant="secondary"
-                className="bg-[#CDA555]/11 text-[#CDA555] border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
+                className="bg-admin-gold/10 text-admin-gold border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
                 Live in Search
               </Badge>
@@ -141,13 +142,13 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-lg lg:text-xl font-bold text-[#D48D1D]">{rdvScore}%</span>
-            <span className="text-[9px] uppercase text-[#D48D1D] font-bold tracking-wider mt-0.5">
+            <span className="text-lg lg:text-xl font-bold text-admin-gold">{rdvScore}%</span>
+            <span className="text-[9px] uppercase text-admin-gold font-bold tracking-wider mt-0.5">
               RDV Score
             </span>
           </div>
         </div>
       </div>
-    </div>
+    </SectionCard>
   );
 }

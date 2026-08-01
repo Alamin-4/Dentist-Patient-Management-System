@@ -254,7 +254,9 @@ export const useDentistFilters = () => {
         if (rdvScoreMin !== undefined) params.rdvScoreMin = rdvScoreMin;
         if (selectedRatings.length > 0) params.ratings = selectedRatings.join(",");
         if (selectedLanguages.length > 0) params.languages = selectedLanguages.join(",");
-        params.price = { min: priceRange[0], max: priceRange[1] };
+        if (priceRange[0] > DEFAULT_PRICE_RANGE[0] || priceRange[1] < DEFAULT_PRICE_RANGE[1]) {
+            params.price = { min: priceRange[0], max: priceRange[1] };
+        }
         return params;
     }, [
         page,

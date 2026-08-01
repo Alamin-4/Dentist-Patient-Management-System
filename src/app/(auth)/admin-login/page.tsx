@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
           {/* Logo */}
           <div className="px-8 pt-8 sm:px-12">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C9963F] shrink-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-admin-gold shrink-0">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
                         autoComplete="email"
                         className={cn(
                           "w-full rounded-lg border px-4 py-3 text-sm text-text placeholder:text-gray-400 outline-none transition-all",
-                          "focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C]",
+                          "focus:ring-2 focus:ring-brand-medium-navy/20 focus:border-brand-medium-navy",
                           errors.email
                             ? "border-red-400 bg-red-50 focus:ring-red-200 focus:border-red-400"
                             : "border-gray-200 bg-white hover:border-gray-300",
@@ -147,7 +147,7 @@ export default function AdminLoginPage() {
                           autoComplete="current-password"
                           className={cn(
                             "w-full rounded-lg border px-4 py-3 pr-11 text-sm text-text placeholder:text-gray-400 outline-none transition-all",
-                            "focus:ring-2 focus:ring-[#163E5C]/20 focus:border-[#163E5C]",
+                            "focus:ring-2 focus:ring-brand-medium-navy/20 focus:border-brand-medium-navy",
                             errors.password
                               ? "border-red-400 bg-red-50 focus:ring-red-200 focus:border-red-400"
                               : "border-gray-200 bg-white hover:border-gray-300",
@@ -184,7 +184,7 @@ export default function AdminLoginPage() {
                           clearErrors();
                           setView("forgot");
                         }}
-                        className="text-sm text-text underline underline-offset-2 hover:text-[#163E5C] transition-colors"
+                        className="text-sm text-text underline underline-offset-2 hover:text-brand-medium-navy transition-colors"
                       >
                         Forgot password?
                       </button>
@@ -202,7 +202,7 @@ export default function AdminLoginPage() {
                       disabled={isSubmitting || isPending}
                       className={cn(
                         "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white transition-all duration-150",
-                        "bg-text hover:bg-[#0D2B3E]",
+                        "bg-text hover:bg-admin-primary",
                         "focus:outline-none focus:ring-2 focus:ring-text/30 focus:ring-offset-2",
                         "disabled:opacity-60 disabled:cursor-not-allowed",
                       )}
@@ -267,7 +267,7 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Right panel — marketing */}
-        <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-start p-14 bg-[#0D2B3E] overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-start p-14 bg-admin-primary overflow-hidden">
           {/* Decorative circles */}
           <div
             aria-hidden="true"
@@ -275,7 +275,7 @@ export default function AdminLoginPage() {
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -top-16 -right-16 h-72 w-72 rounded-full border border-white/5 bg-[#0D2B3E]"
+            className="pointer-events-none absolute -top-16 -right-16 h-72 w-72 rounded-full border border-white/5 bg-admin-primary"
           />
 
           {/* Content */}

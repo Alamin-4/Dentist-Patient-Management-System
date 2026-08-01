@@ -141,7 +141,7 @@ export function Announcements() {
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-primary hover:bg-[#0d3656] px-4 py-2 text-xs font-bold text-white active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 rounded-lg bg-admin-primary hover:bg-admin-primary/90 px-4 py-2 text-xs font-bold text-white active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             New announcement

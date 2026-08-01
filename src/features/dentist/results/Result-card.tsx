@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { BadgeCheck, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SectionCard } from "@/components/shared/section-card";
 
 export interface ResultCardProps {
   title: string;
@@ -25,9 +26,10 @@ export default function ResultCard({
   className,
 }: ResultCardProps) {
   return (
-    <article
+    <SectionCard
+      hoverEffect
       className={cn(
-        "overflow-hidden rounded-[20px] border border-[#DDE5F0] bg-white shadow-[0_8px_24px_rgba(17,50,84,0.04)]",
+        "overflow-hidden p-0 rounded-[20px] border-border",
         className,
       )}
     >
@@ -69,15 +71,15 @@ export default function ResultCard({
           </span>
         </div>
 
-        <div className="h-px bg-[#E9EEF4]" />
+        <div className="h-px bg-border/60" />
 
-        <div className="flex items-center gap-2 text-[#0F3659]">
+        <div className="flex items-center gap-2 text-brand-medium-navy">
           <MapPin className="size-4 shrink-0" />
           <span className="text-[13px] font-medium leading-5 sm:text-[14px]">
             {location}
           </span>
         </div>
       </div>
-    </article>
+    </SectionCard>
   );
 }

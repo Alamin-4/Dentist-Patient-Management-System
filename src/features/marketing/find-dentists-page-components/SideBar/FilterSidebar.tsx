@@ -108,7 +108,7 @@ export default function FilterSidebar({
         <button
           type="button"
           onClick={onClear}
-          className="text-[13px] font-bold text-[#003366] transition-colors hover:text-[#002244] underline underline-offset-4 cursor-pointer"
+          className="text-[13px] font-bold text-brand-medium-navy transition-colors hover:text-brand-medium-navy-hover underline underline-offset-4 cursor-pointer"
         >
           Clear All
         </button>
@@ -167,7 +167,7 @@ export default function FilterSidebar({
                   id={range}
                   checked={selectedScoreRanges.includes(range)}
                   onCheckedChange={() => onScoreToggle(range)}
-                  className="size-4 rounded border-slate-300 data-[state=checked]:border-[#003366] data-[state=checked]:bg-[#003366]"
+                  className="size-4 rounded border-slate-300 data-[state=checked]:border-brand-medium-navy data-[state=checked]:bg-brand-medium-navy"
                 />
                 <label htmlFor={range} className="cursor-pointer select-none text-[13px] font-medium text-slate-600">
                   {range}
@@ -185,7 +185,7 @@ export default function FilterSidebar({
                   id={`star-${stars}`}
                   checked={selectedRatings.includes(stars)}
                   onCheckedChange={() => onRatingToggle(stars)}
-                  className="size-4 rounded border-slate-300 data-[state=checked]:border-[#003366] data-[state=checked]:bg-[#003366]"
+                  className="size-4 rounded border-slate-300 data-[state=checked]:border-brand-medium-navy data-[state=checked]:bg-brand-medium-navy"
                 />
                 <label htmlFor={`star-${stars}`} className="flex cursor-pointer gap-0.5">
                   {[...Array(5)].map((_, index) => (
@@ -211,7 +211,7 @@ export default function FilterSidebar({
                 id="all"
                 checked={!showVerifiedOnly}
                 onCheckedChange={() => onShowVerifiedOnlyChange(false)}
-                className="size-4 rounded border-slate-300 data-[state=checked]:border-[#003366] data-[state=checked]:bg-[#003366]"
+                className="size-4 rounded border-slate-300 data-[state=checked]:border-brand-medium-navy data-[state=checked]:bg-brand-medium-navy"
               />
               <label htmlFor="all" className="cursor-pointer select-none text-[13px] font-medium text-slate-600">
                 All Dentists
@@ -222,7 +222,7 @@ export default function FilterSidebar({
                 id="verified"
                 checked={showVerifiedOnly}
                 onCheckedChange={() => onShowVerifiedOnlyChange(true)}
-                className="size-4 rounded border-slate-300 data-[state=checked]:border-[#003366] data-[state=checked]:bg-[#003366]"
+                className="size-4 rounded border-slate-300 data-[state=checked]:border-brand-medium-navy data-[state=checked]:bg-brand-medium-navy"
               />
               <label htmlFor="verified" className="cursor-pointer select-none text-[13px] font-medium text-slate-600">
                 Only Verified
@@ -240,7 +240,7 @@ export default function FilterSidebar({
                   id={language}
                   checked={selectedLanguages.includes(language)}
                   onCheckedChange={() => onLanguageToggle(language)}
-                  className="size-4 rounded border-slate-300 data-[state=checked]:border-[#003366] data-[state=checked]:bg-[#003366]"
+                  className="size-4 rounded border-slate-300 data-[state=checked]:border-brand-medium-navy data-[state=checked]:bg-brand-medium-navy"
                 />
                 <label htmlFor={language} className="cursor-pointer select-none text-[13px] font-medium text-slate-600">
                   {language}

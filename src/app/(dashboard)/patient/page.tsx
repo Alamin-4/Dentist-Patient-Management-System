@@ -14,6 +14,9 @@ import { usePatientTreatmentPlans } from "@/hooks/treatment-plan/useTreatmentPla
 import { ConsultationItem, TreatmentPlanItem } from "@/types";
 import { ConsultationCardSkeleton } from "@/app/modules/patient/Overview/ConsultationCardSkeleton";
 import { DoctorCardSkeleton } from "@/app/modules/patient/Overview/DoctorCardSkeleton";
+import { PageContainer } from "@/components/shared/page-container";
+import { HeadingGroup } from "@/components/shared/heading-group";
+import { SectionCard } from "@/components/shared/section-card";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -137,14 +140,14 @@ function EmptySlate({ tab }: { tab: Tab }) {
   const { title, body } = EMPTY_STATE[tab];
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="size-14 rounded-lg bg-[#113254] flex items-center justify-center mb-5">
+      <div className="size-14 rounded-lg bg-brand-deep-navy flex items-center justify-center mb-5">
         <Video className="size-7 text-white" />
       </div>
       <p className="text-[17px] font-bold text-text mb-2">{title}</p>
       <p className="text-[14px] text-sec-text max-w-xs leading-relaxed mb-6">{body}</p>
       <Link
         href="/find-dentists"
-        className="px-6 py-3 bg-[#113254] hover:bg-[#0d2844] text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95 cursor-pointer"
+        className="px-6 py-3 bg-brand-deep-navy hover:bg-brand-deep-navy-hover text-white font-semibold text-[14px] rounded-lg transition-all active:scale-95 cursor-pointer"
       >
         Find a dentist
       </Link>
@@ -207,10 +210,10 @@ export default function Overview() {
   const isConsultationsLoading = loadingConsultations;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-text mb-8">Overview</h1>
+    <PageContainer className="space-y-6">
+      <HeadingGroup title="Overview" />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
           icon={<DollarSign className="w-5 h-5" />}
           value={`$${escrowTotal.toLocaleString()}`}
@@ -232,7 +235,7 @@ export default function Overview() {
       </div>
 
       {/* Consultation section */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100">
+      <SectionCard className="md:p-8">
         <h2 className="text-xl font-bold text-text mb-4">Consultation</h2>
 
         {/* Tabs */}
@@ -243,7 +246,7 @@ export default function Overview() {
               type="button"
               onClick={() => setActiveTab(key)}
               className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px cursor-pointer ${activeTab === key
-                ? "text-[#113254] border-[#113254]"
+                ? "text-brand-deep-navy border-brand-deep-navy"
                 : "text-[#9CA3AF] border-transparent hover:text-sec-text"
                 }`}
             >
@@ -362,7 +365,7 @@ export default function Overview() {
         ) : (
           <EmptySlate tab={activeTab} />
         )}
-      </div>
+      </SectionCard>
 
       {selectedConsultation ? (
         <RescheduleConsultationModal
@@ -385,6 +388,6 @@ export default function Overview() {
           }}
         />
       ) : null}
-    </div>
+    </PageContainer>
   );
 }

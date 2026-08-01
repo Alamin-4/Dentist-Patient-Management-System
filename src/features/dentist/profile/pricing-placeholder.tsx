@@ -1,6 +1,7 @@
 import { Lock, DollarSign, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { DentistProfileData } from "./profile.types";
+import { SectionCard } from "@/components/shared/section-card";
 
 interface PricingPlaceholderProps {
   dentist?: DentistProfileData | null;
@@ -11,30 +12,30 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
 
   if (procedures.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-gray-50 px-6 py-4">
+      <SectionCard className="overflow-hidden">
+        <div className="border-b border-border px-6 py-4">
           <h3 className="text-lg font-bold text-gray-900">Pricings</h3>
         </div>
         <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#E8F1F8] text-[#163E5C]">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-brand-medium-navy">
             <Lock className="h-6 w-6" />
           </div>
           <h4 className="mb-2 text-base font-bold text-gray-900">
             Procedure pricing
           </h4>
-          <p className="max-w-[340px] text-sm leading-relaxed text-gray-400">
+          <p className="max-w-85 text-sm leading-relaxed text-gray-400">
             Complete Phase 1 and Phase 2 verification to start adding your procedure prices.
           </p>
         </div>
-      </div>
+      </SectionCard>
     );
   }
 
   return (
-    <div className="rounded-lg border border-gray-100 bg-white shadow-sm overflow-hidden transition-all duration-300">
-      <div className="border-b border-gray-50 px-6 py-4 flex items-center justify-between">
+    <SectionCard className="overflow-hidden transition-all duration-300">
+      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-gray-900">Procedure Pricings</h3>
-        <Badge variant="secondary" className="bg-[#E8F1F8] text-[#163E5C] border-none px-3 py-1 font-semibold">
+        <Badge variant="secondary" className="bg-secondary text-brand-medium-navy border-none px-3 py-1 font-semibold">
           {procedures.length} {procedures.length === 1 ? 'Procedure' : 'Procedures'}
         </Badge>
       </div>
@@ -61,8 +62,8 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-lg font-bold text-[#163E5C] flex items-center">
-                  <DollarSign className="h-4.5 w-4.5 text-[#163E5C]" />
+                <span className="text-lg font-bold text-brand-medium-navy flex items-center">
+                  <DollarSign className="h-4.5 w-4.5 text-brand-medium-navy" />
                   {proc.price}
                 </span>
                 {isVerified ? (
@@ -79,6 +80,6 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
           );
         })}
       </div>
-    </div>
+    </SectionCard>
   );
 }

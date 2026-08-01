@@ -91,15 +91,9 @@ export default function SignupModal() {
   });
 
   const onSubmit = async (data: IRegisterPatient) => {
-
     try {
-      const res = await registerPatientMutation.mutateAsync(data)
+      const res = await registerPatientMutation.mutateAsync(data);
       if (res) {
-        if (res?.data?.needEmailVerify) {
-          setNeedVerifyEmail(data.email);
-          return;
-        }
-
         setPendingEmail(data.email);
         reset();
         setShowSignupModal(false);
@@ -185,7 +179,7 @@ export default function SignupModal() {
                 type="button"
                 onClick={handleSendVerificationOtp}
                 disabled={isOtpResendLoading}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-deep-navy py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {isOtpResendLoading ? (
                   <>
@@ -199,7 +193,7 @@ export default function SignupModal() {
               <button
                 type="button"
                 onClick={() => setNeedVerifyEmail(null)}
-                className="text-sm font-semibold text-[#113254] hover:underline"
+                className="text-sm font-semibold text-brand-deep-navy hover:underline"
               >
                 Go back to Sign up
               </button>
@@ -327,7 +321,7 @@ export default function SignupModal() {
                 <button
                   type="submit"
                   disabled={isRegisterPatientLoading}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#113254] py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-[#0d2844] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-deep-navy py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {isRegisterPatientLoading ? (
                     <>
@@ -346,7 +340,7 @@ export default function SignupModal() {
                 <button
                   type="button"
                   onClick={switchToSignin}
-                  className="font-semibold text-[#113254] hover:underline"
+                  className="font-semibold text-brand-deep-navy hover:underline"
                 >
                   Sign in
                 </button>

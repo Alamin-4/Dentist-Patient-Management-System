@@ -10,6 +10,7 @@ interface SearchInputProps {
     onChange: (value: string) => void;
     placeholder?: string;
     variant?: "desktop" | "mobile";
+    onSubmit?: () => void;
 }
 
 function SearchInputContent({
@@ -17,6 +18,7 @@ function SearchInputContent({
     onChange: propOnChange,
     placeholder = "Search by dentist name or specialty",
     variant = "desktop",
+    onSubmit,
 }: SearchInputProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -70,6 +72,7 @@ function SearchInputContent({
         params.delete("page");
 
         router.push(`/find-dentists?${params.toString()}`);
+        onSubmit?.();
     };
 
     const handleClear = () => {
@@ -83,6 +86,7 @@ function SearchInputContent({
         params.delete("src");
         params.delete("page");
         router.push(`/find-dentists?${params.toString()}`);
+        onSubmit?.();
     };
 
     return (

@@ -57,7 +57,7 @@ export function GeneralSocials() {
   if (isLoading) {
     return (
       <div className="flex min-h-50 items-center justify-center">
-        <div className="h-6 w-6 animate-spin text-slate-400 border-2 border-slate-200 border-t-primary rounded-full" />
+        <div className="h-6 w-6 animate-spin text-slate-400 border-2 border-slate-200 border-t-admin-primary rounded-full" />
       </div>
     );
   }
@@ -76,7 +76,7 @@ export function GeneralSocials() {
         {/* Footer Branding */}
         <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
           <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
-            <Globe className="h-4 w-4 text-primary" />
+            <Globe className="h-4 w-4 text-admin-primary" />
             Footer Brand Tagline
           </h3>
           <div className="flex flex-col gap-1.5">
@@ -87,7 +87,7 @@ export function GeneralSocials() {
               placeholder="Tagline under the logo in footer..."
               className={cn(
                 "w-full rounded-lg border px-4 py-3 text-xs font-medium outline-none transition-colors bg-white resize-none",
-                errors.footerText ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                errors.footerText ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
               )}
             />
             {errors.footerText && (
@@ -99,7 +99,7 @@ export function GeneralSocials() {
         {/* Contact Info */}
         <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
           <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
-            <Mail className="h-4 w-4 text-primary" />
+            <Mail className="h-4 w-4 text-admin-primary" />
             Contact Details
           </h3>
 
@@ -113,7 +113,7 @@ export function GeneralSocials() {
                   {...register("email")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.email ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.email ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <Mail className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
@@ -132,7 +132,7 @@ export function GeneralSocials() {
                   {...register("phone")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.phone ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.phone ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <Phone className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
@@ -151,7 +151,7 @@ export function GeneralSocials() {
                   {...register("address")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.address ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.address ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <MapPin className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
@@ -166,7 +166,7 @@ export function GeneralSocials() {
         {/* Social Media Links */}
         <div className="col-span-1 md:col-span-2 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
           <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
-            <ShareIcon className="h-4 w-4 text-primary" />
+            <ShareIcon className="h-4 w-4 text-admin-primary" />
             Social Media Links
           </h3>
 
@@ -180,7 +180,7 @@ export function GeneralSocials() {
                   {...register("facebook")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.facebook ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.facebook ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <FaFacebook className="absolute left-3.5 top-2.5 h-4 w-4 text-[#1877F2]" />
@@ -199,7 +199,7 @@ export function GeneralSocials() {
                   {...register("twitter")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.twitter ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.twitter ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <span className="absolute left-3.5 top-2 font-black text-xs italic text-slate-800">X</span>
@@ -218,7 +218,7 @@ export function GeneralSocials() {
                   {...register("instagram")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.instagram ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.instagram ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <FaInstagram className="absolute left-3.5 top-2.5 h-4 w-4 text-[#E4405F]" />
@@ -237,7 +237,7 @@ export function GeneralSocials() {
                   {...register("linkedin")}
                   className={cn(
                     "h-9 w-full rounded-lg border pl-10 pr-4 text-xs outline-none transition-colors bg-white",
-                    errors.linkedin ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
+                    errors.linkedin ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-admin-primary"
                   )}
                 />
                 <FaLinkedin className="absolute left-3.5 top-2.5 h-4 w-4 text-[#0A66C2]" />
@@ -255,7 +255,7 @@ export function GeneralSocials() {
         <button
           type="submit"
           disabled={updateMutation.isPending}
-          className="flex items-center gap-2 rounded-lg bg-primary hover:bg-[#0d3656] text-white px-6 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
+          className="flex items-center gap-2 rounded-lg bg-admin-primary hover:bg-admin-primary/90 text-white px-6 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
         >
           <Save className="h-4 w-4" />
           {updateMutation.isPending ? "Saving..." : "Save Branding"}

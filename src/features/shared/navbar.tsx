@@ -16,6 +16,7 @@ import Image from "next/image";
 import { HamburgerButton } from "./hamburger-button";
 import useAuth, { useMe } from "@/hooks/auth/useAuth";
 import { useRouter } from "next/navigation";
+import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 import {
   LogOut,
   User,
@@ -42,6 +43,18 @@ export function Navbar() {
 
   const displayName = user?.name || (user?.email ? user.email.split("@")[0] : "User");
   const role = user?.role?.toLowerCase() || "patient";
+
+  const { data: dentistProfile } = useDentistProfileQuery({
+    enabled: role === "dentist",
+  });
+  const dentist = dentistProfile?.data?.dentist;
+
+  const isDirectoryVerified = dentist?.dentistDirectory?.status === "VERIFIED";
+  const isLicenseVerified = dentist?.dentistLicense?.isVerified || dentist?.dentistLicense?.verificationStatus === "APPROVED";
+  const isOperationsVerified = dentist?.dentistOperationsVerifications?.[0]?.isVerified || dentist?.dentistOperationsVerifications?.[0]?.isApproved || dentist?.dentistOperationsVerifications?.[0]?.verificationStatus === "APPROVED";
+  const isClinicalVerified = dentist?.dentistClinicDepthVerification?.isVerified || dentist?.dentistClinicDepthVerification?.isApproved || dentist?.dentistClinicDepthVerification?.verificationStatus === "APPROVED";
+
+  const isVerified = isDirectoryVerified || (isLicenseVerified && isOperationsVerified && isClinicalVerified);
 
   return (
     <header className="border-b border-border/80 bg-white w-full">
@@ -113,13 +126,15 @@ export function Navbar() {
                 <DropdownMenuGroup>
                   {role === "dentist" ? (
                     <>
-                      <DropdownMenuItem className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors" asChild>
-                        <Link href="/dentist/profile">
-                          <User className="h-4 w-4 text-slate-400" />
-                          <span>My Profile</span>
-                          <DropdownMenuShortcut className="text-slate-400">⌘P</DropdownMenuShortcut>
-                        </Link>
-                      </DropdownMenuItem>
+                      {isVerified && (
+                        <DropdownMenuItem className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors" asChild>
+                          <Link href="/dentist/profile">
+                            <User className="h-4 w-4 text-slate-400" />
+                            <span>My Profile</span>
+                            <DropdownMenuShortcut className="text-slate-400">⌘P</DropdownMenuShortcut>
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors" asChild>
                         <Link href="/dentist/settings">
                           <Settings className="h-4 w-4 text-slate-400" />

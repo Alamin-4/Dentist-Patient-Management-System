@@ -274,7 +274,7 @@ export default function ClaimProfileDialog({
                     className={`size-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${claimStep > s
                       ? "bg-badge text-white animate-scaleUp"
                       : claimStep === s
-                        ? "bg-[#113254] text-white scale-110 ring-4 ring-[#113254]/15 font-extrabold"
+                        ? "bg-brand-deep-navy text-white scale-110 ring-4 ring-brand-deep-navy/15 font-extrabold"
                         : "bg-slate-50 border border-slate-200 text-slate-400"
                       }`}
                   >
@@ -364,7 +364,7 @@ export default function ClaimProfileDialog({
                     onOpenChange(false);
                     router.push("/dentist");
                   }}
-                  className="rounded-lg bg-[#113254] px-6 py-2.5 font-semibold text-white transition-colors hover:bg-[#0d2844] cursor-pointer text-sm"
+                  className="rounded-lg bg-brand-deep-navy px-6 py-2.5 font-semibold text-white transition-colors hover:bg-brand-deep-navy-hover cursor-pointer text-sm"
                 >
                   Go to Dashboard →
                 </button>

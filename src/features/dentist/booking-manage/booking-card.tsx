@@ -38,7 +38,7 @@ export default function BookingCard({
   };
 
   return (
-    <div className="w-full h-full bg-white border border-[#E2E8F0] rounded-lg p-6 shadow-sm font-sans flex flex-col">
+    <div className="w-full h-full bg-white border border-border rounded-lg p-6 shadow-sm font-sans flex flex-col">
       <div className="flex items-center gap-4 pb-5 border-b border-gray-100">
         {image ? (
           <img
@@ -47,13 +47,13 @@ export default function BookingCard({
             className="w-14 h-14 rounded-full object-cover shrink-0 border border-slate-100"
           />
         ) : (
-          <div className="flex items-center justify-center w-14 h-14 bg-[#F1F5F9] rounded-full text-[#1E3A8A] font-bold text-base tracking-wide shrink-0">
+          <div className="flex items-center justify-center w-14 h-14 bg-secondary rounded-full text-brand-medium-navy font-bold text-base tracking-wide shrink-0">
             {initials}
           </div>
         )}
         <div className="space-y-0.5 min-w-0 flex-1">
-          <h2 className="text-xl font-bold text-[#0F172A] truncate" title={name}>{name}</h2>
-          <p className="text-[15px] text-[#0F172A] font-medium opacity-80 truncate" title={email}>
+          <h2 className="text-xl font-bold text-text truncate" title={name}>{name}</h2>
+          <p className="text-[15px] text-text font-medium opacity-80 truncate" title={email}>
             {email}
           </p>
         </div>
@@ -64,13 +64,13 @@ export default function BookingCard({
           <span className="text-[14px] text-[#64748B] font-medium block">
             Treatment Procedure
           </span>
-          <h3 className="text-[17px] font-bold text-[#0F172A] wrap-break-word">{procedure}</h3>
+          <h3 className="text-[17px] font-bold text-text wrap-break-word">{procedure}</h3>
         </div>
         <div className="sm:col-span-3 space-y-1">
           <span className="text-[14px] text-[#64748B] font-medium block">
             Est. Budget
           </span>
-          <h3 className="text-[17px] font-bold text-[#0F172A]">{budget}</h3>
+          <h3 className="text-[17px] font-bold text-text">{budget}</h3>
         </div>
         <div className="sm:col-span-4 flex items-center sm:justify-end">
           <span className="text-[17px] font-bold text-[#D97706]">{status}</span>
@@ -81,15 +81,15 @@ export default function BookingCard({
         <span className="text-[14px] text-[#64748B] font-medium block">
           Traveling Dates
         </span>
-        <h3 className="text-[17px] font-bold text-[#0F172A]">{dates}</h3>
+        <h3 className="text-[17px] font-bold text-text">{dates}</h3>
       </div>
 
       <div className="mt-auto pt-5 space-y-5">
-        <div className="flex items-center justify-between w-full min-h-12 py-2 px-4 bg-[#FEF3C7] border border-[#FDE68A] rounded-lg gap-2">
+        <div className="flex items-center justify-between w-full min-h-12 py-2 px-4 bg-amber-50 border border-amber-200 rounded-lg gap-2">
           <span className="text-[15px] font-medium text-[#334155] shrink-0">
             {timelineLabel}
           </span>
-          <span className="text-[15px] font-bold text-[#0F172A] text-right wrap-break-word">
+          <span className="text-[15px] font-bold text-text text-right wrap-break-word">
             {timelineStatus}
           </span>
         </div>
@@ -97,7 +97,7 @@ export default function BookingCard({
         <button
           type="button"
           onClick={handleViewDetail}
-          className="w-full h-12 flex items-center justify-center border border-[#163E5C] text-[#163E5C] hover:bg-[#F8FAFC] active:bg-[#F1F5F9] rounded-lg font-bold text-base transition-colors"
+          className="w-full h-12 flex items-center justify-center border border-brand-medium-navy text-brand-medium-navy hover:bg-slate-50 active:bg-slate-100 rounded-lg font-bold text-base transition-colors"
         >
           View Detail
         </button>
