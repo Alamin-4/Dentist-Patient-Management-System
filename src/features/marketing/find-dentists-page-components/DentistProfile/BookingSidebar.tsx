@@ -50,6 +50,14 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
     (user.id === dentist.claimedByUserId ||
       (!!dentist.userId && user.id === dentist.userId));
 
+  const isClaimed =
+    dentist.status === "CLAIMED" ||
+    dentist.status === "VERIFIED" ||
+    dentist.isClaimed === true ||
+    dentist.verified === true;
+
+  const isClaimableProfile = dentist.isClaimable && !isClaimed;
+
   const rating = dentist.googleRating ?? dentist.rating ?? 5.0;
   const roundedRating = Math.round(rating);
 
@@ -181,7 +189,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
             </Button>
           ) : (
             <div className="flex flex-col gap-2 flex-1">
-              {dentist.isClaimable && (
+              {isClaimableProfile && (
                 <Button
                   variant="outline"
                   className="h-10 sm:h-11 text-xs sm:text-sm border-amber-500 text-amber-700 bg-amber-50/50 hover:bg-amber-50 font-bold"
@@ -192,7 +200,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
                   Claim Profile
                 </Button>
               )}
-              {(dentist.status === "CLAIMED" || dentist.isClaimed) && (
+              {isClaimed && (
                 <Button
                   className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover"
                   onClick={() => initiateBooking("request")}

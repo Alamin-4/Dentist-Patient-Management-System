@@ -155,6 +155,11 @@ export default function ClaimProfilePage() {
   const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && isProfileVerifiedAndPaid;
   const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && !isProfileVerifiedAndPaid;
 
+  const isProfileAlreadyClaimedBySomeoneElse =
+    (dentist?.status === "CLAIMED" || dentist?.status === "VERIFIED" || dentist?.verified || !dentist?.isClaimable) &&
+    !hasAlreadyClaimedThis &&
+    !isClaimPendingPayment;
+
   useEffect(() => {
     if (isClaimPendingPayment && claimStep < 4) {
       setClaimStep(4);
@@ -399,7 +404,7 @@ export default function ClaimProfilePage() {
             </p>
 
             {/* Step Indicator */}
-            {!isNotDentist && !hasAlreadyClaimedAnother && !hasAlreadyClaimedThis && (
+            {!isNotDentist && !hasAlreadyClaimedAnother && !hasAlreadyClaimedThis && !isProfileAlreadyClaimedBySomeoneElse && (
               <div className="flex items-center gap-2 mt-5">
                 {[1, 2, 3, 4].map((s) => (
                   <div key={s} className="flex items-center gap-1">
@@ -520,8 +525,32 @@ export default function ClaimProfilePage() {
               </div>
             )}
 
+            {/* 3.5 Profile already claimed by someone else block */}
+            {!isNotDentist && !hasAlreadyClaimedAnother && !hasAlreadyClaimedThis && isProfileAlreadyClaimedBySomeoneElse && (
+              <div className="text-center py-6 space-y-4 animate-scaleUp">
+                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                  <AlertCircle className="size-8" />
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-lg font-bold text-slate-900">Profile Already Claimed</h4>
+                  <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
+                    This directory listing for <span className="font-semibold text-slate-800">{dentist?.name}</span> has already been claimed and verified. It is no longer available to be claimed.
+                  </p>
+                </div>
+                <div className="pt-4 flex gap-3 justify-center border-t border-slate-100 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => router.push("/find-dentists")}
+                    className="rounded-lg bg-primary px-6 py-2.5 font-semibold text-white transition-colors hover:bg-[#002850] cursor-pointer text-sm"
+                  >
+                    Back to Dentists Directory
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* 4. Normal onboarding flow */}
-            {!isNotDentist && !hasAlreadyClaimedAnother && !hasAlreadyClaimedThis && (
+            {!isNotDentist && !hasAlreadyClaimedAnother && !hasAlreadyClaimedThis && !isProfileAlreadyClaimedBySomeoneElse && (
               <>
                 {/* Inline Error Notice */}
                 {error && (
