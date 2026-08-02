@@ -1,0 +1,20 @@
+name: rateddocs-frontend
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:5000/api/v1}
+        NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY:-phc_scEWrLPDvmp92hc9zmpTiUEFAHMXKfuJfS33rKo56AHP}
+        NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST:-https://us.i.posthog.com}
+        NEXT_PUBLIC_COUNTRY_API_KEY: ${NEXT_PUBLIC_COUNTRY_API_KEY:-D34fM2jYjG3PtnTlgAmEP4tHEqwtSsKnbJ4EkHTb}
+    container_name: rateddocs-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
