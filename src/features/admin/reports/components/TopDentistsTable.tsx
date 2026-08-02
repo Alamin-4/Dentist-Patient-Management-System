@@ -69,7 +69,7 @@ export function TopDentistsTable({ topDentists }: TopDentistsTableProps) {
                   <td className="px-4 py-3.5">
                     <span className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold",
-                      d.rank === 1 ? "bg-amber-100 text-amber-700" :
+                      d.rank === 1 ? "bg-accent/10 text-accent/95" :
                         d.rank === 2 ? "bg-gray-200 text-gray-600" :
                           d.rank === 3 ? "bg-orange-100 text-orange-600" :
                             "bg-gray-100 text-gray-500"
@@ -92,7 +92,7 @@ export function TopDentistsTable({ topDentists }: TopDentistsTableProps) {
                   <td className="px-4 py-3.5 text-sm font-medium text-gray-700">{fmtNum(d.bookings)}</td>
                   <td className="px-4 py-3.5 text-sm font-bold text-text">{fmt(d.revenue)}</td>
                   <td className="px-4 py-3.5">
-                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-500">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-accent">
                       <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> {d.rating}
                     </span>
                   </td>

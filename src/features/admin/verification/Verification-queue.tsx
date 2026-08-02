@@ -36,7 +36,7 @@ const STAT_CARDS = [
     sub: "In verification pipeline",
   },
   {
-    icon: <Clock className="h-6 w-6 text-amber-500" />,
+    icon: <Clock className="h-6 w-6 text-accent" />,
     iconBg: "bg-amber-50",
     label: "Pending review",
     key: "pending_review" as const,

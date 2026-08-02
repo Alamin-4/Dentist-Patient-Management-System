@@ -199,7 +199,7 @@ export default function ReportsPage() {
                     </div>
                     <span className={cn(
                       "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold",
-                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-amber-700"
+                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-accent/95"
                     )}>
                       {row.passRate}% pass
                     </span>
@@ -241,7 +241,7 @@ export default function ReportsPage() {
               </div>
               <div className="space-y-3.5">
                 {[
-                  { label: "Active Escrow Dep.", value: fmt(statsMap?.totalEscrow || 0), pct: 100, color: "bg-amber-500" },
+                  { label: "Active Escrow Dep.", value: fmt(statsMap?.totalEscrow || 0), pct: 100, color: "bg-accent" },
                   { label: "Released Payouts", value: fmt(statsMap?.totalRevenue || 0), pct: 0, color: "bg-success-500" },
                   { label: "Processing Refunds", value: fmt(statsMap?.totalRefunds || 0), pct: 0, color: "bg-destructive-400" },
                 ].map((row) => (
@@ -338,7 +338,7 @@ export default function ReportsPage() {
                     <p className="text-sm font-semibold text-text">{row.phase}</p>
                     <span className={cn(
                       "rounded-full px-2.5 py-0.5 text-xs font-bold",
-                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-amber-700"
+                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-accent/95"
                     )}>
                       {row.passRate}% pass rate
                     </span>
@@ -348,7 +348,7 @@ export default function ReportsPage() {
                       { label: "Submitted", val: row.submitted, color: "text-gray-700", dot: "bg-gray-400" },
                       { label: "Approved", val: row.approved, color: "text-success-700", dot: "bg-success-500" },
                       { label: "Rejected", val: row.rejected, color: "text-destructive-600", dot: "bg-destructive-400" },
-                      { label: "Pending", val: row.pending, color: "text-amber-600", dot: "bg-amber-400" },
+                      { label: "Pending", val: row.pending, color: "text-accent", dot: "bg-amber-400" },
                     ].map((s) => (
                       <div key={s.label} className="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
                         <p className={cn("text-xl font-bold", s.color)}>{s.val}</p>
@@ -397,7 +397,7 @@ export default function ReportsPage() {
                     </div>
                     <span className={cn(
                       "shrink-0 rounded-full px-3 py-1 text-sm font-bold",
-                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-amber-700"
+                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-accent/95"
                     )}>
                       {row.passRate}%
                     </span>
@@ -419,13 +419,13 @@ export default function ReportsPage() {
                     <div className="flex min-w-0 items-center gap-2.5">
                       {item.ok
                         ? <CheckCircle2 className="h-4 w-4 shrink-0 text-success-500" />
-                        : <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />}
+                        : <AlertTriangle className="h-4 w-4 shrink-0 text-accent" />}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-text">{item.label}</p>
                         <p className="text-xs text-gray-400">{item.note}</p>
                       </div>
                     </div>
-                    <span className={cn("shrink-0 text-sm font-bold", item.ok ? "text-success-700" : "text-amber-600")}>
+                    <span className={cn("shrink-0 text-sm font-bold", item.ok ? "text-success-700" : "text-accent")}>
                       {item.val}
                     </span>
                   </div>

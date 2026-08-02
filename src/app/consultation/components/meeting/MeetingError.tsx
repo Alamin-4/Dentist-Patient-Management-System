@@ -11,9 +11,9 @@ export function MeetingError({ error, onBack }: MeetingErrorProps) {
 
     return (
         <div className="flex h-full w-full flex-1 items-center justify-center bg-[#0B0F19] p-4 text-white">
-            <div className={`max-w-md w-full rounded-2xl border p-6 text-center shadow-2xl backdrop-blur-md ${isTooEarly ? "border-amber-500/20 bg-slate-900/60" : "border-red-500/20 bg-slate-900/60"
+            <div className={`max-w-md w-full rounded-2xl border p-6 text-center shadow-2xl backdrop-blur-md ${isTooEarly ? "border-accent/20 bg-slate-900/60" : "border-red-500/20 bg-slate-900/60"
                 }`}>
-                <div className={`mx-auto flex size-14 items-center justify-center rounded-full mb-4 ${isTooEarly ? "bg-amber-500/10 text-amber-400" : "bg-red-500/10 text-red-500"
+                <div className={`mx-auto flex size-14 items-center justify-center rounded-full mb-4 ${isTooEarly ? "bg-accent/10 text-amber-400" : "bg-red-500/10 text-red-500"
                     }`}>
                     {isTooEarly ? <Video className="size-7" /> : <AlertCircle className="size-7" />}
                 </div>

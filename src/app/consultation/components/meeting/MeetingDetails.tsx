@@ -95,7 +95,7 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
                 <div className="max-w-md w-full rounded-2xl border border-gray-200 bg-white p-8 shadow-lg space-y-6">
                     <div className="text-center space-y-1">
                         <div className="mx-auto size-16 rounded-full bg-amber-50 flex items-center justify-center mb-4">
-                            <Clock className="size-8 text-amber-600" />
+                            <Clock className="size-8 text-accent" />
                         </div>
                         <h2 className="text-2xl font-bold text-text">Consultation Expired</h2>
                         <p className="text-sm text-gray-500">This session's time window has passed.</p>
@@ -116,8 +116,8 @@ export function MeetingDetails({ consultation, userId, onBack, onReschedule }: M
                         </div>
                     </div>
 
-                    <div className="flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-800 leading-relaxed">
-                        <AlertTriangle className="size-4 shrink-0 mt-0.5 text-amber-600" />
+                    <div className="flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-accent/95 leading-relaxed">
+                        <AlertTriangle className="size-4 shrink-0 mt-0.5 text-accent" />
                         <p>This consultation was not completed. You can reschedule it from your dashboard, or contact support if you need assistance.</p>
                     </div>
 

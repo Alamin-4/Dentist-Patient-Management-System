@@ -46,7 +46,7 @@ function VerificationStatus({ label, status, short }: { label: string; status: s
         textColor = "text-red-600 bg-red-50 px-2 py-0.5 rounded";
         textLabel = "Rejected";
     } else if (isPending) {
-        textColor = "text-amber-600";
+        textColor = "text-accent";
         textLabel = "Pending";
     }
 
@@ -97,12 +97,12 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
     const queueStatus = data.queue_status ?? "pending";
     const STATUS_BADGE: Record<string, string> = {
         approved: "bg-emerald-50 text-emerald-600",
-        pending: "bg-amber-50 text-amber-600",
+        pending: "bg-amber-50 text-accent",
         rejected: "bg-red-50 text-red-500",
     };
     const STATUS_DOT: Record<string, string> = {
         approved: "bg-emerald-500",
-        pending: "bg-amber-500",
+        pending: "bg-accent",
         rejected: "bg-red-500",
     };
     const STATUS_LABEL: Record<string, string> = {
@@ -224,7 +224,7 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
                             <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
                                 <Pencil className="h-4 w-4 text-gray-400" /> Edit profile
                             </button>
-                            <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-amber-600 transition-colors hover:bg-amber-50">
+                            <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-amber-50">
                                 <ShieldOff className="h-4 w-4" /> Suspend account
                             </button>
                             <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50">

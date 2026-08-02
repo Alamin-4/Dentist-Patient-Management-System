@@ -311,7 +311,7 @@ export function MeetingLobby({ lobbySecondsLeft, consultation, onLeave }: Meetin
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 py-2.5 rounded-lg">
+                                <div className="flex items-center justify-center gap-2 text-xs font-semibold text-amber-400 bg-accent/10 border border-accent/20 py-2.5 rounded-lg">
                                     <span className="size-2 rounded-full bg-amber-400 animate-pulse" />
                                     Waiting for meeting to start...
                                 </div>

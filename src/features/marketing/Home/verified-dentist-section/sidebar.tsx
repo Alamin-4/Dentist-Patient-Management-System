@@ -27,7 +27,6 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Shared render logic to avoid duplication
   const renderList = (isMobile: boolean) => (
     <>
       <button

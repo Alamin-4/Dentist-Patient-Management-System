@@ -295,7 +295,7 @@ export default function Phase3() {
                       Map coordinates saved (Lat: {Number(selectedAddress.lat).toFixed(4)}, Lng: {Number(selectedAddress.lng).toFixed(4)})
                     </p>
                   ) : (
-                    <p className="text-xs text-amber-600 font-semibold mt-1.5 flex items-center gap-1">
+                    <p className="text-xs text-accent font-semibold mt-1.5 flex items-center gap-1">
                       ⚠️ Map pin location required. Click &quot;Select on Map&quot; to pick location &amp; get coordinates.
                     </p>
                   )}

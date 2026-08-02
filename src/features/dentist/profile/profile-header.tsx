@@ -73,14 +73,14 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             ) : isPaymentPending ? (
               <Badge
                 variant="secondary"
-                className="bg-amber-50 text-amber-600 hover:bg-amber-50 border border-amber-200 px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
+                className="bg-amber-50 text-accent hover:bg-amber-50 border border-amber-200 px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
               >
                 ⚠️ Payment Pending
               </Badge>
             ) : hasSubmittedAny ? (
               <Badge
                 variant="secondary"
-                className="bg-amber-50 text-amber-600 hover:bg-amber-50 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
+                className="bg-amber-50 text-accent hover:bg-amber-50 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
                 Pending Verification
               </Badge>

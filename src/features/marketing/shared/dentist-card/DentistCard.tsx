@@ -15,9 +15,6 @@ import type { Dentist } from "@/features/marketing/find-dentists-page-components
 import { useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Verification phase dots
-// ─────────────────────────────────────────────────────────────────────────────
 function VerificationDots({ phase }: { phase: Dentist["verificationPhase"] }) {
   if (!phase) return null;
   const states = [
@@ -41,10 +38,6 @@ function VerificationDots({ phase }: { phase: Dentist["verificationPhase"] }) {
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Props
-// ─────────────────────────────────────────────────────────────────────────────
 export interface DentistCardProps {
   dentist: Dentist;
   floating?: boolean;
@@ -56,18 +49,13 @@ export interface DentistCardProps {
   mapView?: boolean;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────────────────────────────────────
 export default function DentistCard({
   dentist,
   floating = false,
   isCompareMode = false,
   isSelectedForCompare = false,
   onCompareToggle,
-  onViewOnMap,
   isButtonShow = true,
-  mapView = false,
 }: DentistCardProps) {
   const router = useRouter();
   const { user } = useMe();
@@ -91,7 +79,6 @@ export default function DentistCard({
     setDentistsToCompare,
   } = useStateContext();
 
-  // ── Booking handlers ────────────────────────────────────────────────────────
   const handleBookConsultation = () => {
     if (user?.role === "DENTIST") {
       toast.error("Dentists cannot request or book consultations. Please sign in with a patient account.");
@@ -135,7 +122,7 @@ export default function DentistCard({
     dentist.status === "VERIFIED"
       ? { icon: "text-emerald-500", text: "text-emerald-600", showIcon: true }
       : dentist.status === "CLAIMED"
-        ? { icon: "text-amber-500", text: "text-amber-600", showIcon: true }
+        ? { icon: "text-accent", text: "text-accent", showIcon: true }
         : { icon: "text-slate-400", text: "text-slate-400", showIcon: false };
 
   const ratingValue =
@@ -152,8 +139,8 @@ export default function DentistCard({
       onClick={() => router.push(`/find-dentists/${dentist.slug}`)}
       onMouseEnter={handlePrefetchDetails}
       className={cn(
-        "relative w-full overflow-hidden border border-border bg-white transition-all duration-300 rounded-[12px] shadow-xs hover:shadow-md cursor-pointer p-4 sm:p-5",
-        floating && "w-[min(100%,34rem)] shadow-lg",
+        "relative w-full overflow-hidden border border-border bg-white transition-all duration-300 rounded-[12px] cursor-pointer p-4 sm:p-5",
+        floating && "w-[min(100%,34rem)]",
         isSelectedForCompare && "border-primary bg-slate-50/40",
       )}
     >
@@ -167,13 +154,10 @@ export default function DentistCard({
         </div>
       )}
 
-      {/* Main Container Layout */}
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6">
-        
-        {/* Left Side: Avatar + Details */}
+
         <div className="flex flex-row items-start gap-3.5 sm:gap-4 min-w-0 flex-1 w-full">
-          
-          {/* Avatar Column */}
+
           <div className="flex shrink-0 flex-col items-center gap-2 w-20 sm:w-24">
             <div className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full bg-slate-100 border border-slate-100 shadow-xs">
               <Image
@@ -185,7 +169,6 @@ export default function DentistCard({
               />
             </div>
 
-            {/* Status Badge */}
             <div className="flex items-center gap-1 text-[11px] font-medium tracking-tight">
               {badgeConfig.showIcon && (
                 <ShieldCheck className={cn("size-3.5 shrink-0", badgeConfig.icon)} />
@@ -195,7 +178,6 @@ export default function DentistCard({
               </span>
             </div>
 
-            {/* RDV Score */}
             <div className="flex items-center justify-center text-[11px] gap-1.5 rounded-md border border-slate-200 px-2 py-0.5 text-center bg-slate-50/50 w-full">
               <span className="text-primary font-bold">
                 {dentist.rdvScore > 0 ? dentist.rdvScore : "0"}
@@ -208,7 +190,6 @@ export default function DentistCard({
             )}
           </div>
 
-          {/* Details Column */}
           <div className="min-w-0 flex-1 space-y-2">
             <div>
               <h3 className="text-base sm:text-lg font-bold text-text leading-tight group-hover:text-primary transition-colors line-clamp-1">
@@ -219,7 +200,6 @@ export default function DentistCard({
               </p>
             </div>
 
-            {/* Rating */}
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xs sm:text-sm font-bold text-primary">
                 {ratingValue > 0 ? ratingValue.toFixed(1) : "5.0"}
@@ -242,7 +222,6 @@ export default function DentistCard({
               </span>
             </div>
 
-            {/* Location (Shown when available) */}
             {formattedLocation && (
               <div className="flex items-center gap-1.5 text-slate-500 pt-0.5">
                 <MapPin className="size-3.5 shrink-0 text-slate-400" />
@@ -252,7 +231,6 @@ export default function DentistCard({
               </div>
             )}
 
-            {/* Languages (Only shown on find-dentists / when buttons are enabled) */}
             {isButtonShow && dentist.languages && dentist.languages.length > 0 && (
               <div className="flex items-center gap-1.5 text-slate-500 pt-0.5">
                 <Globe className="size-3.5 shrink-0 text-primary" />
@@ -263,7 +241,6 @@ export default function DentistCard({
               </div>
             )}
 
-            {/* Tags (Only shown on find-dentists / when buttons are enabled) */}
             {isButtonShow && dentist.surpriseGuarantee && (
               <div className="pt-1">
                 <Badge className="inline-flex items-center gap-1 whitespace-nowrap border-none bg-sky-50 px-2.5 py-0.5 text-[11px] font-semibold text-primary hover:bg-sky-100">
@@ -275,12 +252,10 @@ export default function DentistCard({
           </div>
         </div>
 
-        {/* Right Side: Price & Action Buttons */}
         <div className={cn(
           "flex shrink-0 w-full sm:w-auto flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-3 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100",
           !isButtonShow && "sm:items-end justify-end border-t-0 pt-0"
         )}>
-          {/* Price Block */}
           <div className="text-left sm:text-right">
             <div className="text-[11px] sm:text-xs text-sec-text font-medium">Starting from</div>
             <div className="text-primary font-bold text-lg sm:text-xl lg:text-2xl leading-none mt-0.5">
@@ -289,7 +264,6 @@ export default function DentistCard({
             <div className="text-[10px] text-slate-400">Estimate</div>
           </div>
 
-          {/* Action Buttons */}
           {isButtonShow && (
             <div className="flex items-center gap-2 flex-wrap justify-end">
               <Button
@@ -316,7 +290,7 @@ export default function DentistCard({
               ) : isClaimableProfile ? (
                 <Button
                   variant="secondary"
-                  className="h-9 px-3.5 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100 cursor-pointer transition-all rounded-lg"
+                  className="h-9 px-3.5 text-xs font-bold text-accent/95 bg-amber-50 border border-amber-200 hover:bg-accent/10 cursor-pointer transition-all rounded-lg"
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/find-dentists/${dentist.slug}/claim`);

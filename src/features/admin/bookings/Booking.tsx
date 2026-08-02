@@ -17,7 +17,7 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 const ESCROW_BADGE: Record<string, string> = {
-  "In Escrow": "bg-amber-50 text-amber-600 border border-amber-200",
+  "In Escrow": "bg-amber-50 text-accent border border-amber-200",
   Released: "bg-emerald-50 text-emerald-600",
   Refunded: "bg-gray-100 text-gray-500",
 };

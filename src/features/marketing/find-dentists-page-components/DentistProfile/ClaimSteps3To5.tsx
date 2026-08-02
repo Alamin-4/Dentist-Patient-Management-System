@@ -48,10 +48,10 @@ export function ClaimStep3({
   return (
     <div className="space-y-4">
       <div className="rounded-lg bg-amber-50/60 border border-amber-200 p-4">
-        <p className="text-amber-800 text-xs font-semibold flex items-center gap-1.5 mb-1">
-          <AlertCircle className="size-4 shrink-0 text-amber-600" /> Medical Standards & Compliance Requirements
+        <p className="text-accent/95 text-xs font-semibold flex items-center gap-1.5 mb-1">
+          <AlertCircle className="size-4 shrink-0 text-accent" /> Medical Standards & Compliance Requirements
         </p>
-        <p className="text-amber-700 text-xs leading-relaxed">
+        <p className="text-accent/95 text-xs leading-relaxed">
           To maintain directory trust and protect international patients, all listed dental practices must commit to the following clinical standards:
         </p>
       </div>

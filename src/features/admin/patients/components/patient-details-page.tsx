@@ -211,7 +211,7 @@ export default function PatientDetailPage({ patientId }: PatientDetailPageProps)
               <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
                 Referral credits
               </p>
-              <p className="mt-0.5 text-2xl font-bold text-amber-500">
+              <p className="mt-0.5 text-2xl font-bold text-accent">
                 ${profile.referral_credits}
               </p>
             </div>

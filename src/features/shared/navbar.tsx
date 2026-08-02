@@ -90,7 +90,7 @@ export function Navbar() {
                   <span className={cn(
                     "absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white transition-colors duration-200",
                     status === "active" && "bg-emerald-500",
-                    status === "away" && "bg-amber-500",
+                    status === "away" && "bg-accent",
                     status === "dnd" && "bg-rose-500"
                   )} />
                 </div>

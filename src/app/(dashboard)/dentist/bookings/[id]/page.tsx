@@ -159,7 +159,7 @@ export default function BookingDetailPage() {
                 ? "text-sky-600"
                 : booking?.paymentStatus === "PAID"
                   ? "text-green-700"
-                  : "text-amber-600"
+                  : "text-accent"
                 }`}>
                 {booking?.paymentStatus === "IN_ESCROW"
                   ? "In Escrow"
@@ -346,7 +346,7 @@ export default function BookingDetailPage() {
                       </div>
                     </div>
                   </div>
-                  <span className="shrink-0 text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+                  <span className="shrink-0 text-xs font-bold text-accent bg-amber-50 px-3 py-1 rounded-full">
                     ACTION REQUIRED
                   </span>
                 </div>
@@ -527,7 +527,7 @@ export default function BookingDetailPage() {
                       {Array.from({ length: 5 }).map((_, idx) => {
                         const score = (Number(booking.metadata.review.ratingCommunication) + Number(booking.metadata.review.ratingValueForMoney) + Number(booking.metadata.review.ratingFollowThrough)) / 3;
                         return (
-                          <span key={idx} className={idx < Math.round(score) ? "text-amber-500 text-lg" : "text-slate-300 text-lg"}>★</span>
+                          <span key={idx} className={idx < Math.round(score) ? "text-accent text-lg" : "text-slate-300 text-lg"}>★</span>
                         );
                       })}
                     </div>
