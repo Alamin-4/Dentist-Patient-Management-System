@@ -1,6 +1,5 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import useOverview from "@/hooks/admin/overview/useOverview";
 import { OverviewHeader } from "./overview-header";
 import { StatsCards } from "./stats-cards";
@@ -8,16 +7,13 @@ import { BookingsRevenueChart } from "./bookings-revenue-chart";
 import { VerificationQueue } from "./verification-queue";
 import { TopDentists } from "./top-dentists";
 import { RecentActivity } from "./recent-activity";
+import { AdminDashboardSkeleton } from "./admin-skeleton";
 
 export default function Admin() {
   const { data, isLoading } = useOverview();
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-100 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-      </div>
-    );
+    return <AdminDashboardSkeleton />;
   }
 
   return (

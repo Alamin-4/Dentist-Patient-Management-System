@@ -94,7 +94,7 @@ function SearchInputContent({
             onSubmit={handleSearchSubmit}
             className={cn(
                 "relative flex items-center w-full",
-                variant === "desktop" ? "hidden md:flex flex-1 max-w-md" : "md:hidden",
+                variant === "desktop" ? "hidden md:flex flex-1 max-w-sm" : "md:hidden",
             )}
         >
             <input

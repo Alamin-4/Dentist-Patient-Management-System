@@ -43,7 +43,6 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   },
 };
 
-// Parse a timezone string like "GMT+6 Time Zone (BST, GMT+6)" into offset minutes
 const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
   if (!tzStr) return 0;
   const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
@@ -88,8 +87,6 @@ const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: 
   return localUtcMs - offsetMinutes * 60 * 1000;
 };
 
-// Returns true if current moment is within the meeting window:
-// from 5 minutes before scheduledDate until (scheduledDate + durationMinutes)
 const isWithinMeetingWindow = (consultation: ConsultationItem): boolean => {
   if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
   const startUtcMs = getConsultationStartUtcMs(
@@ -118,17 +115,14 @@ const isConsultationExpired = (consultation: ConsultationItem): boolean => {
   return Date.now() > endMs;
 };
 
-// Returns true if the scheduled date (in the consultation's stored timezone) is today
 const isToday = (consultation: ConsultationItem): boolean => {
   if (!consultation.scheduledDate) return false;
   const offsetMinutes = parseTimezoneOffsetMinutes(consultation.timezone);
   const scheduledUtc = new Date(consultation.scheduledDate).getTime();
-  // Shift the UTC timestamp by the consultation timezone offset to get local time
   const localMs = scheduledUtc + offsetMinutes * 60 * 1000;
   const localDate = new Date(localMs);
   const scheduledLocalDateStr = `${localDate.getUTCFullYear()}-${String(localDate.getUTCMonth() + 1).padStart(2, "0")}-${String(localDate.getUTCDate()).padStart(2, "0")}`;
 
-  // Get today in the same timezone
   const nowUtc = Date.now();
   const nowLocal = new Date(nowUtc + offsetMinutes * 60 * 1000);
   const todayStr = `${nowLocal.getUTCFullYear()}-${String(nowLocal.getUTCMonth() + 1).padStart(2, "0")}-${String(nowLocal.getUTCDate()).padStart(2, "0")}`;
@@ -234,7 +228,6 @@ export default function Overview() {
         />
       </div>
 
-      {/* Consultation section */}
       <SectionCard className="md:p-8">
         <h2 className="text-xl font-bold text-text mb-4">Consultation</h2>
 
@@ -255,7 +248,6 @@ export default function Overview() {
           ))}
         </div>
 
-        {/* Content */}
         {isConsultationsLoading ? (
           <div className="space-y-5">
             {activeTab === "estimate-updates" ? (
@@ -276,7 +268,6 @@ export default function Overview() {
               (item) => item.requestStatus === "COMPLETED" && !item.treatmentPlan
             );
 
-            // Filter to show only the latest completed consultation per dentist
             const uniqueCompletedConsultations: ConsultationItem[] = [];
             const seenDentists = new Set<string>();
             const sortedCompleted = [...completedConsultations].sort((a, b) => {

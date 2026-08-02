@@ -6,9 +6,7 @@ import {
     LogOut,
     User as UserIcon,
     Settings,
-    LifeBuoy,
     FolderOpen,
-    Check,
     LayoutDashboard,
     Tag,
     Plane,
@@ -22,9 +20,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuGroup,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
     DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { User } from "./type";
