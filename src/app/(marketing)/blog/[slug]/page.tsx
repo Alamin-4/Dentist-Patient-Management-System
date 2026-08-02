@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { ArrowLeft, User, Calendar, BookOpen, Clock } from "lucide-react";
 import { apiClient } from "@/core/api/client";
 
-interface BlogPost {
+export interface BlogPost {
   id: string;
   title: string;
   slug: string;
@@ -14,6 +14,8 @@ interface BlogPost {
   content: string;
   coverImage: string;
   author: string;
+  category?: string;
+  readTime?: string;
   isPublished: boolean;
   publishedAt?: string;
   createdAt: string;
@@ -26,13 +28,18 @@ export default function BlogPostPage() {
 
   useEffect(() => {
     const loadBlogPost = async () => {
+      if (!slug) return;
       try {
+        setLoading(true);
         const response = await apiClient.blogs.getBySlug(slug);
-        if (response?.data) {
-          setPost(response.data);
+        const fetchedData = response?.data || response;
+        if (fetchedData && (fetchedData.id || fetchedData.slug)) {
+          setPost(fetchedData);
+        } else {
+          setPost(null);
         }
-      } catch (e) {
-        console.error("Error loading blog post from database:", e);
+      } catch (err: any) {
+        setPost(null);
       } finally {
         setLoading(false);
       }
@@ -65,8 +72,10 @@ export default function BlogPostPage() {
   if (!post) {
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
-        <h2 className="text-xl font-bold text-slate-800">Article not found</h2>
-        <p className="text-slate-400 text-xs mt-2 mb-6">The article you are trying to view does not exist or has been archived.</p>
+        <h2 className="text-xl font-bold text-slate-800">Article not found in database</h2>
+        <p className="text-slate-400 text-xs mt-2 mb-6">
+          The requested article standard slug "{slug}" was not found in the database.
+        </p>
         <Link
           href="/blog"
           className="flex items-center gap-1.5 px-5 py-2.5 bg-primary text-white font-bold text-xs rounded-lg hover:bg-[#0d3656] transition-all"
@@ -91,13 +100,15 @@ export default function BlogPostPage() {
           Back to Resource Center
         </Link>
 
-        <div className="w-full h-64 sm:h-95 rounded-3xl overflow-hidden border border-border relative bg-slate-200">
-          <img
-            src={post.coverImage}
-            alt={post.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        {post.coverImage && (
+          <div className="w-full h-64 sm:h-95 rounded-3xl overflow-hidden border border-border relative bg-slate-200">
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
 
         <div className="bg-white border border-border rounded-3xl p-6 md:p-12 space-y-8">
 
@@ -113,7 +124,7 @@ export default function BlogPostPage() {
                   <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-text">{post.author}</p>
+                  <p className="text-xs font-bold text-text">{post.author || "RatedDocs Author"}</p>
                   <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>
@@ -141,12 +152,12 @@ export default function BlogPostPage() {
             </div>
           </div>
 
-          {/* Excerpt */}
-          <p className="text-primary font-bold text-sm leading-relaxed bg-[#F4F9FD] p-4 border-l-4 border-primary rounded-r-xl">
-            {post.summary}
-          </p>
+          {post.summary && (
+            <p className="text-primary font-bold text-sm leading-relaxed bg-[#F4F9FD] p-4 border-l-4 border-primary rounded-r-xl">
+              {post.summary}
+            </p>
+          )}
 
-          {/* Document Content Parser */}
           {isHtml ? (
             <div
               className="blog-rendered-content prose prose-slate max-w-none text-text text-[15px] leading-relaxed"

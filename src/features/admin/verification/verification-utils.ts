@@ -179,10 +179,14 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
     verification: String(item.id || ""),
     registration_authority: item.license_step?.registration_authority || "",
 
-    // Adapted UI Properties
     queue_status: qStatus,
-    dentist_name: item.dentist?.full_name || "Unknown Dentist",
-    specialty: item.dentist?.specialty || "DENTIST",
+    dentist_name:
+      item.dentist?.full_name ||
+      item.dentist?.name ||
+      (item.dentist?.user ? `Dr. ${item.dentist.user.firstName || ""} ${item.dentist.user.lastName || ""}`.trim() : "") ||
+      (item.license_step?.first_name || item.license_step?.last_name ? `${item.license_step.first_name || ""} ${item.license_step.last_name || ""}`.trim() : "") ||
+      "",
+    specialty: item.dentist?.specialty || item.license_step?.specialty || "",
     location: [item.license_step?.city, item.license_step?.country].filter(Boolean).join(", ") || item.clinical_step?.clinic_address || "",
     submitted_ago: getRelativeTime(item.license_step?.created_at || item.dentist?.created_at) || undefined,
     rdv_score: item.dentist?.rdv_score || 0,
@@ -195,7 +199,7 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
 
     ph1_data: item.license_step ? {
       auto_approved: item.license_verification === "APPROVED",
-      auto_approved_message: item.license_step.reviewer_notes || "Verified by Administrator",
+      auto_approved_message: item.license_step.reviewer_notes || "",
       license: {
         number: item.license_step.registration_no,
         issuing_state: item.license_step.city || item.license_step.country || "",
@@ -204,13 +208,13 @@ export function normalizeVerificationDentist(item: any): VerificationDentist {
         file_name: getFileNameFromUrl(item.license_step.file, "License document"),
         file_size: "",
         href: item.license_step.file,
-        verified_note: item.license_step.reviewer_notes || "Document is valid",
+        verified_note: item.license_step.reviewer_notes || "",
       },
       selfie: {
         file_name: getFileNameFromUrl(item.license_step.professional_headshot, "Headshot photo"),
         href: item.license_step.professional_headshot,
         ai_match_score: item.face_match_score || 0,
-        confidence: item.face_match_score ? `${item.face_match_score}%` : "N/A",
+        confidence: item.face_match_score ? `${item.face_match_score}%` : "",
       }
     } : undefined,
 

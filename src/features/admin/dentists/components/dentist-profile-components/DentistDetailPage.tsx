@@ -83,10 +83,10 @@ export default function DentistDetailPage({ dentistId }: DentistDetailPageProps)
     }
 
     // --- Derive display values from the flat API shape ---
-    const fullName = data.dentist?.full_name || "Unknown Dentist";
+    const fullName = data.dentist?.name || "";
     const { initials, color } = getAvatarMeta(fullName);
     const rdvScore = data.dentist?.rdv_score ?? 0;
-    const specialty = data.dentist?.specialty || "General";
+    const specialty = data.dentist?.specialty || "";
     const email = data.user_profile?.email || "0";
     const phone = data.user_profile?.phone || "0";
     const location = data.license_step

@@ -10,6 +10,7 @@ import { FormModal } from "@/components/ui/FormModal";
 import { SpecialtyStats } from "./SpecialtyStats";
 import { SpecialtyFilters } from "./SpecialtyFilters";
 import { SpecialtyTable } from "./SpecialtyTable";
+import { SpecialtyCsvModal } from "./specialty-csv-modal";
 
 type ExtendedSpecialty = Specialty & {
     createdAt?: string;
@@ -26,6 +27,7 @@ export default function SpecialtyOverview() {
     const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [newName, setNewName] = useState("");
     const [newDescription, setNewDescription] = useState("");
 
@@ -34,27 +36,24 @@ export default function SpecialtyOverview() {
     const [editName, setEditName] = useState("");
     const [editDescription, setEditDescription] = useState("");
 
-    const { data: specialties = [], isLoading } = useSpecialties(search);
+    const { data: specialties = [], isLoading: isTableLoading } = useSpecialties(search);
+    const { data: allSpecialties = [], isLoading: isStatsLoading } = useSpecialties("");
     const deleteMutation = useDeleteSpecialty();
     const uploadMutation = useUploadSpecialties();
     const bulkDeleteMutation = useBulkDeleteSpecialties();
     const createMutation = useCreateSpecialty();
     const updateMutation = useUpdateSpecialty();
 
-    const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
+    const handleModalUpload = (file: File) => {
         uploadMutation.mutate(file, {
             onSuccess: (res: any) => {
                 toast.success(res?.message || "Specialties uploaded successfully!");
-                e.target.value = "";
+                setIsCsvModalOpen(false);
             },
             onError: (err: any) => {
                 const errMsg = getErrorMessage(err, "Failed to upload specialties");
                 toast.error(errMsg);
-                e.target.value = "";
-            }
+            },
         });
     };
 
@@ -122,19 +121,19 @@ export default function SpecialtyOverview() {
         });
     }, [specialties, dateFilter]);
 
-    // 2. Calculate Stats
+    // 2. Calculate Stats (computed from overall database specialties so search doesn't alter system totals)
     const stats = useMemo(() => {
-        const total = specialties?.length || 0;
+        const total = allSpecialties?.length || 0;
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        const recent = specialties?.filter((s: ExtendedSpecialty) => {
+        const recent = allSpecialties?.filter((s: ExtendedSpecialty) => {
             if (!s.createdAt) return false;
             return new Date(s.createdAt) >= thirtyDaysAgo;
         }).length || 0;
 
         return { total, recent };
-    }, [specialties]);
+    }, [allSpecialties]);
 
     // 3. Pagination Logic
     const totalPages = Math.ceil(filteredByDate.length / itemsPerPage);
@@ -227,18 +226,14 @@ export default function SpecialtyOverview() {
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50">
+                    <button
+                        type="button"
+                        onClick={() => setIsCsvModalOpen(true)}
+                        className="inline-flex h-9 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 truncate text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    >
                         <Upload className="h-4 w-4 text-gray-500" />
-                        {uploadMutation.isPending ? "Uploading..." : "Upload CSV"}
-                        <input
-                            type="file"
-                            accept=".csv"
-                            onChange={handleCsvUpload}
-                            disabled={uploadMutation.isPending}
-                            className="hidden"
-                        />
-                    </label>
-                    {/* Changed to open the modal instead of routing */}
+                        Upload CSV
+                    </button>
                     <button
                         onClick={() => setIsAddModalOpen(true)}
                         className="inline-flex h-9 items-center gap-2 rounded-lg bg-text px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
@@ -249,14 +244,12 @@ export default function SpecialtyOverview() {
                 </div>
             </div>
 
-            {/* ── Stats ─────────────────────────────────────────────────────── */}
             <SpecialtyStats
-                isLoading={isLoading}
+                isLoading={isStatsLoading}
                 total={stats.total}
                 recent={stats.recent}
             />
 
-            {/* ── Table Card ─────────────────────────────────────────── */}
             <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
                 <SpecialtyFilters
                     search={search}
@@ -269,7 +262,7 @@ export default function SpecialtyOverview() {
                 />
 
                 <SpecialtyTable
-                    isLoading={isLoading}
+                    isLoading={isTableLoading}
                     paginatedData={paginatedData}
                     selectedIds={selectedIds}
                     onSelectAll={handleSelectAll}
@@ -283,7 +276,6 @@ export default function SpecialtyOverview() {
                 />
             </div>
 
-            {/* ── Confirmation Modals ─────────────────────────────────── */}
             <ConfirmDialog
                 open={deleteTarget !== null}
                 onClose={() => setDeleteTarget(null)}
@@ -379,6 +371,13 @@ export default function SpecialtyOverview() {
                     />
                 </div>
             </FormModal>
+            {/* ── Specialty CSV Guide Upload Modal ────────────────── */}
+            <SpecialtyCsvModal
+                isOpen={isCsvModalOpen}
+                onClose={() => setIsCsvModalOpen(false)}
+                onUpload={handleModalUpload}
+                isUploading={uploadMutation.isPending}
+            />
         </div>
     );
 }

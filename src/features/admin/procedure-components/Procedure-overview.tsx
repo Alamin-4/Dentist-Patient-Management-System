@@ -16,8 +16,8 @@ import { CustomStats } from "@/app/(admin-dashboard)/modules/shared/custom-stats
 import { FormModal } from "@/components/ui/FormModal";
 import { ProcedureFilters } from "./ProcedureFilters";
 import { ProcedureTable } from "./ProcedureTable";
+import { CsvGuideModal } from "./csv-guide-modal";
 
-// Extend Procedure type to match backend returned shape
 type ExtendedProcedure = {
   id: string;
   name: string;
@@ -31,50 +31,42 @@ type ExtendedProcedure = {
 };
 
 export default function ProcedureOverview() {
-  // Search & Filtering States
   const [search, setSearch] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
-  const [dateFilter, setDateFilter] = useState(""); // Format: YYYY-MM
+  const [dateFilter, setDateFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Modals / Dialog States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newSpecialtyId, setNewSpecialtyId] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
-  // Selection States
   const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
 
-  // Hooks
-  const { data: procedures = [], isLoading } = useGlobalProcedures(search);
+  const { data: procedures = [], isLoading: isTableLoading } = useGlobalProcedures(search);
+  const { data: allProcedures = [], isLoading: isStatsLoading } = useGlobalProcedures("");
   const { data: specialties = [] } = useSpecialties("");
 
   const createMutation = useCreateGlobalProcedure();
   const deleteMutation = useDeleteGlobalProcedures();
   const uploadMutation = useBulkUploadGlobalProcedures();
 
-  // CSV File Handler
-  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const handleModalUpload = (file: File) => {
     uploadMutation.mutate(file, {
       onSuccess: (res: any) => {
         toast.success(res?.message || "Procedures uploaded successfully!");
-        e.target.value = "";
+        setIsCsvModalOpen(false);
       },
       onError: (err: any) => {
         const errMsg = getErrorMessage(err, "Failed to upload procedures");
         toast.error(errMsg);
-        e.target.value = "";
       },
     });
   };
 
-  // Add Procedure Submit Handler
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) {
@@ -106,7 +98,8 @@ export default function ProcedureOverview() {
   const filteredData = useMemo(() => {
     return (procedures as ExtendedProcedure[]).filter((p) => {
       // 1. Specialty Filter
-      if (selectedSpecialty && p.specialtyId !== selectedSpecialty) {
+      const itemSpecialtyId = p.specialtyId || (p.specialty as any)?.id;
+      if (selectedSpecialty && itemSpecialtyId !== selectedSpecialty) {
         return false;
       }
       // 2. Date Filter
@@ -197,17 +190,16 @@ export default function ProcedureOverview() {
     setSelectedIds([]);
   }, [currentPage]);
 
-  // Stats calculation
+  // Stats calculation (computed from overall database procedures so search doesn't alter system totals)
   const stats = useMemo(() => {
-    const total = procedures.length || 0;
-    const withSpecialty = (procedures as ExtendedProcedure[]).filter((p) => p.specialtyId).length || 0;
+    const total = allProcedures.length || 0;
+    const withSpecialty = (allProcedures as ExtendedProcedure[]).filter((p) => p.specialtyId).length || 0;
     const withoutSpecialty = total - withSpecialty;
     return { total, withSpecialty, withoutSpecialty };
-  }, [procedures]);
+  }, [allProcedures]);
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ── Page Header ─────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text">
@@ -218,20 +210,18 @@ export default function ProcedureOverview() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50">
-            <Upload className="h-4 w-4 text-gray-500" />
-            {uploadMutation.isPending ? "Uploading..." : "Upload CSV"}
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleCsvUpload}
-              disabled={uploadMutation.isPending}
-              className="hidden"
-            />
-          </label>
           <button
+            type="button"
+            onClick={() => setIsCsvModalOpen(true)}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 truncate text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+          >
+            <Upload className="h-4 w-4 text-gray-500" />
+            Upload CSV
+          </button>
+          <button
+            type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-text px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
+            className="inline-flex h-9 items-center gap-2 rounded-lg bg-text px-4 truncate text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2A2A3E]"
           >
             <Plus className="h-4 w-4" />
             Add Procedure
@@ -242,9 +232,9 @@ export default function ProcedureOverview() {
       {/* ── Stats Cards ────────────────────────────────────────────────── */}
       <CustomStats
         stats={[
-          { label: "TOTAL PROCEDURES", value: isLoading ? "..." : stats.total.toLocaleString() },
-          { label: "ASSIGNED TO SPECIALTY", value: isLoading ? "..." : stats.withSpecialty.toLocaleString() },
-          { label: "UNASSIGNED PROCEDURES", value: isLoading ? "..." : stats.withoutSpecialty.toLocaleString() },
+          { label: "TOTAL PROCEDURES", value: isStatsLoading ? "..." : stats.total.toLocaleString() },
+          { label: "ASSIGNED TO SPECIALTY", value: isStatsLoading ? "..." : stats.withSpecialty.toLocaleString() },
+          { label: "UNASSIGNED PROCEDURES", value: isStatsLoading ? "..." : stats.withoutSpecialty.toLocaleString() },
         ]}
         className="grid-cols-1 sm:grid-cols-3"
       />
@@ -265,7 +255,7 @@ export default function ProcedureOverview() {
         />
 
         <ProcedureTable
-          isLoading={isLoading}
+          isLoading={isTableLoading}
           paginatedData={paginatedData}
           selectedIds={selectedIds}
           onSelectAll={handleSelectAll}
@@ -341,6 +331,13 @@ export default function ProcedureOverview() {
         confirmText="Yes, Delete All"
         cancelText="Cancel"
         isLoading={deleteMutation.isPending}
+      />
+
+      <CsvGuideModal
+        isOpen={isCsvModalOpen}
+        onClose={() => setIsCsvModalOpen(false)}
+        onUpload={handleModalUpload}
+        isUploading={uploadMutation.isPending}
       />
     </div>
   );

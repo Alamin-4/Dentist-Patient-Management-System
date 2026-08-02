@@ -16,7 +16,15 @@ export function mapApiErrorToUserMessage(
   const data = e.response?.data || e.data;
   const errorsList = data?.errors || e.errors;
 
-  // 2. Structured API field error array from backend (if present)
+  const rawErrText = String(data?.message || e.message || "");
+  if (
+    rawErrText.includes("P2028") ||
+    rawErrText.includes("expired transaction") ||
+    rawErrText.includes("timeout for this transaction")
+  ) {
+    return "The server operation timed out while processing your request. Please try again or upload in smaller CSV batches.";
+  }
+
   if (Array.isArray(errorsList) && errorsList.length > 0) {
     const firstErr = errorsList[0];
     if (firstErr?.message && typeof firstErr.message === "string") {
@@ -24,7 +32,6 @@ export function mapApiErrorToUserMessage(
     }
   }
 
-  // 3. Extract direct message if present and user-friendly
   const directMessage = data?.message || e.message;
   if (
     directMessage &&
@@ -40,7 +47,6 @@ export function mapApiErrorToUserMessage(
     return directMessage;
   }
 
-  // 4. Status code fallbacks
   switch (status) {
     case 400:
       return "Invalid request details. Please check your input and try again.";

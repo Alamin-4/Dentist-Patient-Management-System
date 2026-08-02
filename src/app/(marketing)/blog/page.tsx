@@ -4,25 +4,20 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Search,
-  Calendar,
   User,
   BookOpen,
   ChevronRight,
   Sparkles,
-  ShieldCheck,
   TrendingUp,
-  Download,
   ArrowRight,
   Clock,
-  Tag
 } from "lucide-react";
 import { cn } from "@/core/lib/utils";
 import { apiClient } from "@/core/api/client";
 import CustomSectionHeading from "@/features/shared/custom-section-heading";
 import CustomDesText from "@/features/shared/custom-des-text";
-import toast from "react-hot-toast";
 
-interface BlogPost {
+export interface BlogPost {
   id: string;
   title: string;
   slug: string;
@@ -36,61 +31,6 @@ interface BlogPost {
   publishedAt?: string;
   createdAt: string;
 }
-
-const FALLBACK_POSTS: BlogPost[] = [
-  {
-    id: "fb-1",
-    title: "The Ultimate 2026 Guide to Dental Tourism in Mexico & Costa Rica",
-    slug: "ultimate-2026-guide-dental-tourism-mexico-costa-rica",
-    summary: "Discover how thousands of US and Canadian patients save 60% to 75% on dental implants, veneers, and crowns with top board-certified international specialists.",
-    content: "Full guide content...",
-    coverImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1200&auto=format&fit=crop",
-    author: "Dr. Elena Rostova",
-    category: "Dental Tourism Guides",
-    readTime: "7 min read",
-    isPublished: true,
-    createdAt: "2026-07-28T10:00:00.000Z",
-  },
-  {
-    id: "fb-2",
-    title: "All-on-4 Dental Implants: Cost Breakdown US vs. International Clinics",
-    slug: "all-on-4-implants-cost-breakdown-us-vs-international",
-    summary: "A transparent side-by-side pricing analysis comparing US dental procedure costs against verified clinics in Mexico, Colombia, and Turkey.",
-    content: "Full breakdown content...",
-    coverImage: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop",
-    author: "Dr. Marcus Vance",
-    category: "Cost & Savings",
-    readTime: "5 min read",
-    isPublished: true,
-    createdAt: "2026-07-25T14:30:00.000Z",
-  },
-  {
-    id: "fb-3",
-    title: "How RatedDocs Vets International Dentist Licenses & RDV Scores",
-    slug: "how-rateddocs-vets-international-dentist-licenses",
-    summary: "Inside our 5-stage verification process: credential audits, malpractice check, patient review authentication, and hygiene standards verification.",
-    content: "Verification methodology...",
-    coverImage: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop",
-    author: "RatedDocs Quality Team",
-    category: "Safety & Verification",
-    readTime: "4 min read",
-    isPublished: true,
-    createdAt: "2026-07-20T09:15:00.000Z",
-  },
-  {
-    id: "fb-4",
-    title: "Porcelain Veneers Aftercare: 7 Tips for a Lifetime Smile",
-    slug: "porcelain-veneers-aftercare-tips",
-    summary: "Essential maintenance practices and hygiene guidelines recommended by leading cosmetic dentists to protect your new veneers.",
-    content: "Aftercare tips...",
-    coverImage: "https://images.unsplash.com/photo-1571772996211-2f02c9727629?q=80&w=800&auto=format&fit=crop",
-    author: "Dr. Sarah Jenkins",
-    category: "Procedure Guides",
-    readTime: "4 min read",
-    isPublished: true,
-    createdAt: "2026-07-15T11:20:00.000Z",
-  },
-];
 
 const CATEGORIES = [
   "All Articles",
@@ -110,23 +50,25 @@ const DESTINATIONS = [
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Articles");
-  const [guideEmail, setGuideEmail] = useState("");
-  const [downloadingGuide, setDownloadingGuide] = useState(false);
 
   useEffect(() => {
     const loadBlogPosts = async () => {
       try {
+        setLoading(true);
         const response = await apiClient.blogs.getPublished();
-        if (response?.data && response.data.length > 0) {
-          setPosts(response.data);
+        const apiData = response?.data || response;
+        if (Array.isArray(apiData)) {
+          setPosts(apiData);
         } else {
-          setPosts(FALLBACK_POSTS);
+          setPosts([]);
         }
-      } catch (e) {
-        console.error("Error loading blog posts from database:", e);
-        setPosts(FALLBACK_POSTS);
+      } catch (err: any) {
+        setPosts([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -155,20 +97,6 @@ export default function BlogPage() {
     return filteredPosts.slice(1);
   }, [filteredPosts]);
 
-  const handleGuideDownload = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!guideEmail || !guideEmail.includes("@")) {
-      toast.error("Please enter a valid email address.");
-      return;
-    }
-    setDownloadingGuide(true);
-    setTimeout(() => {
-      toast.success("Check your email! Your 2026 Dental Tourism Checklist PDF is on its way.");
-      setGuideEmail("");
-      setDownloadingGuide(false);
-    }, 1000);
-  };
-
   return (
     <div className="bg-slate-50 flex-1 py-8 sm:py-12 px-4 sm:px-6 md:px-12 flex flex-col">
       <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10 flex-1 flex flex-col">
@@ -180,7 +108,7 @@ export default function BlogPage() {
               <span>RatedDocs Knowledge Hub</span>
             </div>
             <CustomSectionHeading value="Dental Tourism & Oral Health Resource Center" />
-            <CustomDesText value="Vetted guides, transparent procedure pricing comparisons, and expert international dentist safety standards." />
+            <CustomDesText value="Vetted guides, transparent procedure pricing comparisons, and expert international dentist safety standards directly from our database." />
           </div>
 
           <div className="relative w-full md:w-80 shrink-0">
@@ -188,7 +116,7 @@ export default function BlogPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search guides, procedures, countries..."
+              placeholder="Search database articles..."
               className="h-11 w-full rounded-xl border border-gray-200 pl-10 pr-4 text-xs sm:text-sm font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-xs"
             />
             <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
@@ -230,21 +158,29 @@ export default function BlogPage() {
           </div>
         </div>
 
-        {filteredPosts.length === 0 ? (
+        {loading ? (
+          <div className="flex-1 flex flex-col items-center justify-center py-20 bg-white border border-border rounded-2xl">
+            <div className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-primary animate-spin mb-3" />
+            <p className="text-xs text-slate-400 font-medium">Loading published articles from database...</p>
+          </div>
+        ) : filteredPosts.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-16 px-4 bg-white border border-border rounded-2xl text-sm font-medium text-gray-400 shadow-xs min-h-75 space-y-3">
             <BookOpen className="h-10 w-10 text-slate-300" />
-            <p className="text-base text-text font-bold">No articles found matching "{search}"</p>
-            <p className="text-xs text-sec-text">Try searching for keywords like "Implants", "Mexico", or "Veneers".</p>
-            <button
-              onClick={() => { setSearch(""); setSelectedCategory("All Articles"); }}
-              className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer"
-            >
-              Clear filters
-            </button>
+            <p className="text-base text-text font-bold">No published blog posts found in database</p>
+            <p className="text-xs text-sec-text">
+              {search ? `No articles matching "${search}"` : "Articles published in the database will appear here."}
+            </p>
+            {search && (
+              <button
+                onClick={() => { setSearch(""); setSelectedCategory("All Articles"); }}
+                className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-12">
-
             {featuredPost && (
               <Link
                 href={`/blog/${featuredPost.slug}`}
@@ -252,7 +188,7 @@ export default function BlogPage() {
               >
                 <div className="lg:col-span-3 h-64 sm:h-80 md:h-96 relative bg-slate-100 overflow-hidden">
                   <img
-                    src={featuredPost.coverImage}
+                    src={featuredPost.coverImage || "/placeholder-blog.jpg"}
                     alt={featuredPost.title}
                     className="h-full w-full object-cover group-hover:scale-103 transition-transform duration-500"
                   />
@@ -305,7 +241,7 @@ export default function BlogPage() {
                     </div>
 
                     <span className="flex items-center gap-1 text-primary text-xs sm:text-sm font-bold group-hover:translate-x-1 transition-transform">
-                      Read Full Guide
+                      Read Full Article
                       <ChevronRight className="h-4 w-4" />
                     </span>
                   </div>
@@ -346,7 +282,7 @@ export default function BlogPage() {
                   >
                     <div className="h-48 w-full bg-slate-100 overflow-hidden relative">
                       <img
-                        src={post.coverImage}
+                        src={post.coverImage || "/placeholder-blog.jpg"}
                         alt={post.title}
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -402,7 +338,6 @@ export default function BlogPage() {
             )}
           </div>
         )}
-
       </div>
     </div>
   );
