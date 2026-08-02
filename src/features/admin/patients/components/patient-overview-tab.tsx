@@ -263,7 +263,7 @@ export function PatientOverviewTab({
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Available credits</span>
-              <span className="font-semibold text-amber-500">
+              <span className="font-semibold text-accent">
                 ${profile.referrals.available_credits}
               </span>
             </div>

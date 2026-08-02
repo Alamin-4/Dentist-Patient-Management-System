@@ -69,7 +69,7 @@ export default function VerifiedDentists() {
 
 
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-12 md:py-20 bg-white">
       <div className="mx-auto mb-10 md:mb-12 w-11/12 max-w-400 space-y-3 text-center lg:text-left">
         <CustomSectionHeading value="Verified Dentists" />
         <CustomDesText value="Every dentist is trusted. Every review is from a real patient." />

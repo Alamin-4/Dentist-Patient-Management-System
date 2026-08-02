@@ -200,8 +200,8 @@ function UnverifiedWarning({ dentist }: UnverifiedWarningProps) {
   return (
     <div className="flex flex-col items-center justify-center py-6">
       <div className="relative mb-6">
-        <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl scale-150"></div>
-        <div className="relative bg-amber-50 border border-amber-200 text-amber-600 rounded-2xl p-4 shadow-sm">
+        <div className="absolute inset-0 bg-accent/10 rounded-full blur-xl scale-150"></div>
+        <div className="relative bg-amber-50 border border-amber-200 text-accent rounded-2xl p-4 shadow-sm">
           <ShieldAlert className="size-12 stroke-[1.5]" />
         </div>
       </div>
@@ -229,7 +229,7 @@ function UnverifiedWarning({ dentist }: UnverifiedWarningProps) {
             <span className="font-semibold text-slate-700 truncate">
               {dentist.name}
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 uppercase tracking-wider">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-accent/10 text-accent/95 uppercase tracking-wider">
               {dentist.status}
             </span>
           </div>

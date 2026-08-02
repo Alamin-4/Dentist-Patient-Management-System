@@ -144,13 +144,13 @@ export default function BookingDetailPage({
     const et = booking.payment.escrow_type;
     if (et === "in_escrow") {
       return (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700">
-          <AlertCircle className="h-4 w-4 shrink-0 text-amber-500" />
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-accent/95">
+          <AlertCircle className="h-4 w-4 shrink-0 text-accent" />
           <div>
             <p className="text-sm font-semibold">
               ${booking.amount.toLocaleString()} In Escrow
             </p>
-            <p className="text-xs text-amber-600">
+            <p className="text-xs text-accent">
               Protected · No Surprise Guarantee
             </p>
           </div>

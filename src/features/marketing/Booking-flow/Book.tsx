@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStateContext } from "@/providers/StateProvider";
@@ -53,8 +54,6 @@ export default function IntakeModal() {
   useEffect(() => {
     if (showBookingModal === "book") {
       const draft = getBookingDraft();
-      // If step 6 (the final step) is already completed, do not reopen the intake modal.
-      // Redirect directly to the appropriate screen.
       if (draft.consultationId && draft.completedSteps.includes(TOTAL_STEPS)) {
         setShowBookingModal(null);
         if (bookingMode === "request") {
@@ -414,7 +413,6 @@ export default function IntakeModal() {
           onEscapeKeyDown={(e) => e.preventDefault()}
           className="sm:max-w-212 max-h-[90vh] flex flex-col w-full p-0 border-none rounded-lg bg-white overflow-hidden"
         >
-          {/* Header */}
           <div className="relative bg-white pl-8 pr-16 py-6 border-b border-[#F3F4F6] shrink-0">
             <DialogTitle className="text-[20px] font-bold text-text">
               {bookingMode === "request" ? "Request Consultation" : "Book Consultation"}
@@ -422,7 +420,6 @@ export default function IntakeModal() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-8 min-h-0">
-            {/* Progress bar */}
             <div className="flex items-center gap-4 mb-8">
               <div className="flex-1 h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
                 <div

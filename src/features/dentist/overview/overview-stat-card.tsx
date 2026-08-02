@@ -12,7 +12,7 @@ const ICON_MAP: Record<StatIcon, React.ElementType> = {
 
 const ICON_STYLES: Record<StatIcon, { bg: string; text: string }> = {
   calendar: { bg: "bg-secondary", text: "text-brand-medium-navy" },
-  clock: { bg: "bg-amber-100/70", text: "text-amber-700" },
+  clock: { bg: "bg-accent/10/70", text: "text-accent/95" },
   dollar: { bg: "bg-secondary", text: "text-brand-medium-navy" },
   target: { bg: "bg-secondary", text: "text-brand-medium-navy" },
 };

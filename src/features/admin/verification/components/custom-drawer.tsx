@@ -86,7 +86,7 @@ export function CustomDrawer({
           ? "text-emerald-600"
           : dentist.queue_status === "rejected"
             ? "text-red-500"
-            : "text-amber-600",
+            : "text-accent",
     };
   }, [activePhase, dentist]);
 

@@ -101,7 +101,7 @@ export default function PaymentInfo({
           </div>
         ) : !isVerified ? (
           <div className="rounded-lg border border-amber-200 p-4 bg-amber-50/50 flex items-start gap-3">
-            <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+            <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
               <ShieldCheck className="size-6" />
             </div>
             <div className="space-y-1">
@@ -173,7 +173,7 @@ export default function PaymentInfo({
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${isFullyOnboarded
                           ? "bg-emerald-100 text-emerald-800"
-                          : "bg-amber-100 text-amber-800"
+                          : "bg-accent/10 text-accent/95"
                           }`}
                       >
                         {isFullyOnboarded ? "Active Payouts" : "Setup Incomplete"}

@@ -192,7 +192,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
               {isClaimableProfile && (
                 <Button
                   variant="outline"
-                  className="h-10 sm:h-11 text-xs sm:text-sm border-amber-500 text-amber-700 bg-amber-50/50 hover:bg-amber-50 font-bold"
+                  className="h-10 sm:h-11 text-xs sm:text-sm border-accent text-accent/95 bg-amber-50/50 hover:bg-amber-50 font-bold"
                   onClick={() =>
                     router.push(`/find-dentists/${dentist.slug}/claim`)
                   }
@@ -228,7 +228,7 @@ function TrustPill({
     green:
       "text-badge bg-green-50 border-badge/20",
     amber:
-      "text-amber-600 bg-amber-50 border-amber-200",
+      "text-accent bg-amber-50 border-amber-200",
     slate:
       "text-slate-600 bg-slate-50 border-slate-200",
     blue: "text-brand-medium-navy bg-secondary border-brand-medium-navy/10",
@@ -236,7 +236,7 @@ function TrustPill({
 
   const iconColor: Record<string, string> = {
     green: "text-badge",
-    amber: "text-amber-500",
+    amber: "text-accent",
     slate: "text-slate-400",
     blue: "text-brand-medium-navy",
   };

@@ -17,7 +17,7 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
 
       <div className="relative z-10 mx-auto max-w-2xl w-11/12 text-center space-y-8">
         {/* Simple Icon Badge */}
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-50 border border-amber-100 text-[#E3A32A]">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-50 border border-accent/10 text-[#E3A32A]">
           <CalendarDays className="w-8 h-8" />
         </div>
 

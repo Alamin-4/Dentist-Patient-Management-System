@@ -21,7 +21,7 @@ export default function UnauthorizedPage() {
   };
 
   return (
-    <section className="relative w-full bg-[#F9FAF8] py-16 md:py-24 flex-1 flex items-center justify-center">
+    <section className="relative w-full bg-[#F9FAF8] py-12 md:py-20 flex-1 flex items-center justify-center">
       {/* Background decoration to match marketing warmth */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-[#2e90fa]/5 rounded-full blur-3xl" />

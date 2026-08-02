@@ -89,7 +89,7 @@ export const statCards: StatCard[] = [
     comparison: "vs last month",
     icon: "dollar",
     iconBg: "bg-amber-50",
-    iconColor: "text-amber-500",
+    iconColor: "text-accent",
   },
 ];
 
