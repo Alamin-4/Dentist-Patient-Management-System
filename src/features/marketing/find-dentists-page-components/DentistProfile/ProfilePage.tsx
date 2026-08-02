@@ -35,7 +35,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
             {showPlaceholder ? (
               <div className="rounded-lg border border-dashed border-slate-200 bg-white p-10 text-center space-y-5 shadow-sm">
                 <div className="mx-auto size-14 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
-                  <ShieldAlert className="size-8 text-amber-500" />
+                  <ShieldAlert className="size-8 text-accent" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-bold text-primary">
@@ -52,7 +52,7 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
                   <div className="flex justify-center">
                     <Button
                       variant="default"
-                      className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 shadow-sm transition-colors"
+                      className="bg-accent hover:bg-accent text-white font-bold px-6 shadow-sm transition-colors"
                       onClick={() => {
                         router.push(`/find-dentists/${dentist.slug}/claim`);
                       }}

@@ -434,7 +434,7 @@ export default function ClaimProfilePage() {
             {/* 1. Account type validation block */}
             {isNotDentist && (
               <div className="text-center py-6 space-y-4 animate-scaleUp">
-                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-accent">
                   <AlertCircle className="size-8" />
                 </div>
                 <div className="space-y-2">
@@ -469,7 +469,7 @@ export default function ClaimProfilePage() {
             {/* 2. Dentist owns another profile validation block */}
             {!isNotDentist && hasAlreadyClaimedAnother && (
               <div className="text-center py-6 space-y-4 animate-scaleUp">
-                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-accent">
                   <AlertCircle className="size-8" />
                 </div>
                 <div className="space-y-2">
@@ -528,7 +528,7 @@ export default function ClaimProfilePage() {
             {/* 3.5 Profile already claimed by someone else block */}
             {!isNotDentist && !hasAlreadyClaimedAnother && !hasAlreadyClaimedThis && isProfileAlreadyClaimedBySomeoneElse && (
               <div className="text-center py-6 space-y-4 animate-scaleUp">
-                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-accent">
                   <AlertCircle className="size-8" />
                 </div>
                 <div className="space-y-2">

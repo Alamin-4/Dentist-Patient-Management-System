@@ -7,7 +7,7 @@ export function PhaseTabIcon({ status }: { status: PhaseStatus }) {
   }
 
   if (status === "pending") {
-    return <Clock className="h-4 w-4 text-amber-500" />;
+    return <Clock className="h-4 w-4 text-accent" />;
   }
 
   if (status === "rejected") {

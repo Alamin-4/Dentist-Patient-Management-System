@@ -109,7 +109,7 @@ export default function DentistsPage() {
   const stats = [
     { label: "Total Dentists", value: (apiMeta?.total_verifications ?? 0).toLocaleString(), sub: "Registered on platform" },
     { label: "Active", value: meta.active.toLocaleString(), sub: meta.active_pct },
-    { label: "Pending Verification", value: (apiMeta?.pending_review ?? 0).toLocaleString(), sub: "Awaiting review", valueColor: "text-amber-500" },
+    { label: "Pending Verification", value: (apiMeta?.pending_review ?? 0).toLocaleString(), sub: "Awaiting review", valueColor: "text-accent" },
     { label: "Suspended", value: meta.suspended.toString(), sub: meta.suspended_pct },
     { label: "Directory Entries", value: (apiMeta?.totalDirectory ?? 0).toLocaleString(), sub: "Imported via CSV" },
     { label: "Subscribed Members", value: (apiMeta?.totalSubscribed ?? 0).toLocaleString(), sub: "Active paid plans" },

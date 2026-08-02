@@ -121,7 +121,7 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
       : patient.treatmentPlan === "rejected"
         ? "border-rose-200 bg-rose-50 text-rose-600"
         : patient.treatmentPlan === "awaiting response"
-          ? "border-amber-200 bg-amber-50 text-amber-700"
+          ? "border-amber-200 bg-amber-50 text-accent/95"
           : "border-slate-200 bg-slate-50 text-slate-600";
 
   return (
@@ -201,7 +201,7 @@ export default function PatientDetails({ patient }: PatientDetailsProps) {
         <div
           className={`rounded-lg border px-4 py-3 text-sm font-medium ${patient.treatmentPlan === "rejected"
             ? "border-rose-200 bg-rose-50 text-rose-600"
-            : "border-amber-200 bg-amber-50 text-amber-700"
+            : "border-amber-200 bg-amber-50 text-accent/95"
             }`}
         >
           {patient.treatmentNote}

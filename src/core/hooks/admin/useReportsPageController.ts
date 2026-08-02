@@ -315,7 +315,7 @@ export function useReportsPageController() {
     return [
       { label: "Active Flags", value: 0, sub: "Content flags raised", color: "text-orange-600" },
       { label: "Suspended Accounts", value: 0, sub: "Accounts blocked", color: "text-destructive-600" },
-      { label: "Pending Verification", value: pendingCount, sub: "Queue backlog", color: "text-amber-600" },
+      { label: "Pending Verification", value: pendingCount, sub: "Queue backlog", color: "text-accent" },
       { label: "Cleared Verification", value: list.length - pendingCount, sub: "Successfully vetted", color: "text-success-600" },
       { label: "Avg Process Time", value: "2.4d", sub: "Below 3-day target", color: "text-purple-600" },
       { label: "Compliance Rate", value: "100%", sub: "Reconciled status", color: "text-success-600" },

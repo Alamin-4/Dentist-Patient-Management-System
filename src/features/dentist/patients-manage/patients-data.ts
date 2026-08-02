@@ -175,13 +175,13 @@ export function buildPatientRecords(
       patientCode: `#RD-${7400 + index}`,
       appointmentDate: record.patient_timeline[0]?.date
         ? new Date(record.patient_timeline[0].date).toLocaleDateString(
-            "en-US",
-            {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            },
-          )
+          "en-US",
+          {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          },
+        )
         : "June 15, 2026",
       treatmentPlan: patientInfo.treatment_plan,
       status: patientInfo.status,
@@ -208,19 +208,19 @@ export function buildPatientRecords(
       ),
       attachedDocument: record.payment_and_documents?.attached_document
         ? {
-            fileName: record.payment_and_documents.attached_document.file_name,
-            fileSize: record.payment_and_documents.attached_document.file_size,
-          }
+          fileName: record.payment_and_documents.attached_document.file_name,
+          fileSize: record.payment_and_documents.attached_document.file_size,
+        }
         : null,
       review: record.review
         ? {
-            text: record.review.text,
-            ratings: {
-              communication: record.review.ratings.communication.toFixed(1),
-              valueForMoney: record.review.ratings.value_for_money.toFixed(1),
-              followThrough: record.review.ratings.follow_through.toFixed(1),
-            },
-          }
+          text: record.review.text,
+          ratings: {
+            communication: record.review.ratings.communication.toFixed(1),
+            valueForMoney: record.review.ratings.value_for_money.toFixed(1),
+            followThrough: record.review.ratings.follow_through.toFixed(1),
+          },
+        }
         : null,
       treatmentNote:
         patientInfo.treatment_plan === "rejected"
@@ -264,7 +264,7 @@ export function getTreatmentPlanBadgeClasses(status: string) {
     return "border-slate-200 bg-slate-50 text-slate-600";
   }
 
-  return "border-amber-200 bg-amber-50 text-amber-700";
+  return "border-amber-200 bg-amber-50 text-accent/95";
 }
 
 export function getStatusBadgeClasses(status: string) {
@@ -300,5 +300,5 @@ export function getTimelineBadgeClasses(status: string) {
     return "border-slate-200 bg-slate-50 text-slate-600";
   }
 
-  return "border-amber-200 bg-amber-50 text-amber-700";
+  return "border-amber-200 bg-amber-50 text-accent/95";
 }

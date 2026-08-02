@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const KPI_ICONS: Record<string, { icon: React.ElementType; iconBg: string; iconColor: string }> = {
   revenue: { icon: DollarSign, iconBg: "bg-success-50", iconColor: "text-success-600" },
   fees: { icon: BarChart3, iconBg: "bg-sky-50", iconColor: "text-sky-600" },
-  escrow: { icon: ShieldCheck, iconBg: "bg-amber-50", iconColor: "text-amber-500" },
+  escrow: { icon: ShieldCheck, iconBg: "bg-amber-50", iconColor: "text-accent" },
   bookings: { icon: CalendarDays, iconBg: "bg-purple-50", iconColor: "text-purple-500" },
   dentists: { icon: Users, iconBg: "bg-gray-100", iconColor: "text-gray-600" },
   refunds: { icon: AlertTriangle, iconBg: "bg-destructive-50", iconColor: "text-destructive-500" },

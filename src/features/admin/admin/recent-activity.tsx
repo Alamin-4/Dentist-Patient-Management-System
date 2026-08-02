@@ -24,7 +24,7 @@ function getIconConfig(type: ActivityItem["type"]): IconConfig {
       bg: "bg-blue-50",
     },
     flagged: {
-      icon: <Flag className="h-4 w-4 text-amber-500" />,
+      icon: <Flag className="h-4 w-4 text-accent" />,
       bg: "bg-amber-50",
     },
     payout: {

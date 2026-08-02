@@ -170,7 +170,6 @@ export default function PersonalInfoForm({
           )}
         </div>
 
-        {/* Date of Birth */}
         <div>
           <label className={labelCls}>
             Date of Birth <span className="text-red-500">*</span>
@@ -198,7 +197,6 @@ export default function PersonalInfoForm({
           )}
         </div>
 
-        {/* Country */}
         <div>
           <label className={labelCls}>
             Country <span className="text-red-500">*</span>

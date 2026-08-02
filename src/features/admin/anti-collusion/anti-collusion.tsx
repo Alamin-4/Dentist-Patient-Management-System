@@ -73,7 +73,7 @@ function FlagBadge({ count, threshold }: { count: number; threshold: number }) {
     <span
       className={cn(
         "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold",
-        maxed ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-700"
+        maxed ? "bg-red-100 text-red-600" : "bg-accent/10 text-accent/95"
       )}
     >
       {count}/{threshold}
@@ -83,7 +83,7 @@ function FlagBadge({ count, threshold }: { count: number; threshold: number }) {
 
 const STATUS_CONFIG: Record<DentistStatus, { label: string; dot: string; badge: string }> = {
   suspended: { label: "Suspended", dot: "bg-red-500", badge: "bg-red-50 text-red-600 border-red-200" },
-  warning: { label: "Warning", dot: "bg-amber-500", badge: "bg-amber-50 text-amber-700 border-amber-200" },
+  warning: { label: "Warning", dot: "bg-accent", badge: "bg-amber-50 text-accent/95 border-amber-200" },
   clean: { label: "Clean", dot: "bg-emerald-500", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   cleared: { label: "Cleared", dot: "bg-teal-500", badge: "bg-teal-50 text-teal-700 border-teal-200" },
   removed: { label: "Removed", dot: "bg-gray-400", badge: "bg-gray-50 text-gray-500 border-gray-200" },
@@ -362,7 +362,7 @@ export default function AntiCollusion() {
             icon={<Activity className="h-5 w-5 text-amber-400" />}
             label="Active Investigations"
             value={metaMetrics.active_investigations}
-            valueColor="text-amber-600"
+            valueColor="text-accent"
           />
           <StatCard
             icon={<OctagonAlert className="h-5 w-5 text-red-400" />}

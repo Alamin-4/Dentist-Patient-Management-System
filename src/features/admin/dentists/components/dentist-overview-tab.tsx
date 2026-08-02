@@ -107,19 +107,19 @@ function PhaseBadge({ status }: { status: string }) {
     },
     pending: {
       label: "Pending Review",
-      className: "bg-amber-50 text-amber-600 border border-amber-200",
+      className: "bg-amber-50 text-accent border border-amber-200",
     },
     in_review: {
       label: "Pending Review",
-      className: "bg-amber-50 text-amber-600 border border-amber-200",
+      className: "bg-amber-50 text-accent border border-amber-200",
     },
     submitted: {
       label: "Pending Review",
-      className: "bg-amber-50 text-amber-600 border border-amber-200",
+      className: "bg-amber-50 text-accent border border-amber-200",
     },
     submit: {
       label: "Pending Review",
-      className: "bg-amber-50 text-amber-600 border border-amber-200",
+      className: "bg-amber-50 text-accent border border-amber-200",
     },
     rejected: {
       label: "Rejected",
@@ -369,12 +369,12 @@ export function DentistOverviewTab({
 
         {isSubmitted(phase2Status) && (
           <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-amber-50 px-4 py-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
             <div>
-              <p className="text-sm font-semibold text-amber-700">
+              <p className="text-sm font-semibold text-accent/95">
                 Verification in progress — Phase 2 of 3 pending
               </p>
-              <p className="text-xs text-amber-600">
+              <p className="text-xs text-accent">
                 This dentist is not yet live on the platform. Review and approve
                 Phase 2 — Operations to proceed.
               </p>

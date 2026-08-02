@@ -120,8 +120,8 @@ export default function PatientDetailsDrawer({
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative mr-6 pb-3 text-sm transition-colors px-4 ${isActive
-                      ? "font-semibold text-primary"
-                      : "font-medium text-muted-foreground hover:text-foreground"
+                    ? "font-semibold text-primary"
+                    : "font-medium text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   {tab.label}
@@ -194,12 +194,12 @@ export default function PatientDetailsDrawer({
                 <div className="border-b border-border px-5 py-4">
                   <div
                     className={`rounded-lg border px-4 py-3 text-sm font-medium ${patient.treatmentPlan === "rejected"
-                        ? "border-rose-200 bg-rose-50 text-rose-600"
-                        : patient.treatmentPlan === "awaiting response"
-                          ? "border-amber-200 bg-amber-50 text-amber-700"
-                          : patient.treatmentPlan === "accepted"
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                            : "border-slate-200 bg-slate-50 text-slate-600"
+                      ? "border-rose-200 bg-rose-50 text-rose-600"
+                      : patient.treatmentPlan === "awaiting response"
+                        ? "border-amber-200 bg-amber-50 text-accent/95"
+                        : patient.treatmentPlan === "accepted"
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          : "border-slate-200 bg-slate-50 text-slate-600"
                       }`}
                   >
                     {patient.treatmentNote ?? patient.consultationSummary}

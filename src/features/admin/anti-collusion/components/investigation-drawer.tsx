@@ -19,7 +19,7 @@ interface InvestigationDrawerProps {
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   suspended: { label: "Suspended", className: "bg-red-100 text-red-600 border border-red-200" },
-  warning: { label: "Warning", className: "bg-amber-100 text-amber-700 border border-amber-200" },
+  warning: { label: "Warning", className: "bg-accent/10 text-accent/95 border border-amber-200" },
   clean: { label: "Clean", className: "bg-emerald-100 text-emerald-700 border border-emerald-200" },
   cleared: { label: "Cleared", className: "bg-teal-100 text-teal-700 border border-teal-200" },
   removed: { label: "Removed", className: "bg-gray-100 text-gray-500 border border-gray-200" },
@@ -28,7 +28,7 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
 const RESPONSE_STYLE: Record<string, string> = {
   accepted: "text-emerald-600",
   cancelled: "text-red-500",
-  disputed: "text-amber-600",
+  disputed: "text-accent",
 };
 
 export function InvestigationDrawer({
@@ -135,7 +135,7 @@ export function InvestigationDrawer({
                     >
                       {/* Flag header */}
                       <div className="flex items-center gap-2 border-b border-gray-50 px-4 py-3">
-                        <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">
+                        <span className="rounded-md bg-accent/10 px-2 py-0.5 text-xs font-bold text-accent/95">
                           FLAG {flag.flag_number}
                         </span>
                         <span

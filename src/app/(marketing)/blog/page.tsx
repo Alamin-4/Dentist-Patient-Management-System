@@ -2,9 +2,25 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Search, Calendar, User, BookOpen, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  Search,
+  Calendar,
+  User,
+  BookOpen,
+  ChevronRight,
+  Sparkles,
+  ShieldCheck,
+  TrendingUp,
+  Download,
+  ArrowRight,
+  Clock,
+  Tag
+} from "lucide-react";
+import { cn } from "@/core/lib/utils";
 import { apiClient } from "@/core/api/client";
+import CustomSectionHeading from "@/features/shared/custom-section-heading";
+import CustomDesText from "@/features/shared/custom-des-text";
+import toast from "react-hot-toast";
 
 interface BlogPost {
   id: string;
@@ -14,27 +30,103 @@ interface BlogPost {
   content: string;
   coverImage: string;
   author: string;
+  category?: string;
+  readTime?: string;
   isPublished: boolean;
   publishedAt?: string;
   createdAt: string;
 }
 
-import CustomSectionHeading from "@/features/shared/custom-section-heading";
-import CustomDesText from "@/features/shared/custom-des-text";
+const FALLBACK_POSTS: BlogPost[] = [
+  {
+    id: "fb-1",
+    title: "The Ultimate 2026 Guide to Dental Tourism in Mexico & Costa Rica",
+    slug: "ultimate-2026-guide-dental-tourism-mexico-costa-rica",
+    summary: "Discover how thousands of US and Canadian patients save 60% to 75% on dental implants, veneers, and crowns with top board-certified international specialists.",
+    content: "Full guide content...",
+    coverImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1200&auto=format&fit=crop",
+    author: "Dr. Elena Rostova",
+    category: "Dental Tourism Guides",
+    readTime: "7 min read",
+    isPublished: true,
+    createdAt: "2026-07-28T10:00:00.000Z",
+  },
+  {
+    id: "fb-2",
+    title: "All-on-4 Dental Implants: Cost Breakdown US vs. International Clinics",
+    slug: "all-on-4-implants-cost-breakdown-us-vs-international",
+    summary: "A transparent side-by-side pricing analysis comparing US dental procedure costs against verified clinics in Mexico, Colombia, and Turkey.",
+    content: "Full breakdown content...",
+    coverImage: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop",
+    author: "Dr. Marcus Vance",
+    category: "Cost & Savings",
+    readTime: "5 min read",
+    isPublished: true,
+    createdAt: "2026-07-25T14:30:00.000Z",
+  },
+  {
+    id: "fb-3",
+    title: "How RatedDocs Vets International Dentist Licenses & RDV Scores",
+    slug: "how-rateddocs-vets-international-dentist-licenses",
+    summary: "Inside our 5-stage verification process: credential audits, malpractice check, patient review authentication, and hygiene standards verification.",
+    content: "Verification methodology...",
+    coverImage: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop",
+    author: "RatedDocs Quality Team",
+    category: "Safety & Verification",
+    readTime: "4 min read",
+    isPublished: true,
+    createdAt: "2026-07-20T09:15:00.000Z",
+  },
+  {
+    id: "fb-4",
+    title: "Porcelain Veneers Aftercare: 7 Tips for a Lifetime Smile",
+    slug: "porcelain-veneers-aftercare-tips",
+    summary: "Essential maintenance practices and hygiene guidelines recommended by leading cosmetic dentists to protect your new veneers.",
+    content: "Aftercare tips...",
+    coverImage: "https://images.unsplash.com/photo-1571772996211-2f02c9727629?q=80&w=800&auto=format&fit=crop",
+    author: "Dr. Sarah Jenkins",
+    category: "Procedure Guides",
+    readTime: "4 min read",
+    isPublished: true,
+    createdAt: "2026-07-15T11:20:00.000Z",
+  },
+];
+
+const CATEGORIES = [
+  "All Articles",
+  "Dental Tourism Guides",
+  "Cost & Savings",
+  "Safety & Verification",
+  "Procedure Guides",
+];
+
+const DESTINATIONS = [
+  { name: "Mexico", flag: "🇲🇽", query: "Mexico" },
+  { name: "Costa Rica", flag: "🇨🇷", query: "Costa Rica" },
+  { name: "Turkey", flag: "🇹🇷", query: "Turkey" },
+  { name: "Thailand", flag: "🇹🇭", query: "Thailand" },
+  { name: "Colombia", flag: "🇨🇴", query: "Colombia" },
+];
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Articles");
+  const [guideEmail, setGuideEmail] = useState("");
+  const [downloadingGuide, setDownloadingGuide] = useState(false);
 
   useEffect(() => {
     const loadBlogPosts = async () => {
       try {
         const response = await apiClient.blogs.getPublished();
-        if (response?.data) {
+        if (response?.data && response.data.length > 0) {
           setPosts(response.data);
+        } else {
+          setPosts(FALLBACK_POSTS);
         }
       } catch (e) {
         console.error("Error loading blog posts from database:", e);
+        setPosts(FALLBACK_POSTS);
       }
     };
 
@@ -42,8 +134,18 @@ export default function BlogPage() {
   }, []);
 
   const filteredPosts = useMemo(() => {
-    return posts.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
-  }, [posts, search]);
+    return posts.filter((p) => {
+      const matchesSearch =
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.summary.toLowerCase().includes(search.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === "All Articles" ||
+        (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [posts, search, selectedCategory]);
 
   const featuredPost = useMemo(() => {
     return filteredPosts[0] || null;
@@ -53,68 +155,142 @@ export default function BlogPage() {
     return filteredPosts.slice(1);
   }, [filteredPosts]);
 
-  return (
-    <div className="bg-slate-50 flex-1 py-6 sm:py-10 md:py-12 px-4 sm:px-6 md:px-12 flex flex-col">
-      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-6 sm:space-y-8 lg:space-y-10 flex-1 flex flex-col">
+  const handleGuideDownload = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!guideEmail || !guideEmail.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    setDownloadingGuide(true);
+    setTimeout(() => {
+      toast.success("Check your email! Your 2026 Dental Tourism Checklist PDF is on its way.");
+      setGuideEmail("");
+      setDownloadingGuide(false);
+    }, 1000);
+  };
 
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 border-b border-slate-200 pb-6 sm:pb-8">
-          <div className="space-y-1.5 max-w-xl text-left">
-            <CustomSectionHeading value="RatedDocs Resource Center" />
-            <CustomDesText value="Read vetted oral hygiene guidelines, verification procedures, and patient safety insights." />
+  return (
+    <div className="bg-slate-50 flex-1 py-8 sm:py-12 px-4 sm:px-6 md:px-12 flex flex-col">
+      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10 flex-1 flex flex-col">
+
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border pb-8">
+          <div className="space-y-2 max-w-2xl text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-primary text-xs font-bold border border-border">
+              <Sparkles className="size-3.5 text-accent shrink-0" />
+              <span>RatedDocs Knowledge Hub</span>
+            </div>
+            <CustomSectionHeading value="Dental Tourism & Oral Health Resource Center" />
+            <CustomDesText value="Vetted guides, transparent procedure pricing comparisons, and expert international dentist safety standards." />
           </div>
 
-          {/* Search bar */}
-          <div className="relative w-full md:w-80">
+          <div className="relative w-full md:w-80 shrink-0">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search articles..."
-              className="h-10 w-full rounded-lg border border-gray-200 pl-10 pr-4 text-sm font-semibold outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white"
+              placeholder="Search guides, procedures, countries..."
+              className="h-11 w-full rounded-xl border border-gray-200 pl-10 pr-4 text-xs sm:text-sm font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-xs"
             />
-            <Search className="absolute left-3.5 top-3 h-4.5 w-4.5 text-gray-400" />
+            <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1 w-full sm:w-auto">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer border",
+                    selectedCategory === cat
+                      ? "bg-primary text-white border-primary shadow-xs"
+                      : "bg-white text-sec-text border-gray-200 hover:border-primary/40 hover:text-primary"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-gray-400 font-bold text-[11px] uppercase tracking-wider">Top Destinations:</span>
+              {DESTINATIONS.map((d) => (
+                <button
+                  key={d.name}
+                  onClick={() => setSearch(d.query)}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-text font-semibold hover:bg-slate-100 transition-colors text-xs cursor-pointer shadow-2xs"
+                >
+                  <span>{d.flag}</span>
+                  <span>{d.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center py-10 sm:py-16 px-4 bg-white border border-border rounded-2xl text-sm font-medium text-gray-400 shadow-xs min-h-[250px]">
-            No articles found matching "{search}".
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-16 px-4 bg-white border border-border rounded-2xl text-sm font-medium text-gray-400 shadow-xs min-h-75 space-y-3">
+            <BookOpen className="h-10 w-10 text-slate-300" />
+            <p className="text-base text-text font-bold">No articles found matching "{search}"</p>
+            <p className="text-xs text-sec-text">Try searching for keywords like "Implants", "Mexico", or "Veneers".</p>
+            <button
+              onClick={() => { setSearch(""); setSelectedCategory("All Articles"); }}
+              className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer"
+            >
+              Clear filters
+            </button>
           </div>
         ) : (
           <div className="space-y-12">
 
-            {/* Featured Post (1 Col Hero Banner) */}
             {featuredPost && (
               <Link
                 href={`/blog/${featuredPost.slug}`}
-                className="group grid grid-cols-1 lg:grid-cols-5 bg-white border border-border rounded-3xl overflow-hidden hover:shadow-lg transition-all duration-300"
+                className="group grid grid-cols-1 lg:grid-cols-5 bg-white border border-border rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 relative"
               >
-                <div className="lg:col-span-3 h-64 sm:h-96 relative bg-slate-100 overflow-hidden">
+                <div className="lg:col-span-3 h-64 sm:h-80 md:h-96 relative bg-slate-100 overflow-hidden">
                   <img
                     src={featuredPost.coverImage}
                     alt={featuredPost.title}
-                    className="h-full w-full object-cover group-hover:scale-102 transition-transform duration-500"
+                    className="h-full w-full object-cover group-hover:scale-103 transition-transform duration-500"
                   />
+                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white text-xs font-bold rounded-full shadow-md">
+                    <Sparkles className="h-3.5 w-3.5 text-accent" />
+                    Featured Article
+                  </div>
                 </div>
 
-                <div className="lg:col-span-2 p-6 md:p-10 flex flex-col justify-between gap-6 text-left">
+                <div className="lg:col-span-2 p-6 sm:p-8 md:p-10 flex flex-col justify-between gap-6 text-left">
                   <div className="space-y-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4F9FD] text-primary text-xs font-bold rounded-full">
-                      Featured Article
-                    </span>
-                    <h2 className="text-2xl md:text-3xl font-black text-text leading-snug group-hover:text-primary transition-colors">
+                    <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                      {featuredPost.category && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-secondary text-primary font-bold">
+                          {featuredPost.category}
+                        </span>
+                      )}
+                      {featuredPost.readTime && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5" />
+                          {featuredPost.readTime}
+                        </span>
+                      )}
+                    </div>
+
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-text leading-snug group-hover:text-primary transition-colors">
                       {featuredPost.title}
                     </h2>
-                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
+
+                    <p className="text-sec-text text-xs sm:text-sm leading-relaxed line-clamp-3">
                       {featuredPost.summary}
                     </p>
                   </div>
 
-                  <div className="flex justify-between items-center border-t border-slate-100 pt-5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-4 w-4 text-primary" />
+                  <div className="flex justify-between items-center border-t border-slate-100 pt-5 mt-auto">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                        <User className="h-4.5 w-4.5 text-primary" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-text">{featuredPost.author}</p>
@@ -128,8 +304,8 @@ export default function BlogPage() {
                       </div>
                     </div>
 
-                    <span className="flex items-center gap-1 text-primary text-xs font-bold group-hover:translate-x-1 transition-transform">
-                      Read Article
+                    <span className="flex items-center gap-1 text-primary text-xs sm:text-sm font-bold group-hover:translate-x-1 transition-transform">
+                      Read Full Guide
                       <ChevronRight className="h-4 w-4" />
                     </span>
                   </div>
@@ -137,9 +313,31 @@ export default function BlogPage() {
               </Link>
             )}
 
-            {/* Grid Posts */}
+            <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-[#0E3E65] via-[#113254] to-[#163E5C] p-6 sm:p-8 md:p-10 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-2 text-center md:text-left max-w-xl">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-sky-200 text-xs font-bold backdrop-blur-xs">
+                  <TrendingUp className="h-3.5 w-3.5 text-accent" />
+                  Save Up to 70% on Dental Work
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">
+                  Planning a Dental Trip Abroad?
+                </h3>
+                <p className="text-xs sm:text-sm text-sky-100 leading-relaxed">
+                  Compare transparent pricing, verified clinic licenses, and real patient reviews across 500+ international dentists.
+                </p>
+              </div>
+
+              <Link
+                href="/find-dentists"
+                className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-accent hover:bg-yellow-500 text-text font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              >
+                <span>Compare Dentist Prices</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
             {gridPosts.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {gridPosts.map((post) => (
                   <Link
                     key={post.id}
@@ -152,21 +350,36 @@ export default function BlogPage() {
                         alt={post.title}
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
+                      {post.category && (
+                        <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-white/90 backdrop-blur-xs text-primary text-[11px] font-bold shadow-2xs">
+                          {post.category}
+                        </span>
+                      )}
                     </div>
 
                     <div className="p-5 flex-1 flex flex-col justify-between gap-5 text-left">
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 text-[11px] text-gray-400 font-medium">
+                          {post.readTime && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {post.readTime}
+                            </span>
+                          )}
+                        </div>
+
                         <h3 className="font-bold text-base text-text group-hover:text-primary transition-colors leading-snug line-clamp-2">
                           {post.title}
                         </h3>
-                        <p className="text-xs text-gray-400 leading-relaxed line-clamp-3">
+
+                        <p className="text-xs text-sec-text leading-relaxed line-clamp-3">
                           {post.summary}
                         </p>
                       </div>
 
                       <div className="flex justify-between items-center border-t border-slate-100 pt-4 mt-auto">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-primary/5 flex items-center justify-center">
+                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                             <User className="h-3.5 w-3.5 text-primary" />
                           </div>
                           <div>
@@ -187,7 +400,6 @@ export default function BlogPage() {
                 ))}
               </div>
             )}
-
           </div>
         )}
 

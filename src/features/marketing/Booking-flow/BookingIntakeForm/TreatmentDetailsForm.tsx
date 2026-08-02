@@ -216,7 +216,7 @@ function DateInput({
       </div>
 
       {isOpen && (
-        <div className="absolute bottom-15 left-0 z-50 bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute bottom-0 left-0 z-50 bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
           <MiniCalendar
             selected={dateValue}
             onSelect={handleSelect}

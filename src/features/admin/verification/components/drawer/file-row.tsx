@@ -21,7 +21,7 @@ export function FileRow({ fileName, fileSize, href, onPreview }: FileRowProps) {
           )}
         >
           {isVideo ? (
-            <Video className="h-4 w-4 text-amber-500" />
+            <Video className="h-4 w-4 text-accent" />
           ) : (
             <FileText className="h-4 w-4 text-red-400" />
           )}
@@ -58,10 +58,10 @@ export function FileRow({ fileName, fileSize, href, onPreview }: FileRowProps) {
 export function MissingFileRow({ label, note }: { label: string; note: string }) {
   return (
     <div className="flex items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5">
-      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
+      <AlertTriangle className="h-4 w-4 shrink-0 text-accent" />
       <div>
-        <p className="text-sm font-medium text-amber-700">{label}</p>
-        <p className="text-xs text-amber-500">{note}</p>
+        <p className="text-sm font-medium text-accent/95">{label}</p>
+        <p className="text-xs text-accent">{note}</p>
       </div>
     </div>
   );

@@ -38,14 +38,14 @@ interface DentistDetailPageProps {
 
 const STATUS_BADGE: Record<string, string> = {
   active: "bg-emerald-50 text-emerald-600",
-  pending: "bg-amber-50 text-amber-600",
+  pending: "bg-amber-50 text-accent",
   suspended: "bg-red-50 text-red-500",
   rejected: "bg-gray-100 text-gray-500",
 };
 
 const STATUS_DOT: Record<string, string> = {
   active: "bg-emerald-500",
-  pending: "bg-amber-500",
+  pending: "bg-accent",
   suspended: "bg-red-500",
   rejected: "bg-gray-400",
 };
@@ -72,7 +72,7 @@ function PerformanceBar({ label, value }: { label: string; value: number }) {
         <p
           className={cn(
             "text-xs font-bold",
-            value >= 90 ? "text-text" : "text-amber-500",
+            value >= 90 ? "text-text" : "text-accent",
           )}
         >
           {value >= 90 ? `${value}%` : `${value}%`}
@@ -109,7 +109,7 @@ function VerificationStatus({
       <span
         className={cn(
           "text-xs font-semibold",
-          isDone ? "text-emerald-600" : "text-amber-500",
+          isDone ? "text-emerald-600" : "text-accent",
         )}
       >
         {isDone
@@ -446,7 +446,7 @@ export default function DentistDetailPage({
                   <Pencil className="h-4 w-4 text-gray-400" />
                   Edit profile
                 </button>
-                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-amber-600 transition-colors hover:bg-amber-50">
+                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-amber-50">
                   <ShieldOff className="h-4 w-4" />
                   Suspend account
                 </button>

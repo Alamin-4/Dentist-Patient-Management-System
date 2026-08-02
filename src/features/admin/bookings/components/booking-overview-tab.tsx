@@ -34,12 +34,12 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
     if (escrowType === "in_escrow") {
       return (
         <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
           <div>
-            <p className="text-sm font-semibold text-amber-700">
+            <p className="text-sm font-semibold text-accent/95">
               {booking.payment.escrow_message}
             </p>
-            <p className="mt-0.5 text-xs text-amber-600">
+            <p className="mt-0.5 text-xs text-accent">
               {booking.payment.escrow_detail}
             </p>
           </div>
@@ -255,7 +255,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
                   : escrowType === "refunded"
                     ? "text-red-500"
                     : escrowType === "in_escrow"
-                      ? "text-amber-600"
+                      ? "text-accent"
                       : "text-gray-500"
               )}
             >
