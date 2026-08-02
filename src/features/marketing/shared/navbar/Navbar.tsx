@@ -16,6 +16,12 @@ const navConfig = [
   { label: "Home", href: "/" },
   { label: "Find a Dentist", href: "/find-dentists" },
   { label: "About us", href: "/about-us" },
+  {
+    label: "Contact Us", href: "/contact"
+  },
+  {
+    label: "Blogs", href: "/blog"
+  }
 ];
 
 export default function NavbarPublic() {

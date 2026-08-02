@@ -4,19 +4,7 @@ import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
 import { apiClient } from "@/core/api/client";
 
-/**
- * =============================================================================
- * API ERROR BINDING INSTRUCTION HELPER
- * =============================================================================
- * `bindServerErrors` inspects API error responses from Axios or backend services
- * and sets field-level errors on React Hook Form instances via `setError`.
- *
- * Backend Error Format Examples Handled:
- * 1. `{ errors: { email: "Email is taken", phone: "Invalid format" } }`
- * 2. `{ errors: [{ field: "email", message: "Email is taken" }] }`
- * 3. `{ message: "Generic fallback message" }`
- * =============================================================================
- */
+
 export function bindServerErrors<TFieldValues extends FieldValues>(
   error: any,
   setError: UseFormSetError<TFieldValues>
@@ -26,7 +14,6 @@ export function bindServerErrors<TFieldValues extends FieldValues>(
 
   if (responseData?.errors) {
     if (Array.isArray(responseData.errors)) {
-      // Handles array format: [{ field: 'email', message: 'Invalid' }]
       responseData.errors.forEach((err: { field: string; message: string }) => {
         if (err.field && err.message) {
           setError(err.field as Path<TFieldValues>, {
@@ -37,7 +24,6 @@ export function bindServerErrors<TFieldValues extends FieldValues>(
         }
       });
     } else if (typeof responseData.errors === "object") {
-      // Handles object format: { email: 'Invalid email' }
       Object.keys(responseData.errors).forEach((key) => {
         setError(key as Path<TFieldValues>, {
           type: "server",
@@ -48,20 +34,12 @@ export function bindServerErrors<TFieldValues extends FieldValues>(
     }
   }
 
-  // Display generic toast error if no specific field error was populated
   const message = mapApiErrorToUserMessage(error, "An unexpected error occurred.");
   if (!hasSetField) {
     toast.error(message);
   }
 }
 
-/**
- * =============================================================================
- * REACT QUERY HOOKS FOR ADMIN SETTINGS & CMS
- * =============================================================================
- */
-
-// 1. Policies Hooks
 export function usePolicies() {
   return useQuery({
     queryKey: ["admin-policies"],

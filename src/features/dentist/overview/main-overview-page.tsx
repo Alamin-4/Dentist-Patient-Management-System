@@ -27,31 +27,26 @@ export default function MainOverviewPage() {
     referralCode: "RD-DR-MEMBER",
   };
 
-  const displayName = user?.name 
+  const displayName = user?.name
     ? (user.name.toLowerCase().startsWith("dr.") ? user.name : `Dr. ${user.name}`)
     : "Dr. Mick";
 
   return (
     <PageContainer className="space-y-6">
-      {/* Page header */}
       <HeadingGroup
         title="Dashboard"
         description={`Welcome back, ${displayName}. Here is your practice overview.`}
       />
 
-      {/* 4-stat cards */}
       <OverviewStatsSection stats={overview.stats} />
 
-      {/* RDV performance + Alerts — side by side */}
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <OverviewPerformanceCard chart={overview.chart} />
         <OverviewAlertsCard alerts={overview.alerts} />
       </div>
 
-      {/* Active bookings — full width */}
       <OverviewActiveBookingsCard activeBookings={overview.activeBookings} />
 
-      {/* Referral code — full width */}
       <OverviewReferralsCard referralCode={overview.referralCode} />
     </PageContainer>
   );
