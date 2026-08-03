@@ -100,8 +100,8 @@ export default function SigninModal() {
         }
       },
       onError: (error: any) => {
-        const apiErrors = error?.errors;
-        const errorMessage = error?.message || "Invalid email or password";
+        const apiErrors = error?.errors || error?.response?.data?.errors;
+        const errorMessage = error?.message || error?.response?.data?.message || "Invalid email or password";
 
         const isUnverifiedError =
           errorMessage.toLowerCase().includes("verify") ||
@@ -113,16 +113,20 @@ export default function SigninModal() {
           setIsEmailUnverified(false);
         }
 
+        let hasMappedFieldError = false;
         if (Array.isArray(apiErrors) && apiErrors.length > 0) {
           apiErrors.forEach((err: any) => {
-            if (err.field) {
-              setError(err.field as any, {
+            if (err.field === "email" || err.field === "password") {
+              setError(err.field, {
                 type: "server",
                 message: err.message,
               });
+              hasMappedFieldError = true;
             }
           });
-        } else {
+        }
+
+        if (!hasMappedFieldError) {
           setError("root.server", {
             type: "server",
             message: errorMessage,

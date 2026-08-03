@@ -104,20 +104,27 @@ export function ProfessionalDetailsForm({
       },
       onError: (error: any) => {
         const apiErrors = error?.errors || error?.response?.data?.errors;
+        let hasMappedFieldError = false;
+
+        const validFormFields = ["full_name", "country", "city", "languages", "bio"];
 
         if (apiErrors && Array.isArray(apiErrors)) {
           apiErrors.forEach((fieldError: any) => {
             const mappedField = backendToFrontendFieldMap[fieldError.field] || fieldError.field;
-            setError(mappedField as keyof ProfFormData, {
-              type: "manual",
-              message: fieldError.message,
-            });
+            if (validFormFields.includes(mappedField)) {
+              setError(mappedField as keyof ProfFormData, {
+                type: "manual",
+                message: fieldError.message,
+              });
+              hasMappedFieldError = true;
+            }
           });
-          return;
         }
 
-        const errorMessage = mapApiErrorToUserMessage(error, "Failed to save details.");
-        toast.error(errorMessage);
+        if (!hasMappedFieldError) {
+          const errorMessage = mapApiErrorToUserMessage(error, "Failed to save details.");
+          toast.error(errorMessage);
+        }
       },
     });
   };

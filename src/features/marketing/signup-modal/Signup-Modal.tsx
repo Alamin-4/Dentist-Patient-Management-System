@@ -79,6 +79,7 @@ export default function SignupModal() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
     reset,
   } = useForm<IRegisterPatient>({
@@ -99,8 +100,25 @@ export default function SignupModal() {
         setShowSignupModal(false);
         setShowOtpModal(true);
       }
-    } catch (error: unknown) {
-      toast.error(mapApiErrorToUserMessage(error, "Registration failed. Please check your details and try again."));
+    } catch (error: any) {
+      const apiErrors = error?.errors || error?.response?.data?.errors;
+      let hasMappedFieldError = false;
+
+      if (Array.isArray(apiErrors) && apiErrors.length > 0) {
+        apiErrors.forEach((err: any) => {
+          if (err.field === "email" || err.field === "password" || err.field === "confirmPassword") {
+            setError(err.field, {
+              type: "server",
+              message: err.message,
+            });
+            hasMappedFieldError = true;
+          }
+        });
+      }
+
+      if (!hasMappedFieldError) {
+        toast.error(mapApiErrorToUserMessage(error, "Registration failed. Please check your details and try again."));
+      }
     }
   };
 

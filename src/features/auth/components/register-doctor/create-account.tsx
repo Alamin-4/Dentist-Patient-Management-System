@@ -113,22 +113,34 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
 
       onError: (error: any) => {
         const apiErrors = error?.errors || error?.response?.data?.errors;
+        const validFields: Array<keyof IRegisterDentist> = [
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber",
+          "gender",
+          "referralCode",
+          "password",
+          "confirmPassword",
+        ];
 
-        // Check if backend sent field-specific errors
+        let hasMappedFieldError = false;
         if (apiErrors && Array.isArray(apiErrors) && apiErrors.length > 0) {
           apiErrors.forEach((fieldError: any) => {
-            // Set error on the specific field
-            setError(fieldError.field as keyof IRegisterDentist, {
-              type: "manual",
-              message: fieldError.message,
-            });
+            if (validFields.includes(fieldError.field)) {
+              setError(fieldError.field as keyof IRegisterDentist, {
+                type: "manual",
+                message: fieldError.message,
+              });
+              hasMappedFieldError = true;
+            }
           });
-          return; // Prevent toast from showing
         }
 
-        // Fallback to toast for general errors
-        const errorRes = mapApiErrorToUserMessage(error, "Failed to create account.");
-        toast.error(errorRes);
+        if (!hasMappedFieldError) {
+          const errorRes = mapApiErrorToUserMessage(error, "Failed to create account.");
+          toast.error(errorRes);
+        }
       },
     });
   };
