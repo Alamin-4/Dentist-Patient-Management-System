@@ -39,15 +39,15 @@ export default function Footer() {
           if (response.data.footerText) {
             setFooterText(response.data.footerText);
           }
-          setSocials({
-            facebook: response.data.facebook || "",
-            twitter: response.data.twitter || "",
-            instagram: response.data.instagram || "",
-            linkedin: response.data.linkedin || "",
-          });
+          setSocials((prev) => ({
+            facebook: response.data.facebook || prev.facebook,
+            twitter: response.data.twitter || prev.twitter,
+            instagram: response.data.instagram || prev.instagram,
+            linkedin: response.data.linkedin || prev.linkedin,
+          }));
         }
-      } catch (e) {
-        console.error("Failed to load footer settings:", e);
+      } catch {
+        // Fallback to default footer content when settings endpoint is unavailable
       }
     };
 

@@ -346,7 +346,7 @@ export default function BookingDetailPage() {
                       </div>
                     </div>
                   </div>
-                  <span className="shrink-0 text-xs font-bold text-accent bg-amber-50 px-3 py-1 rounded-full">
+                  <span className="shrink-0 text-xs font-bold text-accent bg-accent/5 px-3 py-1 rounded-full">
                     ACTION REQUIRED
                   </span>
                 </div>

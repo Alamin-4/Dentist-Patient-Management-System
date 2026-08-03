@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useGetMe } from "@/hooks/user/useUser";
 import { User, Lock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ProfileInfo } from "./components/Profile";
 import { ChangePassword } from "./components/ChangePassword";
 
@@ -23,8 +24,33 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <div className="h-10 w-10 border-4 border-text border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex flex-col gap-5">
+        <div>
+          <Skeleton className="h-8 w-40 rounded-lg" />
+          <Skeleton className="h-4 w-40 rounded mt-1" />
+        </div>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+          <div className="w-full rounded-lg border border-gray-100 bg-white p-3 shadow-sm sm:w-56 sm:shrink-0 space-y-1.5">
+            <Skeleton className="h-3 w-16 rounded mb-2" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+          <div className="flex-1 rounded-lg border border-gray-100 bg-white p-6 shadow-sm space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-1.5">
+                  <Skeleton className="h-4 w-24 rounded" />
+                  <Skeleton className="h-10 w-full rounded-lg" />
+                </div>
+              ))}
+            </div>
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-32 rounded" />
+              <Skeleton className="h-10 w-full rounded-lg" />
+            </div>
+            <Skeleton className="h-10 w-28 rounded-lg mt-2" />
+          </div>
+        </div>
       </div>
     );
   }

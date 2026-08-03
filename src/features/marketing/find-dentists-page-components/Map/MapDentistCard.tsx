@@ -222,7 +222,7 @@ export default function MapDentistCard({
                     size={"sm"}
                     variant="secondary"
                     onClick={handleClaimProfile}
-                    className="h-9 rounded-md cursor-pointer border border-amber-300 bg-amber-50 px-2.5 text-xs font-bold text-accent/95 hover:bg-accent/10 transition-colors"
+                    className="h-9 rounded-md cursor-pointer border border-amber-300 bg-accent/5 px-2.5 text-xs font-bold text-accent/95 hover:bg-accent/10 transition-colors"
                   >
                     Claim Profile
                   </Button>

@@ -50,7 +50,7 @@ function Avatar({ initials, color, size = "md" }: { initials: string; color: str
 }
 
 const STATUS_STYLES: Record<string, { dot: string; text: string; bg: string; border: string }> = {
-  "In Escrow": { dot: "bg-amber-400", text: "text-accent/95", bg: "bg-amber-50", border: "border-amber-200" },
+  "In Escrow": { dot: "bg-amber-400", text: "text-accent/95", bg: "bg-accent/5", border: "border-amber-200" },
   Released: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
   Refunded: { dot: "bg-red-400", text: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
   "Refund Pending": { dot: "bg-orange-400", text: "text-orange-700", bg: "bg-orange-50", border: "border-orange-200" },
@@ -139,7 +139,7 @@ function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () 
                         {isDone ? (
                           <CheckCircle className="h-5 w-5 text-emerald-500" />
                         ) : isCurrent ? (
-                          <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-amber-400 bg-amber-50">
+                          <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-amber-400 bg-accent/5">
                             <span className="h-2 w-2 rounded-full bg-amber-400" />
                           </div>
                         ) : (
@@ -376,7 +376,7 @@ export default function PaymentPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {[
-            { icon: <Shield className="h-6 w-6 text-accent" />, iconBg: "bg-amber-50", label: "Total Escrow Held", value: `$${meta.total_escrow_held.toLocaleString()}`, sub: "All active bookings" },
+            { icon: <Shield className="h-6 w-6 text-accent" />, iconBg: "bg-accent/5", label: "Total Escrow Held", value: `$${meta.total_escrow_held.toLocaleString()}`, sub: "All active bookings" },
             { icon: <DollarSign className="h-6 w-6 text-emerald-500" />, iconBg: "bg-emerald-50", label: "Released Payments", value: `$${meta.released_this_month.toLocaleString()}`, sub: "Paid out to dentists", valueColor: "text-emerald-600" },
             { icon: <Clock className="h-6 w-6 text-red-500" />, iconBg: "bg-red-50", label: "Pending/Refunded", value: `$${meta.pending_refunds.toLocaleString()}`, sub: "Disputes & cancellations", valueColor: "text-red-500" },
           ].map((s) => (

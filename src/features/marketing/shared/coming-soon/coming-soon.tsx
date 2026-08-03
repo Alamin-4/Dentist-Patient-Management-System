@@ -13,11 +13,11 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
     <section className="relative w-full bg-white overflow-hidden py-24 md:py-32 flex items-center justify-center min-h-[70vh]">
       {/* Background Gradients */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-blue-50/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/3 w-75 h-75 bg-amber-50/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/3 w-75 h-75 bg-accent/5/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-2xl w-11/12 text-center space-y-8">
         {/* Simple Icon Badge */}
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-50 border border-accent/10 text-[#E3A32A]">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/5 border border-accent/10 text-[#E3A32A]">
           <CalendarDays className="w-8 h-8" />
         </div>
 

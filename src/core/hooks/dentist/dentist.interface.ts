@@ -13,6 +13,9 @@ export interface ProfessionalDetailsI {
     country?: string;
     city?: string;
     phoneNumber?: string;
+    languages?: string[];
+    bio?: string;
+    description?: string;
 }
 export interface ClinicAddressI {
     address: string;

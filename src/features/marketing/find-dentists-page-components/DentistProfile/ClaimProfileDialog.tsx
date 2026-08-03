@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, AlertCircle } from "lucide-react";
 import { useMe, useOtpVerify, useResendOtp } from "@/hooks/auth/useAuth";
+import { useCan } from "@/core/hooks/auth/usePermissions";
 import { useGetMe } from "@/hooks/user/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -39,6 +40,8 @@ export default function ClaimProfileDialog({
 
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const canClaim = useCan("claim_dentist_profile");
 
   const claimMutation = useClaimDentistDirectoryProfile();
   const checkoutMutation = useCreateDirectoryCheckoutSession();
@@ -254,6 +257,8 @@ export default function ClaimProfileDialog({
     );
   };
 
+  if (!isOpen || !canClaim) return null;
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-135 max-h-[95vh] overflow-y-auto rounded-lg border-none p-8 gap-0 bg-white">
@@ -295,7 +300,7 @@ export default function ClaimProfileDialog({
         <div className="mt-2">
           {isNotDentist && (
             <div className="text-center py-6 space-y-4 animate-scaleUp">
-              <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-accent">
+              <div className="mx-auto size-14 rounded-full bg-accent/5 border border-amber-200 flex items-center justify-center text-accent">
                 <AlertCircle className="size-8" />
               </div>
               <div className="space-y-2">
@@ -321,7 +326,7 @@ export default function ClaimProfileDialog({
 
           {!isNotDentist && hasAlreadyClaimedAnother && (
             <div className="text-center py-6 space-y-4 animate-scaleUp">
-              <div className="mx-auto size-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-accent">
+              <div className="mx-auto size-14 rounded-full bg-accent/5 border border-amber-200 flex items-center justify-center text-accent">
                 <AlertCircle className="size-8" />
               </div>
               <div className="space-y-2">
@@ -362,7 +367,7 @@ export default function ClaimProfileDialog({
                   type="button"
                   onClick={() => {
                     onOpenChange(false);
-                    router.push("/dentist");
+                    window.location.href = "/dentist";
                   }}
                   className="rounded-lg bg-brand-deep-navy px-6 py-2.5 font-semibold text-white transition-colors hover:bg-brand-deep-navy-hover cursor-pointer text-sm"
                 >

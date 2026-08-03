@@ -67,7 +67,7 @@ function ConfidenceBadge({ label }: { label: string }) {
   const isHigh = label === "High confidence" || label === "Auto-approved";
   return (
     <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold border",
-      isHigh ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-accent/95 border-amber-200"
+      isHigh ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-accent/5 text-accent/95 border-amber-200"
     )}>
       {label}
     </span>
@@ -234,7 +234,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
             <div>
               <div className="flex items-center gap-2">
                 <p className="font-bold text-text">{review.reviewer_name}</p>
-                {isF && <span className="flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-accent/95"><AlertTriangle className="h-3 w-3" />Flagged for review</span>}
+                {isF && <span className="flex items-center gap-1 rounded-full border border-amber-200 bg-accent/5 px-2.5 py-0.5 text-xs font-semibold text-accent/95"><AlertTriangle className="h-3 w-3" />Flagged for review</span>}
                 {isP && !isAdmin && <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-600"><CheckCircle2 className="h-3 w-3" />Auto-published</span>}
                 {isP && isAdmin && <span className="flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600"><CheckCircle2 className="h-3 w-3" />Admin approved</span>}
                 {isR && <span className="flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600"><XCircle className="h-3 w-3" />Rejected</span>}
@@ -270,7 +270,7 @@ function ReviewDrawer({ review, onClose, onAction }: { review: Review | null; on
 
           {/* AI flag */}
           {aiFlag && (
-            <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-accent/5 p-3">
               <Shield className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="flex-1">
                 <div className="flex items-center gap-2">

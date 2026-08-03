@@ -25,7 +25,7 @@ function getIconConfig(type: ActivityItem["type"]): IconConfig {
     },
     flagged: {
       icon: <Flag className="h-4 w-4 text-accent" />,
-      bg: "bg-amber-50",
+      bg: "bg-accent/5",
     },
     payout: {
       icon: <CreditCard className="h-4 w-4 text-emerald-600" />,

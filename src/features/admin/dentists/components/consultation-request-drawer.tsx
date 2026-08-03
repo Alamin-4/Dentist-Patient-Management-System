@@ -41,7 +41,7 @@ type DrawerTab = "patient_info" | "treatment_plan";
 
 const PLAN_STATUS_BADGE: Record<string, string> = {
   "Not Sent": "text-gray-500 bg-gray-100",
-  "Awaiting response": "text-accent bg-amber-50",
+  "Awaiting response": "text-accent bg-accent/5",
   Rejected: "text-red-500 bg-red-50",
 };
 

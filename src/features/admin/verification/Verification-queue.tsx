@@ -37,7 +37,7 @@ const STAT_CARDS = [
   },
   {
     icon: <Clock className="h-6 w-6 text-accent" />,
-    iconBg: "bg-amber-50",
+    iconBg: "bg-accent/5",
     label: "Pending review",
     key: "pending_review" as const,
     sub: "Ph.2 & Ph.3 submissions",

@@ -53,14 +53,14 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
         </Avatar>
         <div className="space-y-1 w-full">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Dr. {name}
+            {name}
           </h1>
           <p className="text-gray-500 font-medium text-sm">{specialtyName}</p>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2">
             {isFullyVerified && !isPaymentPending ? (
               <Badge
                 variant="secondary"
-                className="bg-badge/11 text-badge hover:bg-[#DEF7EC] border-none px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
+                className="bg-badge/11 text-badge border-none px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
               >
                 <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -68,28 +68,28 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
                     <path d="M14.1142 9.25507C14.6092 8.89507 15.3067 9.24757 15.3067 9.86257V11.2726C15.3067 11.8801 14.9092 12.6676 14.4217 13.0351L10.3192 16.1026C9.95923 16.3651 9.47923 16.5001 8.99923 16.5001C8.51923 16.5001 8.03923 16.3651 7.67923 16.0951L7.05673 15.6301C6.65173 15.3301 6.65173 14.7226 7.06423 14.4226L14.1142 9.25507Z" fill="#4CA30D" />
                   </svg>
                 </div>
-                Verified Profile
+                VERIFIED
               </Badge>
             ) : isPaymentPending ? (
               <Badge
                 variant="secondary"
-                className="bg-amber-50 text-accent hover:bg-amber-50 border border-amber-200 px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
+                className="bg-accent/5 text-accent hover:bg-accent/5 border border-amber-200 px-2.5 py-1 font-semibold text-xs rounded-md flex items-center gap-1 shrink-0"
               >
                 ⚠️ Payment Pending
               </Badge>
             ) : hasSubmittedAny ? (
               <Badge
                 variant="secondary"
-                className="bg-amber-50 text-accent hover:bg-amber-50 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
+                className="bg-accent/5 text-accent hover:bg-accent/5 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
-                Pending Verification
+                SUBMITTED
               </Badge>
             ) : (
               <Badge
                 variant="secondary"
-                className="bg-red-50 text-red-500 hover:bg-red-50 border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
+                className="bg-accent/5 text-accent border-none px-2.5 py-1 font-semibold text-xs rounded-md shrink-0"
               >
-                Unverified Profile
+                UNVERIFIED
               </Badge>
             )}
 
@@ -118,7 +118,6 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
             className="w-full h-full transform -rotate-90"
             viewBox="0 0 100 100"
           >
-            {/* Progress ring track */}
             <circle
               cx="50"
               cy="50"
@@ -127,7 +126,6 @@ export function ProfileHeader({ dentist, rdvScore }: ProfileHeaderProps) {
               strokeWidth="12"
               fill="transparent"
             />
-            {/* Progress indicator */}
             <circle
               cx="50"
               cy="50"

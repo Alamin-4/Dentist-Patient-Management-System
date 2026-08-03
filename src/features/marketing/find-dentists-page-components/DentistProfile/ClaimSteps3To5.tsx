@@ -47,7 +47,7 @@ export function ClaimStep3({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg bg-amber-50/60 border border-amber-200 p-4">
+      <div className="rounded-lg bg-accent/5/60 border border-amber-200 p-4">
         <p className="text-accent/95 text-xs font-semibold flex items-center gap-1.5 mb-1">
           <AlertCircle className="size-4 shrink-0 text-accent" /> Medical Standards & Compliance Requirements
         </p>
@@ -223,7 +223,7 @@ export function ClaimStep5({ dentist, queryClient, router, onOpenChange }: any) 
           onClick={async () => {
             onOpenChange(false);
             await queryClient.invalidateQueries({ queryKey: ["auth"] });
-            router.push("/dentist");
+            window.location.href = "/dentist";
           }}
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-deep-navy px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-brand-deep-navy-hover active:scale-[0.98] cursor-pointer text-sm"
         >

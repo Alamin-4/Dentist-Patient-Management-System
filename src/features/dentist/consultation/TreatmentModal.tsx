@@ -240,7 +240,7 @@ export default function CreateTreatmentPlanModal({
                             }`}
                         />
                         {errors.procedures?.[index]?.name && (
-                          <p className="text-xs text-red-500 font-semibold mt-1">
+                          <p className="text-xs text-red-500 mt-1">
                             {errors.procedures[index]?.name?.message}
                           </p>
                         )}
@@ -264,7 +264,7 @@ export default function CreateTreatmentPlanModal({
                           />
                         </div>
                         {errors.procedures?.[index]?.price && (
-                          <p className="text-xs text-red-500 font-semibold mt-1">
+                          <p className="text-xs text-red-500 mt-1">
                             {errors.procedures[index]?.price?.message}
                           </p>
                         )}

@@ -109,10 +109,10 @@ export default function LicenceForm({
   }, [defaultValues]);
 
   useEffect(() => {
+    form.clearErrors();
     if (serverErrors && Object.keys(serverErrors).length > 0) {
-      form.clearErrors();
-
       Object.entries(serverErrors).forEach(([field, msg]) => {
+        if (!msg) return;
         let formField: "country" | "city" | "authority" | "regNo" | null = null;
         if (field === "country") formField = "country";
         else if (field === "city") formField = "city";
@@ -160,7 +160,7 @@ export default function LicenceForm({
             )}
           />
           {errors.country && (
-            <p className="text-xs text-red-500 font-semibold mt-1">
+            <p className="text-xs text-red-500 mt-1">
               {errors.country.message}
             </p>
           )}
@@ -183,7 +183,7 @@ export default function LicenceForm({
             )}
           />
           {errors.city && (
-            <p className="text-xs text-red-500 font-semibold mt-1">
+            <p className="text-xs text-red-500 mt-1">
               {errors.city.message}
             </p>
           )}
@@ -200,7 +200,7 @@ export default function LicenceForm({
             className="h-14 rounded-lg border-border bg-card px-4 py-0"
           />
           {errors.authority && (
-            <p className="text-xs text-red-500 font-semibold mt-1">
+            <p className="text-xs text-red-500 mt-1">
               {errors.authority.message}
             </p>
           )}
@@ -217,7 +217,7 @@ export default function LicenceForm({
             placeholder="Enter Reg No"
           />
           {errors.regNo && (
-            <p className="text-xs text-red-500 font-semibold mt-1">
+            <p className="text-xs text-red-500 mt-1">
               {errors.regNo.message}
             </p>
           )}

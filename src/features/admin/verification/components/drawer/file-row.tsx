@@ -17,7 +17,7 @@ export function FileRow({ fileName, fileSize, href, onPreview }: FileRowProps) {
         <div
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-            isVideo ? "bg-amber-50" : "bg-red-50",
+            isVideo ? "bg-accent/5" : "bg-red-50",
           )}
         >
           {isVideo ? (
@@ -57,7 +57,7 @@ export function FileRow({ fileName, fileSize, href, onPreview }: FileRowProps) {
 
 export function MissingFileRow({ label, note }: { label: string; note: string }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5">
+    <div className="flex items-center gap-2.5 rounded-lg border border-amber-200 bg-accent/5 px-3 py-2.5">
       <AlertTriangle className="h-4 w-4 shrink-0 text-accent" />
       <div>
         <p className="text-sm font-medium text-accent/95">{label}</p>

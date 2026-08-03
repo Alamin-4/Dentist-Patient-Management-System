@@ -1,4 +1,4 @@
-const CACHE_NAME = "rateddocs-cache-v1";
+const CACHE_NAME = "rateddocs-cache-v2";
 const OFFLINE_URL = "/offline";
 
 // Assets to cache immediately on installation (precaching)
@@ -13,29 +13,35 @@ const PRECACHE_ASSETS = [
   "/logos/mainlogo.png",
 ];
 
-// Install event - precache offline page and crucial assets
+// Install event - precache offline page and key assets
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("[Service Worker] Precaching offline fallback page and key assets");
-      return cache.addAll(PRECACHE_ASSETS);
-    }).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("[Service Worker] Precaching offline fallback page and key assets");
+        return cache.addAll(PRECACHE_ASSETS);
+      })
+      .then(() => self.skipWaiting())
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log("[Service Worker] Deleting old cache:", cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log("[Service Worker] Deleting old cache:", cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -46,10 +52,13 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(event.request.url);
 
-  // Exclude chrome-extension, API calls, Next.js hot-reloading (HMR), or admin/dashboard paths if they shouldn't be offline-cached
+  // Exclude non-http(s), API calls, Next.js HMR/webpack, and protected portal routes
   if (
-    url.protocol !== "http:" && url.protocol !== "https:" ||
+    (url.protocol !== "http:" && url.protocol !== "https:") ||
     url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/dentist") ||
+    url.pathname.startsWith("/patient") ||
+    url.pathname.startsWith("/admin") ||
     url.pathname.includes("/_next/webpack-hmr") ||
     url.pathname.includes("webpack")
   ) {
@@ -61,11 +70,13 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // Clone the response and save it to the cache for offline use
-          const responseCopy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseCopy);
-          });
+          // Only cache successful 200 OK basic responses
+          if (response && response.status === 200 && response.type === "basic") {
+            const responseCopy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseCopy);
+            });
+          }
           return response;
         })
         .catch(() => {
@@ -74,8 +85,10 @@ self.addEventListener("fetch", (event) => {
             if (cachedResponse) {
               return cachedResponse;
             }
-            // If cache fails too, return the offline fallback page
-            return caches.match(OFFLINE_URL);
+            // Fall back to offline page if available
+            return caches.match(OFFLINE_URL).then((offlineRes) => {
+              return offlineRes || new Response("Offline", { status: 503, statusText: "Offline" });
+            });
           });
         })
     );
@@ -83,25 +96,26 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Strategy for static assets (JS, CSS, Fonts, Images): Stale-While-Revalidate
-  // Serve from cache immediately, then fetch in the background and update the cache
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          // If valid response, update cache
-          if (networkResponse && networkResponse.status === 200) {
-            const responseCopy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseCopy);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // Silent catch for network failure when updating cache
-        });
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseCopy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseCopy);
+          });
+        }
+        return networkResponse;
+      });
 
-      return cachedResponse || fetchPromise;
+      if (cachedResponse) {
+        // Background update, catch errors silently
+        fetchPromise.catch(() => {});
+        return cachedResponse;
+      }
+
+      // If not in cache, return fetchPromise directly to avoid returning undefined
+      return fetchPromise;
     })
   );
 });

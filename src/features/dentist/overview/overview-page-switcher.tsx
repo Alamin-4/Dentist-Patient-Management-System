@@ -44,7 +44,6 @@ export function OverviewPageSwitcher() {
       <div className="min-h-[80vh] flex items-center justify-center w-full px-4">
         <div className="mx-auto max-w-xl w-full bg-white p-6 lg:p-8 rounded-lg border border-gray-200 shadow-sm animate-pulse">
           <div className="flex flex-col items-center text-center">
-            {/* Circular progress skeleton */}
             <div className="mb-8 h-44 w-44 sm:h-52 sm:w-52 rounded-full bg-gray-100 flex items-center justify-center">
               <div className="h-32 w-32 rounded-full bg-white flex flex-col items-center justify-center">
                 <div className="h-6 w-12 bg-gray-200 rounded mb-2" />

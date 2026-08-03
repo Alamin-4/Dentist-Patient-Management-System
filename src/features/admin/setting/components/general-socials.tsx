@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Mail, Phone, MapPin, Globe } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { generalSocialsSchema, type GeneralSocialsFormValues } from "@/validation/settings-schemas";
 import { bindServerErrors, useSystemSettings, useUpdateSystemSettings } from "@/core/hooks/admin/settings/useAdminSettings";
@@ -56,8 +57,35 @@ export function GeneralSocials() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-50 items-center justify-center">
-        <div className="h-6 w-6 animate-spin text-slate-400 border-2 border-slate-200 border-t-admin-primary rounded-full" />
+      <div className="flex flex-col gap-6">
+        <div className="border-b border-slate-200 pb-4">
+          <Skeleton className="h-5 w-48 rounded" />
+          <Skeleton className="h-3 w-72 rounded mt-1.5" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
+            <Skeleton className="h-4 w-32 rounded" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+          </div>
+          <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
+            <Skeleton className="h-4 w-28 rounded" />
+            <Skeleton className="h-9 w-full rounded-lg" />
+            <Skeleton className="h-9 w-full rounded-lg" />
+            <Skeleton className="h-9 w-full rounded-lg" />
+          </div>
+          <div className="col-span-1 md:col-span-2 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50/50 p-5">
+            <Skeleton className="h-4 w-36 rounded" />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end border-t border-slate-200 pt-4">
+          <Skeleton className="h-9 w-32 rounded-lg" />
+        </div>
       </div>
     );
   }

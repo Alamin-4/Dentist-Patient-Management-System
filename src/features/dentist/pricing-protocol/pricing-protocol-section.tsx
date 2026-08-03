@@ -1,6 +1,7 @@
 "use client";
 
-import { SquarePen, FileText, Loader2, Video } from "lucide-react";
+import { SquarePen, FileText, Video } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useDentistProgress } from "@/hooks/dentist/useDentist";
 import { useRouter } from "next/navigation";
 import { SectionCard } from "@/components/shared/section-card";
@@ -19,8 +20,22 @@ export default function PricingProtocolSection() {
 
   if (isLoading) {
     return (
-      <SectionCard className="flex min-h-50 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-brand-medium-navy" />
+      <SectionCard className="p-6 space-y-4">
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <Skeleton className="h-6 w-44 rounded-lg" />
+          <Skeleton className="h-8 w-8 rounded-lg" />
+        </div>
+        <div className="divide-y divide-gray-100">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between py-4">
+              <div className="space-y-1.5">
+                <Skeleton className="h-5 w-44 rounded" />
+                <Skeleton className="h-3.5 w-28 rounded" />
+              </div>
+              <Skeleton className="h-6 w-20 rounded" />
+            </div>
+          ))}
+        </div>
       </SectionCard>
     );
   }

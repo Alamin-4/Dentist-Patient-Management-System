@@ -100,7 +100,7 @@ export default function PaymentInfo({
             <Loader2 className="h-6 w-6 animate-spin text-brand-medium-navy" />
           </div>
         ) : !isVerified ? (
-          <div className="rounded-lg border border-amber-200 p-4 bg-amber-50/50 flex items-start gap-3">
+          <div className="rounded-lg border border-amber-200 p-4 bg-accent/5/50 flex items-start gap-3">
             <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
               <ShieldCheck className="size-6" />
             </div>

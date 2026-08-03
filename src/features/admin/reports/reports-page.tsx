@@ -199,7 +199,7 @@ export default function ReportsPage() {
                     </div>
                     <span className={cn(
                       "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold",
-                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-accent/95"
+                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-accent/5 text-accent/95"
                     )}>
                       {row.passRate}% pass
                     </span>
@@ -338,7 +338,7 @@ export default function ReportsPage() {
                     <p className="text-sm font-semibold text-text">{row.phase}</p>
                     <span className={cn(
                       "rounded-full px-2.5 py-0.5 text-xs font-bold",
-                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-accent/95"
+                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-accent/5 text-accent/95"
                     )}>
                       {row.passRate}% pass rate
                     </span>
@@ -397,7 +397,7 @@ export default function ReportsPage() {
                     </div>
                     <span className={cn(
                       "shrink-0 rounded-full px-3 py-1 text-sm font-bold",
-                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-amber-50 text-accent/95"
+                      row.passRate >= 85 ? "bg-success-50 text-success-700" : "bg-accent/5 text-accent/95"
                     )}>
                       {row.passRate}%
                     </span>

@@ -33,7 +33,7 @@ export function BookingOverviewTab({ booking }: BookingOverviewTabProps) {
   const escrowBanner = () => {
     if (escrowType === "in_escrow") {
       return (
-        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-accent/5 p-4">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
           <div>
             <p className="text-sm font-semibold text-accent/95">

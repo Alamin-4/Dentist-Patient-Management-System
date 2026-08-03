@@ -88,7 +88,7 @@ export const statCards: StatCard[] = [
     trendUp: true,
     comparison: "vs last month",
     icon: "dollar",
-    iconBg: "bg-amber-50",
+    iconBg: "bg-accent/5",
     iconColor: "text-accent",
   },
 ];

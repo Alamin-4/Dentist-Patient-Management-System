@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
+import { Can } from "@/core/hooks/auth/usePermissions";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import type { Dentist } from "@/features/marketing/find-dentists-page-components/types";
@@ -278,36 +279,42 @@ export default function DentistCard({
               </Button>
 
               {isVerified ? (
-                <Button
-                  className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs cursor-pointer transition-all rounded-lg"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleBookConsultation();
-                  }}
-                >
-                  Book Consultation
-                </Button>
+                <Can action="book_consultation">
+                  <Button
+                    className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs cursor-pointer transition-all rounded-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBookConsultation();
+                    }}
+                  >
+                    Book Consultation
+                  </Button>
+                </Can>
               ) : isClaimableProfile ? (
-                <Button
-                  variant="secondary"
-                  className="h-9 px-3.5 text-xs font-bold text-accent/95 bg-amber-50 border border-amber-200 hover:bg-accent/10 cursor-pointer transition-all rounded-lg"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/find-dentists/${dentist.slug}/claim`);
-                  }}
-                >
-                  Claim Profile
-                </Button>
+                <Can action="claim_dentist_profile">
+                  <Button
+                    variant="secondary"
+                    className="h-9 px-3.5 text-xs font-bold text-accent/95 bg-accent/5 border border-amber-200 hover:bg-accent/10 cursor-pointer transition-all rounded-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/find-dentists/${dentist.slug}/claim`);
+                    }}
+                  >
+                    Claim Profile
+                  </Button>
+                </Can>
               ) : (
-                <Button
-                  className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs transition-all cursor-pointer rounded-lg"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRequestConsultation();
-                  }}
-                >
-                  Request Consultation
-                </Button>
+                <Can action="book_consultation">
+                  <Button
+                    className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs transition-all cursor-pointer rounded-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRequestConsultation();
+                    }}
+                  >
+                    Request Consultation
+                  </Button>
+                </Can>
               )}
             </div>
           )}

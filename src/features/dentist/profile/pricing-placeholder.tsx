@@ -71,7 +71,7 @@ export function PricingPlaceholder({ dentist }: PricingPlaceholderProps) {
                     Verified
                   </Badge>
                 ) : (
-                  <Badge className="bg-amber-50 text-accent border-none font-semibold hover:bg-accent/10 transition-colors">
+                  <Badge className="bg-accent/5 text-accent border-none font-semibold hover:bg-accent/10 transition-colors">
                     Pending
                   </Badge>
                 )}
