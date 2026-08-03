@@ -80,7 +80,7 @@ export default function TopBar({
             <Link
               href="/register-doctor"
               onClick={handleJoinAsDentistClick}
-              className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-6 text-[14px] font-semibold text-white transition-all hover:bg-brand-medium-navy-hover active:scale-95 shadow-sm shrink-0"
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 lg:px-6 text-sm font-semibold text-white transition-all hover:bg-primary/95 active:scale-95 shadow-sm shrink-0"
             >
               Join as a Dentist
             </Link>

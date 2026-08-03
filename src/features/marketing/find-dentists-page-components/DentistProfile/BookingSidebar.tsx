@@ -10,6 +10,7 @@ import { useMe } from "@/hooks/auth/useAuth";
 import { Can } from "@/core/hooks/auth/usePermissions";
 import { useStateContext } from "@/providers/StateProvider";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
+import { ClaimProfileButton } from "@/features/marketing/shared/ClaimProfileButton";
 
 interface BookingSidebarProps {
   dentist: {
@@ -219,17 +220,11 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
                 </Button>
               </Can>
             ) : isClaimableProfile ? (
-              <Can action="claim_dentist_profile">
-                <Button
-                  variant="outline"
-                  className="h-10 sm:h-11 text-xs sm:text-sm border-accent cursor-pointer text-accent/95 bg-accent/5/50 hover:bg-accent/5 font-bold flex-1"
-                  onClick={() =>
-                    router.push(`/find-dentists/${dentist.slug}/claim`)
-                  }
-                >
-                  Claim Profile
-                </Button>
-              </Can>
+              <ClaimProfileButton
+                slug={dentist.slug}
+                isClaimed={dentist.isClaimed}
+                fullWidth
+              />
             ) : (
               <Can action="book_consultation">
                 <Button
