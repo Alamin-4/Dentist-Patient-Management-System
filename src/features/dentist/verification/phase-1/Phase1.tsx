@@ -159,6 +159,20 @@ export default function Phase1() {
 
     setServerErrors({});
 
+    if (licenseFile && licenseFile.size > 5 * 1024 * 1024) {
+      const sizeMB = (licenseFile.size / (1024 * 1024)).toFixed(2);
+      const msg = `License document file size (${sizeMB} MB) exceeds the 5MB limit. Please choose a smaller file.`;
+      setServerErrors({ licenseDocument: msg });
+      return;
+    }
+
+    if (headshotFile && headshotFile.size > 5 * 1024 * 1024) {
+      const sizeMB = (headshotFile.size / (1024 * 1024)).toFixed(2);
+      const msg = `Profile picture file size (${sizeMB} MB) exceeds the 5MB limit. Please choose a smaller file.`;
+      setServerErrors({ profilePicture: msg });
+      return;
+    }
+
     const fileToUpload =
       licenseFile ||
       new File(["verified match"], "license.pdf", { type: "application/pdf" });
