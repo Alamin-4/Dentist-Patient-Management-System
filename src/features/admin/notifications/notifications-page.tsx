@@ -82,9 +82,9 @@ const TYPE_META: Record<
   review: {
     label: "Review",
     icon: Star,
-    iconBg: "bg-amber-50",
+    iconBg: "bg-accent/5",
     iconColor: "text-accent",
-    badgeBg: "bg-amber-50",
+    badgeBg: "bg-accent/5",
     badgeText: "text-accent/95",
   },
   booking: {
@@ -102,7 +102,7 @@ const PRIORITY_META: Record<
   { label: string; dot: string; badge: string }
 > = {
   low: { label: "Low", dot: "bg-gray-300", badge: "bg-gray-100 text-gray-500" },
-  medium: { label: "Medium", dot: "bg-amber-400", badge: "bg-amber-50 text-accent/95" },
+  medium: { label: "Medium", dot: "bg-amber-400", badge: "bg-accent/5 text-accent/95" },
   high: { label: "High", dot: "bg-orange-400", badge: "bg-orange-50 text-orange-700" },
   critical: { label: "Critical", dot: "bg-destructive-500", badge: "bg-destructive-50 text-destructive-700" },
 };

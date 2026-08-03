@@ -6,14 +6,19 @@ import { IRegisterDentist, IRegisterPatient } from "./auth.validation";
 import { LoginPayload, ResetPasswordPayload } from "@/types/api";
 import { identifyUser, resetUserSession } from "@/lib/posthog-identity";
 
-const hasSessionCookie = (): boolean => {
+export const hasSessionCookie = (): boolean => {
     if (typeof document === 'undefined') return false;
     return document.cookie
         .split('; ')
-        .some((item) =>
-            item.startsWith('better-auth.session_token=') ||
-            item.startsWith('accessToken=')
-        );
+        .some((item) => {
+            const [name, val] = item.split('=');
+            const trimmedName = name?.trim();
+            const trimmedVal = val?.trim();
+            if ((trimmedName === 'better-auth.session_token' || trimmedName === 'accessToken') && trimmedVal && trimmedVal !== '') {
+                return true;
+            }
+            return false;
+        });
 };
 
 

@@ -16,7 +16,7 @@ export function VerificationStatusScreen({
   if (status === "SUBMITTED") {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 border border-amber-200">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/5 border border-amber-200">
           <Clock className="h-8 w-8 text-accent" />
         </div>
         <h3 className="text-xl font-semibold text-foreground">

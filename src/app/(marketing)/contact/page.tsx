@@ -13,7 +13,6 @@ import {
   HeartHandshake,
   Sparkles,
   Mail,
-  Lock,
   Loader2
 } from "lucide-react";
 import CustomSectionHeading from "@/features/shared/custom-section-heading";
@@ -74,7 +73,6 @@ export default function ContactPage() {
     <div className="bg-slate-50 flex-1 py-10 sm:py-14 px-4 sm:px-6 md:px-12 flex flex-col justify-center text-left">
       <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-10 flex-1 flex flex-col justify-center">
 
-        {/* ── HEADER ──────────────────────────────────────────────────────── */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-primary text-xs font-bold border border-border">
             <Sparkles className="size-3.5 text-accent shrink-0" />
@@ -87,10 +85,8 @@ export default function ContactPage() {
           />
         </div>
 
-        {/* ── DUAL-COLUMN LAYOUT ──────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
 
-          {/* ── LEFT COLUMN: PLATFORM SHOWCASE ─────────────────────────────── */}
           <div className="lg:col-span-5 flex flex-col justify-between bg-linear-to-br from-[#0E3E65] via-[#113254] to-[#163E5C] text-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg space-y-8">
             <div className="space-y-6">
               <div className="space-y-3">
@@ -105,7 +101,6 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              {/* Value Highlights */}
               <div className="space-y-4 pt-2">
                 <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
                   <div className="w-9 h-9 rounded-xl bg-accent/20 flex items-center justify-center text-accent shrink-0 mt-0.5">
@@ -145,20 +140,14 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Platform Direct Email & SLA footer note */}
             <div className="border-t border-white/10 pt-6 flex items-center justify-between gap-4 text-xs text-sky-200">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-accent" />
                 <span className="font-semibold">support@rateddocs.com</span>
               </div>
-              <div className="flex items-center gap-1 text-[11px] text-sky-300">
-                <Lock className="h-3.5 w-3.5" />
-                <span>SSL Encrypted</span>
-              </div>
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN: SIMPLE CONTACT FORM (EXACTLY 4 INPUTS) ───────── */}
           <div className="lg:col-span-7 bg-white border border-border rounded-3xl p-6 sm:p-8 md:p-10 shadow-xs flex flex-col justify-between space-y-6">
             <div className="space-y-2 border-b border-slate-100 pb-5">
               <h3 className="text-xl sm:text-2xl font-bold text-text">Send Us a Message</h3>
@@ -167,7 +156,6 @@ export default function ContactPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 flex-1 flex flex-col justify-between">
               <div className="space-y-5">
-                {/* 1. Full Name */}
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="fullName" className="text-[11px] font-bold text-sec-text uppercase tracking-wider">
                     Full Name <span className="text-red-500">*</span>
@@ -182,7 +170,6 @@ export default function ContactPage() {
                   {errors.fullName && <p className="text-xs text-red-500 font-medium">{errors.fullName.message}</p>}
                 </div>
 
-                {/* 2. Email Address */}
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="email" className="text-[11px] font-bold text-sec-text uppercase tracking-wider">
                     Email Address <span className="text-red-500">*</span>

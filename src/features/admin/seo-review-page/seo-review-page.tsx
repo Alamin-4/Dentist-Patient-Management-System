@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Globe, CheckCircle2, Trash2, CalendarDays, Search,
   ExternalLink, RotateCcw, Trash, ChevronDown, X,
@@ -333,8 +334,46 @@ export default function SEOReviewPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-text border-t-transparent" />
+      <div className="flex flex-col gap-5">
+        <div>
+          <Skeleton className="h-8 w-36 rounded-lg" />
+          <Skeleton className="h-4 w-96 rounded mt-1.5" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-lg" />)}
+        </div>
+        <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
+          <div className="border-b border-gray-100 px-4 pt-3 flex gap-4">
+            {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-8 w-24 rounded-full" />)}
+          </div>
+          <div className="flex gap-2 border-b border-gray-100 px-4 py-3">
+            <Skeleton className="h-9 flex-1 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+          </div>
+          <div className="divide-y divide-gray-50">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3">
+                <div className="flex items-center gap-2 w-44">
+                  <Skeleton className="h-7 w-7 rounded-full shrink-0" />
+                  <Skeleton className="h-4 w-28 rounded" />
+                </div>
+                <div className="flex items-center gap-2 w-32">
+                  <Skeleton className="h-7 w-7 rounded-full shrink-0" />
+                  <Skeleton className="h-4 w-20 rounded" />
+                </div>
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-4 w-16 rounded" />
+                <Skeleton className="h-4 w-20 rounded" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <div className="flex gap-2 ml-auto">
+                  <Skeleton className="h-7 w-20 rounded-lg" />
+                  <Skeleton className="h-7 w-16 rounded-lg" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

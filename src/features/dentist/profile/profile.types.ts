@@ -40,6 +40,8 @@ export interface DentistClinicDepthVerification {
 export interface DentistProfessionalData {
   city?: string | null;
   yearsOfExperience?: string | number | null;
+  bio?: string | null;
+  description?: string | null;
 }
 
 export interface DentistSpecialty {
@@ -57,6 +59,8 @@ export interface DentistProfileData {
   slug?: string | null;
   country?: string | null;
   phoneNumber?: string | null;
+  bio?: string | null;
+  description?: string | null;
   user?: DentistProfileUser | null;
   specialty?: DentistSpecialty | null;
   dentistProfessionalData?: DentistProfessionalData | null;

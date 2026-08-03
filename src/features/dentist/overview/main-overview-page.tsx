@@ -29,7 +29,7 @@ export default function MainOverviewPage() {
 
   const displayName = user?.name
     ? (user.name.toLowerCase().startsWith("dr.") ? user.name : `Dr. ${user.name}`)
-    : "Dr. Mick";
+    : "";
 
   return (
     <PageContainer className="space-y-6">

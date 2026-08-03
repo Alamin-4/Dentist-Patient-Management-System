@@ -142,19 +142,7 @@ export default function BlogPage() {
               ))}
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-gray-400 font-bold text-[11px] uppercase tracking-wider">Top Destinations:</span>
-              {DESTINATIONS.map((d) => (
-                <button
-                  key={d.name}
-                  onClick={() => setSearch(d.query)}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-text font-semibold hover:bg-slate-100 transition-colors text-xs cursor-pointer shadow-2xs"
-                >
-                  <span>{d.flag}</span>
-                  <span>{d.name}</span>
-                </button>
-              ))}
-            </div>
+
           </div>
         </div>
 

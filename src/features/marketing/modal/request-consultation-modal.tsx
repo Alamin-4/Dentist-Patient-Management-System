@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
+import { useCan } from "@/core/hooks/auth/usePermissions";
 import { useRequestDirectoryConsultation } from "@/hooks/dentist/useDentistDirectory";
 
 const schema = z.object({
@@ -156,7 +157,9 @@ export default function RequestConsultationModal() {
     );
   };
 
-  if (!requestConsultationDentist) return null;
+  const canBook = useCan("book_consultation");
+
+  if (!requestConsultationDentist || !canBook) return null;
 
   return (
     <Dialog open={showRequestConsultationModal} onOpenChange={handleClose}>

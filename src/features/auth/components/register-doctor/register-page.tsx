@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
+import { RegisterPageSkeleton } from "@/components/skeletons/RegisterPageSkeleton";
 
 import Image from "next/image";
 import { CreateAccountForm } from "./create-account";
@@ -46,15 +47,10 @@ export default function RegisterPageComponent() {
     }
   }, [user, isPending, dentistProfile, router]);
 
-  // Only show full screen spinner on initial load when user status is unknown
   const isInitialLoading = isPending && !user;
 
   if (isInitialLoading) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <RegisterPageSkeleton />;
   }
 
   const getFormMaxWidth = () => {
@@ -71,7 +67,6 @@ export default function RegisterPageComponent() {
 
   return (
     <main className="flex min-h-dvh w-full flex-col lg:flex-row bg-white">
-      {/* Left Banner Section (Desktop Only) */}
       <section className="relative hidden w-full flex-col bg-primary p-6 xl:p-10 text-white lg:flex lg:w-3/5">
         <div className="flex items-center gap-2">
           <div>

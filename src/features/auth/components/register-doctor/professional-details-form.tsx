@@ -21,12 +21,16 @@ import { ProfessionalDetailsI } from "@/hooks/dentist/dentist.interface";
 import { locationData } from "@/lib/location-data";
 import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 
+import { LanguageMultiSelect } from "@/components/ui/language-multi-select";
+
 const profSchema = z.object({
   full_name: z.string().min(2, "Full legal name is required"),
   specialty: z.string().min(1, "Please select a specialty"),
   experience_years: z.coerce.number().min(0, "Years of experience must be at least 0"),
   city: z.string().min(1, "Please select a city"),
   country: z.string().min(1, "Please select a country"),
+  languages: z.array(z.string()).min(1, "Please select at least one language"),
+  bio: z.string().optional(),
 });
 
 type ProfFormData = z.infer<typeof profSchema>;
@@ -37,6 +41,7 @@ const backendToFrontendFieldMap: Record<string, keyof ProfFormData> = {
   yearsOfExperience: "experience_years",
   country: "country",
   city: "city",
+  languages: "languages",
 };
 
 export function ProfessionalDetailsForm({
@@ -63,6 +68,8 @@ export function ProfessionalDetailsForm({
       experience_years: undefined,
       city: "",
       country: "",
+      languages: [],
+      bio: "",
     },
   });
 
@@ -78,6 +85,8 @@ export function ProfessionalDetailsForm({
     ? Object.keys(locationData[selectedCountry].cities)
     : [];
 
+  const selectedLanguages = watch("languages") || [];
+
   const onSubmit = async (data: ProfFormData) => {
     clearErrors();
     const payload: ProfessionalDetailsI = {
@@ -85,8 +94,10 @@ export function ProfessionalDetailsForm({
       yearsOfExperience: data.experience_years.toString(),
       legalName: data.full_name,
       country: data.country,
-      city: data.city
-    }
+      city: data.city,
+      languages: data.languages,
+      bio: data.bio || "",
+    };
     professionalDetailsMutation.mutate(payload, {
       onSuccess: () => {
         setStep("success");
@@ -245,10 +256,30 @@ export function ProfessionalDetailsForm({
               ))}
             </SelectContent>
           </Select>
-          {errors.city && (
-            <p className="text-xs text-red-500">{errors.city.message}</p>
-          )}
         </div>
+      </div>
+
+      <LanguageMultiSelect
+        selectedLanguages={selectedLanguages}
+        onChange={(langs: string[]) => {
+          setValue("languages", langs, { shouldValidate: true });
+          if (langs.length > 0) clearErrors("languages");
+        }}
+        error={errors.languages?.message}
+        label="Spoken Languages"
+        required={true}
+        disabled={isProfessionalDetailsLoading}
+      />
+
+      <div className="grid gap-2 text-left items-start">
+        <Label className="text-sm text-sec-text">Professional Bio / About Us (Optional)</Label>
+        <textarea
+          {...register("bio")}
+          rows={3}
+          placeholder="Briefly describe your clinical practice, philosophy, and experience..."
+          className="w-full rounded-md border border-border bg-white p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-slate-400"
+          disabled={isProfessionalDetailsLoading}
+        />
       </div>
 
       <Button

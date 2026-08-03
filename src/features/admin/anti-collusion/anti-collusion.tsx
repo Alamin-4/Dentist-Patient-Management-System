@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   FileText, Activity, OctagonAlert, CalendarDays,
   Search, ChevronDown, Eye, SearchCheck,
@@ -83,7 +84,7 @@ function FlagBadge({ count, threshold }: { count: number; threshold: number }) {
 
 const STATUS_CONFIG: Record<DentistStatus, { label: string; dot: string; badge: string }> = {
   suspended: { label: "Suspended", dot: "bg-red-500", badge: "bg-red-50 text-red-600 border-red-200" },
-  warning: { label: "Warning", dot: "bg-accent", badge: "bg-amber-50 text-accent/95 border-amber-200" },
+  warning: { label: "Warning", dot: "bg-accent", badge: "bg-accent/5 text-accent/95 border-amber-200" },
   clean: { label: "Clean", dot: "bg-emerald-500", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   cleared: { label: "Cleared", dot: "bg-teal-500", badge: "bg-teal-50 text-teal-700 border-teal-200" },
   removed: { label: "Removed", dot: "bg-gray-400", badge: "bg-gray-50 text-gray-500 border-gray-200" },
@@ -334,8 +335,40 @@ export default function AntiCollusion() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-text border-t-transparent" />
+      <div className="flex flex-col gap-5 pb-8">
+        <div>
+          <Skeleton className="h-8 w-48 rounded-lg" />
+          <Skeleton className="h-4 w-80 rounded mt-1.5" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-lg" />
+          ))}
+        </div>
+        <div className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
+          <div className="border-b border-gray-100 p-4 flex gap-4">
+            {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-8 w-20 rounded-full" />)}
+          </div>
+          <div className="border-b border-gray-100 p-4 flex gap-3">
+            <Skeleton className="h-9 flex-1 rounded-lg" />
+            <Skeleton className="h-9 w-32 rounded-lg" />
+          </div>
+          <div className="divide-y divide-gray-50">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3.5">
+                <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-4 w-40 rounded" />
+                  <Skeleton className="h-3 w-24 rounded" />
+                </div>
+                <Skeleton className="h-3.5 w-16 rounded" />
+                <Skeleton className="h-3.5 w-20 rounded" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-8 w-20 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import useAuth, { useMe } from "@/hooks/auth/useAuth";
-import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 import {
   LayoutDashboard,
   User,
@@ -105,9 +104,8 @@ export function Sidebar() {
     : "US";
 
   const handleLogout = () => {
-    logout();
-    router.push("/");
     close();
+    logout();
   };
 
   const isVerificationPath = pathname === "/dentist/verification";
@@ -116,31 +114,10 @@ export function Sidebar() {
     return null;
   }
 
-  const role = pathname.startsWith("/dentist") ? "dentist" : "patient";
+  const userRole = user?.role?.toLowerCase();
+  const role = userRole === "dentist" || userRole === "patient" ? userRole : (pathname.startsWith("/dentist") ? "dentist" : "patient");
 
-  const { data: dentistProfile } = useDentistProfileQuery({
-    enabled: role === "dentist",
-  });
-  const dentist = dentistProfile?.data?.dentist;
-
-  const isDirectoryVerified = dentist?.dentistDirectory?.status === "VERIFIED";
-  const isLicenseVerified = dentist?.dentistLicense?.isVerified || dentist?.dentistLicense?.verificationStatus === "APPROVED";
-  const isOperationsVerified = dentist?.dentistOperationsVerifications?.[0]?.isVerified || dentist?.dentistOperationsVerifications?.[0]?.isApproved || dentist?.dentistOperationsVerifications?.[0]?.verificationStatus === "APPROVED";
-  const isClinicalVerified = dentist?.dentistClinicDepthVerification?.isVerified || dentist?.dentistClinicDepthVerification?.isApproved || dentist?.dentistClinicDepthVerification?.verificationStatus === "APPROVED";
-
-  const isVerified = isDirectoryVerified || (isLicenseVerified && isOperationsVerified && isClinicalVerified);
-
-  const navGroups = role === "dentist"
-    ? dentistNav.map((group) => ({
-        ...group,
-        items: group.items.filter((item) => {
-          if (item.href === "/dentist/profile") {
-            return isVerified;
-          }
-          return true;
-        }),
-      }))
-    : patientNav;
+  const navGroups = role === "dentist" ? dentistNav : patientNav;
 
   function isActive(href: string) {
     if (DASHBOARD_ROOTS.includes(href)) return pathname === href;

@@ -7,6 +7,7 @@ import { ShieldCheck, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useMe } from "@/hooks/auth/useAuth";
+import { Can } from "@/core/hooks/auth/usePermissions";
 import { useStateContext } from "@/providers/StateProvider";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 
@@ -24,7 +25,7 @@ interface BookingSidebarProps {
     claimedByUserId?: string;
     userId?: string;
     googleRating?: number;
-    rating?: number;
+    rating?: any;
     rdvScore?: number;
     price?: number;
   };
@@ -58,7 +59,16 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
 
   const isClaimableProfile = dentist.isClaimable && !isClaimed;
 
-  const rating = dentist.googleRating ?? dentist.rating ?? 5.0;
+  const rawRating =
+    typeof dentist.googleRating === "number"
+      ? dentist.googleRating
+      : typeof dentist.rating === "number"
+        ? dentist.rating
+        : typeof dentist.rating === "object" && dentist.rating !== null
+          ? (dentist.rating as any).combined ?? (dentist.rating as any).google ?? (dentist.rating as any).doctoralia ?? 5.0
+          : 5.0;
+
+  const rating = typeof rawRating === "number" && !isNaN(rawRating) ? rawRating : 5.0;
   const roundedRating = Math.round(rating);
 
   useEffect(() => {
@@ -146,13 +156,13 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
       <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5 sm:mb-6">
         {dentist.verified ? (
           <TrustPill color="green" icon>
-            Verified
+            VERIFIED
           </TrustPill>
         ) : dentist.status === "CLAIMED" ? (
-          <TrustPill color="amber">Claimed</TrustPill>
-        ) : (
-          <TrustPill color="slate">Directory</TrustPill>
-        )}
+          <TrustPill color="amber">CLAIMED</TrustPill>
+        ) : dentist.isClaimable ? (
+          <TrustPill color="slate">UNCLAIMED</TrustPill>
+        ) : <TrustPill color="slate">UNVERIFIED</TrustPill>}
 
         <TrustPill color="blue">
           <span className="font-extrabold">
@@ -161,13 +171,17 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
           RDV score
         </TrustPill>
 
-        <TrustPill color="slate" icon>
-          No Surprise Guarantee
-        </TrustPill>
-
-        <TrustPill color="slate" icon>
-          Escrow
-        </TrustPill>
+        {dentist.verified && (
+          <TrustPill color="slate" icon>
+            No Surprise Guarantee
+          </TrustPill>
+        )}
+        {/* Show escrow only if verified or claimed */}
+        {(dentist.verified || dentist.status === "CLAIMED") && (
+          <TrustPill color="slate" icon>
+            Escrow
+          </TrustPill>
+        )}
       </div>
 
       <div className="mt-6 sm:mt-10 flex items-center justify-between gap-3 sm:gap-6">
@@ -179,37 +193,41 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
           <p className="text-[10px] text-[#9CA3AF]">Estimate</p>
         </div>
 
-        {!isOwnProfile &&
-          (dentist.verified ? (
-            <Button
-              onClick={() => initiateBooking("book")}
-              className="h-12 sm:h-14 flex-1 bg-primary text-sm sm:text-base font-semibold text-white hover:bg-brand-medium-navy-hover"
-            >
-              Book consultation
-            </Button>
-          ) : (
-            <div className="flex flex-col gap-2 flex-1">
-              {isClaimableProfile && (
+        {!isOwnProfile && (
+          <>
+            {dentist.verified ? (
+              <Can action="book_consultation">
+                <Button
+                  onClick={() => initiateBooking("book")}
+                  className="h-12 sm:h-14 flex-1 bg-primary text-sm sm:text-base font-semibold text-white hover:bg-brand-medium-navy-hover"
+                >
+                  Book consultation
+                </Button>
+              </Can>
+            ) : isClaimableProfile ? (
+              <Can action="claim_dentist_profile">
                 <Button
                   variant="outline"
-                  className="h-10 sm:h-11 text-xs sm:text-sm border-accent text-accent/95 bg-amber-50/50 hover:bg-amber-50 font-bold"
+                  className="h-10 sm:h-11 text-xs sm:text-sm border-accent text-accent/95 bg-accent/5/50 hover:bg-accent/5 font-bold flex-1"
                   onClick={() =>
                     router.push(`/find-dentists/${dentist.slug}/claim`)
                   }
                 >
                   Claim Profile
                 </Button>
-              )}
-              {isClaimed && (
+              </Can>
+            ) : (
+              <Can action="book_consultation">
                 <Button
-                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover"
+                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover flex-1"
                   onClick={() => initiateBooking("request")}
                 >
                   Request Consultation
                 </Button>
-              )}
-            </div>
-          ))}
+              </Can>
+            )}
+          </>
+        )}
       </div>
     </aside>
   );
@@ -228,7 +246,7 @@ function TrustPill({
     green:
       "text-badge bg-green-50 border-badge/20",
     amber:
-      "text-accent bg-amber-50 border-amber-200",
+      "text-accent bg-accent/5 border-amber-200",
     slate:
       "text-slate-600 bg-slate-50 border-slate-200",
     blue: "text-brand-medium-navy bg-secondary border-brand-medium-navy/10",

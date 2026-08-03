@@ -8,6 +8,8 @@ import SearchableDropdown from "@/components/ui/SearchableDropdown";
 import { getCountries, getCities, getAllCities, type CSCCountry, type CSCCity } from "@/lib/countryApi";
 import MiniCalendar from "@/app/(marketing)/schedule/_components/MiniCalendar";
 
+import { LanguageMultiSelect } from "@/components/ui/language-multi-select";
+
 export interface FilterSidebarProps {
   procedure: string;
   onProcedureChange: (value: string) => void;
@@ -21,6 +23,7 @@ export interface FilterSidebarProps {
   onScoreToggle: (range: string) => void;
   selectedLanguages: string[];
   onLanguageToggle: (language: string) => void;
+  onLanguagesChange?: (languages: string[]) => void;
   selectedAvailabilityDate: string | null;
   onAvailabilityDateChange: (value: string | null) => void;
   showVerifiedOnly: boolean;
@@ -63,6 +66,7 @@ export default function FilterSidebar({
   selectedRatings, onRatingToggle,
   selectedScoreRanges, onScoreToggle,
   selectedLanguages, onLanguageToggle,
+  onLanguagesChange,
   selectedAvailabilityDate, onAvailabilityDateChange,
   showVerifiedOnly, onShowVerifiedOnlyChange,
   onClear,
@@ -231,26 +235,22 @@ export default function FilterSidebar({
           </div>
         </FilterSection>
 
-        {/* Languages */}
         <FilterSection title="Languages">
-          <div className="space-y-3">
-            {languagesList.map((language) => (
-              <div key={language} className="flex items-center gap-3">
-                <Checkbox
-                  id={language}
-                  checked={selectedLanguages.includes(language)}
-                  onCheckedChange={() => onLanguageToggle(language)}
-                  className="size-4 rounded border-slate-300 data-[state=checked]:border-brand-medium-navy data-[state=checked]:bg-brand-medium-navy"
-                />
-                <label htmlFor={language} className="cursor-pointer select-none text-[13px] font-medium text-slate-600">
-                  {language}
-                </label>
-              </div>
-            ))}
-          </div>
+          <LanguageMultiSelect
+            selectedLanguages={selectedLanguages}
+            onChange={(langs: string[]) => {
+              if (onLanguagesChange) {
+                onLanguagesChange(langs);
+              } else {
+                const added = langs.filter((l) => !selectedLanguages.includes(l));
+                const removed = selectedLanguages.filter((l) => !langs.includes(l));
+                [...added, ...removed].forEach((l) => onLanguageToggle(l));
+              }
+            }}
+            placeholder="Select Languages"
+          />
         </FilterSection>
 
-        {/* Availability */}
         <FilterSection title="Availability" defaultOpen={false}>
           <MiniCalendar
             selected={selectedAvailabilityDate ? new Date(selectedAvailabilityDate) : null}

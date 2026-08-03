@@ -122,7 +122,7 @@ export function VerificationSidebar() {
           Verification Approved
         </div>
       ) : allSubmittedOrApproved ? (
-        <div className="mt-8 flex flex-col items-center justify-center gap-1 rounded-lg bg-amber-50 border border-amber-200 p-3 text-center">
+        <div className="mt-8 flex flex-col items-center justify-center gap-1 rounded-lg bg-accent/5 border border-amber-200 p-3 text-center">
           <span className="flex items-center gap-1.5 text-xs font-bold text-accent/95">
             <Clock className="h-4 w-4 text-accent animate-pulse" />
             Admin Review

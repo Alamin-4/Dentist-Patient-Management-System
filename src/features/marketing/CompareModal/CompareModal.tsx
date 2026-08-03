@@ -201,7 +201,7 @@ function UnverifiedWarning({ dentist }: UnverifiedWarningProps) {
     <div className="flex flex-col items-center justify-center py-6">
       <div className="relative mb-6">
         <div className="absolute inset-0 bg-accent/10 rounded-full blur-xl scale-150"></div>
-        <div className="relative bg-amber-50 border border-amber-200 text-accent rounded-2xl p-4 shadow-sm">
+        <div className="relative bg-accent/5 border border-amber-200 text-accent rounded-2xl p-4 shadow-sm">
           <ShieldAlert className="size-12 stroke-[1.5]" />
         </div>
       </div>

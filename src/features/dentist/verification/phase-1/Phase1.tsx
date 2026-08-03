@@ -83,32 +83,11 @@ export default function Phase1() {
         registrationNumber: data.regNo,
       });
 
-      // 🚨 CRITICAL: Some API clients resolve 404s instead of throwing. Check payload directly.
       const resData = response?.data || response;
       console.log("✅ Verification Response:", resData);
 
       if (resData?.success === false) {
-        const newErrors: Record<string, string> = {};
-
-        if (resData?.errors && Array.isArray(resData.errors)) {
-          resData.errors.forEach((err: any) => {
-            if (err.field === "registrationNumber" || err.field === "regNo") {
-              newErrors["regNo"] = err.message;
-            } else if (err.field === "registrationAuthority" || err.field === "authority") {
-              newErrors["authority"] = err.message;
-            } else if (err.field) {
-              newErrors[err.field] = err.message;
-            }
-          });
-        }
-
-        if (Object.keys(newErrors).length === 0 && resData?.message) {
-          newErrors["regNo"] = resData.message;
-        }
-
-        console.log("❌ Setting FAILED status with errors:", newErrors);
-        setServerErrors(newErrors);
-        setVerificationStatus("FAILED"); // This guarantees the manual box shows
+        setVerificationStatus("FAILED");
         return;
       }
 
@@ -117,29 +96,20 @@ export default function Phase1() {
       toast.success("License matched and verified successfully via registry!");
 
     } catch (error: any) {
-      console.error("🔥 Verification API threw an error:", error);
-      const resData = error?.response?.data || error;
+      console.warn("ℹ️ Verification API registry check note:", error?.message || error);
+      const status = error?.response?.status || error?.statusCode || error?.status;
+      const errMsg = error?.response?.data?.message || error?.message || "";
 
-      const newErrors: Record<string, string> = {};
-      if (resData?.errors && Array.isArray(resData.errors)) {
-        resData.errors.forEach((err: any) => {
-          if (err.field === "registrationNumber" || err.field === "regNo") {
-            newErrors["regNo"] = err.message;
-          } else if (err.field === "registrationAuthority" || err.field === "authority") {
-            newErrors["authority"] = err.message;
-          } else if (err.field) {
-            newErrors[err.field] = err.message;
-          }
-        });
+      if (status === 409 || errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("conflict")) {
+        const conflictMsg = "This license registration number is already verified by another account.";
+        setServerErrors({ regNo: conflictMsg });
+        setVerificationStatus("IDLE"); // Keep IDLE so PDF upload box is NOT shown!
+        // toast.error(conflictMsg);
+      } else {
+        // Not registered -> switch to manual PDF upload state cleanly
+        setServerErrors({});
+        setVerificationStatus("FAILED");
       }
-
-      if (Object.keys(newErrors).length === 0 && resData?.message) {
-        newErrors["regNo"] = resData.message;
-      }
-
-      console.log("❌ Setting FAILED status from catch block with errors:", newErrors);
-      setServerErrors(newErrors);
-      setVerificationStatus("FAILED");
     }
   }, []);
 
@@ -175,6 +145,8 @@ export default function Phase1() {
     e.preventDefault();
     setSubmissionAttempted(true);
 
+    if (stepOneMutation.isPending) return;
+
     if (isFormLocked) {
       setVerificationStep(2);
       setVerificationCompletedStep(1);
@@ -184,6 +156,8 @@ export default function Phase1() {
     if (!isStepReady || !submittedLicence || !headshotFile) {
       return;
     }
+
+    setServerErrors({});
 
     const fileToUpload =
       licenseFile ||
@@ -257,7 +231,7 @@ export default function Phase1() {
           if (Object.keys(newErrors).length > 0) {
             setServerErrors(newErrors);
           } else {
-            toast.error(resData?.message || error?.message || "Something went wrong. Please try again.");
+            // toast.error(resData?.message || error?.message || "Something went wrong. Please try again.");
           }
         },
       }

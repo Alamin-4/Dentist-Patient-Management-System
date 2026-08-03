@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Save, Info, CheckCircle, Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
@@ -49,8 +50,29 @@ export function RdvScoreWeights() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-50 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+      <div className="flex flex-col gap-6">
+        <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+          <div className="space-y-1.5">
+            <Skeleton className="h-5 w-36 rounded" />
+            <Skeleton className="h-3 w-72 rounded" />
+          </div>
+          <Skeleton className="h-7 w-24 rounded-full" />
+        </div>
+        <div className="flex flex-col divide-y divide-slate-100">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-4 py-4">
+              <Skeleton className="h-2.5 w-2.5 rounded-full shrink-0" />
+              <div className="flex-1 space-y-1">
+                <Skeleton className="h-4 w-52 rounded" />
+                <Skeleton className="h-3 w-32 rounded" />
+              </div>
+              <Skeleton className="h-9 w-20 rounded-lg" />
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-end border-t border-slate-200 pt-4">
+          <Skeleton className="h-9 w-28 rounded-lg" />
+        </div>
       </div>
     );
   }

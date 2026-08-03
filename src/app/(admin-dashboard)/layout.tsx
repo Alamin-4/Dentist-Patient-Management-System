@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 import { useMe } from "@/hooks/auth/useAuth";
 import { AdminNavbar } from "@/app/modules/admin/layout/admin-navbar";
 import { AdminSidebar } from "@/app/modules/admin/layout/admin-sidebar";
 import { AdminMobileSidebarDrawer } from "@/app/modules/admin/layout/admin-mobile-sidebar-drawer";
 import { SidebarProvider } from "@/context/sidebar-context";
-import { Loader2 } from "lucide-react";
 import { UserRole } from "@/types/constants";
+import { AdminDashboardSkeleton } from "@/components/skeletons/AdminDashboardSkeleton";
 
 export default function AdminDashboardLayout({
   children,
@@ -16,22 +16,18 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, isLoading, isError } = useMe();
-  const router = useRouter();
+
 
   useEffect(() => {
     if (!isLoading) {
       if (isError || !user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {
-        router.replace("/admin-login");
+        window.location.href = "/admin-login";
       }
     }
-  }, [isLoading, isError, user, router]);
+  }, [isLoading, isError, user]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-dvh items-center justify-center bg-[#F5F7FA]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0D2B3E]" />
-      </div>
-    );
+    return <AdminDashboardSkeleton />;
   }
 
   if (isError || !user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {

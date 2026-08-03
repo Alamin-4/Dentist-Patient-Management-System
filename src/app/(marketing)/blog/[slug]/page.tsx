@@ -191,7 +191,7 @@ export default function BlogPostPage() {
                   return (
                     <blockquote
                       key={idx}
-                      className="border-l-4 border-[#E3A32A] bg-amber-50/40 px-5 py-3 my-4 rounded-r-xl text-slate-600 italic"
+                      className="border-l-4 border-[#E3A32A] bg-accent/5/40 px-5 py-3 my-4 rounded-r-xl text-slate-600 italic"
                     >
                       {line.replace("> ", "")}
                     </blockquote>

@@ -144,7 +144,7 @@ export function BlogManager() {
                       "absolute top-3 right-3 text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border",
                       post.isPublished
                         ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                        : "bg-amber-50 text-accent/95 border-amber-200"
+                        : "bg-accent/5 text-accent/95 border-amber-200"
                     )}
                   >
                     {post.isPublished ? "Published" : "Draft"}

@@ -38,7 +38,6 @@ export function Navbar() {
 
   const logutHandler = () => {
     logout();
-    router.push("/");
   };
 
   const displayName = user?.name || (user?.email ? user.email.split("@")[0] : "User");

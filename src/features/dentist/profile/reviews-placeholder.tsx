@@ -2,7 +2,8 @@
 
 import { DentistProfileData } from "./profile.types";
 import { useDentistDirectoryReviews } from "@/hooks/dentist/useDentistDirectory";
-import { Star, Loader2 } from "lucide-react";
+import { Star } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SectionCard } from "@/components/shared/section-card";
 
 interface ReviewsPlaceholderProps {
@@ -31,10 +32,45 @@ export function ReviewsPlaceholder({ dentist }: ReviewsPlaceholderProps) {
 
   if (isLoading) {
     return (
-      <SectionCard className="p-6">
-        <div className="py-12 flex justify-center items-center gap-2 text-slate-500">
-          <Loader2 className="animate-spin size-6 text-brand-medium-navy" />
-          <span>Loading reviews...</span>
+      <SectionCard className="p-6 space-y-6">
+        <div className="border-b border-border pb-4">
+          <Skeleton className="h-6 w-40 rounded-lg" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8 border-b border-slate-200">
+          <div className="bg-slate-50 rounded-xl p-5 flex flex-col items-center gap-3">
+            <Skeleton className="h-12 w-16 rounded" />
+            <Skeleton className="h-4 w-28 rounded" />
+            <Skeleton className="h-4 w-20 rounded" />
+          </div>
+          <div className="md:col-span-2 space-y-4 flex flex-col justify-center">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between">
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-4 w-24 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="py-5">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-28 rounded" />
+                    <Skeleton className="h-3 w-20 rounded" />
+                  </div>
+                </div>
+                <div className="space-y-1 text-right">
+                  <Skeleton className="h-3.5 w-20 rounded ml-auto" />
+                  <Skeleton className="h-3 w-16 rounded ml-auto" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-full rounded" />
+              <Skeleton className="h-4 w-4/5 rounded mt-1.5" />
+            </div>
+          ))}
         </div>
       </SectionCard>
     );

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/shared/error-state";
 import { useMe } from "@/hooks/auth/useAuth";
+import { Can } from "@/core/hooks/auth/usePermissions";
 import WriteReviewDialog from "./WriteReviewDialog";
 
 export default function ReviewSection({
@@ -44,15 +45,17 @@ export default function ReviewSection({
         <h2 className="text-xl lg:text-2xl font-bold text-[#033355]">
           Reviews & Ratings
         </h2>
-        {isPatient && isDentistVerified && (
-          <Button
-            type="button"
-            onClick={() => setLocalOpen(true)}
-            className="w-full sm:w-auto h-10 rounded-lg bg-[#113254] hover:bg-[#0d2844] text-white font-bold transition-colors cursor-pointer flex items-center justify-center gap-2"
-          >
-            <MessageSquare className="size-4" />
-            Write a Review
-          </Button>
+        {isDentistVerified && (
+          <Can action="write_review">
+            <Button
+              type="button"
+              onClick={() => setLocalOpen(true)}
+              className="w-full sm:w-auto h-10 rounded-lg bg-[#113254] hover:bg-[#0d2844] text-white font-bold transition-colors cursor-pointer flex items-center justify-center gap-2"
+            >
+              <MessageSquare className="size-4" />
+              Write a Review
+            </Button>
+          </Can>
         )}
       </div>
 
@@ -64,7 +67,6 @@ export default function ReviewSection({
         />
       ) : isLoading ? (
         <div className="space-y-8 animate-pulse">
-          {/* Summary Section Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8 border-b border-slate-200">
             <div className="bg-slate-50 rounded-xl p-5 text-center flex flex-col justify-center items-center border border-slate-100">
               <Skeleton className="h-12 w-16 rounded mb-2" />
