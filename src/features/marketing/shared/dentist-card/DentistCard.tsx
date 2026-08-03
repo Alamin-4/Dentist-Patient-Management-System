@@ -21,6 +21,7 @@ import {
 } from "@/features/marketing/find-dentists-page-components/directory.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
+import { ClaimProfileButton } from "@/features/marketing/shared/ClaimProfileButton";
 
 function VerificationDots({ phase }: { phase: Dentist["verificationPhase"] }) {
   if (!phase) return null;
@@ -314,31 +315,9 @@ export default function DentistCard({
                 (() => {
                   switch (claimState) {
                     case ClaimButtonState.CLAIM_PROFILE:
-                      return (
-                        <Can action="claim_dentist_profile">
-                          <Button
-                            variant="secondary"
-                            className="h-9 px-3.5 text-xs font-bold text-white bg-accent  hover:bg-accent/90 cursor-pointer transition-all rounded-lg"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push(`/find-dentists/${dentist.slug}/claim`);
-                            }}
-                          >
-                            Claim Profile
-                          </Button>
-                        </Can>
-                      );
+                      return <ClaimProfileButton slug={dentist.slug} size="sm" />;
                     case ClaimButtonState.CLAIMED:
-                      return (
-                        <Button
-                          disabled
-                          variant="secondary"
-                          className="h-9 px-3.5 text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 cursor-not-allowed opacity-70 rounded-lg"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Claimed
-                        </Button>
-                      );
+                      return <ClaimProfileButton slug={dentist.slug} isClaimed={true} size="sm" />;
                     case ClaimButtonState.HIDDEN:
                       return null;
                   }

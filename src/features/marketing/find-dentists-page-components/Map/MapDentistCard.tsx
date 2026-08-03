@@ -11,6 +11,7 @@ import type { Dentist } from "../types";
 import { useStateContext } from "@/providers/StateProvider";
 import { useMe } from "@/hooks/auth/useAuth";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
+import { ClaimProfileButton } from "@/features/marketing/shared/ClaimProfileButton";
 import toast from "react-hot-toast";
 
 type MapDentistCardProps = {
@@ -226,15 +227,11 @@ export default function MapDentistCard({
             ) : (
               <>
                 {isClaimableProfile ? (
-                  <Button
-                    type="button"
-                    size={"sm"}
-                    variant="secondary"
-                    onClick={handleClaimProfile}
-                    className="h-9 rounded-md cursor-pointer border border-amber-300 bg-accent/5 px-2.5 text-xs font-bold text-accent/95 hover:bg-accent/10 transition-colors"
-                  >
-                    Claim Profile
-                  </Button>
+                  <ClaimProfileButton
+                    slug={dentist.slug}
+                    isClaimed={dentist.isClaimed}
+                    size="sm"
+                  />
                 ) : (
                   <Button
                     type="button"
