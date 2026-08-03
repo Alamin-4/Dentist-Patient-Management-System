@@ -39,7 +39,7 @@ type SubStatus = "upcoming" | "active" | "waiting_estimate";
 
 const PLAN_STATUS_BADGE: Record<string, string> = {
   "Not Sent": "bg-gray-100 text-gray-500",
-  "Awaiting response": "bg-amber-50 text-accent border border-amber-200",
+  "Awaiting response": "bg-accent/5 text-accent border border-amber-200",
   Rejected: "bg-red-50 text-red-500 border border-red-200",
 };
 

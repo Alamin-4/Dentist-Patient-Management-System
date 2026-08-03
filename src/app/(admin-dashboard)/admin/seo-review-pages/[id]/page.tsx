@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import SEOPageDetail from "@/app/(admin-dashboard)/modules/seo-review-page/components/seo-page-detail";
 
+import { SEOReviewDetailSkeleton } from "@/components/skeletons/SEOReviewDetailSkeleton";
+
 export default function SEOReviewDetailPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -19,11 +21,7 @@ export default function SEOReviewDetailPage() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-text border-t-transparent" />
-      </div>
-    );
+    return <SEOReviewDetailSkeleton />;
   }
 
   if (error || !detailData) {

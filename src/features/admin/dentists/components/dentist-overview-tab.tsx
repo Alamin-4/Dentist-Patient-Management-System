@@ -107,19 +107,19 @@ function PhaseBadge({ status }: { status: string }) {
     },
     pending: {
       label: "Pending Review",
-      className: "bg-amber-50 text-accent border border-amber-200",
+      className: "bg-accent/5 text-accent border border-amber-200",
     },
     in_review: {
       label: "Pending Review",
-      className: "bg-amber-50 text-accent border border-amber-200",
+      className: "bg-accent/5 text-accent border border-amber-200",
     },
     submitted: {
       label: "Pending Review",
-      className: "bg-amber-50 text-accent border border-amber-200",
+      className: "bg-accent/5 text-accent border border-amber-200",
     },
     submit: {
       label: "Pending Review",
-      className: "bg-amber-50 text-accent border border-amber-200",
+      className: "bg-accent/5 text-accent border border-amber-200",
     },
     rejected: {
       label: "Rejected",
@@ -368,7 +368,7 @@ export function DentistOverviewTab({
         </div>
 
         {isSubmitted(phase2Status) && (
-          <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-amber-50 px-4 py-3">
+          <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-accent/5 px-4 py-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
             <div>
               <p className="text-sm font-semibold text-accent/95">

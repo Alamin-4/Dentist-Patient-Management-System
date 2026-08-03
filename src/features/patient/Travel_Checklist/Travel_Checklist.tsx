@@ -103,13 +103,11 @@ export default function TravelChecklistPageComponent() {
           <div className="h-4 w-80 bg-slate-100 rounded-md" />
         </div>
 
-        {/* Progress Card Skeleton */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm space-y-4">
           <div className="h-5 w-40 bg-slate-200 rounded-md" />
           <div className="h-3 w-full bg-slate-100 rounded-full" />
         </div>
 
-        {/* Section 1 Skeleton */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-sm space-y-6">
           <div className="h-6 w-44 bg-slate-200 rounded-md mb-4" />
           {Array.from({ length: 4 }).map((_, idx) => (

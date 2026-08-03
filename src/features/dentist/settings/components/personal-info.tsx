@@ -7,7 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 import toast from "react-hot-toast";
 import { Pencil } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SectionCard } from "@/components/shared/section-card";
+
+import { LanguageMultiSelect } from "@/components/ui/language-multi-select";
 
 interface FormValues {
   firstName: string;
@@ -18,6 +21,8 @@ interface FormValues {
   legalName: string;
   yearsOfExperience: number;
   city: string;
+  languages: string[];
+  bio?: string;
 }
 
 export default function PersonalInfo() {
@@ -38,10 +43,14 @@ export default function PersonalInfo() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     mode: "onTouched",
   });
+
+  const selectedLanguages = watch("languages") || [];
 
   // Populate dentist data
   useEffect(() => {
@@ -62,6 +71,8 @@ export default function PersonalInfo() {
         legalName: user.dentist?.dentistProfessionalData?.legalName || "",
         yearsOfExperience: user.dentist?.dentistProfessionalData?.yearsOfExperience || 0,
         city: user.dentist?.dentistProfessionalData?.city || "",
+        languages: user.dentist?.languages || ["English"],
+        bio: user.dentist?.bio || user.dentist?.description || (user.dentist as any)?.dentistProfessionalData?.bio || (user.dentist as any)?.dentistProfessionalData?.description || "",
       });
     }
   }, [user, reset]);
@@ -84,16 +95,25 @@ export default function PersonalInfo() {
         legalName: user.dentist?.dentistProfessionalData?.legalName || "",
         yearsOfExperience: user.dentist?.dentistProfessionalData?.yearsOfExperience || 0,
         city: user.dentist?.dentistProfessionalData?.city || "",
+        languages: user.dentist?.languages || ["English"],
+        bio: user.dentist?.bio || user.dentist?.description || (user.dentist as any)?.dentistProfessionalData?.bio || (user.dentist as any)?.dentistProfessionalData?.description || "",
       });
     }
     setIsEditing(false);
   };
 
   const onSubmit = async (data: FormValues) => {
+    if (!data.languages || data.languages.length === 0) {
+      toast.error("Please select at least one language");
+      return;
+    }
+
     try {
       const payload = {
         ...data,
         yearsOfExperience: Number(data.yearsOfExperience),
+        bio: data.bio || "",
+        description: data.bio || "",
       };
       const res = await updateDentistProfileMutation.mutateAsync(payload);
       toast.success(res?.message || "Profile updated successfully");
@@ -107,8 +127,19 @@ export default function PersonalInfo() {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-border bg-white p-6 shadow-sm flex items-center justify-center h-48">
-        <div className="h-8 w-8 border-3 border-brand-medium-navy border-t-transparent rounded-full animate-spin"></div>
+      <div className="rounded-lg border border-border bg-white p-6 shadow-sm space-y-5">
+        <div className="flex items-center justify-between border-b border-border/60 pb-4">
+          <Skeleton className="h-6 w-44 rounded" />
+          <Skeleton className="h-8 w-16 rounded-md" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-11 w-full rounded-md" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -268,6 +299,27 @@ export default function PersonalInfo() {
               <p className="mt-1 text-xs text-red-600 font-semibold">{errors.country.message}</p>
             )}
           </div>
+        </div>
+
+        <div className="mt-4">
+          <LanguageMultiSelect
+            selectedLanguages={selectedLanguages}
+            onChange={(langs: string[]) => setValue("languages", langs)}
+            error={selectedLanguages.length === 0 ? "Please select at least one language" : undefined}
+            label="Spoken Languages"
+            disabled={!isEditing || updateDentistProfileMutation.isPending}
+          />
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-[#475569] mb-2">Professional Bio / About Us</label>
+          <textarea
+            rows={4}
+            disabled={!isEditing || updateDentistProfileMutation.isPending}
+            {...register("bio")}
+            placeholder="Tell patients about your clinical background, specializations, treatment philosophy, and experience..."
+            className="w-full rounded-md border border-slate-200 p-3 text-sm outline-none focus:ring-1 focus:ring-brand-medium-navy disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-100 text-slate-800"
+          />
         </div>
 
         {isEditing && (

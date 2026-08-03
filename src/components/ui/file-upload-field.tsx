@@ -104,8 +104,7 @@ export function FileUploadField<TFieldValues extends FieldValues = FieldValues>(
 
     // ── 1. Size check ─────────────────────────────────────────────────────────
     if (file.size > maxSizeBytes) {
-      field.onChange(null);
-      // We need the parent form's setError — use ctx when available
+      field.onChange(file);
       ctx?.setError(name as any, {
         type: "manual",
         message: `File size is too large (${formatBytes(file.size)}). Maximum allowed size is ${maxSizeMB} MB. Please select a smaller file.`,
@@ -120,7 +119,7 @@ export function FileUploadField<TFieldValues extends FieldValues = FieldValues>(
       );
 
       if (!isAllowed) {
-        field.onChange(null);
+        field.onChange(file);
         ctx?.setError(name as any, {
           type: "manual",
           message: `Invalid file type (${file.type || "unknown"}). ${allowedTypesLabel ? `Allowed: ${allowedTypesLabel}.` : ""}`,

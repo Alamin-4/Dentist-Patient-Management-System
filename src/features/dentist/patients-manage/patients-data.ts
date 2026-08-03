@@ -264,7 +264,7 @@ export function getTreatmentPlanBadgeClasses(status: string) {
     return "border-slate-200 bg-slate-50 text-slate-600";
   }
 
-  return "border-amber-200 bg-amber-50 text-accent/95";
+  return "border-amber-200 bg-accent/5 text-accent/95";
 }
 
 export function getStatusBadgeClasses(status: string) {
@@ -300,5 +300,5 @@ export function getTimelineBadgeClasses(status: string) {
     return "border-slate-200 bg-slate-50 text-slate-600";
   }
 
-  return "border-amber-200 bg-amber-50 text-accent/95";
+  return "border-amber-200 bg-accent/5 text-accent/95";
 }

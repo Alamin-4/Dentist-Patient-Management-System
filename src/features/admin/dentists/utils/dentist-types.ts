@@ -43,7 +43,7 @@ export const PAGE_SIZE = 8;
 
 export const STATUS_BADGE: Record<string, string> = {
   active: "bg-emerald-50 text-emerald-600",
-  pending: "bg-amber-50 text-accent",
+  pending: "bg-accent/5 text-accent",
   suspended: "bg-red-50 text-red-500",
   rejected: "bg-gray-100 text-gray-500",
   unclaimed: "bg-[#F3F4F6] text-[#4B5563]", // clean gray look for unclaimed/imported

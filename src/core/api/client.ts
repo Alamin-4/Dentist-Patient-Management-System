@@ -261,6 +261,9 @@ export const apiClient = {
         country: payload.country,
         city: payload.city,
         phoneNumber: payload.phoneNumber || payload.phone_number || payload.phone,
+        languages: payload.languages,
+        bio: payload.bio || payload.description,
+        description: payload.description || payload.bio,
       });
       return response.data;
     },

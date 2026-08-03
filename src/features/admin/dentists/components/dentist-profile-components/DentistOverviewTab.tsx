@@ -129,7 +129,7 @@ export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
 function StatusBadge({ status }: { status: string }) {
     const isApproved = status === "APPROVED";
     return (
-        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${isApproved ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-accent'}`}>
+        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${isApproved ? 'bg-emerald-50 text-emerald-600' : 'bg-accent/5 text-accent'}`}>
             {isApproved ? <CheckCircle2 className="mr-1 h-3 w-3" /> : <AlertCircle className="mr-1 h-3 w-3" />}
             {isApproved ? 'Approved' : status || 'Pending'}
         </span>

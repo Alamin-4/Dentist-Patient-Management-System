@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, Phone, MapPin, Briefcase, PencilLine, Loader2 } from "lucide-react";
+import { Mail, Phone, MapPin, Briefcase, Globe, PencilLine, Loader2 } from "lucide-react";
 import { DentistProfileData } from "./profile.types";
 import { SectionHeader } from "@/components/shared/section-header";
 import {
@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useProfessionalDetailsMutation } from "@/core/hooks/dentist/useDentist";
 import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 import toast from "react-hot-toast";
+import { LanguageMultiSelect } from "@/components/ui/language-multi-select";
 
 interface BasicDetailsCardProps {
   dentist?: DentistProfileData | null;
@@ -28,6 +29,9 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
   const [yearsOfExperience, setYearsOfExperience] = useState<number | string>("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [languagesError, setLanguagesError] = useState<string | undefined>();
+  const [bio, setBio] = useState("");
 
   const updateMutation = useProfessionalDetailsMutation();
 
@@ -37,6 +41,9 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
       setYearsOfExperience(dentist.dentistProfessionalData?.yearsOfExperience ?? 0);
       setCity(dentist.dentistProfessionalData?.city || "");
       setCountry(dentist.country || "");
+      setLanguages((dentist as any)?.languages || ["English"]);
+      setBio(dentist?.bio || dentist?.description || (dentist as any)?.dentistProfessionalData?.bio || (dentist as any)?.dentistProfessionalData?.description || "");
+      setLanguagesError(undefined);
     }
   }, [dentist, isOpen]);
 
@@ -57,12 +64,16 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
 
   const experienceYears = dentist?.dentistProfessionalData?.yearsOfExperience;
   const experience = experienceYears ? `${experienceYears} Years` : "0";
+  const spokenLanguages = (dentist as any)?.languages?.length
+    ? (dentist as any).languages.join(", ")
+    : "English";
 
   const details = [
     { icon: Mail, label: "Email", value: email },
     { icon: Phone, label: "Phone Number", value: phone },
     { icon: MapPin, label: "Location", value: location },
     { icon: Briefcase, label: "Experience", value: experience },
+    { icon: Globe, label: "Spoken Languages", value: spokenLanguages },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -79,6 +90,11 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
       toast.error("Country is required");
       return;
     }
+    if (!languages || languages.length === 0) {
+      setLanguagesError("Please select at least one language");
+      toast.error("Please select at least one language");
+      return;
+    }
 
     updateMutation.mutate(
       {
@@ -88,6 +104,9 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
         country,
         legalName: dentist?.user?.name || "",
         primarySpecialty: dentist?.specialty?.name || "",
+        languages,
+        bio,
+        description: bio,
       },
       {
         onSuccess: () => {
@@ -131,6 +150,16 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Bio Section */}
+        <div className="mt-6 pt-5 border-t border-gray-100">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Professional Bio / About Us</h4>
+          {bio ? (
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{bio}</p>
+          ) : (
+            <p className="text-xs text-gray-400 italic">No bio added yet. Click edit to add your professional bio for patients.</p>
+          )}
         </div>
       </div>
 
@@ -198,6 +227,33 @@ export function BasicDetailsCard({ dentist }: BasicDetailsCardProps) {
                   required
                 />
               </div>
+            </div>
+
+            <div className="pt-2">
+              <LanguageMultiSelect
+                selectedLanguages={languages}
+                onChange={(selected: string[]) => {
+                  setLanguages(selected);
+                  if (selected.length > 0) setLanguagesError(undefined);
+                }}
+                error={languagesError}
+                label="Spoken Languages"
+                disabled={updateMutation.isPending}
+              />
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <Label htmlFor="bio" className="font-semibold text-slate-700 text-sm">
+                Professional Bio / About Us
+              </Label>
+              <textarea
+                id="bio"
+                rows={4}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Tell patients about your clinical background, specialization, treatment philosophy, and experience..."
+                className="w-full rounded-md border border-slate-200 p-3 text-sm outline-none focus:border-brand-medium-navy text-slate-800"
+              />
             </div>
 
             <DialogFooter className="pt-4 border-t border-slate-100 mt-6 flex justify-end gap-2">

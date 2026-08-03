@@ -85,7 +85,7 @@ export default function BookingCard({
       </div>
 
       <div className="mt-auto pt-5 space-y-5">
-        <div className="flex items-center justify-between w-full min-h-12 py-2 px-4 bg-amber-50 border border-amber-200 rounded-lg gap-2">
+        <div className="flex items-center justify-between w-full min-h-12 py-2 px-4 bg-accent/5 border border-amber-200 rounded-lg gap-2">
           <span className="text-[15px] font-medium text-[#334155] shrink-0">
             {timelineLabel}
           </span>

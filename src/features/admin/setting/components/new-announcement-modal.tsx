@@ -84,7 +84,7 @@ export function NewAnnouncementModal({ open, onClose, onPublish }: NewAnnounceme
         >
           {/* Header */}
           <div className="flex items-start gap-3 border-b border-slate-200 p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 border border-amber-200">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/5 border border-amber-200">
               <Megaphone className="h-4 w-4 text-accent" />
             </div>
             <div className="min-w-0 flex-1">

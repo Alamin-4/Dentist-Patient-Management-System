@@ -292,6 +292,7 @@ export default function FindDentist() {
     onScoreToggle: toggleScore,
     selectedLanguages,
     onLanguageToggle: toggleLanguage,
+    onLanguagesChange: (langs: string[]) => { setSelectedLanguages(langs); setPage(1); },
     selectedAvailabilityDate,
     onAvailabilityDateChange: setSelectedAvailabilityDate,
     showVerifiedOnly,

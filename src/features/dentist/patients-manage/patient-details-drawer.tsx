@@ -196,7 +196,7 @@ export default function PatientDetailsDrawer({
                     className={`rounded-lg border px-4 py-3 text-sm font-medium ${patient.treatmentPlan === "rejected"
                       ? "border-rose-200 bg-rose-50 text-rose-600"
                       : patient.treatmentPlan === "awaiting response"
-                        ? "border-amber-200 bg-amber-50 text-accent/95"
+                        ? "border-amber-200 bg-accent/5 text-accent/95"
                         : patient.treatmentPlan === "accepted"
                           ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                           : "border-slate-200 bg-slate-50 text-slate-600"

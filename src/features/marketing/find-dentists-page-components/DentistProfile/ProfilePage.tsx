@@ -28,10 +28,6 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
           <div className="w-full lg:flex-1 min-w-0 space-y-5">
             <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-            {activeTab === "overview" && (
-              <AboutSection name={dentist.name} bio={dentist.bio} />
-            )}
-
             {showPlaceholder ? (
               <div className="rounded-lg border border-dashed border-slate-200 bg-white p-10 text-center space-y-5 shadow-sm">
                 <div className="mx-auto size-14 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
@@ -48,24 +44,16 @@ export default function DentistProfilePage({ dentist }: { dentist: any }) {
                     }
                   </p>
                 </div>
-                {!isClaimed && dentist.isClaimable && (
-                  <div className="flex justify-center">
-                    <Button
-                      variant="default"
-                      className="bg-accent hover:bg-accent text-white font-bold px-6 shadow-sm transition-colors"
-                      onClick={() => {
-                        router.push(`/find-dentists/${dentist.slug}/claim`);
-                      }}
-                    >
-                      Are you Dr. {dentist.name}? Claim Profile
-                    </Button>
-                  </div>
-                )}
+
               </div>
             ) : (
               <>
                 {activeTab === "overview" && (
                   <div className="space-y-5">
+                    {dentist.bio && dentist.bio !== "N/A" && (
+                      <AboutSection name={dentist.name} bio={dentist.bio} />
+                    )}
+
                     {dentist.verified && dentist.procedures && dentist.procedures.length > 0 && dentist.procedures.some((p: any) => p && typeof p === 'object' && 'price' in p) && (
                       <PricingSection procedures={dentist.procedures} />
                     )}

@@ -38,7 +38,7 @@ interface DentistDetailPageProps {
 
 const STATUS_BADGE: Record<string, string> = {
   active: "bg-emerald-50 text-emerald-600",
-  pending: "bg-amber-50 text-accent",
+  pending: "bg-accent/5 text-accent",
   suspended: "bg-red-50 text-red-500",
   rejected: "bg-gray-100 text-gray-500",
 };
@@ -446,7 +446,7 @@ export default function DentistDetailPage({
                   <Pencil className="h-4 w-4 text-gray-400" />
                   Edit profile
                 </button>
-                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-amber-50">
+                <button className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-accent/5">
                   <ShieldOff className="h-4 w-4" />
                   Suspend account
                 </button>
