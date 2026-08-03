@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { useProfessionalDetailsMutation } from "@/hooks/dentist/useDentist";
 import { useSpecialties } from "@/hooks/dentist/useSpecialty";
 import { ProfessionalDetailsI } from "@/hooks/dentist/dentist.interface";
@@ -47,7 +49,7 @@ const backendToFrontendFieldMap: Record<string, keyof ProfFormData> = {
 export function ProfessionalDetailsForm({
   setStep,
 }: {
-  setStep: (step: "success") => void;
+  setStep: (step: "create-account" | "verify-email" | "professional-info" | "success") => void;
 }) {
   const professionalDetailsMutation = useProfessionalDetailsMutation();
   const isProfessionalDetailsLoading = professionalDetailsMutation.isPending;
