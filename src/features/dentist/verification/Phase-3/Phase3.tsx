@@ -169,6 +169,25 @@ export default function Phase3() {
 
   const onSubmit = (payload: Phase3Values) => {
     setSubmitError(null);
+
+    for (const [idx, mat] of payload.materials.entries()) {
+      const docFields: Array<[keyof typeof mat, string]> = [
+        ["ceCertificate", "CE Certificate"],
+        ["materialBrands", "Material Brands"],
+        ["invoice", "Invoice"],
+        ["protocolPdf", "Protocol PDF"],
+      ];
+      for (const [fieldKey, label] of docFields) {
+        const file = mat[fieldKey];
+        if (file instanceof File && file.size > 5 * 1024 * 1024) {
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          const msg = `Procedure #${idx + 1} ${label} file size (${sizeMB} MB) exceeds the 5MB limit. Please upload a smaller file.`;
+          setSubmitError(msg);
+          return;
+        }
+      }
+    }
+
     const formattedPayload: StepThreeI = {
       clinic_address: {
         address: payload.clinic_address.address,

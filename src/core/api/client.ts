@@ -276,12 +276,25 @@ export const apiClient = {
       return response.data;
     },
     stepTwoWithFiles: async (payload: FormData) => {
-      const response = await api.post(endpoints.dentists.verifyOperationsSubmit, payload, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data;
+      try {
+        const response = await api.post(endpoints.dentists.verifyOperationsSubmit, payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        return response.data;
+      } catch (error: any) {
+        const status = error?.response?.status;
+        if (status === 413) {
+          const err = new Error(
+            "Your uploaded file is too large. The maximum allowed file size is 5MB."
+          );
+          (err as any).status = 413;
+          (err as any).isFileTooLarge = true;
+          throw err;
+        }
+        throw error;
+      }
     },
     stepThree: async (payload: { clinicAddress: string; latitude?: number; longitude?: number; procedureDocs: any[] }) => {
       const response = await api.post(endpoints.dentists.verifyClinicDepthSubmit, payload);

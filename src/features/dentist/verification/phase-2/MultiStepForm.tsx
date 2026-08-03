@@ -125,6 +125,24 @@ export default function MultiStepForm() {
       })),
     };
 
+    if (payload.jciCertificate instanceof File && payload.jciCertificate.size > 5 * 1024 * 1024) {
+      const sizeMB = (payload.jciCertificate.size / (1024 * 1024)).toFixed(2);
+      const msg = `JCI Certificate file size (${sizeMB} MB) exceeds the 5MB limit. Please upload a file under 5MB.`;
+      methods.setError("jciCertificate", { type: "manual", message: msg });
+      methods.setError("root", { type: "server", message: msg });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (payload.walkthroughVideo instanceof File && payload.walkthroughVideo.size > 5 * 1024 * 1024) {
+      const sizeMB = (payload.walkthroughVideo.size / (1024 * 1024)).toFixed(2);
+      const msg = `Video Walkthrough file size (${sizeMB} MB) exceeds the 5MB limit. Please upload a video under 5MB.`;
+      methods.setError("videoWalkthrough", { type: "manual", message: msg });
+      methods.setError("root", { type: "server", message: msg });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     stepTwoMutation.mutate(payload, {
       onSuccess: () => {
         toast.success("Operations verification submitted successfully!");
@@ -135,6 +153,14 @@ export default function MultiStepForm() {
       },
 
       onError: (error: any) => {
+        // ── 413 Request Entity Too Large (nginx rejected before backend) ──
+        if (error?.status === 413 || error?.isFileTooLarge || error?.response?.status === 413) {
+          const msg = "Your uploaded file is too large. The maximum allowed file size is 5MB.";
+          methods.setError("root", { type: "server", message: msg });
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+
         const resData = error?.response?.data;
 
         const fieldErrors: Record<string, string> = {};
