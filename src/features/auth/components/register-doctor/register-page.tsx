@@ -2,12 +2,13 @@
 
 import { ArrowLeft } from "lucide-react";
 import { RegisterPageSkeleton } from "@/components/skeletons/RegisterPageSkeleton";
-
 import Image from "next/image";
-import { CreateAccountForm } from "./create-account";
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "motion/react";
+
+import { CreateAccountForm } from "./create-account";
 import { VerifyOtpForm } from "./verify-otp-form";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ProfessionalDetailsForm } from "./professional-details-form";
 import { ProfileSuccessState } from "./ProfileSuccessRate";
 import { useMe } from "@/hooks/auth/useAuth";
@@ -19,53 +20,63 @@ import CustomDesText from "@/features/shared/custom-des-text";
 export default function RegisterPageComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const dentistParam = searchParams.get("dentist");
 
-  const { user, isPending } = useMe();
-  const { data: dentistProfileResponse, isLoading: isProfileLoading } = useDentistProfileQuery({
+  const { user, isFetched: isSessionFetched } = useMe();
+  const { data: dentistProfileResponse, isFetched: isProfileFetched } = useDentistProfileQuery({
     enabled: !!user && user.role === "DENTIST",
   });
-  const dentistProfile = dentistProfileResponse?.data || dentistProfileResponse;
 
-  const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">(
-    dentistParam === "professional-info"
-      ? "professional-info"
-      : dentistParam === "verify-email"
-        ? "verify-email"
-        : "create-account"
-  );
+  const dentistProfile =
+    dentistProfileResponse?.data?.dentist ||
+    dentistProfileResponse?.data ||
+    dentistProfileResponse;
+
+  const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">(() => {
+    if (dentistParam === "success") return "success";
+    if (dentistParam === "professional-info") return "professional-info";
+    if (dentistParam === "verify-email") return "verify-email";
+    return "create-account";
+  });
+
   const registerEmail =
     user?.email ||
     (typeof window !== "undefined" ? localStorage.getItem("registerEmail") : null) ||
     "";
 
-  useEffect(() => {
-    if (dentistParam === "professional-info") {
-      setStep("professional-info");
-    } else if (dentistParam === "verify-email") {
-      setStep("verify-email");
+  const handleStepChange = (
+    nextStep: "create-account" | "verify-email" | "professional-info" | "success"
+  ) => {
+    setStep(nextStep);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `${pathname}?dentist=${nextStep}`);
     }
-  }, [dentistParam]);
+  };
 
   useEffect(() => {
-    if (!isPending && user) {
+    if (isSessionFetched && user) {
       if (user.role === "PATIENT") {
         router.replace("/patient");
       } else if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
         router.replace("/admin");
-      } else if (user.role === "DENTIST") {
-        if (!isProfileLoading) {
-          if (dentistProfile?.specialtyId) {
-            router.replace("/dentist");
-          } else if (user.emailVerified) {
-            setStep("professional-info");
-          }
+      } else if (user.role === "DENTIST" && isProfileFetched) {
+        const hasCompletedProfessionalDetails = !!(
+          dentistProfile?.specialtyId ||
+          dentistProfile?.specialty ||
+          dentistProfile?.dentistProfessionalData
+        );
+
+        if (hasCompletedProfessionalDetails) {
+          router.replace("/dentist");
+        } else if (user.emailVerified && step === "create-account") {
+          handleStepChange("professional-info");
         }
       }
     }
-  }, [user, isPending, isProfileLoading, dentistProfile, router]);
+  }, [user, isSessionFetched, isProfileFetched, dentistProfile, router]);
 
-  const isInitialLoading = isPending || (!!user && user.role === "DENTIST" && isProfileLoading);
+  const isInitialLoading = !isSessionFetched || (!!user && user.role === "DENTIST" && !isProfileFetched);
 
   if (isInitialLoading) {
     return <RegisterPageSkeleton />;
@@ -106,19 +117,17 @@ export default function RegisterPageComponent() {
         </div>
       </section>
 
-      {/* Right Form Section */}
       <section className="flex flex-col items-center justify-center w-full min-h-dvh px-4 py-4 md:px-6 md:py-6 lg:w-2/5 mx-auto">
         <div className={`w-full ${getFormMaxWidth()} transition-all duration-300 mx-auto`}>
-          {/* Top Back Button & Title */}
           {step !== "success" && (
             <div className="flex flex-col items-start gap-3 md:gap-4 mb-5 w-full">
               <button
                 type="button"
                 onClick={() => {
                   if (step === "verify-email") {
-                    setStep("create-account");
+                    handleStepChange("create-account");
                   } else if (step === "professional-info") {
-                    setStep("verify-email");
+                    handleStepChange("verify-email");
                   } else {
                     router.back();
                   }
@@ -139,19 +148,29 @@ export default function RegisterPageComponent() {
             </div>
           )}
 
-          {/* Form Content */}
           <div className="w-full">
-            {step === "verify-email" && (
-              <div className="space-y-2 mb-5 text-center w-full">
-                <CustomSectionHeading value="Check your inbox!" center_align={true} />
-                <CustomDesText value={`We've sent you a temporary 6-digit verification code to ${registerEmail || ""}.`} center_align={true} />
-              </div>
-            )}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="w-full"
+              >
+                {step === "verify-email" && (
+                  <div className="space-y-2 mb-5 text-center w-full">
+                    <CustomSectionHeading value="Check your inbox!" center_align={true} />
+                    <CustomDesText value={`We've sent you a temporary 6-digit verification code to ${registerEmail || ""}.`} center_align={true} />
+                  </div>
+                )}
 
-            {step === "create-account" && <CreateAccountForm setStep={setStep} />}
-            {step === "verify-email" && <VerifyOtpForm setStep={setStep} />}
-            {step === "professional-info" && <ProfessionalDetailsForm setStep={setStep} />}
-            {step === "success" && <ProfileSuccessState />}
+                {step === "create-account" && <CreateAccountForm setStep={handleStepChange} />}
+                {step === "verify-email" && <VerifyOtpForm setStep={handleStepChange} />}
+                {step === "professional-info" && <ProfessionalDetailsForm setStep={handleStepChange} />}
+                {step === "success" && <ProfileSuccessState />}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </section>

@@ -25,17 +25,13 @@ import { IRegisterDentist, registerDentistSchema } from "@/hooks/auth/auth.valid
 import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
 
 interface CreateAccountFormProps {
-  setStep: (step: "verify-email" | "professional-info" | "success") => void;
+  setStep: (step: "create-account" | "verify-email" | "professional-info" | "success") => void;
 }
 
 export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [needVerifyEmail, setNeedVerifyEmail] = useState<string | null>(null);
-  const { user } = useMe()
-
-  const router = useRouter();
-  const pathName = usePathname();
 
   const {
     registerDentistMutation,
@@ -43,13 +39,6 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
     isRegisterDentistLoading,
     isOtpResendLoading
   } = useAuth();
-
-  useEffect(() => {
-    if (user && user?.role === "DENTIST" && user?.emailVerified && setStep) {
-      setStep("professional-info")
-      router.push(`${pathName}?dentist=professional-info`);
-    }
-  }, [user])
 
   const {
     register,
@@ -87,7 +76,6 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           localStorage.setItem("registerEmail", needVerifyEmail);
           setNeedVerifyEmail(null);
           setStep("verify-email");
-          router.push(`${pathName}?dentist=verify-email`);
         },
         onError: (error: any) => {
           const errorMessage = mapApiErrorToUserMessage(error, "Failed to send verification OTP. Try again.");
@@ -108,7 +96,6 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
           return;
         }
         setStep("verify-email");
-        router.push(`${pathName}?dentist=verify-email`);
       },
 
       onError: (error: any) => {

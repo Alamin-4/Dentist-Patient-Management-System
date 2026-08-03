@@ -24,7 +24,7 @@ const otpSchema = z.object({
 type OtpFormData = z.infer<typeof otpSchema>;
 
 interface VerifyOtpFormProps {
-  setStep: (step: "professional-info" | "success") => void;
+  setStep: (step: "create-account" | "verify-email" | "professional-info" | "success") => void;
 }
 
 export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
@@ -122,7 +122,6 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       {
         onSuccess: () => {
           setStep("professional-info");
-          router.push(`${pathName}?dentist=professional-info`);
         },
         onError: (error: any) => {
           const errorMessage = mapApiErrorToUserMessage(
