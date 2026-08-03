@@ -140,10 +140,9 @@ export function mapApiDentist(d: any): Dentist {
   
   const isDocsVerified = isLicenseVerified && isOperationsVerified && isClinicDepthVerified;
   const isPaymentPaid = !!(d.membershipPaidAt || d.membershipPlan);
-  // isPaymentPending is PRIVATE — only shown on dentist's own /dentist/profile page
   const isPaymentPending = isDocsVerified && !isPaymentPaid;
-  // Public badge: VERIFIED (status is VERIFIED or all phases done) or UNVERIFIED
-  const verificationStatus: Dentist['verificationStatus'] = isDocsVerified ? 'VERIFIED' : 'UNVERIFIED';
+  const isFullyVerified = d.status === 'VERIFIED' || isDocsVerified;
+  const verificationStatus: Dentist['verificationStatus'] = isFullyVerified ? 'VERIFIED' : 'UNVERIFIED';
 
   return {
     ...d,
@@ -169,8 +168,9 @@ export function mapApiDentist(d: any): Dentist {
     isClinicDepthVerified,
     isDocsVerified,
     isPaymentPaid,
-    isVerified: isDocsVerified,   // public: all phases done = verified
-    isPaymentPending,              // private: for /dentist/profile only
+    verified: isFullyVerified,
+    isVerified: isFullyVerified,
+    isPaymentPending,
     verificationStatus,
     surpriseGuarantee: d.surpriseGuarantee ?? false,
     verificationPhase: d.verificationPhase ?? null,

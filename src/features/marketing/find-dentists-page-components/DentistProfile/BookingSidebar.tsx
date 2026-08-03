@@ -19,7 +19,9 @@ interface BookingSidebarProps {
     name: string;
     image?: string;
     verified?: boolean;
+    isVerified?: boolean;
     status?: string;
+    verificationStatus?: string;
     isClaimable?: boolean;
     isClaimed?: boolean;
     claimedByUserId?: string;
@@ -153,36 +155,48 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5 sm:mb-6">
-        {dentist.verified ? (
-          <TrustPill color="green" icon>
-            VERIFIED
-          </TrustPill>
-        ) : dentist.status === "CLAIMED" ? (
-          <TrustPill color="amber">CLAIMED</TrustPill>
-        ) : dentist.isClaimable ? (
-          <TrustPill color="slate">UNCLAIMED</TrustPill>
-        ) : <TrustPill color="slate">UNVERIFIED</TrustPill>}
+      {(() => {
+        const isProfileVerified =
+          dentist.verified === true ||
+          dentist.isVerified === true ||
+          dentist.status === "VERIFIED" ||
+          dentist.verificationStatus === "VERIFIED";
 
-        <TrustPill color="blue">
-          <span className="font-extrabold">
-            {dentist.verified ? dentist.rdvScore : "0"}
-          </span>{" "}
-          RDV score
-        </TrustPill>
+        return (
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5 sm:mb-6">
+            {isProfileVerified ? (
+              <TrustPill color="green" icon>
+                VERIFIED
+              </TrustPill>
+            ) : dentist.status === "CLAIMED" ? (
+              <TrustPill color="amber">CLAIMED</TrustPill>
+            ) : dentist.isClaimable ? (
+              <TrustPill color="slate">UNCLAIMED</TrustPill>
+            ) : (
+              <TrustPill color="slate">UNVERIFIED</TrustPill>
+            )}
 
-        {dentist.verified && (
-          <TrustPill color="slate" icon>
-            No Surprise Guarantee
-          </TrustPill>
-        )}
-        {/* Show escrow only if verified or claimed */}
-        {(dentist.verified || dentist.status === "CLAIMED") && (
-          <TrustPill color="slate" icon>
-            Escrow
-          </TrustPill>
-        )}
-      </div>
+            <TrustPill color="blue">
+              <span className="font-extrabold">
+                {isProfileVerified ? dentist.rdvScore ?? "100" : "0"}
+              </span>{" "}
+              RDV score
+            </TrustPill>
+
+            {isProfileVerified && (
+              <TrustPill color="slate" icon>
+                No Surprise Guarantee
+              </TrustPill>
+            )}
+            {/* Show escrow only if verified or claimed */}
+            {(isProfileVerified || dentist.status === "CLAIMED" || dentist.isClaimed) && (
+              <TrustPill color="slate" icon>
+                Escrow
+              </TrustPill>
+            )}
+          </div>
+        );
+      })()}
 
       <div className="mt-6 sm:mt-10 flex items-center justify-between gap-3 sm:gap-6">
         <div className="shrink-0">
