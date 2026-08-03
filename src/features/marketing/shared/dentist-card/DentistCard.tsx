@@ -139,7 +139,7 @@ export default function DentistCard({
 
   const claimState: ClaimButtonState = getClaimButtonState(
     dentist.isClaimable ?? true,
-    dentist.isClaimed ?? (dentist.status === "CLAIMED" || dentist.status === "VERIFIED")
+    dentist.isClaimed ?? !!(dentist as any).claimedByUserId
   );
 
   const badgeConfig =
@@ -224,7 +224,7 @@ export default function DentistCard({
 
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xs sm:text-sm font-bold text-primary">
-                {ratingValue > 0 ? ratingValue.toFixed(1) : "5.0"}
+                {ratingValue > 0 ? ratingValue.toFixed(1) : "0.0"}
               </span>
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
@@ -232,7 +232,7 @@ export default function DentistCard({
                     key={i}
                     className={cn(
                       "size-3.5",
-                      i < Math.floor(ratingValue || 5)
+                      i < Math.floor(ratingValue || 0)
                         ? "fill-amber-400 text-amber-400"
                         : "text-slate-200",
                     )}
