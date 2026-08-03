@@ -13,6 +13,12 @@ import { Can } from "@/core/hooks/auth/usePermissions";
 import { setSelectedDentistsForBooking } from "@/lib/storage/bookingService";
 import toast from "react-hot-toast";
 import type { Dentist } from "@/features/marketing/find-dentists-page-components/types";
+import {
+  ProfileVerificationStatus,
+  ClaimButtonState,
+  getClaimButtonState,
+  determineVerificationStatus,
+} from "@/features/marketing/find-dentists-page-components/directory.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 
@@ -116,15 +122,29 @@ export default function DentistCard({
     }
   };
 
-  const isVerified = dentist.status === "VERIFIED";
-  const isClaimableProfile = dentist.accountType === "CLAIMABLE" && !dentist.isClaimed;
+  const phasesApproved = !!(
+    dentist.isLicenseVerified &&
+    dentist.isOperationsVerified &&
+    dentist.isClinicDepthVerified
+  );
+  const hasActiveSubscription = !!(dentist.membershipPaidAt || dentist.membershipPlan);
+
+  const verificationStatus: ProfileVerificationStatus =
+    dentist.status === "VERIFIED" || dentist.verificationStatus === "VERIFIED"
+      ? ProfileVerificationStatus.VERIFIED
+      : determineVerificationStatus(phasesApproved, hasActiveSubscription);
+
+  const isVerified = verificationStatus === ProfileVerificationStatus.VERIFIED;
+
+  const claimState: ClaimButtonState = getClaimButtonState(
+    dentist.isClaimable ?? true,
+    dentist.isClaimed ?? (dentist.status === "CLAIMED" || dentist.status === "VERIFIED")
+  );
 
   const badgeConfig =
-    dentist.status === "VERIFIED"
-      ? { icon: "text-emerald-500", text: "text-emerald-600", showIcon: true }
-      : dentist.status === "CLAIMED"
-        ? { icon: "text-accent", text: "text-accent", showIcon: true }
-        : { icon: "text-slate-400", text: "text-slate-400", showIcon: false };
+    verificationStatus === ProfileVerificationStatus.VERIFIED
+      ? { icon: "text-emerald-500", text: "text-emerald-600", label: "VERIFIED", showIcon: true }
+      : { icon: "text-slate-400", text: "text-slate-500", label: "UNVERIFIED", showIcon: false };
 
   const ratingValue =
     dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
@@ -145,7 +165,7 @@ export default function DentistCard({
         isSelectedForCompare && "border-primary bg-slate-50/40",
       )}
     >
-      {isCompareMode && dentist.status === "VERIFIED" && (
+      {isCompareMode && isVerified && (
         <div className="absolute left-3 top-3 z-20" onClick={(e) => e.stopPropagation()}>
           <Checkbox
             checked={isSelectedForCompare}
@@ -159,11 +179,11 @@ export default function DentistCard({
 
         <div className="flex flex-row items-start gap-3.5 sm:gap-4 min-w-0 flex-1 w-full">
 
-          <div className="flex shrink-0 flex-col items-center gap-2 w-20 sm:w-24">
-            <div className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full bg-slate-100 border border-slate-100 shadow-xs">
+          <div className="flex shrink-0 flex-col items-center gap-2 w-20 sm:w-28">
+            <div className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full">
               <Image
                 src={dentist.image ?? "/images/man-avatar.png"}
-                alt={dentist.name.split(" ")[0] || "Dentist"}
+                alt={dentist.name.split(" ")[0] || ""}
                 fill
                 className="object-cover"
                 unoptimized
@@ -175,7 +195,7 @@ export default function DentistCard({
                 <ShieldCheck className={cn("size-3.5 shrink-0", badgeConfig.icon)} />
               )}
               <span className={cn("uppercase whitespace-nowrap font-bold", badgeConfig.text)}>
-                {dentist.status}
+                {badgeConfig.label}
               </span>
             </div>
 
@@ -193,11 +213,11 @@ export default function DentistCard({
 
           <div className="min-w-0 flex-1 space-y-2">
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-text leading-tight group-hover:text-primary transition-colors line-clamp-1">
+              <h3 className="text-base sm:text-lg font-semibold text-text leading-tight group-hover:text-primary transition-colors line-clamp-1">
                 {dentist.name}
               </h3>
               <p className="text-xs sm:text-sm font-semibold text-primary mt-0.5">
-                {dentist.specialty || "Dentist"}
+                {dentist.specialty || ""}
               </p>
             </div>
 
@@ -290,31 +310,39 @@ export default function DentistCard({
                     Book Consultation
                   </Button>
                 </Can>
-              ) : isClaimableProfile ? (
-                <Can action="claim_dentist_profile">
-                  <Button
-                    variant="secondary"
-                    className="h-9 px-3.5 text-xs font-bold text-accent/95 bg-accent/5 border border-amber-200 hover:bg-accent/10 cursor-pointer transition-all rounded-lg"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/find-dentists/${dentist.slug}/claim`);
-                    }}
-                  >
-                    Claim Profile
-                  </Button>
-                </Can>
               ) : (
-                <Can action="book_consultation">
-                  <Button
-                    className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs transition-all cursor-pointer rounded-lg"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRequestConsultation();
-                    }}
-                  >
-                    Request Consultation
-                  </Button>
-                </Can>
+                (() => {
+                  switch (claimState) {
+                    case ClaimButtonState.CLAIM_PROFILE:
+                      return (
+                        <Can action="claim_dentist_profile">
+                          <Button
+                            variant="secondary"
+                            className="h-9 px-3.5 text-xs font-bold text-white bg-accent  hover:bg-accent/90 cursor-pointer transition-all rounded-lg"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/find-dentists/${dentist.slug}/claim`);
+                            }}
+                          >
+                            Claim Profile
+                          </Button>
+                        </Can>
+                      );
+                    case ClaimButtonState.CLAIMED:
+                      return (
+                        <Button
+                          disabled
+                          variant="secondary"
+                          className="h-9 px-3.5 text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 cursor-not-allowed opacity-70 rounded-lg"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Claimed
+                        </Button>
+                      );
+                    case ClaimButtonState.HIDDEN:
+                      return null;
+                  }
+                })()
               )}
             </div>
           )}

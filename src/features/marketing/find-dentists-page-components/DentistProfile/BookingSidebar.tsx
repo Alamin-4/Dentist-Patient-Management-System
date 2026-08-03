@@ -121,7 +121,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
   return (
     <aside className="lg:sticky lg:top-24 w-full rounded-lg border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
       <div className="flex gap-3 sm:gap-5 mb-5 sm:mb-6 items-start">
-        <div className="relative size-16 sm:size-20 shrink-0 overflow-hidden rounded-full ring-4 ring-slate-50 bg-slate-100">
+        <div className="relative size-16 sm:size-20 shrink-0 overflow-hidden rounded-full">
           <Image
             src={dentist.image || "/images/man-avatar.png"}
             alt={dentist.name}
@@ -168,12 +168,12 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
               <TrustPill color="green" icon>
                 VERIFIED
               </TrustPill>
-            ) : dentist.status === "CLAIMED" ? (
-              <TrustPill color="amber">CLAIMED</TrustPill>
-            ) : dentist.isClaimable ? (
-              <TrustPill color="slate">UNCLAIMED</TrustPill>
-            ) : (
+            ) : dentist.isClaimable === false ? (
               <TrustPill color="slate">UNVERIFIED</TrustPill>
+            ) : dentist.status === "CLAIMED" || dentist.isClaimed ? (
+              <TrustPill color="amber">CLAIMED</TrustPill>
+            ) : (
+              <TrustPill color="slate">UNCLAIMED</TrustPill>
             )}
 
             <TrustPill color="blue">
@@ -222,7 +222,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
               <Can action="claim_dentist_profile">
                 <Button
                   variant="outline"
-                  className="h-10 sm:h-11 text-xs sm:text-sm border-accent text-accent/95 bg-accent/5/50 hover:bg-accent/5 font-bold flex-1"
+                  className="h-10 sm:h-11 text-xs sm:text-sm border-accent cursor-pointer text-accent/95 bg-accent/5/50 hover:bg-accent/5 font-bold flex-1"
                   onClick={() =>
                     router.push(`/find-dentists/${dentist.slug}/claim`)
                   }

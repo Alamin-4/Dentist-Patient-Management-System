@@ -238,7 +238,6 @@ export default function ReviewPlanPage() {
               </div>
             </div>
 
-            {/* 15% leeway */}
             <div className="mt-6 bg-[#F0F9FF] p-5 rounded-xl border border-[#B3D8FF] shadow-[0_1px_2px_rgba(14,62,101,0.02)]">
               <p className="text-primary font-bold mb-1 text-[15px]">15% leeway</p>
               <p className="text-[#203A55] text-sm leading-relaxed font-medium">
@@ -247,7 +246,6 @@ export default function ReviewPlanPage() {
               </p>
             </div>
 
-            {/* Doctor's additional notes */}
             {plan.notes && (
               <div className="mt-4 p-4 rounded-xl border border-slate-100 bg-slate-50">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
