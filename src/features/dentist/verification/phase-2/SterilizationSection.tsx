@@ -10,14 +10,23 @@ interface SterilizationSectionProps {
 
 export const SterilizationSection = ({ disabled }: SterilizationSectionProps) => {
   const { formState: { errors } } = useFormContext();
-  const hasSterilizationError = !!errors.jciCertificate || !!errors.videoWalkthrough;
+
+  const jciMsg = errors.jciCertificate?.message as string | undefined;
+  const videoMsg = errors.videoWalkthrough?.message as string | undefined;
+
+  // Show "Action Required" banner only if both files are missing
+  const showMissingBanner =
+    jciMsg?.toLowerCase().includes("either") ||
+    jciMsg?.toLowerCase().includes("submitted") ||
+    videoMsg?.toLowerCase().includes("either") ||
+    videoMsg?.toLowerCase().includes("submitted");
 
   return (
     <section className="grid grid-cols-1 gap-8 px-5 py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)] lg:px-8 lg:py-8">
       <PhaseStep step={1} title="Sterilization" />
 
       <div className="space-y-6">
-        {hasSterilizationError && (
+        {showMissingBanner && (
           <div className="p-4 rounded-lg border border-red-200 bg-red-50 text-red-600 text-sm flex gap-3 animate-in fade-in slide-in-from-top-1">
             <span className="font-semibold">Action Required:</span>
             <span>You must upload either a JCI Certificate or a Video Walkthrough to proceed.</span>

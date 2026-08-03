@@ -129,8 +129,6 @@ export default function MultiStepForm() {
       const sizeMB = (payload.jciCertificate.size / (1024 * 1024)).toFixed(2);
       const msg = `JCI Certificate file size (${sizeMB} MB) exceeds the 5MB limit. Please upload a file under 5MB.`;
       methods.setError("jciCertificate", { type: "manual", message: msg });
-      methods.setError("root", { type: "server", message: msg });
-      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -138,8 +136,6 @@ export default function MultiStepForm() {
       const sizeMB = (payload.walkthroughVideo.size / (1024 * 1024)).toFixed(2);
       const msg = `Video Walkthrough file size (${sizeMB} MB) exceeds the 5MB limit. Please upload a video under 5MB.`;
       methods.setError("videoWalkthrough", { type: "manual", message: msg });
-      methods.setError("root", { type: "server", message: msg });
-      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
