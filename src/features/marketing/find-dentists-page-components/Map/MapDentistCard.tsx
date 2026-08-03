@@ -87,9 +87,18 @@ export default function MapDentistCard({
     router.push(`/find-dentists/${dentist.slug}/claim`);
   };
 
-  const badgeConfig = dentist.verificationStatus === 'VERIFIED'
+  const isProfileVerified =
+    dentist.isVerified === true ||
+    dentist.status === "VERIFIED" ||
+    dentist.verificationStatus === "VERIFIED";
+
+  const badgeConfig = isProfileVerified
     ? { icon: 'text-emerald-500', text: 'text-emerald-600', label: 'VERIFIED', showIcon: true }
-    : { icon: 'text-[#505050]', text: 'text-[#505050]', label: 'UNVERIFIED', showIcon: false };
+    : dentist.isClaimable === false
+      ? { icon: 'text-[#505050]', text: 'text-[#505050]', label: 'UNVERIFIED', showIcon: false }
+      : dentist.status === "CLAIMED" || dentist.isClaimed
+        ? { icon: 'text-amber-500', text: 'text-amber-600', label: 'CLAIMED', showIcon: true }
+        : { icon: 'text-[#505050]', text: 'text-[#505050]', label: dentist.isClaimable ? 'UNCLAIMED' : 'UNVERIFIED', showIcon: false };
 
   const ratingValue = dentist.rating.combined ?? dentist.rating.google ?? dentist.rating.doctoralia ?? 0;
   const reviewCount =
@@ -101,7 +110,7 @@ export default function MapDentistCard({
     <div className="w-full">
       <div className="flex items-start gap-4">
         <div className="flex flex-col items-center gap-2 shrink-0">
-          <div className="relative h-16 w-16 overflow-hidden rounded-full bg-slate-100 ring-2 ring-slate-50">
+          <div className="relative h-16 w-16 overflow-hidden rounded-full">
             <Image
               src={dentist.image || "/images/man-avatar.png"}
               alt={dentist.name}
