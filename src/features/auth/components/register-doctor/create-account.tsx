@@ -145,7 +145,6 @@ export function CreateAccountForm({ setStep }: CreateAccountFormProps) {
     });
   };
 
-  // Early return for the "Verify Email" state
   if (needVerifyEmail) {
     return (
       <div className="flex w-full flex-col items-center justify-center space-y-5 text-center animate-in fade-in zoom-in duration-300">

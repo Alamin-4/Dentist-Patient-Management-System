@@ -12,6 +12,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useRouter, usePathname } from "next/navigation";
 import useAuth from "@/hooks/auth/useAuth";
 import { useOtpCountdown } from "@/hooks/auth/useOtpCountdown";
 import { mapApiErrorToUserMessage } from "@/core/lib/getErrorMessage";
@@ -27,6 +28,8 @@ interface VerifyOtpFormProps {
 }
 
 export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
+  const router = useRouter();
+  const pathName = usePathname();
   const { otpVerifyMutation, resendOtpMutation, isOtpVerifyLoading } = useAuth();
   const isResending = resendOtpMutation.isPending;
 
@@ -119,6 +122,7 @@ export function VerifyOtpForm({ setStep }: VerifyOtpFormProps) {
       {
         onSuccess: () => {
           setStep("professional-info");
+          router.push(`${pathName}?dentist=professional-info`);
         },
         onError: (error: any) => {
           const errorMessage = mapApiErrorToUserMessage(

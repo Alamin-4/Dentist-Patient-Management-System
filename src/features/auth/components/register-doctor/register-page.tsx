@@ -28,12 +28,24 @@ export default function RegisterPageComponent() {
   const dentistProfile = dentistProfileResponse?.data || dentistProfileResponse;
 
   const [step, setStep] = useState<"create-account" | "verify-email" | "professional-info" | "success">(
-    dentistParam === "professional-info" ? "professional-info" : "create-account"
+    dentistParam === "professional-info"
+      ? "professional-info"
+      : dentistParam === "verify-email"
+        ? "verify-email"
+        : "create-account"
   );
   const registerEmail =
-    typeof window !== "undefined"
-      ? localStorage.getItem("registerEmail")
-      : null;
+    user?.email ||
+    (typeof window !== "undefined" ? localStorage.getItem("registerEmail") : null) ||
+    "";
+
+  useEffect(() => {
+    if (dentistParam === "professional-info") {
+      setStep("professional-info");
+    } else if (dentistParam === "verify-email") {
+      setStep("verify-email");
+    }
+  }, [dentistParam]);
 
   useEffect(() => {
     if (!isPending && user) {
@@ -41,13 +53,19 @@ export default function RegisterPageComponent() {
         router.replace("/patient");
       } else if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
         router.replace("/admin");
-      } else if (user.role === "DENTIST" && dentistProfile?.specialtyId) {
-        router.replace("/dentist");
+      } else if (user.role === "DENTIST") {
+        if (!isProfileLoading) {
+          if (dentistProfile?.specialtyId) {
+            router.replace("/dentist");
+          } else if (user.emailVerified) {
+            setStep("professional-info");
+          }
+        }
       }
     }
-  }, [user, isPending, dentistProfile, router]);
+  }, [user, isPending, isProfileLoading, dentistProfile, router]);
 
-  const isInitialLoading = isPending && !user;
+  const isInitialLoading = isPending || (!!user && user.role === "DENTIST" && isProfileLoading);
 
   if (isInitialLoading) {
     return <RegisterPageSkeleton />;
