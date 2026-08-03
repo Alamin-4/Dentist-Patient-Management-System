@@ -135,6 +135,15 @@ export default function MultiStepForm() {
       },
 
       onError: (error: any) => {
+        // ── 413 Request Entity Too Large (nginx rejected before backend) ──
+        if (error?.status === 413 || error?.isFileTooLarge || error?.response?.status === 413) {
+          const msg = "Your uploaded file is too large. The maximum allowed file size is 5MB.";
+          toast.error(msg);
+          methods.setError("root", { type: "server", message: msg });
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+
         const resData = error?.response?.data;
 
         const fieldErrors: Record<string, string> = {};
