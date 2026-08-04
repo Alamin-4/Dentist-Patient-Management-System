@@ -57,7 +57,7 @@ export function VerificationBanner() {
             }
           },
           onError: (err: any) => {
-            toast.error(err?.response?.data?.message || "Payment setup failed.");
+            toast.error(err?.message || "Payment setup failed.");
           },
         }
       );

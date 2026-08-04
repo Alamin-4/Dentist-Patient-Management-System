@@ -150,7 +150,7 @@ export default function RequestConsultationModal() {
           handleClose();
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to submit request.";
+          const errMsg = err?.message || err?.message || "Failed to submit request.";
           toast.error(errMsg);
         },
       }
@@ -198,9 +198,8 @@ export default function RequestConsultationModal() {
                   </span>
                   <Input
                     placeholder="Enter your full name"
-                    className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${
-                      errors.patientName ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
-                    }`}
+                    className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${errors.patientName ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
+                      }`}
                     {...register("patientName")}
                   />
                 </div>
@@ -221,9 +220,8 @@ export default function RequestConsultationModal() {
                   <Input
                     type="email"
                     placeholder="name@example.com"
-                    className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${
-                      errors.patientEmail ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
-                    }`}
+                    className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${errors.patientEmail ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
+                      }`}
                     {...register("patientEmail")}
                   />
                 </div>
@@ -243,9 +241,8 @@ export default function RequestConsultationModal() {
                   </span>
                   <Input
                     placeholder="+1 (555) 000-0000"
-                    className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${
-                      errors.patientPhone ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
-                    }`}
+                    className={`h-12 pl-11 rounded-lg bg-slate-50 border transition-all ${errors.patientPhone ? "border-red-500 focus:ring-red-100" : "border-slate-200 focus:border-primary"
+                      }`}
                     {...register("patientPhone")}
                   />
                 </div>

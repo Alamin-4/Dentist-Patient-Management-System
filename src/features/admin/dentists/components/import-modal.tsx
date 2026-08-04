@@ -71,10 +71,10 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
       "123 Broadway, New York, NY",
       "https://metrodental.example.com",
     ];
-    
-    const csvContent = "data:text/csv;charset=utf-8," 
+
+    const csvContent = "data:text/csv;charset=utf-8,"
       + [headers.join(","), sampleRow.join(",")].join("\n");
-      
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -86,7 +86,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
 
   const validateFileHeaders = (selectedFile: File) => {
     const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
-    
+
     if (fileExtension !== "csv") {
       setValidation({
         status: "success",
@@ -112,7 +112,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
           .split(",")
           .map(h => h.replace(/["'\r]/g, "").trim());
 
-        const normalizedHeaders = headers.map(h => 
+        const normalizedHeaders = headers.map(h =>
           h.toLowerCase().replace(/[_\s-]+/g, "")
         );
 
@@ -209,7 +209,7 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
         setFile(null);
       },
       onError: (err: any) => {
-        const errMsg = err?.response?.data?.message || err?.message || "Failed to import dentist directory.";
+        const errMsg = err?.message || err?.message || "Failed to import dentist directory.";
         setValidation({
           status: "error",
           message: errMsg,
@@ -276,13 +276,12 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 transition-colors cursor-pointer ${
-                  dragActive
+                className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 transition-colors cursor-pointer ${dragActive
                     ? "border-primary bg-primary/5"
                     : file
-                    ? "border-slate-200 bg-slate-50/50 hover:bg-slate-50"
-                    : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
-                }`}
+                      ? "border-slate-200 bg-slate-50/50 hover:bg-slate-50"
+                      : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                  }`}
               >
                 <input
                   ref={fileInputRef}
@@ -314,11 +313,10 @@ export function ImportModal({ isOpen, onClose, onUpload, isPending }: ImportModa
 
               {validation.status !== "idle" && (
                 <div
-                  className={`p-3.5 rounded-xl border flex gap-3 text-left ${
-                    validation.status === "error"
+                  className={`p-3.5 rounded-xl border flex gap-3 text-left ${validation.status === "error"
                       ? "bg-red-50 border-red-100 text-red-700"
                       : "bg-emerald-50 border-emerald-100 text-emerald-700"
-                  }`}
+                    }`}
                 >
                   <div className="shrink-0 mt-0.5">
                     {validation.status === "error" ? (

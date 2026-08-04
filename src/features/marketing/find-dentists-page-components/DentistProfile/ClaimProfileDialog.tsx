@@ -122,7 +122,7 @@ export default function ClaimProfileDialog({
           setClaimStep(2);
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to send OTP.";
+          const errMsg = err?.message || err?.message || "Failed to send OTP.";
           setError(errMsg);
         },
       }
@@ -146,7 +146,7 @@ export default function ClaimProfileDialog({
           setClaimStep(3);
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Invalid OTP code.";
+          const errMsg = err?.message || err?.message || "Invalid OTP code.";
           setError(errMsg);
         },
       }
@@ -168,7 +168,7 @@ export default function ClaimProfileDialog({
           options?.onSuccess?.();
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Failed to resend OTP.";
+          const errMsg = err?.message || err?.message || "Failed to resend OTP.";
           setError(errMsg);
           options?.onError?.(err);
         },
@@ -214,7 +214,7 @@ export default function ClaimProfileDialog({
             setClaimStep(4);
           },
           onError: (err: any) => {
-            const errMsg = err?.response?.data?.message || err?.message || "Failed to save application.";
+            const errMsg = err?.message || err?.message || "Failed to save application.";
             if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("claimed")) {
               setClaimStep(4);
               return;
@@ -248,7 +248,7 @@ export default function ClaimProfileDialog({
           }
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || "Payment setup failed.";
+          const errMsg = err?.message || err?.message || "Payment setup failed.";
           setError(errMsg);
         },
       }

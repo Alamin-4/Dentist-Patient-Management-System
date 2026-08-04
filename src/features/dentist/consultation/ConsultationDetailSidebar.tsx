@@ -99,7 +99,7 @@ export const ConsultationDetailsSidebar = ({
           onClose();
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || "Failed to submit decision.");
+          toast.error(err?.message || "Failed to submit decision.");
         },
       }
     );

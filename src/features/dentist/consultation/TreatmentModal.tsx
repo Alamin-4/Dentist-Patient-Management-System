@@ -107,7 +107,7 @@ export default function CreateTreatmentPlanModal({
           onClose();
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || "Failed to create treatment plan.");
+          toast.error(err?.message || "Failed to create treatment plan.");
         },
       }
     );

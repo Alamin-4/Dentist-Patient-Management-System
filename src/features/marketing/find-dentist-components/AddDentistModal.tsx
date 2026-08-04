@@ -58,7 +58,7 @@ export default function AddDentistModal({ open, onOpenChange }: AddDentistModalP
                 }
             },
             onError: (err: any) => {
-                const errMsg = err?.response?.data?.message || err?.message || "Failed to add dentist profile.";
+                const errMsg = err?.message || err?.message || "Failed to add dentist profile.";
                 toast.error(errMsg, { id: toastId });
                 console.error("Add dentist error:", err);
             },
