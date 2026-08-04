@@ -105,7 +105,7 @@ export default function ReviewPlanPage() {
       // Step 3: Redirect to Stripe Checkout
       window.location.href = checkoutUrl;
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Payment initiation failed. Please try again.");
+      toast.error(err?.message || "Payment initiation failed. Please try again.");
       setIsRedirecting(false);
     }
   };
@@ -123,7 +123,7 @@ export default function ReviewPlanPage() {
           router.push("/patient");
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || "Failed to reject treatment plan.");
+          toast.error(err?.message || "Failed to reject treatment plan.");
         },
       }
     );

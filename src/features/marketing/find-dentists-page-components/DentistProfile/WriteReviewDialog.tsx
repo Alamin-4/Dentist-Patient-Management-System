@@ -141,7 +141,7 @@ export default function WriteReviewDialog({
           });
         },
         onError: (err: any) => {
-          const msg = err?.response?.data?.message || err?.message || "Failed to submit review.";
+          const msg = err?.message || err?.message || "Failed to submit review.";
           toast.error(msg, { id: toastId, style: TOAST_STYLE });
         },
       }

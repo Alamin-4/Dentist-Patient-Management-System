@@ -52,7 +52,7 @@ export default function DentistsPage() {
           setSelectedIds([]);
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || err?.message || `Failed to perform bulk action.`;
+          const errMsg = err?.message || err?.message || `Failed to perform bulk action.`;
           toast.error(errMsg);
         },
       }

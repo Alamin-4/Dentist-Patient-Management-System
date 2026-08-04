@@ -158,7 +158,7 @@ export default function ConsultationPage() {
           setIsTreatmentModalOpen(true);
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || "Failed to update consultation status.");
+          toast.error(err?.message || "Failed to update consultation status.");
         },
       }
     );

@@ -27,7 +27,7 @@ export default function AdminForgotPasswordForm({ onBack, onSuccess }: AdminForg
           onSuccess(email);
         },
         onError: (err: any) => {
-          setErrorMsg(err?.response?.data?.message || err?.message || "Failed to send reset link");
+          setErrorMsg(err?.message || err?.message || "Failed to send reset link");
         },
       }
     );

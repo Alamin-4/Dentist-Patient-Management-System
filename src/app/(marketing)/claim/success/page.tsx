@@ -36,7 +36,7 @@ export default function ClaimSuccessPage() {
       } catch (err: any) {
         console.error("Payment confirmation failed:", err);
         setConfirmStatus("error");
-        setErrorMessage(err?.response?.data?.message || err?.message || "Failed to confirm payment.");
+        setErrorMessage(err?.message || err?.message || "Failed to confirm payment.");
       }
     };
 

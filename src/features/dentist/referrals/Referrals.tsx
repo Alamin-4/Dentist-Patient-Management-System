@@ -35,7 +35,7 @@ export default function Referrals() {
       queryClient.invalidateQueries({ queryKey: ["dentist-referrals"] });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to process withdrawal");
+      toast.error(err?.message || err?.message || "Failed to process withdrawal");
     },
   });
 

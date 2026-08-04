@@ -41,7 +41,7 @@ export default function ResetPasswordModalForm({ token, onSuccess, onBack }: Res
           onSuccess();
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || err?.message || "Failed to reset password.");
+          toast.error(err?.message || err?.message || "Failed to reset password.");
         },
       }
     );

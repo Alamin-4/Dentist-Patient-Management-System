@@ -39,7 +39,7 @@ export default function PaymentInfo({
       }
     } catch (err: any) {
       console.error(err);
-      const errMsg = err?.response?.data?.message || "An error occurred during Stripe Connect initialization.";
+      const errMsg = err?.message || "An error occurred during Stripe Connect initialization.";
       setError(errMsg);
     } finally {
       setIsLoading(false);
@@ -59,7 +59,7 @@ export default function PaymentInfo({
       }
     } catch (err: any) {
       console.error(err);
-      const errMsg = err?.response?.data?.message || "An error occurred while syncing Stripe status.";
+      const errMsg = err?.message || "An error occurred while syncing Stripe status.";
       setError(errMsg);
     } finally {
       setIsSyncing(false);

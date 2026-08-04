@@ -23,7 +23,7 @@ export function useConsultationSession(slug: string, userId: string | undefined,
                 setServerUrl(tokenData.serverUrl);
                 setLoading(false);
             } catch (err: any) {
-                const backendMsg = err?.response?.data?.message || err?.message || "Failed to join consultation session.";
+                const backendMsg = err?.message || err?.message || "Failed to join consultation session.";
                 setError(backendMsg);
                 setLoading(false);
             }
@@ -70,7 +70,7 @@ export function useConsultationSession(slug: string, userId: string | undefined,
                 }
             } catch (err: any) {
                 console.error("Initialization error:", err);
-                const backendMsg = err?.response?.data?.message || err?.message || "Failed to join consultation session.";
+                const backendMsg = err?.message || err?.message || "Failed to join consultation session.";
                 setError(backendMsg);
                 setLoading(false);
             }

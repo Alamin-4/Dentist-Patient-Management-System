@@ -58,7 +58,7 @@ export default function TravelChecklistPageComponent() {
       if (context?.previousItems) {
         queryClient.setQueryData(["patient-travel-checklist"], context.previousItems);
       }
-      toast.error(err?.response?.data?.message || err?.message || "Failed to update checklist item");
+      toast.error(err?.message || err?.message || "Failed to update checklist item");
     },
     onSettled: () => {
       // Soft background invalidation to maintain consistency with server
