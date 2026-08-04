@@ -33,7 +33,6 @@ export default function DentistsPage() {
   const uploadMutation = useUploadDentistDirectory();
   const bulkActionMutation = useBulkDentistAction();
 
-  // Search, Filter & Pagination States
   const [activeTab, setActiveTab] = useState<StatusFilter>("all");
   const [tableSearch, setTableSearch] = useState("");
   const [specialty, setSpecialty] = useState("All specialties");
@@ -124,7 +123,6 @@ export default function DentistsPage() {
     { key: "rejected", label: "Rejected", count: meta.tab_counts.rejected },
   ];
 
-  // Apply filters
   const filtered = useMemo(() => {
     let list = mappedDentists;
     if (activeTab !== "all") list = list.filter((d) => d.status === activeTab);
@@ -143,7 +141,8 @@ export default function DentistsPage() {
         (d) =>
           d.name.toLowerCase().includes(q) ||
           d.email.toLowerCase().includes(q) ||
-          d.id.toLowerCase().includes(q)
+          d.id.toLowerCase().includes(q) ||
+          (d.membershipPlan && d.membershipPlan.toLowerCase().includes(q))
       );
     }
     return list;
