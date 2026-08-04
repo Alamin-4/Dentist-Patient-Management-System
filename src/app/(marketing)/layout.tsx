@@ -10,6 +10,9 @@ import NavbarPublic from "@/features/marketing/shared/navbar/Navbar";
 
 import ScrollToTop from "@/components/shared/scroll-to-top";
 
+import { Suspense } from "react";
+import AccountSuspendedBanner from "@/features/marketing/shared/AccountSuspendedBanner";
+
 export default function PublicLayout({
   children,
 }: {
@@ -18,6 +21,9 @@ export default function PublicLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
+      <Suspense fallback={null}>
+        <AccountSuspendedBanner />
+      </Suspense>
       <NavbarPublic />
       <main className="flex-1 flex flex-col">{children}</main>
       <SignupModal />

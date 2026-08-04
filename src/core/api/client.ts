@@ -15,7 +15,21 @@ export interface PaginationMeta {
   totalDirectory?: number;
   totalSubscribed?: number;
   total_verifications?: number;
+  total_dentists?: number;
+  active_count?: number;
+  active_percentage?: string;
+  suspended_count?: number;
+  suspended_percentage?: string;
   pending_review?: number;
+  rejected?: number;
+  tab_counts?: {
+    all?: number;
+    active?: number;
+    pending?: number;
+    suspended?: number;
+    rejected?: number;
+    unclaimed?: number;
+  };
 }
 
 export interface ApiResponse<T = unknown> {
@@ -524,6 +538,27 @@ export const apiClient = {
     },
     bulkDentistAction: async (ids: string[], action: "suspend" | "unsuspend" | "delete") => {
       const response = await api.post(endpoints.admin.bulkDentistAction, { ids, action });
+      return response.data;
+    },
+    updateAdminDentistData: async (
+      id: string,
+      payload: {
+        specialtyId?: string;
+        yearsOfExperience?: number;
+        registrationNumber?: string;
+        registrationAuthority?: string;
+        reason: string;
+      }
+    ) => {
+      const response = await api.patch(`/admin/dentists/${id}/admin-data`, payload);
+      return response.data;
+    },
+    updateDentistStatus: async (id: string, payload: { status: "SUSPENDED" | "ACTIVE"; reason: string }) => {
+      const response = await api.patch(`/admin/dentists/${id}/status`, payload);
+      return response.data;
+    },
+    deleteDentistAccount: async (id: string, payload: { confirmSlug: string; reason: string }) => {
+      const response = await api.delete(`/admin/dentists/${id}`, { data: payload });
       return response.data;
     },
     getPatientsList: async (params?: { status?: string; city?: string; search?: string; page?: number; limit?: number }) => {

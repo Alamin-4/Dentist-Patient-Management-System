@@ -37,9 +37,9 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
         )}
       >
         All Procedures
-        {(!active || active === "All Procedures") && <Check size={16} className="text-primary" />}
+        {(!active || active === "All Procedures") && <Check size={11} className="text-primary" />}
       </button>
-      {(showAll ? procedureList : procedureList.slice(0, 16)).map((p) => (
+      {(showAll ? procedureList : procedureList.slice(0, 11)).map((p) => (
         <button
           key={p}
           onClick={() => { onChange(p); if (isMobile) setIsMobileOpen(false); }}
@@ -49,7 +49,7 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
           )}
         >
           {p}
-          {active === p && <Check size={16} className="text-primary" />}
+          {active === p && <Check size={11} className="text-primary" />}
         </button>
       ))}
     </>
@@ -66,7 +66,7 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
           >
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Stethoscope size={16} />
+                <Stethoscope size={11} />
               </div>
               <span className={cn("truncate", !active || active === "All Procedures" ? "text-gray-500" : "text-primary")}>
                 {active || "All Procedures"}
@@ -97,20 +97,19 @@ export default function Sidebar({ active, onChange }: { active: string; onChange
 
         <div
           className={cn(
-            "flex max-h-200 h-fit flex-col gap-1 pr-1 transition-all duration-300",
-            "",
+            "flex max-h-146.25 h-fit flex-col gap-1 pr-1 transition-all duration-300",
             showAll ? "overflow-y-auto" : "overflow-hidden",
             "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300"
           )}
         >
           {isLoading ? (
-            Array.from({ length: 16 }).map((_, i) => <div key={i} className="mb-1 h-11 w-full animate-pulse rounded-lg bg-gray-100" />)
+            Array.from({ length: 11 }).map((_, i) => <div key={i} className="mb-1 h-11 w-full animate-pulse rounded-lg bg-gray-100" />)
           ) : (
             renderList(false)
           )}
         </div>
 
-        {!isLoading && procedureList.length > 8 && (
+        {!isLoading && procedureList.length > 11 && (
           <button
             onClick={() => setShowAll(!showAll)}
             className="mt-4 w-full py-2.5 cursor-pointer hover:underline text-center text-sm font-semibold text-primary"

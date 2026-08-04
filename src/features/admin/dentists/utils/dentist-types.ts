@@ -1,6 +1,14 @@
 import dentistsData from "@/lib/dentists-data";
 import { type AdminDentist } from "@/hooks/admin/dentist/useDentist";
 
+export enum AccountStatus {
+  ACTIVE,
+  SUSPENDED,
+  BLOCKED,
+  DELETED
+
+}
+
 export type Dentist = Omit<
   (typeof dentistsData.dentists)[number],
   "profile"
@@ -65,28 +73,17 @@ export const STATUS_LABEL: Record<string, string> = {
   unclaimed: "Unclaimed Directory",
 };
 
-export const SPECIALTIES = [
-  "All specialties",
-  "Orthodontics",
-  "Endodontics",
-  "Pediatric",
-  "Cosmetic",
-  "Periodontics",
-  "Oral Surgery",
-  "General",
-  "Prosthodontics",
-];
+export const SPECIALTIES = ["All specialties"];
+
+import { locationData } from "@/core/lib/location-data";
 
 export const CITIES = [
   "All cities",
-  "San Francisco, CA",
-  "New York, NY",
-  "Austin, TX",
-  "Seattle, WA",
-  "Boston, MA",
-  "Chicago, IL",
-  "Los Angeles, CA",
-  "Denver, CO",
+  ...Array.from(
+    new Set(
+      Object.values(locationData).flatMap((c) => Object.keys(c.cities))
+    )
+  ).sort(),
 ];
 
 export const mapSpecialty = (s?: string): string => {
@@ -124,45 +121,51 @@ export const mapVerificationStatus = (status?: string): string => {
 
 export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   const anyD = d as any;
-  let location = "0";
-  if (anyD.license_step?.city || anyD.license_step?.country) {
-    location = [anyD.license_step.city, anyD.license_step.country].filter(Boolean).join(", ");
+  let location = "";
+  if (anyD.city || anyD.country) {
+    location = [anyD.city, anyD.country].filter(Boolean).filter((x: string) => x !== "0").join(", ");
+  } else if (anyD.license_step?.city || anyD.license_step?.country) {
+    location = [anyD.license_step.city, anyD.license_step.country].filter(Boolean).filter((x: string) => x !== "0").join(", ");
   } else if (anyD.clinical_step?.clinic_address) {
     location = anyD.clinical_step.clinic_address;
   } else if (d.dentist_verification?.clinical_path_verification?.clinic_address) {
     const clinicAddr = d.dentist_verification.clinical_path_verification.clinic_address;
-    location = typeof clinicAddr === "string" ? clinicAddr : (clinicAddr?.address || "0");
+    location = typeof clinicAddr === "string" ? clinicAddr : (clinicAddr?.address || "");
   } else if (d.dentist_address?.[0]) {
-    location = `${d.dentist_address[0].city}, ${d.dentist_address[0].country}`;
+    location = [d.dentist_address[0].city, d.dentist_address[0].country].filter(Boolean).filter((x: string) => x !== "0").join(", ");
+  }
+
+  if (!location || location === "0" || location === "0, 0") {
+    location = "N/A";
   }
 
   let status: StatusFilter = "pending";
   if (d.is_directory_only) {
     status = "unclaimed";
-  } else if (d.is_verified) {
+  } else if (anyD.user?.status === "SUSPENDED" || anyD.user_profile?.status === "SUSPENDED") {
+    status = "suspended";
+  } else if (d.queue_status === "approved" || d.is_verified) {
     status = "active";
-  } else if (
-    d.dentist_verification?.license_verification === "REJECTED" ||
-    d.dentist_verification?.operations_verification === "REJECTED" ||
-    d.dentist_verification?.clinical_verification === "REJECTED"
-  ) {
+  } else if (d.queue_status === "rejected") {
     status = "rejected";
-  } else if (
-    ["PENDING", "SUBMIT", "SUBMITTED"].includes(d.dentist_verification?.license_verification || "") ||
-    ["PENDING", "SUBMIT", "SUBMITTED"].includes(d.dentist_verification?.operations_verification || "") ||
-    ["PENDING", "SUBMIT", "SUBMITTED"].includes(d.dentist_verification?.clinical_verification || "")
-  ) {
+  } else {
     status = "pending";
   }
 
-  const initials = d.full_name
-    ? d.full_name
-      .split(" ")
-      .map((n: string) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-    : "D";
+  const dentistName =
+    d.full_name ||
+    anyD.name ||
+    anyD.user?.name ||
+    anyD.user_profile?.name ||
+    "Dentist";
+
+  const initials = dentistName
+    .split(" ")
+    .filter(Boolean)
+    .map((n: string) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "D";
 
   const colors = [
     "#1A3A5C",
@@ -256,13 +259,13 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
   });
 
   return {
-    id: `DEN-${String(d.id).padStart(3, "0")}`,
+    id: String(d.id),
     slug: d.slug || null,
-    name: d.full_name,
+    name: dentistName,
     initials,
     avatar_color: avatarColor,
-    email: d.user?.email || "0",
-    phone: d.phone || d.user?.phone || "0",
+    email: d.user?.email || anyD.user_profile?.email || anyD.email || "",
+    phone: d.phone || d.user?.phone || anyD.user_profile?.phone || "",
     location,
     specialty: mapSpecialty(d.specialty),
     experience_years: d.experience_years || 0,
@@ -273,7 +276,7 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
     bookings: 0,
     joined: d.created_at
       ? new Date(d.created_at).toISOString().split("T")[0]
-      : "0",
+      : "N/A",
     rdv_score: d.rdv_score || 0,
     rdv_verified: d.is_verified,
     membershipPlan: anyD.membershipPlan || null,
@@ -302,15 +305,15 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           ),
           country:
             d.dentist_verification?.dentist_license_verification?.country ||
-            "0",
+            "N/A",
           city:
-            d.dentist_verification?.dentist_license_verification?.city || "0",
+            d.dentist_verification?.dentist_license_verification?.city || "N/A",
           registration_authority:
             d.dentist_verification?.dentist_license_verification
-              ?.registration_authority_name || "0",
+              ?.registration_authority_name || "N/A",
           registration_no:
             d.dentist_verification?.dentist_license_verification
-              ?.registration_no || "0",
+              ?.registration_no || "N/A",
           files: [],
         },
         phase2: {
@@ -336,8 +339,8 @@ export function mapApiDentistToUIDentist(d: AdminDentist): Dentist {
           clinic_location: d.dentist_verification?.clinical_path_verification?.clinic_address
             ? (typeof d.dentist_verification.clinical_path_verification.clinic_address === "string"
               ? d.dentist_verification.clinical_path_verification.clinic_address
-              : d.dentist_verification.clinical_path_verification.clinic_address.address || "0")
-            : "0",
+              : d.dentist_verification.clinical_path_verification.clinic_address.address || "N/A")
+            : "N/A",
           categories: phase3Categories,
         },
       },

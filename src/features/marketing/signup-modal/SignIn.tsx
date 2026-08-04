@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebook } from "react-icons/fa";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ShieldOff, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import z from "zod";
@@ -60,6 +60,9 @@ export default function SigninModal() {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [emailToVerify, setEmailToVerify] = useState("");
   const [isEmailUnverified, setIsEmailUnverified] = useState(false);
+  const [isAccountSuspended, setIsAccountSuspended] = useState(false);
+  const [isAccountDeleted, setIsAccountDeleted] = useState(false);
+  const [suspendedReason, setSuspendedReason] = useState("");
 
   const { mutate: login, isPending } = useLogin();
   const { mutate: googleLogin, isPending: isGooglePending } = useGoogleLogin();
@@ -84,6 +87,8 @@ export default function SigninModal() {
 
   const onSubmit = (data: LoginFormData) => {
     clearErrors();
+    setIsAccountSuspended(false);
+    setIsAccountDeleted(false);
 
     login(data, {
       onSuccess: () => {
@@ -102,10 +107,29 @@ export default function SigninModal() {
       onError: (error: any) => {
         const apiErrors = error?.errors || error?.response?.data?.errors;
         const errorMessage = error?.message || error?.response?.data?.message || "Invalid email or password";
+        const lowerMsg = errorMessage.toLowerCase();
 
+        const isSuspended = lowerMsg.includes("suspended") || lowerMsg.includes("suspend");
+        const isDeleted = lowerMsg.includes("deleted") || lowerMsg.includes("deactivated");
         const isUnverifiedError =
-          errorMessage.toLowerCase().includes("verify") ||
+          lowerMsg.includes("verify") ||
           apiErrors?.some((err: any) => err.message?.toLowerCase().includes("verify"));
+
+        if (isSuspended) {
+          setIsAccountSuspended(true);
+          setIsAccountDeleted(false);
+          setIsEmailUnverified(false);
+          setSuspendedReason(errorMessage);
+          return;
+        } else if (isDeleted) {
+          setIsAccountDeleted(true);
+          setIsAccountSuspended(false);
+          setIsEmailUnverified(false);
+          return;
+        } else {
+          setIsAccountSuspended(false);
+          setIsAccountDeleted(false);
+        }
 
         if (isUnverifiedError) {
           setIsEmailUnverified(true);
@@ -309,11 +333,65 @@ export default function SigninModal() {
                     )}
                   </div>
 
-                  {errors.root?.server?.message && !isEmailUnverified && (
+                  {isAccountSuspended ? (
+                    <div className="rounded-xl border border-amber-200 bg-amber-50/90 p-4 space-y-3 shadow-xs">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                          <ShieldOff className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-amber-900 font-heading">
+                            Account Suspended
+                          </h4>
+                          <p className="mt-1 text-xs text-amber-800 leading-relaxed font-medium">
+                            {suspendedReason || "Your dentist profile has been suspended by administration. Access to your dashboard, consultation bookings, and public listings is restricted."}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-amber-200/70 flex items-center justify-between">
+                        <span className="text-xs text-amber-700 font-medium">
+                          Need help or want to appeal?
+                        </span>
+                        <a
+                          href="mailto:support@rateddocs.com?subject=Account%20Suspension%20Appeal"
+                          className="inline-flex items-center gap-1 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-amber-700 transition-colors"
+                        >
+                          Contact Support
+                        </a>
+                      </div>
+                    </div>
+                  ) : isAccountDeleted ? (
+                    <div className="rounded-xl border border-red-200 bg-red-50/90 p-4 space-y-3 shadow-xs">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-700">
+                          <AlertTriangle className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-red-900 font-heading">
+                            Account Deactivated / Deleted
+                          </h4>
+                          <p className="mt-1 text-xs text-red-800 leading-relaxed font-medium">
+                            This account has been deleted and is no longer active on RatedDocs.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-red-200/70 flex items-center justify-between">
+                        <span className="text-xs text-red-700 font-medium">
+                          Believe this is an error?
+                        </span>
+                        <a
+                          href="mailto:support@rateddocs.com?subject=Account%20Restoration%20Request"
+                          className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-700 transition-colors"
+                        >
+                          Contact Support
+                        </a>
+                      </div>
+                    </div>
+                  ) : errors.root?.server?.message && !isEmailUnverified ? (
                     <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
                       {errors.root.server.message}
                     </div>
-                  )}
+                  ) : null}
 
                   {isEmailUnverified && (
                     <div className="rounded-lg border border-amber-200 bg-accent/5 px-4 py-3 text-sm font-medium text-accent/95 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
