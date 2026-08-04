@@ -69,6 +69,7 @@ export default function DentistCard({
   const { user } = useMe();
   const queryClient = useQueryClient();
 
+
   const handlePrefetchDetails = () => {
     if (!dentist.slug) return;
     queryClient.prefetchQuery({
@@ -137,9 +138,14 @@ export default function DentistCard({
 
   const isVerified = verificationStatus === ProfileVerificationStatus.VERIFIED;
 
+  const isClaimed =
+    dentist.isClaimed === true ||
+    !!(dentist as any).claimedByUserId ||
+    !!(dentist as any).userId;
+
   const claimState: ClaimButtonState = getClaimButtonState(
     dentist.isClaimable ?? true,
-    dentist.isClaimed ?? !!(dentist as any).claimedByUserId
+    isClaimed
   );
 
   const badgeConfig =
@@ -311,18 +317,24 @@ export default function DentistCard({
                     Book Consultation
                   </Button>
                 </Can>
-              ) : (
-                (() => {
-                  switch (claimState) {
-                    case ClaimButtonState.CLAIM_PROFILE:
-                      return <ClaimProfileButton slug={dentist.slug} size="sm" />;
-                    case ClaimButtonState.CLAIMED:
-                      return <ClaimProfileButton slug={dentist.slug} isClaimed={true} size="sm" />;
-                    case ClaimButtonState.HIDDEN:
-                      return null;
-                  }
-                })()
-              )}
+              ) : claimState === ClaimButtonState.CLAIMED || isClaimed ? (
+                <>
+                  <ClaimProfileButton slug={dentist.slug} isClaimed={true} size="sm" />
+                  <Can action="book_consultation">
+                    <Button
+                      className="h-9 px-3.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 shadow-xs cursor-pointer transition-all rounded-lg"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRequestConsultation();
+                      }}
+                    >
+                      Request Consultation
+                    </Button>
+                  </Can>
+                </>
+              ) : claimState === ClaimButtonState.CLAIM_PROFILE ? (
+                <ClaimProfileButton slug={dentist.slug} size="sm" />
+              ) : null}
             </div>
           )}
         </div>

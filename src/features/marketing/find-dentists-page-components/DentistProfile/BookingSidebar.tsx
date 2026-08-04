@@ -54,13 +54,18 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
     (user.id === dentist.claimedByUserId ||
       (!!dentist.userId && user.id === dentist.userId));
 
-  const isClaimed =
-    dentist.status === "CLAIMED" ||
+  const isVerified =
+    dentist.verified === true ||
+    dentist.isVerified === true ||
     dentist.status === "VERIFIED" ||
-    dentist.isClaimed === true ||
-    dentist.verified === true;
+    dentist.verificationStatus === "VERIFIED";
 
-  const isClaimableProfile = dentist.isClaimable && !isClaimed;
+  const isClaimed =
+    dentist.isClaimed === true ||
+    !!dentist.claimedByUserId ||
+    !!dentist.userId;
+
+  const isClaimableProfile = (dentist.isClaimable ?? true) && !isClaimed && !isVerified;
 
   const rawRating =
     typeof dentist.googleRating === "number"
@@ -210,7 +215,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
 
         {!isOwnProfile && (
           <>
-            {dentist.verified ? (
+            {isVerified ? (
               <Can action="book_consultation">
                 <Button
                   onClick={() => initiateBooking("book")}
@@ -219,10 +224,26 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
                   Book consultation
                 </Button>
               </Can>
+            ) : isClaimed ? (
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
+                <ClaimProfileButton
+                  slug={dentist.slug}
+                  isClaimed={true}
+                  fullWidth
+                />
+                <Can action="book_consultation">
+                  <Button
+                    className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover w-full flex-1"
+                    onClick={() => initiateBooking("request")}
+                  >
+                    Request Consultation
+                  </Button>
+                </Can>
+              </div>
             ) : isClaimableProfile ? (
               <ClaimProfileButton
                 slug={dentist.slug}
-                isClaimed={dentist.isClaimed}
+                isClaimed={false}
                 fullWidth
               />
             ) : (
