@@ -76,9 +76,17 @@ export default function RegisterPageComponent() {
     }
   }, [user, isSessionFetched, isProfileFetched, dentistProfile, router]);
 
-  const isInitialLoading = !isSessionFetched || (!!user && user.role === "DENTIST" && !isProfileFetched);
+  const [hasCompletedInitialCheck, setHasCompletedInitialCheck] = useState(false);
 
-  if (isInitialLoading) {
+  useEffect(() => {
+    if (isSessionFetched) {
+      if (!user || user.role !== "DENTIST" || isProfileFetched) {
+        setHasCompletedInitialCheck(true);
+      }
+    }
+  }, [isSessionFetched, user, isProfileFetched]);
+
+  if (!hasCompletedInitialCheck) {
     return <RegisterPageSkeleton />;
   }
 

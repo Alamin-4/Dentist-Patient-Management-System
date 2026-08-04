@@ -24,6 +24,7 @@ export default function ClaimSuccessPage() {
     const confirmPaymentAndRefresh = async () => {
       if (!sessionId) {
         setConfirmStatus("success");
+        router.replace("/dentist");
         return;
       }
 
@@ -33,15 +34,16 @@ export default function ClaimSuccessPage() {
         setConfirmStatus("success");
         // Force session update on frontend
         await queryClient.invalidateQueries({ queryKey: ["auth"] });
+        router.replace("/dentist");
       } catch (err: any) {
         console.error("Payment confirmation failed:", err);
         setConfirmStatus("error");
-        setErrorMessage(err?.message || err?.message || "Failed to confirm payment.");
+        setErrorMessage(err?.message || "Failed to confirm payment.");
       }
     };
 
     confirmPaymentAndRefresh();
-  }, [searchParams, queryClient]);
+  }, [searchParams, queryClient, router]);
 
   if (!mounted) {
     return null;
@@ -51,13 +53,30 @@ export default function ClaimSuccessPage() {
 
   if (confirmStatus === "loading") {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-xl border border-slate-200/80 shadow-md text-center relative overflow-hidden">
-          <div className="relative flex flex-col items-center justify-center py-10">
-            <Loader2 className="size-12 animate-spin text-brand-medium-navy mb-6" />
-            <h2 className="text-2xl font-bold text-text">Verifying Your Payment</h2>
-            <p className="mt-2 text-gray-500 max-w-sm text-sm leading-relaxed">
-              We are confirming your transaction with Stripe. This will only take a moment...
+      <div className="min-h-[85vh] flex items-center justify-center bg-secondary/30 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-6 bg-card p-8 sm:p-10 rounded-2xl border border-border/80 shadow-lg text-center relative overflow-hidden animate-scaleUp">
+          {/* Subtle Accent Glow */}
+          <div className="absolute -top-12 -left-12 size-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-12 -right-12 size-32 bg-badge/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative flex flex-col items-center justify-center py-4">
+            <div className="relative mb-6">
+              <div className="size-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-inner">
+                <Loader2 className="size-8 animate-spin" />
+              </div>
+              <div className="absolute inset-0 rounded-full bg-primary/15 animate-ping pointer-events-none" />
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3">
+              <Sparkles className="size-3.5 text-accent" />
+              Verifying Transaction
+            </div>
+
+            <h2 className="text-2xl font-bold text-text tracking-tight mb-2">
+              Verifying Your Payment
+            </h2>
+            <p className="text-sm text-sec-text max-w-xs leading-relaxed">
+              We are securely confirming your transaction with Stripe and activating your dashboard access...
             </p>
           </div>
         </div>
@@ -67,27 +86,28 @@ export default function ClaimSuccessPage() {
 
   if (confirmStatus === "error") {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-xl border border-slate-200/80 shadow-md text-center relative overflow-hidden">
-          <div className="relative flex flex-col items-center justify-center py-6">
-            <div className="mx-auto size-16 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-600 mb-6">
+      <div className="min-h-[85vh] flex items-center justify-center bg-secondary/30 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full bg-card p-8 sm:p-10 rounded-2xl border border-border/80 shadow-lg text-center relative overflow-hidden animate-scaleUp">
+          <div className="relative flex flex-col items-center justify-center">
+            <div className="mx-auto size-16 rounded-full bg-destructive/10 border border-destructive/20 flex items-center justify-center text-destructive mb-6 shadow-sm">
               <AlertTriangle className="size-8" />
             </div>
-            <h2 className="text-2xl font-bold text-red-600">Verification Failed</h2>
-            <p className="mt-2 text-gray-600 max-w-sm text-sm leading-relaxed">
+            <h2 className="text-2xl font-bold text-text tracking-tight mb-2">Verification Failed</h2>
+            <p className="text-sm text-sec-text max-w-xs leading-relaxed mb-6">
               {errorMessage || "We encountered an issue verifying your payment session with Stripe."}
             </p>
-            <div className="mt-8 space-y-3 flex flex-col items-center w-full">
+
+            <div className="space-y-3 flex flex-col items-center w-full">
               <Button
                 onClick={() => window.location.reload()}
-                className="w-full max-w-xs h-14 bg-brand-medium-navy hover:bg-brand-medium-navy-hover cursor-pointer text-white text-base font-semibold rounded-lg transition-all shadow-md active:scale-[0.98]"
+                className="w-full max-w-xs h-12 bg-primary hover:bg-brand-deep-navy-hover cursor-pointer text-primary-foreground text-sm font-semibold rounded-xl transition-all shadow-md active:scale-[0.98]"
               >
                 Retry Verification
               </Button>
               <Button
                 variant="link"
                 onClick={() => router.push("/find-dentists")}
-                className="text-gray-500 hover:text-brand-medium-navy text-sm font-semibold transition-colors"
+                className="text-sec-text hover:text-text text-sm font-semibold transition-colors cursor-pointer"
               >
                 Back to Dentist Directory
               </Button>
@@ -99,56 +119,56 @@ export default function ClaimSuccessPage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-xl w-full space-y-8 bg-white p-8 md:p-10 rounded-xl border border-slate-200/80 shadow-md text-center relative overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div className="min-h-[85vh] flex items-center justify-center bg-secondary/30 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-lg w-full space-y-8 bg-card p-8 sm:p-10 rounded-2xl border border-border/80 shadow-lg text-center relative overflow-hidden animate-scaleUp">
         <div className="relative">
           {/* Success Badge */}
-          <div className="mx-auto size-20 lg:size-24 rounded-full bg-brand-medium-navy flex items-center justify-center text-white mb-8 shadow-md">
-            <Check className="size-10 lg:size-12 stroke-3" />
+          <div className="mx-auto size-20 rounded-full bg-badge flex items-center justify-center text-white mb-6 shadow-md ring-8 ring-badge/15">
+            <Check className="size-10 stroke-3" />
           </div>
 
-          <div className="flex justify-center items-center gap-1.5 mb-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-medium-navy bg-brand-medium-navy/10 px-3 py-1 rounded-full flex items-center gap-1">
-              <Sparkles className="size-3" /> Payment Verified
+          <div className="flex justify-center items-center gap-1.5 mb-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-badge bg-badge/10 border border-badge/20 px-3.5 py-1 rounded-full flex items-center gap-1.5">
+              <Sparkles className="size-3.5 text-accent" /> Payment Verified
             </span>
           </div>
 
-          <h1 className="text-[28px] lg:text-[32px] font-bold text-text leading-tight mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-text tracking-tight mb-3">
             Profile Claimed Successfully!
           </h1>
-          <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-md mx-auto">
-            Welcome to RatedDocs! Your professional identity has been verified, your membership plan activated, and your premium directory page is now live.
+          <p className="text-sec-text text-sm leading-relaxed mb-6 max-w-sm mx-auto">
+            Welcome to RatedDocs! Your professional identity has been verified, your membership plan activated, and your dashboard is ready.
           </p>
 
-          <div className="mt-8 p-6 rounded-xl bg-slate-50 border border-slate-200/60 text-left space-y-4 max-w-md mx-auto">
-            <h3 className="font-bold text-text text-sm border-b border-slate-200 pb-2">
+          <div className="p-5 rounded-xl bg-secondary/60 border border-border/80 text-left space-y-3 max-w-sm mx-auto mb-8">
+            <h3 className="font-bold text-text text-xs uppercase tracking-wider border-b border-border/80 pb-2">
               Setup Actions Completed:
             </h3>
-            <p className="flex items-center gap-3 text-xs font-medium text-gray-600">
-              <Check className="size-4 text-brand-medium-navy stroke-3 shrink-0" />
-              <span>Membership status updated to <strong className="text-gray-800">Paid</strong></span>
+            <p className="flex items-center gap-2.5 text-xs font-medium text-sec-text">
+              <Check className="size-4 text-badge stroke-3 shrink-0" />
+              <span>Membership status updated to <strong className="text-text">Paid</strong></span>
             </p>
-            <p className="flex items-center gap-3 text-xs font-medium text-gray-600">
-              <Check className="size-4 text-brand-medium-navy stroke-3 shrink-0" />
-              <span>Professional credentials linked to your new dashboard</span>
+            <p className="flex items-center gap-2.5 text-xs font-medium text-sec-text">
+              <Check className="size-4 text-badge stroke-3 shrink-0" />
+              <span>Directory profile linked to dashboard</span>
             </p>
-            <p className="flex items-center gap-3 text-xs font-medium text-gray-600">
-              <Check className="size-4 text-brand-medium-navy stroke-3 shrink-0" />
-              <span>Welcome & verification email sent to your inbox</span>
+            <p className="flex items-center gap-2.5 text-xs font-medium text-sec-text">
+              <Check className="size-4 text-badge stroke-3 shrink-0" />
+              <span>Confirmation email sent</span>
             </p>
           </div>
 
-          <div className="mt-8 space-y-3 flex flex-col items-center">
+          <div className="space-y-3 flex flex-col items-center">
             <Button
               onClick={() => router.push("/dentist")}
-              className="w-full max-w-xs h-14 bg-brand-medium-navy hover:bg-brand-medium-navy-hover cursor-pointer text-white text-base font-semibold rounded-lg transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full max-w-xs h-12 bg-primary hover:bg-brand-deep-navy-hover cursor-pointer text-primary-foreground text-sm font-semibold rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              Go To Your Dashboard <ArrowRight className="size-5" />
+              Go To Your Dashboard <ArrowRight className="size-4" />
             </Button>
             <Button
               variant="link"
               onClick={() => router.push("/find-dentists")}
-              className="text-gray-500 hover:text-brand-medium-navy text-sm font-semibold transition-colors"
+              className="text-sec-text hover:text-text text-sm font-semibold transition-colors cursor-pointer"
             >
               Back to Dentist Directory
             </Button>
