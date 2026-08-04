@@ -16,10 +16,10 @@ export const api = axios.create({
   },
   paramsSerializer: (params) => {
     const searchParams = new URLSearchParams();
-    
+
     Object.entries(params || {}).forEach(([key, value]) => {
       if (value === undefined || value === null) return;
-      
+
       if (typeof value === 'object' && !Array.isArray(value)) {
         Object.entries(value).forEach(([subKey, subValue]) => {
           if (subValue !== undefined && subValue !== null) {
@@ -36,7 +36,7 @@ export const api = axios.create({
         searchParams.append(key, String(value));
       }
     });
-    
+
     return searchParams.toString();
   },
 });
@@ -75,7 +75,6 @@ api.interceptors.response.use(
     ) {
       if (typeof window !== "undefined") {
         resetUserSession();
-        // Clear local session cookies
         deleteCookie("accessToken", { path: "/" });
         deleteCookie("better-auth.session_token", { path: "/" });
         deleteCookie("refreshToken", { path: "/" });
@@ -90,16 +89,31 @@ api.interceptors.response.use(
           return Promise.reject(apiError);
         }
 
-        if (
-          pathname.startsWith("/dentist") ||
-          pathname.startsWith("/patient")
-        ) {
-          window.dispatchEvent(
-            new CustomEvent("auth:session-expired", {
-              detail: { redirectTo: "/?session_token_required=true" },
-            })
-          );
+        if (pathname.startsWith("/dentist") || pathname.startsWith("/patient")) {
+          window.location.href = "/?session_token_required=true";
+          return Promise.reject(apiError);
         }
+      }
+    }
+
+    if (apiError.statusCode === 403 && typeof window !== "undefined") {
+      const msg = (apiError as any)?.message?.toLowerCase() || "";
+      const pathname = window.location.pathname;
+      if (msg.includes("suspended") && pathname.startsWith("/dentist")) {
+        resetUserSession();
+        deleteCookie("accessToken", { path: "/" });
+        deleteCookie("better-auth.session_token", { path: "/" });
+        deleteCookie("refreshToken", { path: "/" });
+        document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "better-auth.session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
+        // Invoke server-side logout to clear HttpOnly cookies securely
+        fetch(`${API_BASE_URL}/auth/logout`, { method: "POST", credentials: "include" })
+          .finally(() => {
+            window.location.href = "/?account_suspended=true";
+          });
+        return Promise.reject(apiError);
       }
     }
 

@@ -1,16 +1,34 @@
 "use client";
 
-import { FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { FileText, CheckCircle2, AlertCircle, CreditCard } from "lucide-react";
 
 interface DentistOverviewTabProps {
     apiData: any; // Raw API response from GET /admin/dentist-verification/:id
 }
 
 export function DentistOverviewTab({ apiData }: DentistOverviewTabProps) {
-    const { license_step, operation_step, clinical_step } = apiData || {};
+    const { license_step, operation_step, clinical_step, membership } = apiData || {};
 
     return (
         <div className="space-y-6">
+            {/* Membership Plan Details (if present) */}
+            {membership && (
+                <div className="rounded-lg border border-indigo-100 bg-indigo-50/40 p-5 shadow-sm">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-indigo-950 flex items-center gap-2">
+                            <CreditCard className="h-5 w-5 text-indigo-600" /> Membership Plan
+                        </h3>
+                        <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-700 uppercase tracking-wide">
+                            {membership.plan_name}
+                        </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <InfoItem label="Plan Name" value={membership.plan_name} />
+                        <InfoItem label="Paid At" value={membership.paid_at ? new Date(membership.paid_at).toLocaleDateString() : 'N/A'} />
+                        <InfoItem label="Stripe Subscription" value={membership.stripe_subscription_id || 'N/A'} />
+                    </div>
+                </div>
+            )}
             {/* Phase 1: License */}
             <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">

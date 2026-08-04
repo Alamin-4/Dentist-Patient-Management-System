@@ -79,72 +79,97 @@ export default function DentistsPage() {
     isLoading,
     isError,
   } = useAdminDentists({
-    params: { limit: 1000 },
+    params: { limit: 20 },
   });
 
   const mappedDentists = useMemo(() => {
     return (apiDentists || []).map(mapApiDentistToUIDentist);
   }, [apiDentists]);
 
-  const meta = useMemo(() => {
-    const total = mappedDentists.length;
-    const active = mappedDentists.filter((d) => d.status === "active").length;
-    const pending = mappedDentists.filter((d) => d.status === "pending").length;
-    const suspended = mappedDentists.filter((d) => d.status === "suspended").length;
-    const rejected = mappedDentists.filter((d) => d.status === "rejected").length;
-    const unclaimed = mappedDentists.filter((d) => d.status === "unclaimed").length;
-
-    return {
-      total_dentists: total,
-      active,
-      active_pct: total > 0 ? `${Math.round((active / total) * 100)}%` : "0%",
-      pending_verification: pending,
-      suspended,
-      suspended_pct: total > 0 ? `${Math.round((suspended / total) * 100)}%` : "0%",
-      tab_counts: { all: total, active, pending, suspended, rejected, unclaimed },
-    };
-  }, [mappedDentists]);
-
   const stats = [
-    { label: "Total Dentists", value: (apiMeta?.total_verifications ?? 0).toLocaleString(), sub: "Registered on platform" },
-    { label: "Active", value: meta.active.toLocaleString(), sub: meta.active_pct },
-    { label: "Pending Verification", value: (apiMeta?.pending_review ?? 0).toLocaleString(), sub: "Awaiting review", valueColor: "text-accent" },
-    { label: "Suspended", value: meta.suspended.toString(), sub: meta.suspended_pct },
-    { label: "Directory Entries", value: (apiMeta?.totalDirectory ?? 0).toLocaleString(), sub: "Imported via CSV" },
-    { label: "Subscribed Members", value: (apiMeta?.totalSubscribed ?? 0).toLocaleString(), sub: "Active paid plans" },
+    {
+      label: "Total Dentists",
+      value: (apiMeta?.total_dentists ?? apiMeta?.total ?? 0).toLocaleString(),
+      sub: "Registered on platform",
+    },
+    {
+      label: "Active",
+      value: (apiMeta?.active_count ?? 0).toLocaleString(),
+      sub: apiMeta?.active_percentage ?? "0%",
+    },
+    {
+      label: "Suspended",
+      value: (apiMeta?.suspended_count ?? 0).toLocaleString(),
+      sub: apiMeta?.suspended_percentage ?? "0%",
+    },
+    {
+      label: "Directory Entries",
+      value: (apiMeta?.totalDirectory ?? 0).toLocaleString(),
+      sub: "Imported via CSV",
+    },
+    {
+      label: "Subscribed Members",
+      value: (apiMeta?.totalSubscribed ?? 0).toLocaleString(),
+      sub: "Active paid plans",
+    },
   ];
 
   const tabs = [
-    { key: "all", label: "All", count: (apiMeta?.total_verifications ?? 0) + (apiMeta?.totalDirectory ?? 0) },
-    { key: "active", label: "Active", count: meta.tab_counts.active },
-    { key: "pending", label: "Pending", count: apiMeta?.pending_review ?? 0 },
-    { key: "unclaimed", label: "Unclaimed", count: apiMeta?.totalDirectory ?? 0 },
-    { key: "suspended", label: "Suspended", count: meta.tab_counts.suspended },
-    { key: "rejected", label: "Rejected", count: meta.tab_counts.rejected },
+    { key: "all", label: "All", count: apiMeta?.tab_counts?.all ?? (apiMeta?.total_dentists ?? 0) + (apiMeta?.totalDirectory ?? 0) },
+    { key: "active", label: "Active", count: apiMeta?.tab_counts?.active ?? apiMeta?.active_count ?? 0 },
+    { key: "pending", label: "Pending", count: apiMeta?.tab_counts?.pending ?? apiMeta?.pending_review ?? 0 },
+    { key: "unclaimed", label: "Unclaimed", count: apiMeta?.tab_counts?.unclaimed ?? apiMeta?.totalDirectory ?? 0 },
+    { key: "suspended", label: "Suspended", count: apiMeta?.tab_counts?.suspended ?? apiMeta?.suspended_count ?? 0 },
+    { key: "rejected", label: "Rejected", count: apiMeta?.tab_counts?.rejected ?? apiMeta?.rejected ?? 0 },
   ];
 
   const filtered = useMemo(() => {
     let list = mappedDentists;
-    if (activeTab !== "all") list = list.filter((d) => d.status === activeTab);
-    if (specialty !== "All specialties") list = list.filter((d) => d.specialty === specialty);
+    const searchTerm = tableSearch.trim().toLowerCase();
+
+    // 1. If searching, prioritize global search across all statuses
+    if (searchTerm) {
+      list = list.filter((d) => {
+        const nameMatch = (d.name || "").toLowerCase().includes(searchTerm);
+        const emailMatch = (d.email || "").toLowerCase().includes(searchTerm);
+        const idMatch = (d.id || "").toLowerCase().includes(searchTerm);
+        const phoneMatch = (d.phone || "").toLowerCase().includes(searchTerm);
+        const specialtyMatch = (d.specialty || "").toLowerCase().includes(searchTerm);
+        const locationMatch = (d.location || "").toLowerCase().includes(searchTerm);
+        const planMatch = (d.membershipPlan || "").toLowerCase().includes(searchTerm);
+
+        return (
+          nameMatch ||
+          emailMatch ||
+          idMatch ||
+          phoneMatch ||
+          specialtyMatch ||
+          locationMatch ||
+          planMatch
+        );
+      });
+    } else {
+      // 2. Filter by status tab only when no search string is provided
+      if (activeTab !== "all") {
+        list = list.filter((d) => d.status === activeTab);
+      }
+    }
+
+    // 3. Apply specialty dropdown filter if selected
+    if (specialty !== "All specialties") {
+      list = list.filter((d) => d.specialty === specialty);
+    }
+
+    // 4. Apply city dropdown filter if selected
     if (city !== "All cities") {
       const q = city.toLowerCase();
       list = list.filter(
         (d) =>
-          d.location.toLowerCase().includes(q) ||
-          q.includes(d.location.toLowerCase())
+          (d.location || "").toLowerCase().includes(q) ||
+          q.includes((d.location || "").toLowerCase())
       );
     }
-    if (tableSearch) {
-      const q = tableSearch.toLowerCase();
-      list = list.filter(
-        (d) =>
-          d.name.toLowerCase().includes(q) ||
-          d.email.toLowerCase().includes(q) ||
-          d.id.toLowerCase().includes(q) ||
-          (d.membershipPlan && d.membershipPlan.toLowerCase().includes(q))
-      );
-    }
+
     return list;
   }, [mappedDentists, activeTab, specialty, city, tableSearch]);
 
@@ -226,7 +251,6 @@ export default function DentistsPage() {
           <CustomTab tabs={tabs} active={activeTab} onChange={handleTabChange} />
         </div>
 
-        {/* Input Filters */}
         <ListFilters
           tableSearch={tableSearch}
           setTableSearch={setTableSearch}
@@ -242,7 +266,6 @@ export default function DentistsPage() {
           onClearSelection={() => setSelectedIds([])}
         />
 
-        {/* Dentists Data Table */}
         <DentistsTable
           filtered={filtered}
           pageData={pageData}
@@ -255,7 +278,6 @@ export default function DentistsPage() {
         />
       </div>
 
-      {/* Professional Import Drawer/Modal */}
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}

@@ -19,9 +19,9 @@ export function VerificationSidebar() {
 
   const progress = progressData?.data as any;
 
-  const step1Status = progress?.step_one_status || "PENDING";
-  const step2Status = progress?.step_two_status || "PENDING";
-  const step3Status = progress?.step_three_status || "PENDING";
+  const step1Status = progress?.step_one_status || "NOT_STARTED";
+  const step2Status = progress?.step_two_status || "NOT_STARTED";
+  const step3Status = progress?.step_three_status || "NOT_STARTED";
 
   const step1Done = progress?.is_step_one_completed || false;
   const step2Done = progress?.is_step_two_completed || false;

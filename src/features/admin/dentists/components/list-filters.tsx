@@ -27,10 +27,6 @@ export function ListFilters({
   setCity,
   setPage,
   specialities,
-  selectedCount,
-  onBulkAction,
-  isBulkPending,
-  onClearSelection,
 }: ListFiltersProps) {
   return (
     <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:gap-3 min-h-13">
@@ -58,11 +54,13 @@ export function ListFilters({
             className="h-9 appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-text cursor-pointer"
           >
             <option value="All specialties">All specialties</option>
-            {specialities?.map((s) => (
-              <option key={s.slug || s.id} value={s.name}>
-                {s.name}
-              </option>
-            ))}
+            {Array.isArray(specialities) && specialities.length > 0
+              ? specialities.map((s) => (
+                  <option key={s.slug || s.id} value={s.name}>
+                    {s.name}
+                  </option>
+                ))
+              : null}
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
         </div>

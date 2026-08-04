@@ -13,7 +13,6 @@ import {
   PAGE_SIZE,
 } from "../utils/dentist-types";
 
-// Inner Helper Components
 function Avatar({ initials, color }: { initials: string; color: string }) {
   return (
     <span
@@ -88,6 +87,8 @@ export function DentistsTable({
     );
   };
 
+  console.log("pageData:", pageData)
+
   return (
     <>
       <div className="overflow-x-auto min-h-87.5">
@@ -103,7 +104,7 @@ export function DentistsTable({
                   className="rounded border-gray-300 text-text focus:ring-text"
                 />
               </th>
-              {["Dentist", "Specialty", "Location", "Status", "Rating", "Bookings", "Membership", "Joined", ""].map((h, i) => (
+              {["Dentist", "Specialty", "Location", "Verification Status", "Rating", "Bookings", "Membership", "Joined", ""].map((h, i) => (
                 <th
                   key={i}
                   className="px-4 py-3 text-left text-sm font-normal text-gray-400"
@@ -130,7 +131,6 @@ export function DentistsTable({
                     selectedIds.includes(dentist.id) && "bg-indigo-50/40 hover:bg-indigo-50/60"
                   )}
                 >
-                  {/* Checkbox */}
                   <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"

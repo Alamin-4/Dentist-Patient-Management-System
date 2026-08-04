@@ -136,6 +136,7 @@ export interface AdminDentist {
   created_at: string;
   updated_at: string;
   is_directory_only?: boolean;
+  queue_status?: string;
 }
 
 interface UseAdminDentistsOptions {
@@ -240,6 +241,50 @@ export function useBulkDentistAction() {
     mutationFn: ({ ids, action }: { ids: string[]; action: "suspend" | "unsuspend" | "delete" }) =>
       adminApi.bulkDentistAction(ids, action),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
+    },
+  });
+}
+
+export function useUpdateAdminDentistData(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: {
+      specialtyId?: string;
+      yearsOfExperience?: number;
+      registrationNumber?: string;
+      registrationAuthority?: string;
+      reason: string;
+    }) => adminApi.updateAdminDentistData(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentist", id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
+    },
+  });
+}
+
+export function useUpdateDentistStatus(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: { status: "SUSPENDED" | "ACTIVE"; reason: string }) =>
+      adminApi.updateDentistStatus(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentist", id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
+    },
+  });
+}
+
+export function useDeleteDentistAccount(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: { confirmSlug: string; reason: string }) =>
+      adminApi.deleteDentistAccount(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "dentist", id] });
       queryClient.invalidateQueries({ queryKey: ["admin", "dentists"] });
     },
   });

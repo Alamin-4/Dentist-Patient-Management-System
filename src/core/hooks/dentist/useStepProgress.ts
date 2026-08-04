@@ -38,7 +38,7 @@ export default function useVerificationProgress() {
     const checkLicenseVerifyProgress = useMemo(() => ({
         data: progressData ? {
             submitted: progressData.step_one_status === "SUBMITTED" || progressData.step_one_status === "APPROVED",
-            status: progressData.step_one_status || "PENDING",
+            status: progressData.step_one_status || "NOT_STARTED",
             note: progressData.step_one_note || null,
             data: progressData.dentistLicense || {
                 country: "",
@@ -56,7 +56,7 @@ export default function useVerificationProgress() {
     const checkPhotoVerifyProgress = useMemo(() => ({
         data: progressData ? {
             submitted: progressData.step_two_status === "SUBMITTED" || progressData.step_two_status === "APPROVED",
-            status: progressData.step_two_status || "PENDING",
+            status: progressData.step_two_status || "NOT_STARTED",
             note: progressData.step_two_note || null,
             data: progressData.dentistOperations
                 ? {
@@ -76,7 +76,7 @@ export default function useVerificationProgress() {
     const checkIdVerifyProgress = useMemo(() => ({
         data: progressData ? {
             submitted: progressData.step_three_status === "SUBMITTED" || progressData.step_three_status === "APPROVED",
-            status: progressData.step_three_status || "PENDING",
+            status: progressData.step_three_status || "NOT_STARTED",
             note: progressData.step_three_note || null,
             data: {
                 materials: [],
@@ -89,9 +89,9 @@ export default function useVerificationProgress() {
         refetch: progressQuery.refetch,
     }), [progressData, progressQuery.isLoading, progressQuery.isError, progressQuery.error, progressQuery.refetch]);
 
-    const step1Status = checkLicenseVerifyProgress.data?.status ?? "PENDING";
-    const step2Status = checkPhotoVerifyProgress.data?.status ?? "PENDING";
-    const step3Status = checkIdVerifyProgress.data?.status ?? "PENDING";
+    const step1Status = checkLicenseVerifyProgress.data?.status ?? "NOT_STARTED";
+    const step2Status = checkPhotoVerifyProgress.data?.status ?? "NOT_STARTED";
+    const step3Status = checkIdVerifyProgress.data?.status ?? "NOT_STARTED";
 
     const step1Note = checkLicenseVerifyProgress.data?.note ?? null;
     const step2Note = checkPhotoVerifyProgress.data?.note ?? null;
