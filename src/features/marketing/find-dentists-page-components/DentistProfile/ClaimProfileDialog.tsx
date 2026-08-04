@@ -72,15 +72,13 @@ export default function ClaimProfileDialog({
   // Authentication & Role verification checks
   const isNotDentist = user && user.role !== "DENTIST";
   const alreadyClaimedDirectoryId = fullUser?.dentist?.dentistDirectoryId;
-  const isProfileVerifiedAndPaid =
-    fullUser?.dentist?.dentistDirectory?.status === "VERIFIED" ||
+  const isProfilePaid =
     !!fullUser?.dentist?.dentistDirectory?.membershipPaidAt ||
-    dentist?.status === "VERIFIED" ||
-    dentist?.verified;
+    !!dentist?.membershipPaidAt;
 
   const hasAlreadyClaimedAnother = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId !== dentist.id;
-  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id && isProfileVerifiedAndPaid;
-  const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id && !isProfileVerifiedAndPaid;
+  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id && isProfilePaid;
+  const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist.id && !isProfilePaid;
 
   useEffect(() => {
     if (isClaimPendingPayment && claimStep < 4) {

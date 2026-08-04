@@ -68,6 +68,8 @@ export default function ClaimProfilePage() {
       backendId: d.backendId,
       claimedByUserId: d.claimedByUserId,
       userId: d.userId,
+      membershipPaidAt: d.membershipPaidAt,
+      membershipPlan: d.membershipPlan,
     };
   }, [directoryDetailResponse]);
 
@@ -145,18 +147,16 @@ export default function ClaimProfilePage() {
   }, [user, claimEmail, slug]);
 
   const alreadyClaimedDirectoryId = fullUser?.dentist?.dentistDirectoryId;
-  const isProfileVerifiedAndPaid =
-    fullUser?.dentist?.dentistDirectory?.status === "VERIFIED" ||
+  const isProfilePaid =
     !!fullUser?.dentist?.dentistDirectory?.membershipPaidAt ||
-    dentist?.status === "VERIFIED" ||
-    dentist?.verified;
+    !!dentist?.membershipPaidAt;
 
   const hasAlreadyClaimedAnother = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId !== dentist?.id;
-  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && isProfileVerifiedAndPaid;
-  const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && !isProfileVerifiedAndPaid;
+  const hasAlreadyClaimedThis = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && isProfilePaid;
+  const isClaimPendingPayment = alreadyClaimedDirectoryId && alreadyClaimedDirectoryId === dentist?.id && !isProfilePaid;
 
   const isProfileAlreadyClaimedBySomeoneElse =
-    (dentist?.status === "CLAIMED" || dentist?.status === "VERIFIED" || dentist?.verified || !dentist?.isClaimable) &&
+    (!!dentist?.claimedByUserId || !dentist?.isClaimable) &&
     !hasAlreadyClaimedThis &&
     !isClaimPendingPayment;
 
