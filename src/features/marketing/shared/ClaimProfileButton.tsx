@@ -40,7 +40,7 @@ export function ClaimProfileButton({
         disabled
         variant="secondary"
         className={cn(
-          "font-bold text-slate-400 bg-slate-100 border border-slate-200 cursor-not-allowed opacity-70 rounded-lg",
+          "font-bold text-white bg-accent cursor-not-allowed opacity-70 rounded-lg",
           size === "sm" ? "h-9 px-3 text-xs" : "h-10 px-4 text-xs sm:text-sm",
           fullWidth && "w-full flex-1",
           className
