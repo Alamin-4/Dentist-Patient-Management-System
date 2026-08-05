@@ -35,10 +35,8 @@ function TimelineIcon({ status }: { status: "completed" | "current" | "pending" 
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
 export default function BookingDetailPage() {
   const {
-    id,
     booking,
     isLoading,
     arrivalCode,

@@ -37,7 +37,6 @@ type Transaction = {
 
 type StatusFilter = "All" | "In Escrow" | "Released" | "Refunded" | "Refund Pending";
 
-/* ─── helpers ───────────────────────────────────────────────────────────── */
 function Avatar({ initials, color, size = "md" }: { initials: string; color: string; size?: "sm" | "md" }) {
   return (
     <span
@@ -66,7 +65,6 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-/* ─── Payment Drawer ─────────────────────────────────────────────────────── */
 function PaymentDrawer({ txn, onClose }: { txn: Transaction | null; onClose: () => void }) {
   const open = !!txn;
 

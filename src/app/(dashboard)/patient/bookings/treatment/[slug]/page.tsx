@@ -517,7 +517,6 @@ function PlanTable({
   breakdown,
   totalLabel,
   total,
-  isFinal = false,
 }: {
   breakdown: Array<{ label: string; price: number | string }>;
   totalLabel: string;
