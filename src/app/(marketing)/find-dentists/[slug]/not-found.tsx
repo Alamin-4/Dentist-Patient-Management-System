@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowLeft, Search, Home } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 
 export default function DentistNotFound() {
     return (

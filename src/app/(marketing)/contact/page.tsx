@@ -62,9 +62,10 @@ export default function ContactPage() {
       setTimeout(() => {
         setSubmitted(false);
       }, 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setSubmitting(false);
-      const errorMsg = error?.response?.data?.message || "Failed to send message. Please try again.";
+      const apiErr = error as { message?: string; response?: { data?: { message?: string } } };
+      const errorMsg = apiErr?.response?.data?.message || apiErr?.message || "Failed to send message. Please try again.";
       toast.error(errorMsg);
     }
   };
