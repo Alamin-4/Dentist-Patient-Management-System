@@ -18,8 +18,7 @@ import { PageContainer } from "@/components/shared/page-container";
 import { HeadingGroup } from "@/components/shared/heading-group";
 import { SectionCard } from "@/components/shared/section-card";
 import {
-  parseTimezoneOffsetMinutes,
-  getConsultationStartUtcMs,
+  resolveConsultationTab,
   type ConsultationDisplayState,
 } from "@/lib/consultation-state";
 
@@ -47,42 +46,6 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   },
 };
 
-// ── isToday helper — used only for tab filtering, unchanged ────────────────────
-// Tab filtering correctly uses isToday() to route today's consultations to
-// the "active" tab. This remains independent of the join-window check.
-const isToday = (consultation: ConsultationItem): boolean => {
-  if (!consultation.scheduledDate) return false;
-  const offsetMinutes = parseTimezoneOffsetMinutes(consultation.timezone);
-  const scheduledUtc = new Date(consultation.scheduledDate).getTime();
-  const localMs = scheduledUtc + offsetMinutes * 60 * 1000;
-  const localDate = new Date(localMs);
-  const scheduledLocalDateStr = `${localDate.getUTCFullYear()}-${String(localDate.getUTCMonth() + 1).padStart(2, "0")}-${String(localDate.getUTCDate()).padStart(2, "0")}`;
-
-  const nowUtc = Date.now();
-  const nowLocal = new Date(nowUtc + offsetMinutes * 60 * 1000);
-  const todayStr = `${nowLocal.getUTCFullYear()}-${String(nowLocal.getUTCMonth() + 1).padStart(2, "0")}-${String(nowLocal.getUTCDate()).padStart(2, "0")}`;
-
-  return scheduledLocalDateStr === todayStr;
-};
-
-// ── Tab-level isWithinMeetingWindow — used ONLY for tab filter routing ────────
-// This is intentionally kept for the tab filter (isWithinMeetingWindow on
-// mount) because it just decides which tab a card appears in — it is NOT
-// used for any button label or action. The card itself re-resolves state
-// reactively via useConsultationState.
-const isWithinMeetingWindowForTabFilter = (consultation: ConsultationItem): boolean => {
-  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
-  const startUtcMs = getConsultationStartUtcMs(
-    consultation.scheduledDate,
-    consultation.scheduledTime,
-    consultation.timezone,
-  );
-  if (startUtcMs === null) return false;
-  const duration = (consultation.durationMinutes || 15) * 60 * 1000;
-  const earlyMs = 5 * 60 * 1000;
-  const nowUtc = Date.now();
-  return nowUtc >= startUtcMs - earlyMs && nowUtc <= startUtcMs + duration;
-};
 
 function EmptySlate({ tab }: { tab: Tab }) {
   const { title, body } = EMPTY_STATE[tab];
@@ -117,27 +80,36 @@ export default function Overview() {
   const treatmentPlans: TreatmentPlanItem[] = treatmentPlansResponse?.data || [];
   const proposedTreatmentPlans = treatmentPlans.filter((plan) => plan.status === "PROPOSED");
 
-  const consultationsToShow = consultations.filter((item) => {
-    if (item.treatmentPlan?.treatmentBooking) {
-      return false;
-    }
-
-    if (activeTab === "upcoming") {
-      return (
-        item.requestStatus === "PENDING" ||
-        item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindowForTabFilter(item))
-      );
-    }
-    if (activeTab === "active") {
-      return (
-        item.requestStatus === "ACTIVE" ||
-        item.requestStatus === "MISSED" ||
-        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindowForTabFilter(item)))
-      );
-    }
-    return false;
+  const rawConsultations = consultations.filter((item) => {
+    if (item.treatmentPlan?.treatmentBooking) return false;
+    if (item.requestStatus?.toUpperCase() === "CANCELLED") return false;
+    return resolveConsultationTab(item, Date.now()) === activeTab;
   });
+
+  const consultationsToShow = activeTab === "estimate-updates"
+    ? (() => {
+        const withoutPlan = rawConsultations.filter((item) => !item.treatmentPlan);
+        const seenDentists = new Set<string>();
+        const sorted = [...withoutPlan].sort((a, b) => {
+          const dateA = a.scheduledDate ? new Date(a.scheduledDate).getTime() : 0;
+          const dateB = b.scheduledDate ? new Date(b.scheduledDate).getTime() : 0;
+          return dateB - dateA;
+        });
+        const unique: ConsultationItem[] = [];
+        for (const item of sorted) {
+          const dentistKey = item.dentistId || item.directoryEntryId;
+          if (dentistKey) {
+            if (!seenDentists.has(dentistKey)) {
+              seenDentists.add(dentistKey);
+              unique.push(item);
+            }
+          } else {
+            unique.push(item);
+          }
+        }
+        return unique;
+      })()
+    : rawConsultations;
 
   const openReschedule = (consultation: ConsultationItem) => {
     setSelectedConsultation(consultation);
@@ -156,6 +128,10 @@ export default function Overview() {
 
   const isStatsLoading = loadingConsultations || loadingPlans;
   const isConsultationsLoading = loadingConsultations;
+
+  const hasContent = activeTab === "estimate-updates"
+    ? Boolean(consultationsToShow.length || proposedTreatmentPlans.length)
+    : Boolean(consultationsToShow.length);
 
   return (
     <PageContainer className="space-y-6">
@@ -216,60 +192,7 @@ export default function Overview() {
               </>
             )}
           </div>
-        ) : activeTab === "estimate-updates" ? (
-          (() => {
-            const completedConsultations = consultations.filter(
-              (item) => item.requestStatus === "COMPLETED" && !item.treatmentPlan
-            );
-
-            const uniqueCompletedConsultations: ConsultationItem[] = [];
-            const seenDentists = new Set<string>();
-            const sortedCompleted = [...completedConsultations].sort((a, b) => {
-              const dateA = a.scheduledDate ? new Date(a.scheduledDate).getTime() : 0;
-              const dateB = b.scheduledDate ? new Date(b.scheduledDate).getTime() : 0;
-              return dateB - dateA;
-            });
-
-            for (const item of sortedCompleted) {
-              const dentistKey = item.dentistId || item.directoryEntryId;
-              if (dentistKey) {
-                if (!seenDentists.has(dentistKey)) {
-                  seenDentists.add(dentistKey);
-                  uniqueCompletedConsultations.push(item);
-                }
-              } else {
-                uniqueCompletedConsultations.push(item);
-              }
-            }
-
-            return (proposedTreatmentPlans.length || uniqueCompletedConsultations.length) ? (
-              <div className="space-y-5 animate-fade-in">
-                {uniqueCompletedConsultations.map((consultation) => {
-                  const completedCount = consultations.filter(
-                    (c) =>
-                      c.requestStatus === "COMPLETED" &&
-                      (c.dentistId === consultation.dentistId || c.directoryEntryId === consultation.directoryEntryId)
-                  ).length;
-                  return (
-                    <ConsultationCard
-                      key={consultation.id}
-                      consultation={consultation}
-                      completedCount={completedCount}
-                      onPrimaryAction={() => {
-                        openReschedule(consultation);
-                      }}
-                    />
-                  );
-                })}
-                {proposedTreatmentPlans.map((plan) => (
-                  <DoctorCard key={plan.id} data={plan} />
-                ))}
-              </div>
-            ) : (
-              <EmptySlate tab={activeTab} />
-            );
-          })()
-        ) : consultationsToShow.length ? (
+        ) : hasContent ? (
           <div className="space-y-5 animate-fade-in">
             {consultationsToShow.map((consultation) => {
               const completedCount = consultations.filter(
@@ -283,8 +206,6 @@ export default function Overview() {
                   consultation={consultation}
                   completedCount={completedCount}
                   onPrimaryAction={(state: ConsultationDisplayState) => {
-                    // The card emits the exact state used to render its label.
-                    // No independent window recomputation here.
                     switch (state) {
                       case "reschedule-missed":
                       case "reschedule-expired":
@@ -300,15 +221,20 @@ export default function Overview() {
                       case "join":
                         router.push(`/consultation/${consultation.id}`);
                         break;
-                      case "awaiting-approval":
                       case "completed":
-                        // disabled / no-op
+                        openReschedule(consultation);
+                        break;
+                      case "awaiting-approval":
                         break;
                     }
                   }}
                 />
               );
             })}
+            {activeTab === "estimate-updates" &&
+              proposedTreatmentPlans.map((plan) => (
+                <DoctorCard key={plan.id} data={plan} />
+              ))}
           </div>
         ) : (
           <EmptySlate tab={activeTab} />

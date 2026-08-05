@@ -11,75 +11,17 @@ import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-pa
 import { useDentistConsultations, useUpdateConsultationStatus } from "@/hooks/consultation/useConsultation";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import {
+  resolveConsultationTab,
+  resolveConsultationState,
+} from "@/lib/consultation-state";
+import type { ConsultationItem } from "@/types";
 
 const tabs = [
   { id: "Upcoming", label: "Upcoming" },
   { id: "Active", label: "Active" },
   { id: "Treatment Estimate", label: "Treatment Estimate" },
 ];
-
-// Parse timezone string like "GMT+6 Time Zone (BST, GMT+6)" → offset in minutes
-const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
-  if (!tzStr) return 0;
-  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
-  const match = tzStr.match(regex);
-  if (match) {
-    const sign = match[1] === "-" ? -1 : 1;
-    const hours = parseInt(match[2], 10);
-    const mins = match[3] ? parseInt(match[3], 10) : 0;
-    return sign * (hours * 60 + mins);
-  }
-  if (tzStr.includes("EST")) return -5 * 60;
-  if (tzStr.includes("CST")) return -6 * 60;
-  if (tzStr.includes("MST")) return -7 * 60;
-  if (tzStr.includes("PST")) return -8 * 60;
-  if (tzStr.includes("CET")) return 1 * 60;
-  if (tzStr.includes("AEST")) return 10 * 60;
-  if (tzStr.includes("BST")) return 6 * 60;
-  return 0;
-};
-
-const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
-  const dObj = new Date(scheduledDate);
-  const year = dObj.getUTCFullYear();
-  const month = dObj.getUTCMonth();
-  const day = dObj.getUTCDate();
-
-  const timeParts = scheduledTime.split(":");
-  let hours = parseInt(timeParts[0], 10);
-  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
-
-  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
-    hours += 12;
-  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
-    hours = 0;
-  }
-
-  if (isNaN(hours)) hours = 0;
-  if (isNaN(minutes)) minutes = 0;
-
-  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
-  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
-  return localUtcMs - offsetMinutes * 60 * 1000;
-};
-
-// True if now is within the 5-min-early → end-of-duration join window
-const isWithinMeetingWindow = (item: any): boolean => {
-  if (!item?.scheduledDate || !item?.scheduledTime) return false;
-  const startUtcMs = getConsultationStartUtcMs(item.scheduledDate, item.scheduledTime, item.timezone);
-  const duration = (item.durationMinutes || 15) * 60 * 1000;
-  const earlyMs = 5 * 60 * 1000;
-  const nowUtc = Date.now();
-  return nowUtc >= startUtcMs - earlyMs && nowUtc <= startUtcMs + duration;
-};
-
-const isPast = (item: any): boolean => {
-  if (!item?.scheduledDate || !item?.scheduledTime) return false;
-  const startUtcMs = getConsultationStartUtcMs(item.scheduledDate, item.scheduledTime, item.timezone);
-  const duration = (item.durationMinutes || 15) * 60 * 1000;
-  const nowUtc = Date.now();
-  return nowUtc > startUtcMs + duration;
-};
 
 export default function ConsultationPage() {
   const router = useRouter();
@@ -122,25 +64,14 @@ export default function ConsultationPage() {
     if (item.treatmentPlan?.treatmentBooking) {
       return false;
     }
+    if (item.requestStatus?.toUpperCase() === "CANCELLED") {
+      return false;
+    }
 
-    if (activeTab === "Upcoming") {
-      return (
-        item.requestStatus === "PENDING" ||
-        item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isPast(item) && !isWithinMeetingWindow(item))
-      );
-    }
-    if (activeTab === "Active") {
-      return (
-        item.requestStatus === "ACTIVE" ||
-        item.requestStatus === "MISSED" ||
-        (item.requestStatus === "SCHEDULED" && isWithinMeetingWindow(item)) ||
-        ((item.requestStatus === "SCHEDULED" || item.requestStatus === "ACTIVE") && isPast(item))
-      );
-    }
-    if (activeTab === "Treatment Estimate") {
-      return item.requestStatus === "COMPLETED";
-    }
+    const tab = resolveConsultationTab(item as ConsultationItem, Date.now());
+    if (activeTab === "Upcoming") return tab === "upcoming";
+    if (activeTab === "Active") return tab === "active";
+    if (activeTab === "Treatment Estimate") return tab === "estimate-updates";
     return false;
   });
 
@@ -198,11 +129,10 @@ export default function ConsultationPage() {
                 setSelectedConsultation(item);
                 setIsSidebarOpen(true);
               }}
+              isMeetingActive={
+                resolveConsultationState(item as ConsultationItem, Date.now()) === "join"
+              }
               onJoinMeeting={() => {
-                if (!isWithinMeetingWindow(item)) {
-                  router.push(`/consultation/${item.id}?mode=details`);
-                  return;
-                }
                 router.push(`/consultation/${item.id}`);
               }}
               onMarkComplete={() => handleMarkAsComplete(item)}
