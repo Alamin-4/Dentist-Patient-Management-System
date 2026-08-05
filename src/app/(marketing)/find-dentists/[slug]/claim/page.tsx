@@ -74,8 +74,9 @@ export default function ClaimProfilePage() {
   }, [directoryDetailResponse]);
 
   const { user } = useMe();
-  const { data: meResponse } = useGetMe({ enabled: !!user }) as any;
-  const fullUser = meResponse?.data || meResponse;
+  const { data: meResponse } = useGetMe({ enabled: !!user });
+  const meData = meResponse as { data?: unknown } | undefined;
+  const fullUser = (meData?.data || meResponse) as Record<string, any> | undefined;
 
   const claimMutation = useClaimDentistDirectoryProfile();
   const checkoutMutation = useCreateDirectoryCheckoutSession();
@@ -232,8 +233,9 @@ export default function ClaimProfilePage() {
           setSuccessMessage("OTP verification code sent. Please check your email.");
           setClaimStep(2);
         },
-        onError: (err: any) => {
-          const errMsg = err?.message || err?.message || "Failed to send OTP.";
+        onError: (err: unknown) => {
+          const apiErr = err as { message?: string };
+          const errMsg = apiErr?.message || "Failed to send OTP.";
           setError(errMsg);
         },
       }
@@ -256,8 +258,9 @@ export default function ClaimProfilePage() {
           setSuccessMessage("Email verified and logged in successfully!");
           setClaimStep(3);
         },
-        onError: (err: any) => {
-          const errMsg = err?.message || err?.message || "Invalid OTP code.";
+        onError: (err: unknown) => {
+          const apiErr = err as { message?: string };
+          const errMsg = apiErr?.message || "Invalid OTP code.";
           setError(errMsg);
         },
       }
@@ -274,8 +277,9 @@ export default function ClaimProfilePage() {
         onSuccess: () => {
           setSuccessMessage("Verification OTP resent to your email.");
         },
-        onError: (err: any) => {
-          const errMsg = err?.message || err?.message || "Failed to resend OTP.";
+        onError: (err: unknown) => {
+          const apiErr = err as { message?: string };
+          const errMsg = apiErr?.message || "Failed to resend OTP.";
           setError(errMsg);
         },
       }
@@ -313,14 +317,15 @@ export default function ClaimProfilePage() {
           },
         },
         {
-          onSuccess: (res: any) => {
+          onSuccess: (res: { data?: { id?: string } }) => {
             const directoryId = res?.data?.id;
             if (directoryId) setClaimedDirectoryId(directoryId);
             setSuccessMessage("Application saved! Please select your membership plan.");
             setClaimStep(4);
           },
-          onError: (err: any) => {
-            const errMsg = err?.message || err?.message || "Failed to save application.";
+          onError: (err: unknown) => {
+            const apiErr = err as { message?: string };
+            const errMsg = apiErr?.message || "Failed to save application.";
             if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("claimed")) {
               setClaimStep(4);
               return;
@@ -345,7 +350,7 @@ export default function ClaimProfilePage() {
     checkoutMutation.mutate(
       { dentistDirectoryId: directoryId, membershipPlan: selectedPlan },
       {
-        onSuccess: (res: any) => {
+        onSuccess: (res: { data?: { url?: string } }) => {
           const checkoutUrl = res?.data?.url;
           if (checkoutUrl) {
             window.location.href = checkoutUrl;
@@ -353,8 +358,9 @@ export default function ClaimProfilePage() {
             setError("Failed to create checkout session. Please try again.");
           }
         },
-        onError: (err: any) => {
-          const errMsg = err?.message || err?.message || "Payment setup failed.";
+        onError: (err: unknown) => {
+          const apiErr = err as { message?: string };
+          const errMsg = apiErr?.message || "Payment setup failed.";
           setError(errMsg);
         },
       }

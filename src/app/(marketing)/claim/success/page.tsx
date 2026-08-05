@@ -2,9 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ShieldCheck, Check, Sparkles, LayoutDashboard, ArrowRight, Loader2, AlertTriangle } from "lucide-react";
+import { Check, Sparkles, ArrowRight, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useStateContext } from "@/providers/StateProvider";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
 
@@ -12,7 +11,6 @@ export default function ClaimSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { setShowSigninModal } = useStateContext();
   const [mounted, setMounted] = useState(false);
   const [confirmStatus, setConfirmStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,7 +30,6 @@ export default function ClaimSuccessPage() {
         setConfirmStatus("loading");
         await apiClient.dentists.confirmDirectoryPayment({ sessionId });
         setConfirmStatus("success");
-        // Force session update on frontend
         await queryClient.invalidateQueries({ queryKey: ["auth"] });
         router.replace("/dentist");
       } catch (err: any) {
@@ -49,13 +46,10 @@ export default function ClaimSuccessPage() {
     return null;
   }
 
-  const directoryId = searchParams.get("directoryId");
-
   if (confirmStatus === "loading") {
     return (
       <div className="min-h-[85vh] flex items-center justify-center bg-secondary/30 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-6 bg-card p-8 sm:p-10 rounded-2xl border border-border/80 shadow-lg text-center relative overflow-hidden animate-scaleUp">
-          {/* Subtle Accent Glow */}
           <div className="absolute -top-12 -left-12 size-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute -bottom-12 -right-12 size-32 bg-badge/10 rounded-full blur-2xl pointer-events-none" />
 

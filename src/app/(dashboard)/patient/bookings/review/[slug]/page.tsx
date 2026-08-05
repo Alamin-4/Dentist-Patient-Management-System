@@ -74,14 +74,11 @@ export default function ReviewPlanPage() {
     ? plan.lineItems.reduce((acc: number, item: { unitPrice: number | string }) => acc + Number(item.unitPrice), 0)
     : 0;
 
-  const leewayAmount = Math.round(totalEstimate * 0.15);
-
   const handleAccept = async () => {
     if (!agreed || !signatureData) return;
     setIsRedirecting(true);
 
     try {
-      // Step 1: Accept the treatment plan → creates a TreatmentBooking with PENDING_PAYMENT status
       const acceptResult = await apiClient.treatmentPlans.decision(plan.id, { action: "ACCEPT" });
       const bookingId = acceptResult?.data?.treatmentBooking?.id;
 
@@ -91,7 +88,6 @@ export default function ReviewPlanPage() {
         return;
       }
 
-      // Step 2: Create Stripe escrow checkout session → get redirect URL
       const sessionResult = await apiClient.treatmentBookings.createEscrowSession(bookingId);
       const checkoutUrl = sessionResult?.data?.url;
 
@@ -101,7 +97,6 @@ export default function ReviewPlanPage() {
         return;
       }
 
-      // Step 3: Redirect to Stripe Checkout
       window.location.href = checkoutUrl;
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : (err as { message?: string })?.message;
