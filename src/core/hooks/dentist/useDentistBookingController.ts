@@ -35,7 +35,6 @@ export function useDentistBookingController() {
   const submitFinalPlanMutation = useSubmitFinalPlan();
   const verifyPaymentMutation = useVerifyPaymentCode();
 
-  // Determine booking step based on live booking status
   let step: BookingStep = "day1_arrival";
 
   if (booking) {
@@ -90,7 +89,6 @@ export function useDentistBookingController() {
   const travelDate = booking?.scheduledDate ? new Date(booking.scheduledDate) : null;
   const arrivalDate = travelDate ? new Date(travelDate.getTime() + 24 * 60 * 60 * 1000) : null;
 
-  // Timeline status per step
   const timelineItems = [
     {
       label: "Payment Confirmed",
@@ -146,7 +144,6 @@ export function useDentistBookingController() {
     },
   ];
 
-  // Arrival verification handler
   const handleVerify = async () => {
     if (arrivalCode.length !== 4) {
       setCodeError(true);
@@ -156,14 +153,15 @@ export function useDentistBookingController() {
     verifyArrivalMutation.mutate(
       { id: id!, arrivalCode },
       {
-        onError: () => {
+        onError: (err: unknown) => {
           setCodeError(true);
+          const apiErr = normalizeApiError(err);
+          toast.error(apiErr.message || "Invalid arrival code. Please check with the patient.");
         },
       }
     );
   };
 
-  // Payment release verification handler
   const handleVerifyPayment = async () => {
     if (paymentCode.length !== 4) {
       setPaymentCodeError(true);
@@ -201,7 +199,6 @@ export function useDentistBookingController() {
     );
   };
 
-  // Final plan modal submit
   const handleFinalPlanSubmit = (data: any) => {
     submitFinalPlanMutation.mutate({
       id: id!,

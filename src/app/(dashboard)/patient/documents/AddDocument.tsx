@@ -110,7 +110,7 @@ export default function UploadDocumentModal({
       toast.success("Document uploaded successfully!");
       handleClose();
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       setErrors((prev) => ({
         ...prev,
         file: mapApiErrorToUserMessage(err, "Failed to upload document. Please try again."),

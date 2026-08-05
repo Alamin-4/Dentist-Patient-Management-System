@@ -57,7 +57,7 @@ export default function BlogPage() {
         } else {
           setPosts([]);
         }
-      } catch (err: any) {
+      } catch {
         setPosts([]);
       } finally {
         setLoading(false);

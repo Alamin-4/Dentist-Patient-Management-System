@@ -38,7 +38,7 @@ export default function BlogPostPage() {
         } else {
           setPost(null);
         }
-      } catch (_err: any) {
+      } catch {
         setPost(null);
       } finally {
         setLoading(false);
@@ -74,7 +74,7 @@ export default function BlogPostPage() {
       <div className="min-h-dvh flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
         <h2 className="text-xl font-bold text-slate-800">Article not found in database</h2>
         <p className="text-slate-400 text-xs mt-2 mb-6">
-          The requested article standard slug "{slug}" was not found in the database.
+          The requested article standard slug &quot;{slug}&quot; was not found in the database.
         </p>
         <Link
           href="/blog"
