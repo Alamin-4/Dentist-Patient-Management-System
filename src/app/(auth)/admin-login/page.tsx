@@ -38,10 +38,11 @@ export default function AdminLoginPage() {
       if (response) {
         router.push("/admin");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : (error as { message?: string })?.message;
       setError("root.server", {
         type: "server",
-        message: error?.message || "Invalid credentials",
+        message: message || "Invalid credentials",
       });
     }
   };

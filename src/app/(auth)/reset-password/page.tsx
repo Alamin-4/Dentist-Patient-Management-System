@@ -61,7 +61,7 @@ function ResetPasswordForm() {
         onSuccess: () => {
           setIsSuccess(true);
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
           toast.error(mapApiErrorToUserMessage(err, "Failed to reset password. Please try again."));
         },
       }

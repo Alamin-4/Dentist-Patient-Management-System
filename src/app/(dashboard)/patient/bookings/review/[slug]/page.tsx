@@ -71,7 +71,7 @@ export default function ReviewPlanPage() {
   const avatarSrc = dentistUser?.image || plan.dentist?.profileImageUrl || "/images/dentist.png";
 
   const totalEstimate = plan.lineItems
-    ? plan.lineItems.reduce((acc: number, item: any) => acc + Number(item.unitPrice), 0)
+    ? plan.lineItems.reduce((acc: number, item: { unitPrice: number | string }) => acc + Number(item.unitPrice), 0)
     : 0;
 
   const leewayAmount = Math.round(totalEstimate * 0.15);
@@ -103,8 +103,9 @@ export default function ReviewPlanPage() {
 
       // Step 3: Redirect to Stripe Checkout
       window.location.href = checkoutUrl;
-    } catch (err: any) {
-      toast.error(err?.message || "Payment initiation failed. Please try again.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : (err as { message?: string })?.message;
+      toast.error(errorMessage || "Payment initiation failed. Please try again.");
       setIsRedirecting(false);
     }
   };

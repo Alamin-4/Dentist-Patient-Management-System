@@ -17,7 +17,7 @@ export default function DentistDashboardLayout({
 
   const progress = progressData?.data as DentistVerificationProgress | undefined;
 
-  const profileErr = dentistProfile.error as any;
+  const profileErr = dentistProfile.error as { message?: string; response?: { data?: { message?: string } } } | null;
   const isSuspendedError =
     profileErr?.message?.toLowerCase().includes("suspended") ||
     profileErr?.response?.data?.message?.toLowerCase().includes("suspended");
