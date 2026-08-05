@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Send, User as UserIcon, Loader2, Check, CheckCheck, ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import { useConsultationChat } from "@/hooks/consultation/useConsultationChat";
 import { Button } from "@/components/ui/button";
 
@@ -100,7 +101,7 @@ export function ConsultationChat({
     try {
       const d = new Date(dateStr);
       return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    } catch (e) {
+    } catch {
       return "";
     }
   };
@@ -135,12 +136,14 @@ export function ConsultationChat({
 
           <div className="relative">
             {recipientAvatar ? (
-              <img
-                src={recipientAvatar}
-                alt={recipientName}
-                className={`size-10 rounded-full object-cover border ${isLight ? "border-slate-200" : "border-slate-700"
-                  }`}
-              />
+              <div className="relative size-10">
+                <Image
+                  src={recipientAvatar}
+                  alt={recipientName}
+                  fill
+                  className={`rounded-full object-cover border ${isLight ? "border-slate-200" : "border-slate-700"}`}
+                />
+              </div>
             ) : (
               <div
                 className={`size-10 rounded-full flex items-center justify-center border ${isLight

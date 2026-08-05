@@ -1,23 +1,16 @@
-/**
- * Auth pages loading fallback (admin-login, register-doctor, reset-password).
- * Renders a centered auth card skeleton that matches the login/register form layout.
- */
 export default function AuthLoading() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md animate-pulse space-y-6 rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-        {/* Logo */}
         <div className="flex justify-center">
           <div className="h-8 w-32 rounded-lg bg-slate-200" />
         </div>
 
-        {/* Heading */}
         <div className="space-y-2 text-center">
           <div className="mx-auto h-7 w-48 rounded-lg bg-slate-200" />
           <div className="mx-auto h-4 w-64 rounded bg-slate-100" />
         </div>
 
-        {/* Form fields */}
         <div className="space-y-4">
           <div className="space-y-1.5">
             <div className="h-4 w-16 rounded bg-slate-200" />
@@ -29,10 +22,8 @@ export default function AuthLoading() {
           </div>
         </div>
 
-        {/* Submit button */}
         <div className="h-11 w-full rounded-lg bg-primary/20" />
 
-        {/* Footer link */}
         <div className="mx-auto h-4 w-40 rounded bg-slate-100" />
       </div>
     </div>

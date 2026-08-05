@@ -8,7 +8,7 @@ interface LocalVideoPiPProps {
     isPatient: boolean;
 }
 
-export function LocalVideoPiP({ track, cameraOff, avatar, isPatient }: LocalVideoPiPProps) {
+export function LocalVideoPiP({ track, cameraOff, avatar }: LocalVideoPiPProps) {
     return (
         <div className="absolute bottom-4 right-4 w-32 sm:w-44 md:w-52 rounded-2xl overflow-hidden border border-white/20 bg-slate-950 shadow-xl transition-all duration-300">
             <div className="relative aspect-video w-full bg-slate-900">

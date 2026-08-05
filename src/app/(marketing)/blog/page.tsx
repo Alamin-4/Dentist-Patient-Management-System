@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Search,
   User,
@@ -167,10 +168,11 @@ export default function BlogPage() {
                 className="group grid grid-cols-1 lg:grid-cols-5 bg-white border border-border rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 relative"
               >
                 <div className="lg:col-span-3 h-64 sm:h-80 md:h-96 relative bg-slate-100 overflow-hidden">
-                  <img
+                  <Image
                     src={featuredPost.coverImage || "/placeholder-blog.jpg"}
                     alt={featuredPost.title}
-                    className="h-full w-full object-cover group-hover:scale-103 transition-transform duration-500"
+                    fill
+                    className="object-cover group-hover:scale-103 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white text-xs font-bold rounded-full shadow-md">
                     <Sparkles className="h-3.5 w-3.5 text-accent" />
@@ -261,10 +263,11 @@ export default function BlogPage() {
                     className="group flex flex-col bg-white border border-border rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300"
                   >
                     <div className="h-48 w-full bg-slate-100 overflow-hidden relative">
-                      <img
+                      <Image
                         src={post.coverImage || "/placeholder-blog.jpg"}
                         alt={post.title}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       {post.category && (
                         <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-white/90 backdrop-blur-xs text-primary text-[11px] font-bold shadow-2xs">

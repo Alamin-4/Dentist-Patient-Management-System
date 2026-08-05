@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Video, Clock, AlertTriangle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ConsultationChat } from "./ConsultationChat";
 
 const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
     if (!tzStr) return 0;

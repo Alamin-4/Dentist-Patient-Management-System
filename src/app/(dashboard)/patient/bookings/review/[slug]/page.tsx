@@ -309,9 +309,11 @@ export default function ReviewPlanPage() {
               {signatureData ? (
                 <div className="relative h-32 bg-white border border-[#10B981] rounded-lg overflow-hidden ">
                   {signatureData.startsWith("data:image") ? (
-                    <img
+                    <Image
                       src={signatureData}
                       alt="Signature"
+                      width={400}
+                      height={128}
                       className="h-full w-full object-contain p-2"
                     />
                   ) : (

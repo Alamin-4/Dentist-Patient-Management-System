@@ -76,7 +76,18 @@ export default function ClaimProfilePage() {
   const { user } = useMe();
   const { data: meResponse } = useGetMe({ enabled: !!user });
   const meData = meResponse as { data?: unknown } | undefined;
-  const fullUser = (meData?.data || meResponse) as Record<string, any> | undefined;
+
+  interface FullUserData {
+    dentist?: {
+      dentistDirectoryId?: string | null;
+      dentistDirectory?: {
+        membershipPaidAt?: string | null;
+        name?: string | null;
+      } | null;
+    } | null;
+  }
+
+  const fullUser = (meData?.data || meResponse) as FullUserData | undefined;
 
   const claimMutation = useClaimDentistDirectoryProfile();
   const checkoutMutation = useCreateDirectoryCheckoutSession();
@@ -449,7 +460,7 @@ export default function ClaimProfilePage() {
                     You are currently logged in as a <strong>{user?.role?.toLowerCase()}</strong>. Only dental professionals can claim directory listings.
                   </p>
                   <p className="text-slate-400 text-xs max-w-sm mx-auto">
-                    Please log out first, then click "Claim Profile" to sign up or log in with your Dentist credentials.
+                    Please log out first, then click &ldquo;Claim Profile&rdquo; to sign up or log in with your Dentist credentials.
                   </p>
                 </div>
                 <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center border-t border-slate-100 mt-6">
@@ -472,7 +483,6 @@ export default function ClaimProfilePage() {
               </div>
             )}
 
-            {/* 2. Dentist owns another profile validation block */}
             {!isNotDentist && hasAlreadyClaimedAnother && (
               <div className="text-center py-6 space-y-4 animate-scaleUp">
                 <div className="mx-auto size-14 rounded-full bg-accent/5 border border-amber-200 flex items-center justify-center text-accent">

@@ -54,27 +54,6 @@ export default function ScheduleContent() {
   const { setShowCompareModal } = useStateContext();
   const { user } = useMe();
 
-  if (user?.role === "DENTIST") {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
-        <div className="text-5xl">🦷</div>
-        <h2 className="text-2xl font-bold text-text">
-          Dentists cannot book consultations
-        </h2>
-        <p className="text-sec-text text-sm max-w-sm">
-          Your account is registered as a <strong>Dentist</strong>. Only patients can book consultation appointments. If you need help, please contact support.
-        </p>
-        <button
-          type="button"
-          onClick={() => router.push("/find-dentists")}
-          className="px-6 py-3 bg-[#113254] text-white font-semibold rounded-lg hover:bg-[#0d2844] transition-colors"
-        >
-          Back to Directory
-        </button>
-      </div>
-    );
-  }
-
   const dentistIdsParam = searchParams.get("dentistIds") ?? "";
   const consultationIdParam = searchParams.get("consultationId");
 
@@ -132,6 +111,27 @@ export default function ScheduleContent() {
 
     fetchScheduleData();
   }, [dentistIdsParam]);
+
+  if (user?.role === "DENTIST") {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
+        <div className="text-5xl">🦷</div>
+        <h2 className="text-2xl font-bold text-text">
+          Dentists cannot book consultations
+        </h2>
+        <p className="text-sec-text text-sm max-w-sm">
+          Your account is registered as a <strong>Dentist</strong>. Only patients can book consultation appointments. If you need help, please contact support.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push("/find-dentists")}
+          className="px-6 py-3 bg-[#113254] text-white font-semibold rounded-lg hover:bg-[#0d2844] transition-colors"
+        >
+          Back to Directory
+        </button>
+      </div>
+    );
+  }
 
   const updateSelection = useCallback(
     (dentistId: string, updates: Partial<Omit<DentistSelection, "dentistId">>) => {
