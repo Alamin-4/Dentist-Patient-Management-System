@@ -254,3 +254,121 @@ export function msUntilNextBoundary(
 
   return Math.min(...futureBoundaries) - now;
 }
+
+// ─── Tab Assignment ───────────────────────────────────────────────────────────
+
+/**
+ * The three tabs a consultation can be routed to in either the patient
+ * or dentist dashboard.  Tab *labels* may differ between views
+ * ("estimate-updates" vs "Treatment Estimate"); this type uses the
+ * canonical key and each view maps it to its own display string.
+ */
+export type ConsultationTab = "upcoming" | "active" | "estimate-updates";
+
+/**
+ * Returns true if the consultation's scheduled date falls on today's
+ * calendar date, adjusted for the consultation's timezone.
+ *
+ * Derives the local date from `getConsultationBoundaries(c).startMs`
+ * rather than re-parsing `c.scheduledDate` — shares the same UTC
+ * timestamp used by `isConsultationPast` and `resolveConsultationState`,
+ * keeping timezone computation on a single code path.
+ *
+ * @param c   - Consultation object.
+ * @param now - Unix timestamp in ms (pass `Date.now()`).
+ */
+export function isConsultationToday(c: ConsultationItem, now: number): boolean {
+  const boundaries = getConsultationBoundaries(c);
+  if (!boundaries) return false; // no parseable schedule → cannot be "today"
+
+  const offsetMinutes = parseTimezoneOffsetMinutes(c.timezone);
+
+  // startMs = Date.UTC(year, month, day, hours, minutes) - offsetMs
+  // Adding offset back gives the local datetime in UTC-frame coordinates.
+  const localStartMs = boundaries.startMs + offsetMinutes * 60 * 1000;
+  const localStart = new Date(localStartMs);
+  const appointmentDateStr =
+    `${localStart.getUTCFullYear()}-` +
+    `${String(localStart.getUTCMonth() + 1).padStart(2, "0")}-` +
+    `${String(localStart.getUTCDate()).padStart(2, "0")}`;
+
+  const localNow = new Date(now + offsetMinutes * 60 * 1000);
+  const todayStr =
+    `${localNow.getUTCFullYear()}-` +
+    `${String(localNow.getUTCMonth() + 1).padStart(2, "0")}-` +
+    `${String(localNow.getUTCDate()).padStart(2, "0")}`;
+
+  return appointmentDateStr === todayStr;
+}
+
+/**
+ * Returns true if the consultation's meeting window has fully elapsed.
+ * (now > scheduledStart + durationMinutes)
+ *
+ * @param c   - Consultation object.
+ * @param now - Unix timestamp in ms (pass `Date.now()`).
+ */
+export function isConsultationPast(c: ConsultationItem, now: number): boolean {
+  const boundaries = getConsultationBoundaries(c);
+  if (!boundaries) return false;
+  return now > boundaries.endMs;
+}
+
+/**
+ * Resolves which dashboard tab a consultation belongs to.
+ *
+ * PRECONDITIONS — callers are responsible for excluding before calling
+ * this function:
+ *   1. Consultations where `treatmentPlan.treatmentBooking` is present
+ *      (these have graduated to the booking flow and must not appear in
+ *      the consultation tab list).
+ *   2. CANCELLED consultations — currently excluded from all tabs on both
+ *      patient and dentist sides by the callers' pre-filter guard:
+ *      `item.requestStatus?.toUpperCase() === "CANCELLED"`.
+ *
+ * This function is not a complete classifier on its own.
+ *
+ * Fail-safe: unknown/malformed status or missing schedule data → "upcoming".
+ * A consultation can always be seen; it never silently disappears from all
+ * tabs, and ambiguity never resolves toward granting meeting access.
+ *
+ * @param c   - Consultation object (typed `ConsultationItem`).
+ * @param now - Unix timestamp in ms (pass `Date.now()`).
+ */
+export function resolveConsultationTab(
+  c: ConsultationItem,
+  now: number,
+): ConsultationTab {
+  const statusUpper = c.requestStatus?.toUpperCase() ?? "";
+
+  // ── Estimate tab ──────────────────────────────────────────────────────────
+  if (statusUpper === "COMPLETED") return "estimate-updates";
+
+  // ── Always Active ─────────────────────────────────────────────────────────
+  if (statusUpper === "MISSED" || statusUpper === "ACTIVE") return "active";
+
+  // ── Always Upcoming ───────────────────────────────────────────────────────
+  if (statusUpper === "PENDING" || statusUpper === "ACCEPTED") return "upcoming";
+
+  // ── SCHEDULED: time-sensitive routing ─────────────────────────────────────
+  if (statusUpper === "SCHEDULED") {
+    const boundaries = getConsultationBoundaries(c);
+    if (!boundaries) return "upcoming"; // malformed schedule → fail-safe
+
+    // Window already elapsed → keep visible in Active (backend gap compensation)
+    if (isConsultationPast(c, now)) return "active";
+
+    // Today's appointment → promote to Active even before join window opens
+    if (isConsultationToday(c, now)) return "active";
+
+    // Within the 5-min-early join window
+    const { windowOpenMs, endMs } = boundaries;
+    if (now >= windowOpenMs && now <= endMs) return "active";
+
+    // Future date, not today → Upcoming
+    return "upcoming";
+  }
+
+  // Unknown status → fail-safe upcoming (never silently vanish)
+  return "upcoming";
+}

@@ -14,7 +14,11 @@ import {
   getConsultationStartUtcMs,
   getConsultationBoundaries,
   msUntilNextBoundary,
+  resolveConsultationTab,
+  isConsultationToday,
+  isConsultationPast,
   type ConsultationDisplayState,
+  type ConsultationTab,
 } from "../consultation-state";
 import type { ConsultationItem } from "../../types";
 
@@ -94,6 +98,14 @@ function assert(
 function assertState(
   actual: ConsultationDisplayState,
   expected: ConsultationDisplayState,
+  testName: string,
+): void {
+  assert(actual === expected, testName, `expected "${expected}", got "${actual}"`);
+}
+
+function assertTab(
+  actual: ConsultationTab,
+  expected: ConsultationTab,
   testName: string,
 ): void {
   assert(actual === expected, testName, `expected "${expected}", got "${actual}"`);
@@ -249,24 +261,17 @@ assertState(
 );
 
 // ─── Race condition simulation ────────────────────────────────────────────────
-// Simulates: render happens before window opens, then clock advances past the
-// boundary before the user clicks.  Proves label and action cannot diverge
-// when both derive from the same resolveConsultationState call.
 
 console.log("\n─── Race condition simulation ────────────────────────────────────────────\n");
 
 const PRE_WINDOW = WINDOW_OPEN_MS - 60_000; // 1 minute before window opens
 const POST_WINDOW = WINDOW_OPEN_MS + 1;     // 1 ms after window opens
 
-// Simulated render: compute state at render time
 const stateAtRender = resolveConsultationState(c, PRE_WINDOW);
-// Simulated label
-const labelAtRender = stateAtRender; // (what the user sees)
+const labelAtRender = stateAtRender;
 
-// Time passes: state that WOULD have been computed at click time if re-computed
 const stateAtClick_wrongWay = resolveConsultationState(c, POST_WINDOW);
 
-// Correct way: the click handler uses the SAME stateAtRender value
 assert(
   stateAtRender === "view-details",
   "At render time (before window): state is view-details",
@@ -277,25 +282,17 @@ assert(
   "Label matches state (trivially true when both read same value)",
 );
 
-// The stale render would trigger "View Details" label, but if we re-computed at click time:
 assert(
   stateAtClick_wrongWay === "join",
   "Clock-advanced re-computation would yield join (the old bug vector)",
 );
 
-// With the new architecture, the card emits stateAtRender to onPrimaryAction.
-// So the handler receives "view-details" — correct, even though the clock moved.
 assert(
   stateAtRender !== stateAtClick_wrongWay,
-  "Confirms render-time state and click-time re-computation diverge (proving the old bug exists without the fix)",
+  "Confirms render-time state and click-time re-computation diverge",
 );
 
-// The fix: the hook re-fires a setTimeout at WINDOW_OPEN_MS,
-// which re-renders the component and updates stateAtRender to "join".
-// So by the time window opens, the component has already re-rendered,
-// and stateAtRender === stateAtClick_wrongWay === "join".
-// No click can ever see "view-details" after the window has opened
-// because the component will have re-rendered before that click.
+// ─── msUntilNextBoundary ───────────────────────────────────────────────────────
 
 console.log("\n─── msUntilNextBoundary ─────────────────────────────────────────────────\n");
 
@@ -336,6 +333,130 @@ assert(
   "PENDING consultation has no time-based boundaries → null",
 );
 
+// ─── resolveConsultationTab — boundary-exact tests ───────────────────────────
+
+console.log("\n─── resolveConsultationTab — boundary-exact tests ───────────────────────────\n");
+
+assertTab(resolveConsultationTab(c, WINDOW_OPEN_MS - 1), "active",
+  "SCHEDULED, 1ms before window opens but SAME DAY → active (isToday promotion)");
+
+assertTab(resolveConsultationTab(c, WINDOW_OPEN_MS), "active",
+  "SCHEDULED, exactly at windowOpenMs: active (inclusive)");
+
+assertTab(resolveConsultationTab(c, WINDOW_OPEN_MS + 1), "active",
+  "SCHEDULED, 1ms after window opens: active");
+
+assertTab(resolveConsultationTab(c, END_MS), "active",
+  "SCHEDULED, exactly at endMs: active (inclusive)");
+
+assertTab(resolveConsultationTab(c, END_MS + 1), "active",
+  "SCHEDULED, 1ms after endMs: active (isPast → keep visible)");
+
+// isConsultationToday check with a future date
+const NEXT_DAY_MS = START_UTC_MS + 24 * 60 * 60 * 1000;
+const futureConsultation = makeConsultation({
+  scheduledDate: "2025-01-16",
+  scheduledTime: "14:00",
+  timezone: "UTC+0",
+});
+
+assert(
+  isConsultationToday(c, START_UTC_MS) === true,
+  "isConsultationToday returns true for appointment on same calendar day",
+);
+
+assert(
+  isConsultationToday(futureConsultation, START_UTC_MS) === false,
+  "isConsultationToday returns false for appointment on different calendar day",
+);
+
+assertTab(resolveConsultationTab(futureConsultation, START_UTC_MS), "upcoming",
+  "SCHEDULED, future date (not today, not window, not past): upcoming");
+
+assertTab(resolveConsultationTab(makeConsultation({ requestStatus: "COMPLETED" }), START_UTC_MS), "estimate-updates",
+  "COMPLETED status → estimate-updates");
+
+assertTab(resolveConsultationTab(makeConsultation({ requestStatus: "MISSED" }), START_UTC_MS), "active",
+  "MISSED status → active");
+
+assertTab(resolveConsultationTab(makeConsultation({ requestStatus: "ACTIVE" }), START_UTC_MS), "active",
+  "ACTIVE status → active");
+
+assertTab(resolveConsultationTab(makeConsultation({ requestStatus: "PENDING" }), START_UTC_MS), "upcoming",
+  "PENDING status → upcoming");
+
+assertTab(resolveConsultationTab(makeConsultation({ requestStatus: "ACCEPTED" }), START_UTC_MS), "upcoming",
+  "ACCEPTED status → upcoming");
+
+assertTab(resolveConsultationTab(makeConsultation({ requestStatus: "UNKNOWN_STATE" as any }), START_UTC_MS), "upcoming",
+  "UNKNOWN status → upcoming (fail-safe)");
+
+// ─── CANCELLED regression tests ───────────────────────────────────────────────
+
+console.log("\n─── CANCELLED regression tests ──────────────────────────────────────────\n");
+
+function patientFilter(c: ConsultationItem, activeTab: string, now: number): boolean {
+  if ((c as any).treatmentPlan?.treatmentBooking) return false;
+  if (c.requestStatus?.toUpperCase() === "CANCELLED") return false;
+  return resolveConsultationTab(c, now) === activeTab;
+}
+
+function dentistFilter(c: ConsultationItem, activeTab: string, now: number): boolean {
+  if ((c as any).treatmentPlan?.treatmentBooking) return false;
+  if (c.requestStatus?.toUpperCase() === "CANCELLED") return false;
+  const tab = resolveConsultationTab(c, now);
+  if (activeTab === "Upcoming") return tab === "upcoming";
+  if (activeTab === "Active") return tab === "active";
+  if (activeTab === "Treatment Estimate") return tab === "estimate-updates";
+  return false;
+}
+
+const cancelledUpper = makeConsultation({ requestStatus: "CANCELLED" });
+const cancelledLower = makeConsultation({ requestStatus: "cancelled" as any });
+
+assert(!patientFilter(cancelledUpper, "upcoming", START_UTC_MS), "CANCELLED (upper): excluded from patient upcoming");
+assert(!patientFilter(cancelledUpper, "active", START_UTC_MS), "CANCELLED (upper): excluded from patient active");
+assert(!patientFilter(cancelledUpper, "estimate-updates", START_UTC_MS), "CANCELLED (upper): excluded from patient estimate-updates");
+
+assert(!patientFilter(cancelledLower, "upcoming", START_UTC_MS), "cancelled (lower): excluded from patient upcoming");
+assert(!patientFilter(cancelledLower, "active", START_UTC_MS), "cancelled (lower): excluded from patient active");
+assert(!patientFilter(cancelledLower, "estimate-updates", START_UTC_MS), "cancelled (lower): excluded from patient estimate-updates");
+
+assert(!dentistFilter(cancelledUpper, "Upcoming", START_UTC_MS), "CANCELLED (upper): excluded from dentist Upcoming");
+assert(!dentistFilter(cancelledUpper, "Active", START_UTC_MS), "CANCELLED (upper): excluded from dentist Active");
+assert(!dentistFilter(cancelledUpper, "Treatment Estimate", START_UTC_MS), "CANCELLED (upper): excluded from dentist Treatment Estimate");
+
+assert(!dentistFilter(cancelledLower, "Upcoming", START_UTC_MS), "cancelled (lower): excluded from dentist Upcoming");
+assert(!dentistFilter(cancelledLower, "Active", START_UTC_MS), "cancelled (lower): excluded from dentist Active");
+assert(!dentistFilter(cancelledLower, "Treatment Estimate", START_UTC_MS), "cancelled (lower): excluded from dentist Treatment Estimate");
+
+// ─── Integration: patient and dentist filters yield identical tabs ─────────────
+
+console.log("\n─── Integration: patient and dentist filters yield identical tabs ────────\n");
+
+const scenarios: Array<{ label: string; c: ConsultationItem; now: number }> = [
+  { label: "today, pre-window", c, now: PRE_WINDOW },
+  { label: "in window", c, now: WINDOW_OPEN_MS + 1 },
+  { label: "past end", c, now: END_MS + 1 },
+  { label: "future date", c: futureConsultation, now: START_UTC_MS },
+];
+
+for (const { label, c: sc, now } of scenarios) {
+  const patientTab = patientFilter(sc, "upcoming", now) ? "upcoming"
+    : patientFilter(sc, "active", now) ? "active"
+    : patientFilter(sc, "estimate-updates", now) ? "estimate-updates" : "none";
+
+  const dentistTab = dentistFilter(sc, "Upcoming", now) ? "upcoming"
+    : dentistFilter(sc, "Active", now) ? "active"
+    : dentistFilter(sc, "Treatment Estimate", now) ? "estimate-updates" : "none";
+
+  assert(
+    patientTab === dentistTab,
+    `Integration [${label}]: patient and dentist route to same tab (${patientTab})`,
+    `patient="${patientTab}", dentist="${dentistTab}"`,
+  );
+}
+
 // ─── Summary ──────────────────────────────────────────────────────────────────
 
 console.log(`\n${"─".repeat(60)}`);
@@ -345,3 +466,4 @@ if (failed > 0) {
 } else {
   console.log("All tests passed ✅");
 }
+
