@@ -17,8 +17,12 @@ import { DoctorCardSkeleton } from "@/app/modules/patient/Overview/DoctorCardSke
 import { PageContainer } from "@/components/shared/page-container";
 import { HeadingGroup } from "@/components/shared/heading-group";
 import { SectionCard } from "@/components/shared/section-card";
+import {
+  parseTimezoneOffsetMinutes,
+  getConsultationStartUtcMs,
+  type ConsultationDisplayState,
+} from "@/lib/consultation-state";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 type Tab = "upcoming" | "active" | "estimate-updates";
 
@@ -43,78 +47,9 @@ const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
   },
 };
 
-const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
-  if (!tzStr) return 0;
-  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
-  const match = tzStr.match(regex);
-  if (match) {
-    const sign = match[1] === "-" ? -1 : 1;
-    const hours = parseInt(match[2], 10);
-    const minutes = match[3] ? parseInt(match[3], 10) : 0;
-    return sign * (hours * 60 + minutes);
-  }
-  if (tzStr.includes("EST")) return -5 * 60;
-  if (tzStr.includes("CST")) return -6 * 60;
-  if (tzStr.includes("MST")) return -7 * 60;
-  if (tzStr.includes("PST")) return -8 * 60;
-  if (tzStr.includes("CET")) return 1 * 60;
-  if (tzStr.includes("AEST")) return 10 * 60;
-  if (tzStr.includes("BST")) return 6 * 60;
-  return 0;
-};
-
-const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
-  const dObj = new Date(scheduledDate);
-  const year = dObj.getUTCFullYear();
-  const month = dObj.getUTCMonth();
-  const day = dObj.getUTCDate();
-
-  const timeParts = scheduledTime.split(":");
-  let hours = parseInt(timeParts[0], 10);
-  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
-
-  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
-    hours += 12;
-  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
-    hours = 0;
-  }
-
-  if (isNaN(hours)) hours = 0;
-  if (isNaN(minutes)) minutes = 0;
-
-  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
-  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
-  return localUtcMs - offsetMinutes * 60 * 1000;
-};
-
-const isWithinMeetingWindow = (consultation: ConsultationItem): boolean => {
-  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
-  const startUtcMs = getConsultationStartUtcMs(
-    consultation.scheduledDate,
-    consultation.scheduledTime,
-    consultation.timezone
-  );
-  const duration = (consultation.durationMinutes || 15) * 60 * 1000;
-  const earlyMs = 5 * 60 * 1000;
-  const nowUtc = Date.now();
-  return nowUtc >= startUtcMs - earlyMs && nowUtc <= startUtcMs + duration;
-};
-
-const isConsultationExpired = (consultation: ConsultationItem): boolean => {
-  const statusUpper = consultation.requestStatus?.toUpperCase();
-  if (statusUpper === "COMPLETED" || statusUpper === "MISSED" || statusUpper === "CANCELLED") return false;
-  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
-
-  const startUtcMs = getConsultationStartUtcMs(
-    consultation.scheduledDate,
-    consultation.scheduledTime,
-    consultation.timezone
-  );
-  const durationMin = consultation.durationMinutes || 15;
-  const endMs = startUtcMs + durationMin * 60 * 1000;
-  return Date.now() > endMs;
-};
-
+// ── isToday helper — used only for tab filtering, unchanged ────────────────────
+// Tab filtering correctly uses isToday() to route today's consultations to
+// the "active" tab. This remains independent of the join-window check.
 const isToday = (consultation: ConsultationItem): boolean => {
   if (!consultation.scheduledDate) return false;
   const offsetMinutes = parseTimezoneOffsetMinutes(consultation.timezone);
@@ -128,6 +63,25 @@ const isToday = (consultation: ConsultationItem): boolean => {
   const todayStr = `${nowLocal.getUTCFullYear()}-${String(nowLocal.getUTCMonth() + 1).padStart(2, "0")}-${String(nowLocal.getUTCDate()).padStart(2, "0")}`;
 
   return scheduledLocalDateStr === todayStr;
+};
+
+// ── Tab-level isWithinMeetingWindow — used ONLY for tab filter routing ────────
+// This is intentionally kept for the tab filter (isWithinMeetingWindow on
+// mount) because it just decides which tab a card appears in — it is NOT
+// used for any button label or action. The card itself re-resolves state
+// reactively via useConsultationState.
+const isWithinMeetingWindowForTabFilter = (consultation: ConsultationItem): boolean => {
+  if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
+  const startUtcMs = getConsultationStartUtcMs(
+    consultation.scheduledDate,
+    consultation.scheduledTime,
+    consultation.timezone,
+  );
+  if (startUtcMs === null) return false;
+  const duration = (consultation.durationMinutes || 15) * 60 * 1000;
+  const earlyMs = 5 * 60 * 1000;
+  const nowUtc = Date.now();
+  return nowUtc >= startUtcMs - earlyMs && nowUtc <= startUtcMs + duration;
 };
 
 function EmptySlate({ tab }: { tab: Tab }) {
@@ -172,14 +126,14 @@ export default function Overview() {
       return (
         item.requestStatus === "PENDING" ||
         item.requestStatus === "ACCEPTED" ||
-        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindow(item))
+        (item.requestStatus === "SCHEDULED" && !isToday(item) && !isWithinMeetingWindowForTabFilter(item))
       );
     }
     if (activeTab === "active") {
       return (
         item.requestStatus === "ACTIVE" ||
         item.requestStatus === "MISSED" ||
-        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindow(item)))
+        (item.requestStatus === "SCHEDULED" && (isToday(item) || isWithinMeetingWindowForTabFilter(item)))
       );
     }
     return false;
@@ -328,26 +282,29 @@ export default function Overview() {
                   key={consultation.id}
                   consultation={consultation}
                   completedCount={completedCount}
-                  onPrimaryAction={() => {
-                    if (
-                      consultation.requestStatus === "MISSED" ||
-                      consultation.requestStatus === "ACCEPTED" ||
-                      isConsultationExpired(consultation)
-                    ) {
-                      openReschedule(consultation);
-                      return;
+                  onPrimaryAction={(state: ConsultationDisplayState) => {
+                    // The card emits the exact state used to render its label.
+                    // No independent window recomputation here.
+                    switch (state) {
+                      case "reschedule-missed":
+                      case "reschedule-expired":
+                        openReschedule(consultation);
+                        break;
+                      case "schedule-slot":
+                        openReschedule(consultation);
+                        break;
+                      case "view-details":
+                        setSelectedConsultation(consultation);
+                        setDetailsOpen(true);
+                        break;
+                      case "join":
+                        router.push(`/consultation/${consultation.id}`);
+                        break;
+                      case "awaiting-approval":
+                      case "completed":
+                        // disabled / no-op
+                        break;
                     }
-
-                    if (
-                      (consultation.requestStatus === "SCHEDULED" || consultation.requestStatus === "ACTIVE") &&
-                      !isWithinMeetingWindow(consultation)
-                    ) {
-                      setSelectedConsultation(consultation);
-                      setDetailsOpen(true);
-                      return;
-                    }
-                    // Within 5-min early buffer or during meeting → go to meeting page (lobby or room)
-                    router.push(`/consultation/${consultation.id}`);
                   }}
                 />
               );

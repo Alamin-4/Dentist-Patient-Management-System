@@ -5,58 +5,24 @@ import Image from "next/image";
 import { CalendarDays, CheckCircle2, Plus, Star, Info, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AddToCalendarModal } from "./AddToCalendarModal";
-import { ConsultationItem } from "@/types";
+import type { ConsultationItem } from "@/types";
+import { useConsultationState } from "@/hooks/useConsultationState";
+import {
+  getConsultationActionLabel,
+  getConsultationStartUtcMs,
+  type ConsultationDisplayState,
+} from "@/lib/consultation-state";
 
 interface ConsultationCardProps {
   consultation: ConsultationItem;
-  onPrimaryAction: () => void;
+  /**
+   * Called with the SAME resolved state that produced the visible button label.
+   * The parent must NOT independently re-compute isWithinMeetingWindow.
+   */
+  onPrimaryAction: (state: ConsultationDisplayState) => void;
   onReschedule?: () => void;
   completedCount?: number;
 }
-
-const parseTimezoneOffsetMinutes = (tzStr?: string | null): number => {
-  if (!tzStr) return 0;
-  const regex = /(?:UTC|GMT)\s*([+-])\s*(\d+)(?::(\d+))?/;
-  const match = tzStr.match(regex);
-  if (match) {
-    const sign = match[1] === "-" ? -1 : 1;
-    const hours = parseInt(match[2], 10);
-    const minutes = match[3] ? parseInt(match[3], 10) : 0;
-    return sign * (hours * 60 + minutes);
-  }
-  if (tzStr.includes("EST")) return -5 * 60;
-  if (tzStr.includes("CST")) return -6 * 60;
-  if (tzStr.includes("MST")) return -7 * 60;
-  if (tzStr.includes("PST")) return -8 * 60;
-  if (tzStr.includes("CET")) return 1 * 60;
-  if (tzStr.includes("AEST")) return 10 * 60;
-  if (tzStr.includes("BST")) return 6 * 60;
-  return 0;
-};
-
-const getConsultationStartUtcMs = (scheduledDate: string | Date, scheduledTime: string, timezoneStr?: string | null): number => {
-  const dObj = new Date(scheduledDate);
-  const year = dObj.getUTCFullYear();
-  const month = dObj.getUTCMonth();
-  const day = dObj.getUTCDate();
-
-  const timeParts = scheduledTime.split(":");
-  let hours = parseInt(timeParts[0], 10);
-  let minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
-
-  if (scheduledTime.toUpperCase().includes("PM") && hours < 12) {
-    hours += 12;
-  } else if (scheduledTime.toUpperCase().includes("AM") && hours === 12) {
-    hours = 0;
-  }
-
-  if (isNaN(hours)) hours = 0;
-  if (isNaN(minutes)) minutes = 0;
-
-  const localUtcMs = Date.UTC(year, month, day, hours, minutes, 0, 0);
-  const offsetMinutes = parseTimezoneOffsetMinutes(timezoneStr);
-  return localUtcMs - offsetMinutes * 60 * 1000;
-};
 
 export function ConsultationCard({
   consultation,
@@ -68,17 +34,25 @@ export function ConsultationCard({
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState("24:00:00");
 
-  const statusUpper = consultation.requestStatus?.toUpperCase();
-  const isCompleted = statusUpper === "COMPLETED";
+  // ── Single source of truth for the current display state ─────────────────
+  // Both the label AND the click handler read from this one value.
+  const displayState = useConsultationState(consultation);
 
+  const isCompleted = displayState === "completed";
+  const isPending = displayState === "awaiting-approval";
+  const isAccepted = displayState === "schedule-slot";
+
+  // ── 24-hour countdown for completed consultations ─────────────────────────
   useEffect(() => {
     if (!isCompleted || !consultation.scheduledDate || !consultation.scheduledTime) return;
 
     const startUtcMs = getConsultationStartUtcMs(
       consultation.scheduledDate,
       consultation.scheduledTime,
-      consultation.timezone
+      consultation.timezone,
     );
+    if (startUtcMs === null) return;
+
     const deadlineMs = startUtcMs + 24 * 60 * 60 * 1000;
 
     const updateTimer = () => {
@@ -89,8 +63,7 @@ export function ConsultationCard({
         const hrs = Math.floor(diff / (3600 * 1000));
         const mins = Math.floor((diff % (3600 * 1000)) / (60 * 1000));
         const secs = Math.floor((diff % (60 * 1000)) / 1000);
-
-        const pad = (num: number) => String(num).padStart(2, '0');
+        const pad = (n: number) => String(n).padStart(2, "0");
         setTimeRemaining(`${pad(hrs)}:${pad(mins)}:${pad(secs)}`);
       }
     };
@@ -100,24 +73,32 @@ export function ConsultationCard({
     return () => clearInterval(interval);
   }, [isCompleted, consultation]);
 
+  // ── Derived display values ────────────────────────────────────────────────
   const dentistUser = consultation.dentist?.user;
   const dentistDirectory = consultation.dentist?.dentistDirectory || consultation.directoryEntry;
 
   const doctorName = dentistUser
     ? `Dr. ${dentistUser.firstName} ${dentistUser.lastName}`.trim()
-    : (dentistDirectory?.name ? `Dr. ${dentistDirectory.name}` : "Dentist");
-  const specialty = consultation.dentist?.specialty?.name || dentistDirectory?.specialty || "General Dentist";
+    : dentistDirectory?.name
+      ? `Dr. ${dentistDirectory.name}`
+      : "Dentist";
+
+  const specialty =
+    consultation.dentist?.specialty?.name || dentistDirectory?.specialty || "General Dentist";
   const avatarSrc = dentistUser?.image || dentistDirectory?.image || "/images/dentist.png";
 
   const rating = dentistDirectory?.googleRating || dentistDirectory?.doctoraliaRating || undefined;
-  const reviewCount = dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
+  const reviewCount =
+    dentistDirectory?.googleReviewCount || dentistDirectory?.doctoraliaReviewCount || 0;
   const rdvScore = consultation.dentist?.dentistVerificationProgress?.rvdScore || 100;
 
   const procedure = consultation?.intake?.procedureNames?.[0] || "Dental Consultation";
   const estimateBudget = consultation?.intake?.budget || "N/A";
   const timezone = consultation.timezone || "UTC";
 
-  const dateStr = consultation.scheduledDate ? new Date(consultation.scheduledDate).toLocaleDateString() : "Not Scheduled";
+  const dateStr = consultation.scheduledDate
+    ? new Date(consultation.scheduledDate).toLocaleDateString()
+    : "Not Scheduled";
   const timeStr = consultation.scheduledTime || "N/A";
   const duration = `${consultation.durationMinutes || 15}-minute video call`;
 
@@ -131,73 +112,35 @@ export function ConsultationCard({
     isoDate: consultation.scheduledDate || "",
   };
 
-  const isPending = statusUpper === "PENDING";
-  const isAccepted = statusUpper === "ACCEPTED";
-
-  // Check if the scheduled time window has already passed
-  const isExpired = (() => {
-    if (isCompleted || statusUpper === "MISSED" || statusUpper === "CANCELLED") return false;
-    if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
-
-    const startUtcMs = getConsultationStartUtcMs(
-      consultation.scheduledDate,
-      consultation.scheduledTime,
-      consultation.timezone
-    );
-    const durationMin = consultation.durationMinutes || 15;
-    const endMs = startUtcMs + durationMin * 60 * 1000;
-    return Date.now() > endMs;
-  })();
-
-  const isWithinWindow = (() => {
-    if (statusUpper !== "SCHEDULED" && statusUpper !== "ACTIVE") return false;
-    if (!consultation.scheduledDate || !consultation.scheduledTime) return false;
-
-    const startUtcMs = getConsultationStartUtcMs(
-      consultation.scheduledDate,
-      consultation.scheduledTime,
-      consultation.timezone
-    );
-    const durationMin = consultation.durationMinutes || 15;
-    const earlyMs = 5 * 60 * 1000;
-    const now = Date.now();
-    return now >= startUtcMs - earlyMs && now <= startUtcMs + durationMin * 60 * 1000;
-  })();
-
-  const showRescheduleAction = statusUpper === "MISSED" || isExpired;
-
-  let alertMessage = undefined;
-  if (showRescheduleAction) {
+  // ── Alert message ─────────────────────────────────────────────────────────
+  let alertMessage: string | undefined;
+  if (displayState === "reschedule-missed" || displayState === "reschedule-expired") {
     alertMessage = `You missed your consultation. You can book any available slot ${doctorName} has in the next 24 hours. After that, this option will expire.`;
-  } else if (isAccepted) {
-    alertMessage = "Your consultation request has been approved by the doctor! Please select your preferred date and time to secure your slot.";
-  } else if (isPending) {
-    alertMessage = "Your request has been sent to the doctor and is awaiting review. We will notify you here once they approve it.";
+  } else if (displayState === "schedule-slot") {
+    alertMessage =
+      "Your consultation request has been approved by the doctor! Please select your preferred date and time to secure your slot.";
+  } else if (displayState === "awaiting-approval") {
+    alertMessage =
+      "Your request has been sent to the doctor and is awaiting review. We will notify you here once they approve it.";
   }
 
-  let primaryActionLabel = "Join Consultation";
-  if (showRescheduleAction) {
-    primaryActionLabel = "Reschedule";
-  } else if (isAccepted) {
-    primaryActionLabel = "Schedule Slot";
-  } else if (isPending) {
-    primaryActionLabel = "Awaiting Approval";
-  } else if (isCompleted) {
-    primaryActionLabel = "Book New Slot";
-  } else if (statusUpper === "SCHEDULED" && !isWithinWindow) {
-    primaryActionLabel = "View Details";
-  }
+  // ── Button label — derived from the SAME state as the click handler ───────
+  const primaryActionLabel = getConsultationActionLabel(displayState);
 
   return (
     <>
       <div className="rounded-lg border border-border bg-white p-5 md:p-6 shadow-[0_1px_0_rgba(17,50,84,0.02)]">
         {alertMessage ? (
-          <div className={`mb-4 flex items-start gap-3 rounded-lg border px-4 py-3 text-[12px] leading-relaxed ${isCompleted
-            ? "border-[#10B981]/30 bg-[#E8F8F5] text-[#065F46]"
-            : "border-[#FACC15]/40 bg-[#FFF7E6] text-[#7A4A00]"
-            }`}>
-            <div className={`mt-0.5 size-5 rounded-full bg-white flex items-center justify-center shrink-0 ${isCompleted ? "text-[#10B981]" : "text-[#F59E0B]"
-              }`}>
+          <div
+            className={`mb-4 flex items-start gap-3 rounded-lg border px-4 py-3 text-[12px] leading-relaxed ${isCompleted
+                ? "border-[#10B981]/30 bg-[#E8F8F5] text-[#065F46]"
+                : "border-[#FACC15]/40 bg-[#FFF7E6] text-[#7A4A00]"
+              }`}
+          >
+            <div
+              className={`mt-0.5 size-5 rounded-full bg-white flex items-center justify-center shrink-0 ${isCompleted ? "text-[#10B981]" : "text-[#F59E0B]"
+                }`}
+            >
               <CalendarDays className="size-3.5" />
             </div>
             <p>{alertMessage}</p>
@@ -207,20 +150,13 @@ export function ConsultationCard({
         <div className="grid gap-5 lg:grid-cols-[1.35fr_0.9fr_0.9fr] lg:items-start">
           <div className="flex gap-4">
             <div className="relative size-16 shrink-0 overflow-hidden rounded-full border border-[#E5E7EB] bg-[#F8FAFC]">
-              <Image
-                src={avatarSrc}
-                alt={doctorName}
-                fill
-                className="object-cover"
-              />
+              <Image src={avatarSrc} alt={doctorName} fill className="object-cover" />
             </div>
 
             <div className="min-w-0 space-y-1">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[16px] font-bold text-text">
-                    {doctorName}
-                  </h3>
+                  <h3 className="text-[16px] font-bold text-text">{doctorName}</h3>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -233,9 +169,7 @@ export function ConsultationCard({
                     <MessageSquare size={13} />
                   </button>
                 </div>
-                <p className="text-[13px] font-medium text-sec-text">
-                  {specialty}
-                </p>
+                <p className="text-[13px] font-medium text-sec-text">{specialty}</p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#9CA3AF]">
@@ -270,7 +204,9 @@ export function ConsultationCard({
                 {completedCount !== undefined && completedCount > 0 && (
                   <div className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-200/60 px-3 py-1.5 text-emerald-800 shadow-[0_1px_2px_rgba(16,185,129,0.05)]">
                     <span className="text-[14px] font-black">{completedCount}</span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Completed Sessions</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                      Completed Sessions
+                    </span>
                   </div>
                 )}
               </div>
@@ -281,9 +217,7 @@ export function ConsultationCard({
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">
               Procedure
             </p>
-            <p className="text-[15px] font-bold text-text">
-              {procedure}
-            </p>
+            <p className="text-[15px] font-bold text-text">{procedure}</p>
             <p className="text-[13px] text-sec-text">{timezone}</p>
           </div>
 
@@ -295,18 +229,14 @@ export function ConsultationCard({
               <p className="text-[18px] font-mono font-bold text-text mt-1 leading-none">
                 {timeRemaining}
               </p>
-              <p className="text-[11px] font-medium text-[#9CA3AF]">
-                Time remaining
-              </p>
+              <p className="text-[11px] font-medium text-[#9CA3AF]">Time remaining</p>
             </div>
           ) : (
             <div className="space-y-1 lg:text-right">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">
                 Estimate Budget
               </p>
-              <p className="text-[18px] font-bold text-brand-deep-navy">
-                {estimateBudget}
-              </p>
+              <p className="text-[18px] font-bold text-brand-deep-navy">{estimateBudget}</p>
             </div>
           )}
         </div>
@@ -317,7 +247,11 @@ export function ConsultationCard({
               <Info className="size-3.5" />
             </div>
             <p className="text-slate-500 text-sm leading-relaxed">
-              Dr. {dentistUser?.lastName || dentistDirectory?.name?.split(" ").pop() || "dentist"} is reviewing your case. Estimate expected within 24 hours.
+              Dr.{" "}
+              {dentistUser?.lastName ||
+                dentistDirectory?.name?.split(" ").pop() ||
+                "dentist"}{" "}
+              is reviewing your case. Estimate expected within 24 hours.
             </p>
           </div>
         ) : (
@@ -325,7 +259,10 @@ export function ConsultationCard({
             <div className="space-y-1">
               <p className="text-[15px] font-bold text-text">{dateStr}</p>
               <p className="text-[13px] font-medium text-sec-text">
-                {timeStr === "N/A" && (isPending || isAccepted) ? "Awaiting scheduling" : timeStr} · {duration}
+                {timeStr === "N/A" && (isPending || isAccepted)
+                  ? "Awaiting scheduling"
+                  : timeStr}{" "}
+                · {duration}
               </p>
               {!isPending && !isAccepted && consultation.scheduledDate && (
                 <button
@@ -342,11 +279,13 @@ export function ConsultationCard({
             <div className="flex flex-col gap-2 sm:items-end">
               <button
                 type="button"
-                onClick={onPrimaryAction}
+                // Pass the resolved state — same value used for the label above.
+                // The parent switch will decide what to do. No recomputation here.
+                onClick={() => onPrimaryAction(displayState)}
                 disabled={isPending}
                 className={`w-full rounded-lg px-6 py-3 text-[14px] font-bold text-white transition-all sm:w-auto cursor-pointer ${isPending
-                  ? "bg-slate-300 text-slate-500 cursor-not-allowed opacity-60"
-                  : "bg-brand-deep-navy hover:bg-brand-deep-navy-hover active:scale-95"
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed opacity-60"
+                    : "bg-brand-deep-navy hover:bg-brand-deep-navy-hover active:scale-95"
                   }`}
               >
                 {primaryActionLabel}
