@@ -54,7 +54,6 @@ export default function ScheduleContent() {
   const { setShowCompareModal } = useStateContext();
   const { user } = useMe();
 
-  // ── Dentist role guard ───────────────────────────────────────────
   if (user?.role === "DENTIST") {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
@@ -81,6 +80,7 @@ export default function ScheduleContent() {
 
   const [dentists, setDentists] = useState<Dentist[]>([]);
   const [selections, setSelections] = useState<DentistSelection[]>([]);
+  const [patientBudget, setPatientBudget] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -105,6 +105,9 @@ export default function ScheduleContent() {
         }
 
         setDentists(loadedDentists);
+
+        // Read the patient's budget from the booking draft (draft already declared above)
+        setPatientBudget(draft.budget ?? "");
 
         const nextSelections = loadedDentists.map((dentist) => {
           const saved = draft.scheduleSelections.find(
@@ -264,9 +267,7 @@ export default function ScheduleContent() {
 
   return (
     <>
-      {/* ── Page ── */}
       <div className="max-w-7xl w-11/12 mx-auto py-12">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-[26px] font-black text-text leading-tight">
@@ -297,6 +298,7 @@ export default function ScheduleContent() {
                 dentist={doc}
                 selection={selections[i] ?? makeSelection(doc.id)}
                 onUpdate={(updates) => updateSelection(doc.id, updates)}
+                patientBudget={patientBudget}
               />
             ))}
           </div>

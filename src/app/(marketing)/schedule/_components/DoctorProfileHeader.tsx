@@ -1,16 +1,16 @@
-import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import type { Dentist } from "@/features/marketing/find-dentists-page-components/types";
 
 interface DoctorProfileHeaderProps {
     dentist: Dentist;
+    /** The budget the patient entered during the booking flow (e.g. "200") */
+    patientBudget?: string;
 }
 
-const estimateLow = (price: number) => Math.round((price * 2.2) / 20) * 20;
 
-export function DoctorProfileHeader({ dentist }: DoctorProfileHeaderProps) {
+
+export function DoctorProfileHeader({ dentist, patientBudget }: DoctorProfileHeaderProps) {
     const location = dentist.location?.fullAddress ?? dentist.location?.city ?? "Location unavailable";
 
     return (
@@ -32,15 +32,16 @@ export function DoctorProfileHeader({ dentist }: DoctorProfileHeaderProps) {
                 </div>
             </div>
 
-            <div className="text-right shrink-0 space-y-1">
-                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
-                    Est. Budget
-                </p>
-                <p className="text-xl font-black text-[#113254]">
-                    ${estimateLow(dentist.price).toLocaleString()}
-                </p>
-                {/* Accuracy badge hidden until real data is available */}
-            </div>
+            {patientBudget && (
+                <div className="text-right shrink-0 space-y-1">
+                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
+                        Est. Budget
+                    </p>
+                    <p className="text-xl font-black text-[#113254]">
+                        ${Number(patientBudget).toLocaleString()}
+                    </p>
+                </div>
+            )}
         </div>
     );
 }

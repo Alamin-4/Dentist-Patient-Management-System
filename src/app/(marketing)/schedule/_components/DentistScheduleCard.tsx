@@ -10,7 +10,6 @@ import { DoctorProfileHeader } from "./DoctorProfileHeader";
 import { TimezoneSelector } from "./TimezoneSelector";
 import { TimeSlotPicker } from "./TimeSlotPicker";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 export interface DentistSelection {
   dentistId: string;
   date: Date | null;
@@ -22,9 +21,10 @@ interface DentistScheduleCardProps {
   dentist: Dentist;
   selection: DentistSelection;
   onUpdate: (updates: Partial<Omit<DentistSelection, "dentistId">>) => void;
+  /** Budget the patient set in the booking flow */
+  patientBudget?: string;
 }
 
-// ─── Optimized Time Slot Generator ────────────────────────────────────────────
 function generateTimeSlots(): string[] {
   const slots: string[] = [];
   const startMinutes = 9 * 60 + 40; // 09:40
@@ -67,7 +67,6 @@ export function formatSlotToAmPm(slot: string): string {
   return `${toAmPmStr(parts[0])} to ${toAmPmStr(parts[1])}`;
 }
 
-// ─── Helper: Format selected date nicely ──────────────────────────────────────
 function formatSelectedDate(date: Date | null): string {
   if (!date) return "";
   return date.toLocaleDateString("en-US", {
@@ -78,19 +77,17 @@ function formatSelectedDate(date: Date | null): string {
   });
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function DentistScheduleCard({
   dentist,
   selection,
   onUpdate,
+  patientBudget,
 }: DentistScheduleCardProps) {
   return (
     <Card className="bg-white border-gray-200 shadow-sm relative overflow-visible!">
-      {/* 1. Doctor Header */}
-      <DoctorProfileHeader dentist={dentist} />
+      <DoctorProfileHeader dentist={dentist} patientBudget={patientBudget} />
 
       <CardContent className="p-6 space-y-6">
-        {/* 2. Consultation Info */}
         <div className="space-y-3">
           <p className="text-sm font-semibold text-gray-700">Consultation Details</p>
           <div className="flex flex-wrap gap-2">
@@ -112,7 +109,6 @@ export default function DentistScheduleCard({
           </div>
         </div>
 
-        {/* 3. Calendar */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-gray-700">Select Availability</p>
@@ -138,13 +134,11 @@ export default function DentistScheduleCard({
           />
         </div>
 
-        {/* 4. Timezone */}
         <TimezoneSelector
           value={selection.timezone}
           onChange={(tz) => onUpdate({ timezone: tz })}
         />
 
-        {/* 5. Time Slots */}
         <TimeSlotPicker
           slots={TIME_SLOTS}
           selectedSlot={selection.timeSlot}

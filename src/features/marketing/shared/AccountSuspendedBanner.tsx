@@ -55,7 +55,7 @@ export default function AccountSuspendedBanner() {
   return (
     <>
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-red-600 to-amber-600 text-white px-4 py-3 shadow-md border-b border-red-700">
+      <div className="bg-linear-to-r from-red-600 to-amber-600 text-white px-4 py-3 shadow-md border-b border-red-700">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-sm font-medium">
           <div className="flex items-center gap-2.5">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 shrink-0">
