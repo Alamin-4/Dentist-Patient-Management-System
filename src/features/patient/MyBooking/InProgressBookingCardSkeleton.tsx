@@ -20,13 +20,13 @@ export default function InProgressBookingCardSkeleton() {
         </div>
 
         {/* Procedure */}
-        <div className="shrink-0 space-y-2 min-w-[130px]">
+        <div className="shrink-0 space-y-2 min-w-32.5">
           <Skeleton className="w-16 h-3 rounded" />
           <Skeleton className="w-28 h-5 rounded" />
         </div>
 
         {/* Appointment */}
-        <div className="shrink-0 space-y-2 min-w-[170px]">
+        <div className="shrink-0 space-y-2 min-w-42.5">
           <Skeleton className="w-24 h-3 rounded" />
           <Skeleton className="w-36 h-5 rounded" />
         </div>

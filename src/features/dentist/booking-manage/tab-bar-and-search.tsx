@@ -2,9 +2,9 @@
 
 import { Search, ChevronDown } from "lucide-react";
 import { dentistBookingTabs, useStateContext } from "@/providers/StateProvider";
-import CustomTabs from "../../shared/custom-tabs/custom-tabs";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
 
-const tabs = [
+const tabs: TabItem[] = [
   {
     id: "booking-1",
     label: "In Progress",
@@ -32,11 +32,11 @@ export default function TabBarAndSearch() {
   return (
     <div className="w-full">
       <div className="flex gap-10 border-b border-slate-100">
-        <CustomTabs
+        <Tabs
           tabs={tabs}
-          storageKey="booking-tabs"
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
+          value={activeTab || "booking-1"}
+          onChange={setActiveTab}
+          ariaLabel="Booking Tabs"
         />
       </div>
 

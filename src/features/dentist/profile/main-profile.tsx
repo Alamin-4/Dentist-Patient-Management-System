@@ -10,12 +10,27 @@ import { VerificationSidebar } from "./verification-sidebar";
 import { ClinicalDepthCard } from "./clinical-depth-card";
 import { useDentistProfileQuery } from "@/hooks/dentist/useDentist";
 import useVerificationProgress from "@/hooks/dentist/useStepProgress";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
+
+type ProfileTab = "overview" | "operations" | "clinical-depth" | "reviews";
+
+const tabs: TabItem<ProfileTab>[] = [
+  { id: "overview", label: "Overview" },
+  { id: "operations", label: "Operations" },
+  { id: "clinical-depth", label: "Clinical Depth" },
+  { id: "reviews", label: "Reviews" },
+];
 
 export default function DentistProfilePage() {
   const { user } = useMe();
   const dentistProfile = useDentistProfileQuery();
   const { rdvScore } = useVerificationProgress();
-  const [activeTab, setActiveTab] = useState<"overview" | "operations" | "clinical-depth" | "reviews">("overview");
+  const [activeTab, setActiveTab] = useUrlTab<ProfileTab>(
+    "tab",
+    "overview",
+    ["overview", "operations", "clinical-depth", "reviews"]
+  );
 
   if (dentistProfile.isPending) {
     return (
@@ -56,13 +71,6 @@ export default function DentistProfilePage() {
 
   const dentist = dentistProfile.data?.data?.dentist;
 
-  const tabs = [
-    { key: "overview", label: "Overview" },
-    { key: "operations", label: "Operations" },
-    { key: "clinical-depth", label: "Clinical Depth" },
-    { key: "reviews", label: "Reviews" },
-  ] as const;
-
   return (
     <div className="flex flex-col gap-6 relative min-h-dvh pb-16">
       {/* Top Section: Full Width Header */}
@@ -74,25 +82,12 @@ export default function DentistProfilePage() {
       <div className={activeTab === "reviews" ? "w-full" : "grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start"}>
         {/* Left Column: Details with Tab navigation */}
         <div className="flex flex-col gap-6">
-          {/* Tab Navigation */}
-          <div className="flex border-b border-gray-200 gap-4 sm:gap-8 overflow-x-auto no-scrollbar scrollbar-none whitespace-nowrap pb-0.5">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`pb-3.5 text-xs sm:text-sm font-bold transition-all relative shrink-0 ${isActive ? "text-brand-medium-navy" : "text-gray-400 hover:text-gray-600"
-                    }`}
-                >
-                  {tab.label}
-                  {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-medium-navy rounded-full" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <Tabs
+            tabs={tabs}
+            value={activeTab}
+            onChange={setActiveTab}
+            ariaLabel="Dentist Profile Tabs"
+          />
 
           {/* Active Tab Component */}
           <div>

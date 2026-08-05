@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react";
-import ToggleButton from "./ToggleButton/ToggleButton";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
 import InProgressBookingCard from "./InProgressBookingCard";
 import InProgressBookingCardSkeleton from "./InProgressBookingCardSkeleton";
 import { CalendarOff } from "lucide-react";
@@ -192,14 +193,18 @@ export function mapPlanToBooking(plan: TreatmentPlanItem): any {
   };
 }
 
-const TABS = [
-  { key: "in-progress", label: "In progress" },
-  { key: "completed", label: "Completed" },
-  { key: "rejected", label: "Rejected" },
+const TABS: TabItem[] = [
+  { id: "in-progress", label: "In progress" },
+  { id: "completed", label: "Completed" },
+  { id: "rejected", label: "Rejected" },
 ];
 
 export default function MyBooking() {
-  const [activeTab, setActiveTab] = useState("in-progress");
+  const [activeTab, setActiveTab] = useUrlTab(
+    "tab",
+    "in-progress",
+    TABS.map((t) => t.id)
+  );
   const { data: treatmentPlansResponse, isLoading } = usePatientTreatmentPlans();
 
   const treatmentPlans = treatmentPlansResponse?.data || [];
@@ -215,6 +220,12 @@ export default function MyBooking() {
   const inProgress = byStatus("in_progress");
   const completed = byStatus("completed");
   const rejected = byStatus("rejected");
+
+  const tabsWithCounts: TabItem[] = [
+    { id: "in-progress", label: "In progress", count: inProgress.length },
+    { id: "completed", label: "Completed", count: completed.length },
+    { id: "rejected", label: "Rejected", count: rejected.length },
+  ];
 
   const currentList =
     activeTab === "in-progress"
@@ -246,7 +257,7 @@ export default function MyBooking() {
       <p className="text-2xl lg:text-3xl text-text font-bold">My Bookings</p>
 
       <div className="mt-4">
-        <ToggleButton value={activeTab} onChange={setActiveTab} tabs={TABS} />
+        <Tabs value={activeTab} onChange={setActiveTab} tabs={tabsWithCounts} ariaLabel="My Bookings Tabs" />
       </div>
 
       <div className="py-5 space-y-4">

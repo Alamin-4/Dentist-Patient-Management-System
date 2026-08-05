@@ -6,7 +6,9 @@ import { ConsultationCard } from "./ConsultationCard";
 import { ConsultationDetailsSidebar } from "./ConsultationDetailSidebar";
 import CreateTreatmentPlanModal from "./TreatmentModal";
 import { RescheduleConsultationModal } from "@/features/patient/Overview/RescheduleConsultationModal";
-import CustomTabs from "../../shared/custom-tabs/custom-tabs";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
+import { useTabPersistence } from "@/components/ui/tabs/useTabPersistence";
 import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-page-header";
 import { useDentistConsultations, useUpdateConsultationStatus } from "@/hooks/consultation/useConsultation";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,7 +19,7 @@ import {
 } from "@/lib/consultation-state";
 import type { ConsultationItem } from "@/types";
 
-const tabs = [
+const tabs: TabItem<TabType>[] = [
   { id: "Upcoming", label: "Upcoming" },
   { id: "Active", label: "Active" },
   { id: "Treatment Estimate", label: "Treatment Estimate" },
@@ -34,12 +36,16 @@ export default function ConsultationPage() {
   const [isTreatmentModalOpen, setIsTreatmentModalOpen] = useState(false);
   const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
 
-  const queryTab = searchParams ? searchParams.get("tab") : null;
-  const [activeTab, setActiveTab] = useState<TabType>((queryTab as TabType) || "Upcoming");
+  const [activeTab, setActiveTab, isUrlParamPresent] = useUrlTab<TabType>(
+    "tab",
+    "Upcoming",
+    tabs.map((t) => t.id as TabType)
+  );
 
-  const handleTabChange = useCallback((id: string) => {
-    setActiveTab(id as TabType);
-  }, []);
+  useTabPersistence("dentist-consultation-active-tab", activeTab, setActiveTab, {
+    validTabIds: tabs.map((t) => t.id as TabType),
+    isUrlParamPresent,
+  });
 
   const consultations = consultationsResponse?.data || [];
 
@@ -102,11 +108,11 @@ export default function ConsultationPage() {
         subHeading="Review your consultation scheduling of the patients"
       />
 
-      <CustomTabs
+      <Tabs
         tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        storageKey="dentist-consultation-active-tab"
+        value={activeTab}
+        onChange={setActiveTab}
+        ariaLabel="Consultation Tabs"
       />
 
       {isLoading ? (
@@ -118,7 +124,6 @@ export default function ConsultationPage() {
           <p className="text-slate-500 font-medium">No consultations found in this category.</p>
         </div>
       ) : (
-        /* Responsive Grid */
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-6">
           {filteredConsultations.map((item: any) => (
             <ConsultationCard

@@ -9,6 +9,8 @@ import {
   type PatientRecord,
 } from "./patients-data";
 
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+
 type ActiveTab = "patient-info" | "treatment-plan";
 
 function getInitials(name: string) {
@@ -111,27 +113,15 @@ export default function PatientDetailsDrawer({
             </button>
           </div>
 
-          <div className="flex">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative mr-6 pb-3 text-sm transition-colors px-4 ${isActive
-                    ? "font-semibold text-primary"
-                    : "font-medium text-muted-foreground hover:text-foreground"
-                    }`}
-                >
-                  {tab.label}
-                  {isActive && (
-                    <span className="absolute -bottom-px left-0 right-0 h-1 rounded-t-full bg-primary" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <Tabs
+            tabs={[
+              { id: "patient-info", label: "Patient Info" },
+              { id: "treatment-plan", label: "Treatment Plan" },
+            ]}
+            value={activeTab}
+            onChange={(id) => setActiveTab(id as ActiveTab)}
+            ariaLabel="Patient Detail Tabs"
+          />
         </header>
 
         <div className="flex-1 overflow-y-auto">

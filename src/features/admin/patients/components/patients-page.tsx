@@ -8,7 +8,8 @@ import { CustomStats } from "@/app/(admin-dashboard)/modules/shared/custom-stats
 
 import type { StatusFilter } from "./types";
 import { PatientsHeader } from "./patients-header";
-import CustomTabs from "@/app/modules/shared/custom-tabs/custom-tabs";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
 import { PatientsFilters } from "./patients-filters";
 import { PatientsTable } from "./patients-table";
 import { PatientsPagination } from "./patients-pagination";
@@ -19,10 +20,15 @@ export default function PatientsPage() {
     const router = useRouter();
 
     const [headerSearch, setHeaderSearch] = useState("");
-    const [activeTab, setActiveTab] = useState<StatusFilter>("all");
     const [tableSearch, setTableSearch] = useState("");
     const [cityFilter, setCityFilter] = useState("all");
     const [page, setPage] = useState(1);
+
+    const [activeTab, setActiveTab] = useUrlTab<StatusFilter>(
+        "tab",
+        "all",
+        ["all", "Active", "Inactive"]
+    );
 
     // Call the backend API using our React Query hook
     const { patientslist, patientslistData, isPatientslistLoading, isPatientslistError } = usePatients({
@@ -53,7 +59,7 @@ export default function PatientsPage() {
         { label: "Inactive", value: meta.inactive_today.toString(), sub: meta.inactive_pct },
     ];
 
-    const tabs = [
+    const tabs: TabItem<StatusFilter>[] = [
         { id: "all", label: "All patients", count: meta.total_patients },
         { id: "Active", label: "Active", count: meta.active_count },
         { id: "Inactive", label: "Inactive", count: meta.inactive_count },
@@ -96,11 +102,11 @@ export default function PatientsPage() {
 
             <div className="rounded-lg border border-gray-100 bg-white shadow-sm">
                 <div className="px-4 overflow-x-auto pt-1">
-                    <CustomTabs
+                    <Tabs
                         tabs={tabs}
-                        activeTab={activeTab}
-                        onTabChange={handleTabChange}
-                        queryKey="tab"
+                        value={activeTab}
+                        onChange={handleTabChange}
+                        ariaLabel="Admin Patients Tabs"
                     />
                 </div>
 

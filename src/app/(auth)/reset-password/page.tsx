@@ -17,6 +17,7 @@ function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const resetPasswordMutation = useResetPassword();
 
@@ -39,8 +40,6 @@ function ResetPasswordForm() {
       </div>
     );
   }
-
-  const [validationError, setValidationError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
