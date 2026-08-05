@@ -1,12 +1,12 @@
 import { Skeleton } from "@/components/feedback/skeleton";
 
-export default function GlobalLoading() {
+export default function MarketingLoading() {
   return (
-    <div className="min-h-screen bg-white flex flex-col w-full">
+    <div className="w-full bg-white flex flex-col min-h-screen">
       {/* 1. Hero Section Skeleton */}
       <section className="relative w-full bg-white py-12">
         <div className="mx-auto flex max-w-400 w-11/12 flex-col-reverse items-center justify-between gap-12 lg:flex-row">
-          {/* Left Text & Search */}
+          {/* Hero Left Content */}
           <div className="w-full lg:w-3/5 space-y-6">
             <div className="space-y-4 max-w-xl">
               <Skeleton className="h-10 md:h-14 w-full max-w-lg rounded-lg" />
@@ -14,6 +14,7 @@ export default function GlobalLoading() {
               <Skeleton className="h-6 w-3/4 rounded-md mt-2" />
             </div>
 
+            {/* Search Bar Skeleton */}
             <div className="w-full lg:max-w-4/5 pt-4">
               <div className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white shadow-sm">
                 <Skeleton className="h-12 w-full flex-1 rounded-lg" />
@@ -24,7 +25,7 @@ export default function GlobalLoading() {
             <Skeleton className="h-4 w-48 rounded" />
           </div>
 
-          {/* Right Hero Media Banner */}
+          {/* Hero Right Image Banner Skeleton */}
           <div className="relative w-full lg:w-2/5">
             <Skeleton className="relative aspect-video lg:aspect-4/3 w-full rounded-xl" />
           </div>
@@ -39,7 +40,7 @@ export default function GlobalLoading() {
         </div>
 
         <div className="mx-auto flex w-11/12 max-w-400 flex-col rounded-md border border-slate-200 lg:flex-row">
-          {/* Sidebar */}
+          {/* Sidebar Procedure List Skeleton */}
           <div className="w-full lg:w-64 p-4 border-b lg:border-b-0 lg:border-r border-slate-200 space-y-3 bg-slate-50/50">
             <Skeleton className="h-5 w-32 mb-4" />
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -47,7 +48,7 @@ export default function GlobalLoading() {
             ))}
           </div>
 
-          {/* Main Dentist Card Grid */}
+          {/* Main Dentist Grid Skeleton */}
           <div className="flex-1 p-4 lg:p-6 space-y-6">
             <div className="flex justify-between items-center">
               <Skeleton className="h-4 w-44" />
@@ -99,6 +100,38 @@ export default function GlobalLoading() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 4. AI Smile Preview Section Skeleton */}
+      <section className="py-12 md:py-20 bg-white">
+        <div className="max-w-400 w-11/12 mx-auto space-y-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-8">
+            <div className="space-y-4 max-w-xl">
+              <Skeleton className="h-8 w-72 rounded-md" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-4/5" />
+              <Skeleton className="h-11 w-48 rounded-lg bg-primary/20" />
+            </div>
+            <div className="space-y-3 w-full lg:w-80">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <Skeleton className="h-4 w-56" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <Skeleton className="w-full aspect-2/1 rounded-xl bg-slate-900/10" />
+        </div>
+      </section>
+
+      {/* 5. CTA Section Skeleton */}
+      <section className="py-16 bg-[#003366]">
+        <div className="max-w-400 w-11/12 mx-auto flex flex-col items-center text-center space-y-6">
+          <Skeleton className="h-8 w-48 rounded-full bg-white/20" />
+          <Skeleton className="h-10 w-72 md:w-96 rounded-lg bg-white/30" />
+          <Skeleton className="h-12 w-full max-w-2xl rounded-xl bg-white/20" />
         </div>
       </section>
     </div>
