@@ -228,7 +228,7 @@ export default function BookingDetailPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {booking?.treatmentPlan?.lineItems?.map((item: any, i: number) => (
+                        {booking?.treatmentPlan?.lineItems?.map((item: { globalProcedure?: { name: string }; unitPrice: number | string }, i: number) => (
                           <tr key={i} className="border-t border-slate-100">
                             <td className="px-4 py-3 text-slate-500 text-xs">
                               {item.globalProcedure?.name || "Procedure"}
@@ -301,7 +301,7 @@ export default function BookingDetailPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {booking.metadata.finalPlan.procedures.map((row: any, i: number) => (
+                          {booking.metadata.finalPlan.procedures.map((row: { name: string; price: number | string }, i: number) => (
                             <tr key={i} className="border-t border-slate-100">
                               <td className="px-4 py-3 text-slate-500 text-xs">{row.name}</td>
                               <td className="px-4 py-3 text-right text-xs text-slate-600">${Number(row.price).toLocaleString()}</td>
@@ -515,7 +515,7 @@ export default function BookingDetailPage() {
                       })}
                     </div>
                     <p className="text-slate-600 text-sm mt-2 font-normal italic">
-                      "{booking.metadata.review.comments}"
+                      &quot;{booking.metadata.review.comments}&quot;
                     </p>
                   </div>
                 )}

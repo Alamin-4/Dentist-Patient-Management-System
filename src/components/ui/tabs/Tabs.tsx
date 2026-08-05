@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useId } from "react";
+import { motion } from "motion/react";
 import { cn } from "@/core/lib/utils";
 
 export interface TabItem<T extends string = string> {
@@ -29,6 +30,7 @@ export function Tabs<T extends string = string>({
   className,
   ariaLabel = "Navigation Tabs",
 }: TabsProps<T>) {
+  const instanceId = useId();
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const handleKeyDown = (e: React.KeyboardEvent, currentId: T) => {
@@ -62,7 +64,7 @@ export function Tabs<T extends string = string>({
       <div
         role="tablist"
         aria-label={ariaLabel}
-        className={cn("flex gap-1.5 overflow-x-auto", className)}
+        className={cn("flex gap-1.5 overflow-x-auto p-0.5", className)}
       >
         {tabs.map((tab) => {
           const isActive = value === tab.id;
@@ -84,25 +86,33 @@ export function Tabs<T extends string = string>({
               onClick={() => onChange(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, tab.id)}
               className={cn(
-                "rounded-full px-3.5 py-1 text-sm font-medium transition-colors outline-none cursor-pointer flex items-center gap-1.5 whitespace-nowrap",
-                isActive
-                  ? "bg-brand-deep-navy text-white"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700",
+                "relative rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors outline-none cursor-pointer flex items-center gap-1.5 whitespace-nowrap select-none",
+                isActive ? "text-white font-semibold" : "text-gray-500 hover:text-gray-700",
                 tab.disabled && "opacity-50 cursor-not-allowed"
               )}
             >
-              {tab.icon}
-              <span>{tab.label}</span>
-              {tab.count !== undefined && (
-                <span
-                  className={cn(
-                    "ml-1 rounded-full px-1.5 py-0.5 text-xs font-semibold",
-                    isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                  )}
-                >
-                  {tab.count.toLocaleString()}
-                </span>
+              {isActive && (
+                <motion.div
+                  layoutId={`active-tab-pill-${instanceId}`}
+                  className="absolute inset-0 rounded-full bg-brand-deep-navy"
+                  transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                />
               )}
+
+              <span className="relative z-10 flex items-center gap-1.5">
+                {tab.icon}
+                <span>{tab.label}</span>
+                {tab.count !== undefined && (
+                  <span
+                    className={cn(
+                      "ml-1 rounded-full px-1.5 py-0.5 text-xs font-semibold transition-colors",
+                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                    )}
+                  >
+                    {tab.count.toLocaleString()}
+                  </span>
+                )}
+              </span>
             </button>
           );
         })}
@@ -137,10 +147,10 @@ export function Tabs<T extends string = string>({
               onClick={() => onChange(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, tab.id)}
               className={cn(
-                "relative pb-3 pt-2 text-[15px] font-semibold transition-all duration-150 outline-none select-none flex items-center gap-2 cursor-pointer border-b-2 -mb-px whitespace-nowrap",
+                "relative pb-3 pt-2 text-[15px] font-semibold transition-colors outline-none select-none flex items-center gap-2 cursor-pointer whitespace-nowrap",
                 isActive
-                  ? "text-brand-deep-navy border-brand-deep-navy"
-                  : "text-[#9CA3AF] border-transparent hover:text-sec-text",
+                  ? "text-brand-deep-navy font-bold"
+                  : "text-[#9CA3AF] hover:text-sec-text",
                 tab.disabled && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -162,6 +172,14 @@ export function Tabs<T extends string = string>({
                 >
                   {tab.count.toLocaleString()}
                 </span>
+              )}
+
+              {isActive && (
+                <motion.div
+                  layoutId={`active-tab-underline-${instanceId}`}
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-deep-navy"
+                  transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                />
               )}
             </button>
           );
