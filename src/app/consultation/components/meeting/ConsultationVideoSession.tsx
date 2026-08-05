@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { useTracks, useLocalParticipant, useRoomContext, RoomAudioRenderer, useRemoteParticipants } from "@livekit/components-react";
@@ -85,6 +85,30 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
         ? (consultation?.patient?.user?.image || "/images/man-avatar.png")
         : (consultation?.dentist?.user?.image || consultation?.dentist?.dentistDirectory?.image || consultation?.directoryEntry?.image || "/images/dentist.png");
 
+    const handleEndCall = useCallback(async (autoExpire = false) => {
+        if (isEndingRef.current) return;
+        isEndingRef.current = true;
+
+        try {
+            if (room) room.disconnect();
+            await api.patch(endpoints.consultations.updateStatus(slug), { requestStatus: "COMPLETED" });
+
+            if (autoExpire) {
+                toast.success("Meeting ended automatically after 15 minutes.");
+            } else {
+                toast.success("Consultation session ended.");
+            }
+        } catch (err) {
+            console.error("Error finalizing consultation:", err);
+        } finally {
+            if (isPatient) {
+                router.push(`/consultation/${slug}/complete`);
+            } else {
+                setShowCompletedModal(true);
+            }
+        }
+    }, [room, slug, isPatient, router]);
+
     useEffect(() => {
         if (!consultation?.scheduledDate) return;
 
@@ -105,7 +129,7 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
         updateTimer();
         const interval = setInterval(updateTimer, 1000);
         return () => clearInterval(interval);
-    }, [consultation]);
+    }, [consultation, handleEndCall]);
 
     // Poll consultation status to auto-redirect patient when doctor ends meeting
     useEffect(() => {
@@ -151,30 +175,6 @@ export function ConsultationVideoSession({ consultation, slug, userId }: Session
             room.off("disconnected", handleDisconnect);
         };
     }, [room, slug, router, isPatient]);
-
-    const handleEndCall = async (autoExpire = false) => {
-        if (isEndingRef.current) return;
-        isEndingRef.current = true;
-
-        try {
-            if (room) room.disconnect();
-            await api.patch(endpoints.consultations.updateStatus(slug), { requestStatus: "COMPLETED" });
-
-            if (autoExpire) {
-                toast.success("Meeting ended automatically after 15 minutes.");
-            } else {
-                toast.success("Consultation session ended.");
-            }
-        } catch (err) {
-            console.error("Error finalizing consultation:", err);
-        } finally {
-            if (isPatient) {
-                router.push(`/consultation/${slug}/complete`);
-            } else {
-                setShowCompletedModal(true);
-            }
-        }
-    };
 
     const toggleMic = async () => {
         if (!localParticipant) return;

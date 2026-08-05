@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ShieldAlert, ArrowLeft, LogIn } from "lucide-react";
+import { ArrowLeft, LogIn } from "lucide-react";
 import { useStateContext } from "@/providers/StateProvider";
 
 export default function UnauthorizedPage() {
