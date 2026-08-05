@@ -122,8 +122,9 @@ export default function ReviewPlanPage() {
           setRejectModalOpen(false);
           router.push("/patient");
         },
-        onError: (err: any) => {
-          toast.error(err?.message || "Failed to reject treatment plan.");
+        onError: (err: unknown) => {
+          const message = (err as { message?: string })?.message;
+          toast.error(message || "Failed to reject treatment plan.");
         },
       }
     );
@@ -213,7 +214,6 @@ export default function ReviewPlanPage() {
               </div>
             </div>
 
-            {/* Treatment breakdown */}
             <h4 className="text-[17px] font-bold mb-4 text-text">Treatment plan breakdown</h4>
             <div className="border  rounded-xl overflow-hidden  bg-white">
               <div className="flex justify-between bg-slate-50 px-6 py-3.5 border-b  font-bold text-[13px] uppercase tracking-wider text-[#475569]">
@@ -221,7 +221,7 @@ export default function ReviewPlanPage() {
                 <span>Price</span>
               </div>
               <div className="divide-y divide-[#EEF2F6]">
-                {plan.lineItems?.map((item: any, idx: number) => (
+                {plan.lineItems?.map((item: { globalProcedure?: { name: string }; unitPrice: number | string }, idx: number) => (
                   <div key={idx} className="flex justify-between px-6 py-4 text-sm hover:bg-slate-50/50 transition-colors">
                     <span className="text-[#475569] font-medium">{item.globalProcedure?.name || "Procedure"}</span>
                     <span className="text-text font-semibold">

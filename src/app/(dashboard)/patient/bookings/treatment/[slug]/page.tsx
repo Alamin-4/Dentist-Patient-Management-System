@@ -383,7 +383,7 @@ export default function TreatmentDetailsPage() {
           <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-5 md:p-6">
             <h4 className="font-bold text-text mb-6">Treatment Timeline</h4>
             <div className="space-y-0">
-              {booking.timeline.map((step: any, i: number) => (
+              {booking.timeline.map((step: { title: string; description: string; completed: boolean; date?: string | null; link?: string }, i: number) => (
                 <TimelineStepItem
                   key={i}
                   step={step}
@@ -565,7 +565,7 @@ function TimelineStepItem({
   isLast,
   onViewMap,
 }: {
-  step: any;
+  step: { title: string; description: string; completed: boolean; date?: string | null; link?: { label: string } | string };
   isLast: boolean;
   onViewMap?: () => void;
 }) {
@@ -607,7 +607,7 @@ function TimelineStepItem({
             className="flex items-center gap-1 text-primary text-xs font-bold mt-2 hover:underline cursor-pointer"
           >
             <MapPin className="size-3" />
-            <span>{step.link.label}</span>
+            <span>{typeof step.link === "object" ? step.link.label : "View on map"}</span>
           </button>
         )}
       </div>
