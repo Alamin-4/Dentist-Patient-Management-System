@@ -75,7 +75,6 @@ export default function ReviewPlanPage() {
     : 0;
 
   const leewayAmount = Math.round(totalEstimate * 0.15);
-  const maxPrice = totalEstimate + leewayAmount;
 
   const handleAccept = async () => {
     if (!agreed || !signatureData) return;

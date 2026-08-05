@@ -35,10 +35,8 @@ function TimelineIcon({ status }: { status: "completed" | "current" | "pending" 
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
 export default function BookingDetailPage() {
   const {
-    id,
     booking,
     isLoading,
     arrivalCode,
@@ -193,18 +191,14 @@ export default function BookingDetailPage() {
           </div>
         </div>
 
-        {/* ── Main Content Grid ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ── Left Column ── */}
           <div className="lg:col-span-2 space-y-5">
-            {/* Rejection / Cancelled Banner */}
             {booking?.status === "CANCELLED" && (
               <div className="bg-red-50 border border-red-200 rounded-lg px-5 py-4 text-destructive text-sm font-semibold shadow-sm leading-relaxed">
                 {booking.metadata?.rejection?.reason || "I'm not ready to proceed with treatment at this time"}
               </div>
             )}
 
-            {/* Estimate Treatment Plan */}
             <div className="bg-white rounded-lg border border-slate-100 shadow-sm overflow-hidden">
               <button
                 type="button"
@@ -265,7 +259,6 @@ export default function BookingDetailPage() {
               )}
             </div>
 
-            {/* Proposed Final Treatment Plan (if submitted) */}
             {booking?.metadata?.finalPlan && (
               <div className="bg-white rounded-lg border border-slate-100 shadow-sm overflow-hidden">
                 <button
@@ -326,12 +319,9 @@ export default function BookingDetailPage() {
               </div>
             )}
 
-            {/* ── Step-based Section ── */}
 
-            {/* Step: Day 1 Arrival Verification */}
             {step === "day1_arrival" && (
               <div className="space-y-4">
-                {/* Dark verification banner */}
                 <div className="bg-brand-deep-navy rounded-lg px-5 py-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
@@ -351,7 +341,6 @@ export default function BookingDetailPage() {
                   </span>
                 </div>
 
-                {/* Info box */}
                 <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3.5 flex items-start gap-3">
                   <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
                   <p className="text-sm text-blue-700 leading-relaxed">
@@ -361,7 +350,6 @@ export default function BookingDetailPage() {
                   </p>
                 </div>
 
-                {/* Code input */}
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
                     Enter Arrival Code
@@ -402,7 +390,6 @@ export default function BookingDetailPage() {
               </div>
             )}
 
-            {/* Step: Final Treatment Plan */}
             {step === "final_plan" && (
               <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6">
                 <h3 className="font-bold text-text text-base mb-5">
@@ -444,10 +431,8 @@ export default function BookingDetailPage() {
               </div>
             )}
 
-            {/* Step: Payment Release Code Verification */}
             {step === "payment_release" && (
               <div className="space-y-4">
-                {/* Dark payment release banner */}
                 <div className="bg-green-500 rounded-lg px-5 py-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
@@ -467,7 +452,6 @@ export default function BookingDetailPage() {
                   </span>
                 </div>
 
-                {/* Code input */}
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
                     Enter Payment Code
@@ -508,7 +492,6 @@ export default function BookingDetailPage() {
               </div>
             )}
 
-            {/* Step: Completed Details */}
             {step === "completed" && (
               <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 flex flex-col items-center text-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center">
@@ -539,16 +522,13 @@ export default function BookingDetailPage() {
               </div>
             )}
 
-            {/* Cancelled step content is handled via the top-level banner */}
           </div>
 
-          {/* ── Right Column: Patient Timeline ── */}
           <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 h-fit">
             <h4 className="font-bold text-text mb-6">Patient Timeline</h4>
             <ol className="space-y-0">
               {timelineItems.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  {/* Icon + vertical connector */}
                   <div className="flex flex-col items-center">
                     <TimelineIcon status={item.status} />
                     {i < timelineItems.length - 1 && (
@@ -558,7 +538,6 @@ export default function BookingDetailPage() {
                       />
                     )}
                   </div>
-                  {/* Content */}
                   <div className="pb-5">
                     <div
                       className={`font-semibold text-sm leading-tight ${item.status === "pending" ? "text-slate-500" : "text-text"
@@ -575,7 +554,6 @@ export default function BookingDetailPage() {
         </div>
       </div>
 
-      {/* ── Create Final Treatment Plan Modal ── */}
       {booking && (
         <CreateFinalTreatmentPlanModal
           isOpen={showFinalModal}

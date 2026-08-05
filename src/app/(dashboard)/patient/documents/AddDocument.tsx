@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Upload, X, Loader2, FileText, Trash2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { Upload, X, Loader2, FileText } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { apiClient } from "@/api/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

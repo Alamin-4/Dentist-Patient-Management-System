@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import CustomTabs from "../../shared/custom-tabs/custom-tabs";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
+import { useTabPersistence } from "@/components/ui/tabs/useTabPersistence";
 import DashboardPageHeader from "../../shared/dashboard-page-header/dashboard-page-header";
 import SearchPatient from "./search-patient";
 import PatientCardsSection, { PatientCardsSkeleton } from "./patient-card";
@@ -14,14 +16,28 @@ interface PatientManageProps {
   patients?: PatientRecord[];
 }
 
+type PatientManageTab = "consultations" | "bookings";
+
+const patientTabs: TabItem<PatientManageTab>[] = [
+  { id: "consultations", label: "Consultations" },
+  { id: "bookings", label: "Bookings" },
+];
+
 export default function PatientManage({ patients: patientsProp }: PatientManageProps) {
   const router = useRouter();
   const { data: apiResponse, isLoading, isError } = useDentistPatients();
   const patients: PatientRecord[] = patientsProp || (apiResponse?.data as PatientRecord[]) || [];
 
-  const [activeTab, setActiveTab] = useState<"consultations" | "bookings">(
+  const [activeTab, setActiveTab, isUrlParamPresent] = useUrlTab<"consultations" | "bookings">(
+    "tab",
     "consultations",
+    ["consultations", "bookings"]
   );
+
+  useTabPersistence("patients-tabs", activeTab, setActiveTab, {
+    validTabIds: ["consultations", "bookings"],
+    isUrlParamPresent,
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProcedure, setSelectedProcedure] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -96,22 +112,13 @@ export default function PatientManage({ patients: patientsProp }: PatientManageP
         subHeading="All patients with confirmed bookings, past and present."
       />
 
-      <CustomTabs
-        tabs={[
-          {
-            id: "consultations",
-            label: "Consultations",
-          },
-          {
-            id: "bookings",
-            label: "Bookings",
-          },
-        ]}
-        activeTab={activeTab}
-        onTabChange={(tabId) =>
+      <Tabs
+        tabs={patientTabs}
+        value={activeTab}
+        onChange={(tabId) =>
           setActiveTab(tabId === "bookings" ? "bookings" : "consultations")
         }
-        storageKey="patients-tabs"
+        ariaLabel="Patients Tabs"
       />
 
       <SearchPatient

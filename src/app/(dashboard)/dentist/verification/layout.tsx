@@ -20,7 +20,6 @@ export default function VerificationLayout({
     nextIncompleteStep,
     canAccessStep,
     isProgressLoading,
-    rdvScore,
   } = useVerificationProgress();
   const router = useRouter();
   const searchParams = useSearchParams();

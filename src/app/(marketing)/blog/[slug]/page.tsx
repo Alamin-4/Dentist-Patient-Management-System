@@ -38,7 +38,7 @@ export default function BlogPostPage() {
         } else {
           setPost(null);
         }
-      } catch (err: any) {
+      } catch (_err: any) {
         setPost(null);
       } finally {
         setLoading(false);

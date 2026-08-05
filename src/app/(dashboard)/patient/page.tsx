@@ -17,18 +17,19 @@ import { DoctorCardSkeleton } from "@/app/modules/patient/Overview/DoctorCardSke
 import { PageContainer } from "@/components/shared/page-container";
 import { HeadingGroup } from "@/components/shared/heading-group";
 import { SectionCard } from "@/components/shared/section-card";
+import { Tabs, TabItem } from "@/components/ui/tabs/Tabs";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
 import {
   resolveConsultationTab,
   type ConsultationDisplayState,
 } from "@/lib/consultation-state";
 
-
 type Tab = "upcoming" | "active" | "estimate-updates";
 
-const TABS: { key: Tab; label: string }[] = [
-  { key: "upcoming", label: "Upcoming" },
-  { key: "active", label: "Active" },
-  { key: "estimate-updates", label: "Estimate Updates" },
+const TABS: TabItem<Tab>[] = [
+  { id: "upcoming", label: "Upcoming" },
+  { id: "active", label: "Active" },
+  { id: "estimate-updates", label: "Estimate Updates" },
 ];
 
 const EMPTY_STATE: Record<Tab, { title: string; body: string }> = {
@@ -71,7 +72,11 @@ export default function Overview() {
   const { data: consultationsResponse, isLoading: loadingConsultations } = usePatientConsultations();
   const { data: treatmentPlansResponse, isLoading: loadingPlans } = usePatientTreatmentPlans();
 
-  const [activeTab, setActiveTab] = useState<Tab>("upcoming");
+  const [activeTab, setActiveTab] = useUrlTab<Tab>(
+    "tab",
+    "upcoming",
+    TABS.map((t) => t.id as Tab)
+  );
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedConsultation, setSelectedConsultation] = useState<ConsultationItem | null>(null);
@@ -80,35 +85,37 @@ export default function Overview() {
   const treatmentPlans: TreatmentPlanItem[] = treatmentPlansResponse?.data || [];
   const proposedTreatmentPlans = treatmentPlans.filter((plan) => plan.status === "PROPOSED");
 
+  const [now] = useState(() => Date.now());
+
   const rawConsultations = consultations.filter((item) => {
     if (item.treatmentPlan?.treatmentBooking) return false;
     if (item.requestStatus?.toUpperCase() === "CANCELLED") return false;
-    return resolveConsultationTab(item, Date.now()) === activeTab;
+    return resolveConsultationTab(item, now) === activeTab;
   });
 
   const consultationsToShow = activeTab === "estimate-updates"
     ? (() => {
-        const withoutPlan = rawConsultations.filter((item) => !item.treatmentPlan);
-        const seenDentists = new Set<string>();
-        const sorted = [...withoutPlan].sort((a, b) => {
-          const dateA = a.scheduledDate ? new Date(a.scheduledDate).getTime() : 0;
-          const dateB = b.scheduledDate ? new Date(b.scheduledDate).getTime() : 0;
-          return dateB - dateA;
-        });
-        const unique: ConsultationItem[] = [];
-        for (const item of sorted) {
-          const dentistKey = item.dentistId || item.directoryEntryId;
-          if (dentistKey) {
-            if (!seenDentists.has(dentistKey)) {
-              seenDentists.add(dentistKey);
-              unique.push(item);
-            }
-          } else {
+      const withoutPlan = rawConsultations.filter((item) => !item.treatmentPlan);
+      const seenDentists = new Set<string>();
+      const sorted = [...withoutPlan].sort((a, b) => {
+        const dateA = a.scheduledDate ? new Date(a.scheduledDate).getTime() : 0;
+        const dateB = b.scheduledDate ? new Date(b.scheduledDate).getTime() : 0;
+        return dateB - dateA;
+      });
+      const unique: ConsultationItem[] = [];
+      for (const item of sorted) {
+        const dentistKey = item.dentistId || item.directoryEntryId;
+        if (dentistKey) {
+          if (!seenDentists.has(dentistKey)) {
+            seenDentists.add(dentistKey);
             unique.push(item);
           }
+        } else {
+          unique.push(item);
         }
-        return unique;
-      })()
+      }
+      return unique;
+    })()
     : rawConsultations;
 
   const openReschedule = (consultation: ConsultationItem) => {
@@ -161,22 +168,13 @@ export default function Overview() {
       <SectionCard className="md:p-8">
         <h2 className="text-xl font-bold text-text mb-4">Consultation</h2>
 
-        {/* Tabs */}
-        <div className="flex gap-8 border-b border-gray-100 mb-6">
-          {TABS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setActiveTab(key)}
-              className={`pb-3 text-[15px] font-semibold transition-colors border-b-2 -mb-px cursor-pointer ${activeTab === key
-                ? "text-brand-deep-navy border-brand-deep-navy"
-                : "text-[#9CA3AF] border-transparent hover:text-sec-text"
-                }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={TABS}
+          value={activeTab}
+          onChange={setActiveTab}
+          ariaLabel="Consultation Tabs"
+          className="mb-6"
+        />
 
         {isConsultationsLoading ? (
           <div className="space-y-5">

@@ -40,14 +40,6 @@ const CATEGORIES = [
   "Procedure Guides",
 ];
 
-const DESTINATIONS = [
-  { name: "Mexico", flag: "🇲🇽", query: "Mexico" },
-  { name: "Costa Rica", flag: "🇨🇷", query: "Costa Rica" },
-  { name: "Turkey", flag: "🇹🇷", query: "Turkey" },
-  { name: "Thailand", flag: "🇹🇭", query: "Thailand" },
-  { name: "Colombia", flag: "🇨🇴", query: "Colombia" },
-];
-
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);

@@ -14,9 +14,10 @@ import { ErrorState } from "@/components/shared/error-state";
 import { PageContainer } from "@/components/shared/page-container";
 import { HeadingGroup } from "@/components/shared/heading-group";
 import { SectionCard } from "@/components/shared/section-card";
+import { useUrlTab } from "@/components/ui/tabs/useUrlTab";
 
 export default function ProfileSettingsPage() {
-  const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useUrlTab("tab", "personal", ["personal", "password"]);
   const { data: response, isLoading, isError, refetch } = useGetMe();
   const uploadProfileImageMutation = useUpdateProfileImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +39,7 @@ export default function ProfileSettingsPage() {
   const tabs = [
     { id: "personal", label: "Personal Information", icon: User },
     { id: "password", label: "Change Password", icon: Lock },
-  ];
+  ] as const;
 
   const {
     register,
