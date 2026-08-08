@@ -92,7 +92,7 @@ export default function BlogPage() {
 
   return (
     <div className="bg-slate-50 flex-1 py-8 sm:py-12 px-4 sm:px-6 md:px-12 flex flex-col">
-      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10 flex-1 flex flex-col">
+      <div className="max-w-320 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10 flex-1 flex flex-col">
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border pb-8">
           <div className="space-y-2 max-w-2xl text-left">

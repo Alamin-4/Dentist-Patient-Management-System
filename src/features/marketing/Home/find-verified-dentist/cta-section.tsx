@@ -10,7 +10,7 @@ export default function CtaSearchSection() {
         <div className="absolute inset-0 bg-linear-to-b from-black/10 to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-400 w-11/12 mx-auto flex flex-col items-center text-center">
+      <div className="relative z-10 max-w-320 w-11/12 mx-auto flex flex-col items-center text-center">
         {/* Top Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#F2C467] bg-[#CDA555]/32 backdrop-blur-md mb-4 sm:mb-6">
           <div className="flex h-4 sm:h-5 w-4 sm:w-5 items-center justify-center rounded-full bg-[#17B26A]">

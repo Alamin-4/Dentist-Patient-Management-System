@@ -56,7 +56,7 @@ export default function SmileTransformations() {
 
   return (
     <section className="py-8 sm:py-12 md:py-16 font-sans antialiased">
-      <div className="max-w-400 mx-auto w-11/12 space-y-8 sm:space-y-10">
+      <div className="max-w-320 mx-auto w-11/12 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
           <div className="max-w-2xl space-y-2">
             <CustomSectionHeading value="Smile Transformations That Matter for Everyone" />

@@ -72,7 +72,7 @@ export default function ContactPage() {
 
   return (
     <div className="bg-slate-50 flex-1 py-10 sm:py-14 px-4 sm:px-6 md:px-12 flex flex-col justify-center text-left">
-      <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-10 flex-1 flex flex-col justify-center">
+      <div className="max-w-320 w-full md:w-11/12 mx-auto space-y-10 flex-1 flex flex-col justify-center">
 
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-primary text-xs font-bold border border-border">

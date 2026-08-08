@@ -70,12 +70,12 @@ export default function VerifiedDentists() {
 
   return (
     <section className="py-12 md:py-20 bg-white">
-      <div className="mx-auto mb-10 md:mb-12 w-11/12 max-w-400 space-y-3 text-center lg:text-left">
+      <div className="mx-auto mb-10 md:mb-12 w-11/12 max-w-320 space-y-3 text-center lg:text-left">
         <CustomSectionHeading value="Verified Dentists" />
         <CustomDesText value="Every dentist is trusted. Every review is from a real patient." />
       </div>
 
-      <div className="mx-auto flex w-11/12 max-w-400 flex-col rounded-md border border-stroke lg:flex-row">
+      <div className="mx-auto flex w-11/12 max-w-320 flex-col rounded-md border border-stroke lg:flex-row">
         <Sidebar active={procedure} onChange={setProcedure} />
 
         <div className="flex-1 p-4 lg:p-6">

@@ -56,7 +56,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-primary pt-20 pb-10 px-6 md:px-12 text-white">
-      <div className="max-w-400 w-11/12 mx-auto">
+      <div className="max-w-320 w-11/12 mx-auto">
         <div className="flex justify-between flex-wrap gap-12 lg:gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
