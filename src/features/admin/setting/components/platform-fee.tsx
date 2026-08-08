@@ -5,8 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Info } from "lucide-react";
 import { platformFeeSchema, type PlatformFeeFormValues } from "@/validation/settings-schemas";
-import { bindServerErrors } from "@/core/hooks/admin/settings/useAdminSettings";
-import toast from "react-hot-toast";
+import { bindServerErrors, useSystemSettings, useUpdateSystemSettings } from "@/core/hooks/admin/settings/useAdminSettings";
 import { cn } from "@/lib/utils";
 
 /**
@@ -20,12 +19,15 @@ import { cn } from "@/lib/utils";
  */
 
 export function PlatformFee() {
+  const { data: settingsData } = useSystemSettings();
+  const updateMutation = useUpdateSystemSettings();
+
   const {
     register,
     handleSubmit,
     setValue,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<PlatformFeeFormValues>({
     resolver: zodResolver(platformFeeSchema),
     defaultValues: {
@@ -34,17 +36,14 @@ export function PlatformFee() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("rateddocs_platform_fee_rate");
-    if (saved) {
-      setValue("rate", Number(saved) || 10);
+    if (settingsData && settingsData.platformFee !== undefined && settingsData.platformFee !== null) {
+      setValue("rate", Number(settingsData.platformFee));
     }
-  }, [setValue]);
+  }, [settingsData, setValue]);
 
   const onSubmit = async (data: PlatformFeeFormValues) => {
     try {
-      await new Promise((r) => setTimeout(r, 400)); // Simulating API call
-      localStorage.setItem("rateddocs_platform_fee_rate", String(data.rate));
-      toast.success("Platform fee rate saved successfully.");
+      await updateMutation.mutateAsync({ platformFee: data.rate });
     } catch (err: any) {
       bindServerErrors(err, setError);
     }
@@ -96,11 +95,11 @@ export function PlatformFee() {
       <div className="flex justify-end border-t border-slate-200 pt-4">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={updateMutation.isPending}
           className="flex items-center gap-2 rounded-lg bg-admin-primary hover:bg-admin-primary/90 text-white px-5 py-2.5 text-xs font-bold transition-all cursor-pointer disabled:bg-slate-300"
         >
           <Save className="h-4 w-4" />
-          {isSubmitting ? "Saving…" : "Save Fee Rate"}
+          {updateMutation.isPending ? "Saving…" : "Save Fee Rate"}
         </button>
       </div>
     </form>
