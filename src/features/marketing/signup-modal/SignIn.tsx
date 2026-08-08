@@ -91,9 +91,24 @@ export default function SigninModal() {
     setIsAccountDeleted(false);
 
     login(data, {
-      onSuccess: () => {
+      onSuccess: (res: any) => {
         reset();
         setShowSigninModal(false);
+
+        const loggedInUser = res?.data?.user || res?.user || res?.data;
+        const role = loggedInUser?.role;
+
+        if (role === "DENTIST") {
+          toast.success("Welcome back!");
+          router.push("/dentist");
+          return;
+        }
+
+        if (role === "ADMIN" || role === "SUPER_ADMIN") {
+          toast.success("Welcome back!");
+          router.push("/admin");
+          return;
+        }
 
         if (dentistsToCompare && dentistsToCompare.length > 0) {
           const hasProfileDetails = !!(user?.first_name || user?.name || user?.firstName);
