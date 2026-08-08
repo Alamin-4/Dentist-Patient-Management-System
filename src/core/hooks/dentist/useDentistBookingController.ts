@@ -176,8 +176,13 @@ export function useDentistBookingController() {
         onError: async (err: any) => {
           const apiErr = normalizeApiError(err);
           const errorMsg = apiErr.message || "An error occurred during payment verification.";
+          const errorCode = err?.errorCode || err?.response?.data?.errorCode;
 
-          if (errorMsg.includes("Stripe Connect") || errorMsg.includes("receive payouts")) {
+          const isConnectRequired =
+            errorCode === "STRIPE_CONNECT_REQUIRED" ||
+            (errorMsg.includes("You must connect your Stripe Connect account") && !errorMsg.includes("failed"));
+
+          if (isConnectRequired) {
             toast.error("Stripe Connect setup required to receive payouts.");
             try {
               const response = await apiClient.stripe.connectOnboard();
