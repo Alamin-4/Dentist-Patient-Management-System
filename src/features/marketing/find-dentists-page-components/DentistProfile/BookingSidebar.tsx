@@ -204,28 +204,30 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
         );
       })()}
 
-      <div className="mt-6 sm:mt-10 flex items-center justify-between gap-3 sm:gap-6">
-        <div className="shrink-0">
-          <p className="text-xs text-sec-text">Starting from</p>
-          <p className="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary">
-            ${dentist.price ? dentist.price.toLocaleString() : "0"}
-          </p>
-          <p className="text-[10px] text-[#9CA3AF]">Estimate</p>
+      <div className="mt-6 border-t border-slate-100 pt-5 flex flex-col gap-4">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <p className="text-xs text-sec-text font-medium">Starting from</p>
+            <p className="text-xl sm:text-2xl font-extrabold text-primary">
+              ${dentist.price ? dentist.price.toLocaleString() : "0"}
+            </p>
+          </div>
+          <span className="text-[11px] font-semibold text-[#9CA3AF]">Estimate</span>
         </div>
 
         {!isOwnProfile && (
-          <>
+          <div className="flex flex-col gap-2.5 w-full">
             {isVerified ? (
               <Can action="book_consultation">
                 <Button
                   onClick={() => initiateBooking("book")}
-                  className="h-12 sm:h-14 flex-1 bg-primary text-sm sm:text-base font-semibold text-white hover:bg-brand-medium-navy-hover"
+                  className="h-11 sm:h-12 w-full bg-primary text-sm font-semibold text-white hover:bg-brand-medium-navy-hover"
                 >
                   Book consultation
                 </Button>
               </Can>
             ) : isClaimed ? (
-              <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
+              <div className="flex flex-col gap-2.5 w-full">
                 <ClaimProfileButton
                   slug={dentist.slug}
                   isClaimed={true}
@@ -233,7 +235,7 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
                 />
                 <Can action="book_consultation">
                   <Button
-                    className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover w-full flex-1"
+                    className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover w-full"
                     onClick={() => initiateBooking("request")}
                   >
                     Request Consultation
@@ -249,14 +251,14 @@ export default function BookingSidebar({ dentist }: BookingSidebarProps) {
             ) : (
               <Can action="book_consultation">
                 <Button
-                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover flex-1"
+                  className="h-10 sm:h-11 text-xs sm:text-sm bg-primary font-semibold text-white hover:bg-brand-medium-navy-hover w-full"
                   onClick={() => initiateBooking("request")}
                 >
                   Request Consultation
                 </Button>
               </Can>
             )}
-          </>
+          </div>
         )}
       </div>
     </aside>
