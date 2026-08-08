@@ -5,7 +5,7 @@ export default function MarketingLoading() {
     <div className="w-full bg-white flex flex-col min-h-screen">
       {/* 1. Hero Section Skeleton */}
       <section className="relative w-full bg-white py-12">
-        <div className="mx-auto flex max-w-400 w-11/12 flex-col-reverse items-center justify-between gap-12 lg:flex-row">
+        <div className="mx-auto flex max-w-320 w-11/12 flex-col-reverse items-center justify-between gap-12 lg:flex-row">
           {/* Hero Left Content */}
           <div className="w-full lg:w-3/5 space-y-6">
             <div className="space-y-4 max-w-xl">
@@ -34,12 +34,12 @@ export default function MarketingLoading() {
 
       {/* 2. Verified Dentists Section Skeleton */}
       <section className="py-12 md:py-20 bg-white border-t border-slate-100">
-        <div className="mx-auto mb-10 md:mb-12 w-11/12 max-w-400 space-y-3">
+        <div className="mx-auto mb-10 md:mb-12 w-11/12 max-w-320 space-y-3">
           <Skeleton className="h-8 w-64 rounded-md" />
           <Skeleton className="h-4 w-96 max-w-full rounded" />
         </div>
 
-        <div className="mx-auto flex w-11/12 max-w-400 flex-col rounded-md border border-slate-200 lg:flex-row">
+        <div className="mx-auto flex w-11/12 max-w-320 flex-col rounded-md border border-slate-200 lg:flex-row">
           {/* Sidebar Procedure List Skeleton */}
           <div className="w-full lg:w-64 p-4 border-b lg:border-b-0 lg:border-r border-slate-200 space-y-3 bg-slate-50/50">
             <Skeleton className="h-5 w-32 mb-4" />
@@ -82,7 +82,7 @@ export default function MarketingLoading() {
 
       {/* 3. Why Trust Section Skeleton */}
       <section className="py-12 md:py-20 bg-slate-50">
-        <div className="max-w-400 w-11/12 mx-auto">
+        <div className="max-w-320 w-11/12 mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
             <Skeleton className="h-8 w-80 mx-auto rounded-md" />
             <Skeleton className="h-4 w-full max-w-xl mx-auto rounded" />
@@ -105,7 +105,7 @@ export default function MarketingLoading() {
 
       {/* 4. AI Smile Preview Section Skeleton */}
       <section className="py-12 md:py-20 bg-white">
-        <div className="max-w-400 w-11/12 mx-auto space-y-8">
+        <div className="max-w-320 w-11/12 mx-auto space-y-8">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-8">
             <div className="space-y-4 max-w-xl">
               <Skeleton className="h-8 w-72 rounded-md" />
@@ -128,7 +128,7 @@ export default function MarketingLoading() {
 
       {/* 5. CTA Section Skeleton */}
       <section className="py-16 bg-[#003366]">
-        <div className="max-w-400 w-11/12 mx-auto flex flex-col items-center text-center space-y-6">
+        <div className="max-w-320 w-11/12 mx-auto flex flex-col items-center text-center space-y-6">
           <Skeleton className="h-8 w-48 rounded-full bg-white/20" />
           <Skeleton className="h-10 w-72 md:w-96 rounded-lg bg-white/30" />
           <Skeleton className="h-12 w-full max-w-2xl rounded-xl bg-white/20" />

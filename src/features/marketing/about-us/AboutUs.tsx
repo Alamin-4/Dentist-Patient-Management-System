@@ -76,7 +76,7 @@ export default function AboutUs() {
                 <div className="absolute top-[-10%] right-[-10%] w-160 h-160 rounded-full bg-[#EBF4FF]/60 blur-3xl -z-10" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-120 h-120 rounded-full bg-[#113254]/5 blur-3xl -z-10" />
 
-                <div className="max-w-400 w-full md:w-11/12 mx-auto text-center relative space-y-4">
+                <div className="max-w-320 w-full md:w-11/12 mx-auto text-center relative space-y-4">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -98,7 +98,7 @@ export default function AboutUs() {
 
             {/* ── STATS SECTION ── */}
             <section className="relative -mt-6 sm:-mt-8 z-10 px-4 sm:px-6 md:px-12">
-                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                <div className="max-w-320 w-full md:w-11/12 mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                         {[
                             {
@@ -137,7 +137,7 @@ export default function AboutUs() {
 
             {/* ── MISSION & VISION ── */}
             <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-12">
-                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                <div className="max-w-320 w-full md:w-11/12 mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
@@ -207,7 +207,7 @@ export default function AboutUs() {
 
             {/* ── THE RDV VERIFICATION SYSTEM ── */}
             <section className="py-8 sm:py-12 md:py-16 bg-white border-y border-[#EEF2F6] px-4 sm:px-6 md:px-12">
-                <div className="max-w-400 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10">
+                <div className="max-w-320 w-full md:w-11/12 mx-auto space-y-8 sm:space-y-10">
                     <div className="text-center max-w-2xl mx-auto space-y-1.5">
                         <CustomSectionHeading value="The RatedDocs Verified Score" center_align />
                         <CustomDesText value="We don't rely on unverified online reviews. Our proprietary verification system calculates an RDV score (out of 100) based on three independent clinical audits." center_align />
@@ -265,7 +265,7 @@ export default function AboutUs() {
 
             {/* ── CORE VALUES ── */}
             <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-12">
-                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                <div className="max-w-320 w-full md:w-11/12 mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
@@ -317,7 +317,7 @@ export default function AboutUs() {
             </section>
 
             <section className="pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-12">
-                <div className="max-w-400 w-full md:w-11/12 mx-auto">
+                <div className="max-w-320 w-full md:w-11/12 mx-auto">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.98 }}
                         whileInView={{ opacity: 1, scale: 1 }}

@@ -46,7 +46,7 @@ export default function NavbarPublic() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow/5 py-4 lg:py-6">
-      <div className="mx-auto flex max-w-400 w-11/12 items-center justify-between gap-4">
+      <div className="mx-auto flex max-w-320 w-11/12 items-center justify-between gap-4">
 
         <Link
           href="/"

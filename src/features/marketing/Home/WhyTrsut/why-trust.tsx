@@ -32,7 +32,7 @@ const trustFeatures = [
 export default function WhyTrust() {
   return (
     <section className="py-12 md:py-20 bg-secondary">
-      <div className="max-w-400 w-11/12 mx-auto">
+      <div className="max-w-320 w-11/12 mx-auto">
         <div className="text-center max-w-4xl mx-auto mb-10 md:mb-12 space-y-4">
           <CustomSectionHeading value={"Why Trust RatedDocs Verified Dentists?"} center_align={true} />
           <CustomDesText value="Every dentist on RatedDocs undergoes a strict verification process,
