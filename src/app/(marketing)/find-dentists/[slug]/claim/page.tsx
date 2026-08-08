@@ -8,13 +8,11 @@ import { useGetMe } from "@/hooks/user/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDentistDirectoryDetail } from "@/hooks/dentist/useDentistDirectory";
 import ProfilePageSkeleton from "@/features/marketing/find-dentists-page-components/DentistProfile/profile-page-skeleton";
-
 import {
   useClaimDentistDirectoryProfile,
   useCreateDirectoryCheckoutSession,
   useSendClaimOtp,
 } from "@/hooks/dentist/useDentistDirectory";
-
 import { ClaimStep1, ClaimStep2 } from "@/features/marketing/find-dentists-page-components/DentistProfile/ClaimSteps1To2";
 import { ClaimStep3, ClaimStep4, ClaimStep5 } from "@/features/marketing/find-dentists-page-components/DentistProfile/ClaimSteps3To5";
 

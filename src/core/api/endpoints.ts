@@ -119,6 +119,7 @@ export const endpoints = {
   stripe: {
     confirmPayment: "/stripe/confirm-payment",
     connectOnboard: "/stripe/connect/onboard",
+    connectLoginLink: "/stripe/connect/login-link",
     connectStatus: "/stripe/connect/status",
   },
   contact: "/contact",

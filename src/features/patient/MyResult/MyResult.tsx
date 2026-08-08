@@ -90,8 +90,7 @@ export default function MyResultPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Existing Result Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
           {results.map((result) => (
             <SectionCard
               key={result.id}
@@ -131,7 +130,6 @@ export default function MyResultPage() {
             </SectionCard>
           ))}
 
-          {/* Add New Photo Trigger */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="group border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center gap-4 h-80 bg-[#F8FAFC]/50 hover:bg-slate-50 hover:border-brand-medium-navy transition-all cursor-pointer shadow-sm"
